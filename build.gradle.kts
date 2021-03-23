@@ -3,14 +3,19 @@ plugins {
     kotlin("jvm") version "1.4.31"
 }
 
-group = "eu.thesimplecloud"
-version = "3.0.0-SNAPSHOT"
+allprojects {
 
-repositories {
-    mavenCentral()
-}
+    group = "eu.thesimplecloud"
+    version = "3.0.0-SNAPSHOT"
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    testCompile("junit", "junit", "4.12")
+    repositories {
+        mavenCentral()
+    }
+
+    dependencies {
+        implementation(kotlin("stdlib"))
+        implementation("com.google.inject:guice:5.0.1")
+        testImplementation("junit", "junit", "4.12")
+    }
+
 }
