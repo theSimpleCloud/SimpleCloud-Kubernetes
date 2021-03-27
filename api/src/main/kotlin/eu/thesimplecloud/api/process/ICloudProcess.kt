@@ -1,6 +1,7 @@
 package eu.thesimplecloud.api.process
 
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.request.IProcessStopRequest
 import eu.thesimplecloud.api.process.state.ProcessState
@@ -8,20 +9,21 @@ import eu.thesimplecloud.api.process.template.ITemplate
 import eu.thesimplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.api.utils.Address
 import eu.thesimplecloud.api.utils.INameable
+import eu.thesimplecloud.api.utils.INetworkComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-interface ICloudProcess : INameable {
-
-    /**
-     * Returns the unique id of the process
-     */
-    fun getUniqueId(): UUID
+interface ICloudProcess : INetworkComponent {
 
     /**
      * Returns the group of the process
      */
     fun getGroup(): ICloudProcessGroup
+
+    /**
+     * Returns the node this process is running on
+     */
+    fun getNodeRunningOn(): INode
 
     /**
      * Returns the process number

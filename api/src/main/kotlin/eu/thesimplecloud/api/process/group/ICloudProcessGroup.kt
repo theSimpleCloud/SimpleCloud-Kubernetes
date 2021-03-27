@@ -1,6 +1,7 @@
 package eu.thesimplecloud.api.process.group
 
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
@@ -42,11 +43,13 @@ interface ICloudProcessGroup : INameable {
 
     fun getStartPriority(): Int
 
+    fun getNodesAllowedToStartServicesOn(): List<INode>
+
     fun getProcesses(): List<ICloudProcess>
 
     fun getProcessOnlineCountConfiguration(): IProcessesOnlineCountConfiguration
 
-    fun createStartRequest(): IProcessStartRequest
+    fun createProcessStartRequest(): IProcessStartRequest
 
     fun createUpdateRequest(): ICloudProcessGroupUpdateRequest
 
