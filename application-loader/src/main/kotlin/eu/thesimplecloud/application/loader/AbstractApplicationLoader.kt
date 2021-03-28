@@ -2,9 +2,9 @@ package eu.thesimplecloud.application.loader
 
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
+import eu.thesimplecloud.application.ILoadedApplication
 import eu.thesimplecloud.application.data.DefaultApplicationData
 import eu.thesimplecloud.application.data.IApplicationData
-import eu.thesimplecloud.application.LoadedApplication
 import java.io.File
 import java.util.jar.JarEntry
 import java.util.jar.JarFile
@@ -15,16 +15,16 @@ import java.util.jar.JarFile
  * Date: 26.03.2021
  * Time: 21:17
  */
-abstract class AbstractApplicationLoader<D : IApplicationData>{
+abstract class AbstractApplicationLoader<D : IApplicationData> {
 
     private val objectMapper = ObjectMapper()
 
-    fun loadAllApplications(directory: File): List<LoadedApplication<*>> {
+    fun loadAllApplications(directory: File): List<ILoadedApplication<*, *>> {
         require(directory.isDirectory)
-        return directory.listFiles()?.map{
+        return directory.listFiles()?.map {
             val applicationData = loadJsonFileInJar(it)
             loadApplication(it, applicationData)
-        }?: emptyList()
+        } ?: emptyList()
     }
 
 
@@ -50,7 +50,7 @@ abstract class AbstractApplicationLoader<D : IApplicationData>{
         return DefaultApplicationData.fromJsonNode(jsonNode)
     }
 
-    abstract fun loadApplication(file: File, applicationData: D): LoadedApplication<*>
+    abstract fun loadApplication(file: File, applicationData: D): ILoadedApplication<*, *>
 
     abstract fun loadJsonFileInJar(file: File): D
 
