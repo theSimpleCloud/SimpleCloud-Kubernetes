@@ -4,6 +4,7 @@ import eu.thesimplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.api.process.group.server.ICloudServerGroup
 import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.api.impl.process.request.CloudServerGroupUpdateRequest
+import eu.thesimplecloud.api.process.group.update.ICloudServerGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,7 +44,7 @@ open class CloudServerGroup(
     joinPermission
 ), ICloudServerGroup {
 
-    override fun createUpdateRequest(): ICloudProcessGroupUpdateRequest {
+    override fun createUpdateRequest(): ICloudServerGroupUpdateRequest {
         return CloudServerGroupUpdateRequest(this)
     }
 

@@ -1,7 +1,10 @@
 package eu.thesimplecloud.api.impl.process.group
 
+import eu.thesimplecloud.api.impl.process.request.CloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.api.process.group.lobby.ICloudLobbyGroup
+import eu.thesimplecloud.api.process.group.update.ICloudLobbyGroupUpdateRequest
+import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,6 +47,10 @@ class CloudLobbyGroup(
 
     override fun getLobbyPriority(): Int {
         return this.lobbyPriority
+    }
+
+    override fun createUpdateRequest(): ICloudLobbyGroupUpdateRequest {
+        return CloudLobbyGroupUpdateRequest(this)
     }
 
     override fun getProcessGroupType(): ProcessGroupType {

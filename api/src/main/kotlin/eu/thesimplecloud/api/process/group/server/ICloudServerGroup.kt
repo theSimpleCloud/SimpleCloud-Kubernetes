@@ -1,6 +1,7 @@
 package eu.thesimplecloud.api.process.group.server
 
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.api.process.group.update.ICloudServerGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -8,4 +9,8 @@ import eu.thesimplecloud.api.process.group.ICloudProcessGroup
  * Time: 21:20
  * @author Frederick Baier
  */
-interface ICloudServerGroup : ICloudProcessGroup
+interface ICloudServerGroup : ICloudProcessGroup {
+
+    override fun createUpdateRequest(): ICloudServerGroupUpdateRequest
+
+}

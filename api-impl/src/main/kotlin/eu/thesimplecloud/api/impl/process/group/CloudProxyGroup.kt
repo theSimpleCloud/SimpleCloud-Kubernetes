@@ -4,6 +4,7 @@ import eu.thesimplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.api.process.group.proxy.ICloudProxyGroup
 import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.api.impl.process.request.CloudProxyGroupUpdateRequest
+import eu.thesimplecloud.api.process.group.update.ICloudProxyGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +53,7 @@ class CloudProxyGroup(
         return ProcessGroupType.PROXY
     }
 
-    override fun createUpdateRequest(): ICloudProcessGroupUpdateRequest {
+    override fun createUpdateRequest(): ICloudProxyGroupUpdateRequest {
         return CloudProxyGroupUpdateRequest(this)
     }
 
