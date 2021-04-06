@@ -1,4 +1,4 @@
-package eu.thesimplecloud.api.process.template
+package eu.thesimplecloud.api.template
 
 import java.io.File
 

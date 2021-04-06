@@ -1,5 +1,6 @@
-package eu.thesimplecloud.api.process.template
+package eu.thesimplecloud.api.template
 
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.INameable
 
 /**
@@ -12,7 +13,7 @@ import eu.thesimplecloud.api.utils.INameable
  * The files associated with this template will be copied to a process before the process gets started
  *
  */
-interface ITemplate : INameable {
+interface ITemplate : INameable, IIdentifiable<String> {
 
     /**
      * Returns the parent template or null if this template has no parent

@@ -1,6 +1,8 @@
 package eu.thesimplecloud.api.process.version
 
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.INameable
+import java.net.URL
 
 /**
  * Created by IntelliJ IDEA.
@@ -11,7 +13,7 @@ import eu.thesimplecloud.api.utils.INameable
  * Represents a version processes can be executed with
  *
  */
-interface IProcessVersion : INameable {
+interface IProcessVersion : INameable, IIdentifiable<String> {
 
     /**
      * Returns the api type
@@ -21,6 +23,6 @@ interface IProcessVersion : INameable {
     /**
      * Returns the direct download link to a jar file
      */
-    fun getDownloadLink(): String
+    fun getDownloadLink(): URL
 
 }

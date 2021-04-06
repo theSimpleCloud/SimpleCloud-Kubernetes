@@ -1,10 +1,13 @@
 package eu.thesimplecloud.api.process.group.update
 
+import eu.thesimplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.api.process.template.ITemplate
+import eu.thesimplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
+import eu.thesimplecloud.api.template.ITemplate
 import eu.thesimplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.api.utils.IRequest
 import eu.thesimplecloud.api.process.state.ProcessState
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,10 +44,46 @@ interface ICloudProcessGroupUpdateRequest : IRequest<ICloudProcessGroup> {
     fun setVersion(version: IProcessVersion): ICloudProcessGroupUpdateRequest
 
     /**
+     * Sets the version for the group
+     * @return this
+     */
+    fun setVersion(versionFuture: CompletableFuture<IProcessVersion>): ICloudProcessGroupUpdateRequest
+
+    /**
      * Sets the template for the group
      * @return this
      */
     fun setTemplate(template: ITemplate): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the template for the group
+     * @return this
+     */
+    fun setTemplate(templateFuture: CompletableFuture<ITemplate>): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the jvm arguments for the group
+     * @return this
+     */
+    fun setJvmArguments(jvmArguments: IJVMArguments): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the jvm arguments for the group
+     * @return this
+     */
+    fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<IJVMArguments>): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the online count configuration for the group
+     * @return this
+     */
+    fun setOnlineCountConfiguration(onlineCountConfiguration: IProcessesOnlineCountConfiguration): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the online count configuration for the group
+     * @return this
+     */
+    fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration>): ICloudProcessGroupUpdateRequest
 
     /**
      * Sets the maintenance state for the group
@@ -68,7 +107,7 @@ interface ICloudProcessGroupUpdateRequest : IRequest<ICloudProcessGroup> {
      * Sets the permission a player need to join processes of the group
      * @return this
      */
-    fun setJoinPermission(permission: String): ICloudProcessGroupUpdateRequest
+    fun setJoinPermission(permission: String?): ICloudProcessGroupUpdateRequest
 
     /**
      * Sets whether the state of processes shall be automatically set to [ProcessState.VISIBLE]

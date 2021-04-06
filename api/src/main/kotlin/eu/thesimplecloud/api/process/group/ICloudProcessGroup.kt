@@ -8,12 +8,13 @@ import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateReques
 import eu.thesimplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.api.process.request.IProcessGroupDeleteRequest
 import eu.thesimplecloud.api.process.request.IProcessStartRequest
-import eu.thesimplecloud.api.process.template.ITemplate
+import eu.thesimplecloud.api.template.ITemplate
 import eu.thesimplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.api.reference.INamedReferenceHolder
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.INameable
+import java.util.concurrent.CompletableFuture
 
-interface ICloudProcessGroup : INameable {
+interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
     fun getMaxMemory(): Int
 
@@ -23,11 +24,11 @@ interface ICloudProcessGroup : INameable {
 
     fun isInMaintenance(): Boolean
 
-    fun getTemplate(): ITemplate
+    fun getTemplate(): CompletableFuture<ITemplate>
 
-    fun getVersion(): IProcessVersion
+    fun getVersion(): CompletableFuture<IProcessVersion>
 
-    fun getJvmArguments(): IJVMArguments
+    fun getJvmArguments(): CompletableFuture<IJVMArguments>
 
     fun getProcessGroupType(): ProcessGroupType
 
@@ -43,11 +44,11 @@ interface ICloudProcessGroup : INameable {
 
     fun getStartPriority(): Int
 
-    fun getNodesAllowedToStartServicesOn(): List<INode>
+    fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>>
 
-    fun getProcesses(): List<ICloudProcess>
+    fun getProcesses(): CompletableFuture<List<ICloudProcess>>
 
-    fun getProcessOnlineCountConfiguration(): IProcessesOnlineCountConfiguration
+    fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration>
 
     fun createProcessStartRequest(): IProcessStartRequest
 

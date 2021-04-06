@@ -1,5 +1,6 @@
 package eu.thesimplecloud.api.jvmargs
 
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.INameable
 
 /**
@@ -10,7 +11,7 @@ import eu.thesimplecloud.api.utils.INameable
  *
  * Represents arguments for a JVM
  */
-interface IJVMArguments : INameable {
+interface IJVMArguments : INameable, IIdentifiable<String> {
 
     /**
      * Returns the arguments to be applied

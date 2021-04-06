@@ -1,6 +1,7 @@
 package eu.thesimplecloud.api.process.onlineonfiguration
 
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.INameable
 
 /**
@@ -12,17 +13,12 @@ import eu.thesimplecloud.api.utils.INameable
  * Describes how much processes shall be online
  *
  */
-interface IProcessesOnlineCountConfiguration : INameable {
+interface IProcessesOnlineCountConfiguration : INameable, IIdentifiable<String> {
 
     /**
      * Returns the amount of processes that should be online in the moment the method gets called
      * According to the returned value processes will be stopped and started
      */
-    fun getOnlineCount(group: ICloudProcessGroup): Int
-
-    /**
-     * Returns the start priority used to to determine which process to start next (higher is better)
-     */
-    fun getStartPriority(group: ICloudProcessGroup): Int
+    fun calculateOnlineCount(group: ICloudProcessGroup): Int
 
 }

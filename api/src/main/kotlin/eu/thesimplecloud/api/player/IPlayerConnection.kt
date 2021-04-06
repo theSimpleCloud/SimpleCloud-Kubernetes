@@ -17,7 +17,6 @@ interface IPlayerConnection : INameable {
      */
     fun getUniqueId(): UUID
 
-
     /**
      * Returns the address of this player
      */

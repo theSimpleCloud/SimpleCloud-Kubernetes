@@ -5,25 +5,24 @@ import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.request.IProcessStopRequest
 import eu.thesimplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.api.process.template.ITemplate
+import eu.thesimplecloud.api.template.ITemplate
 import eu.thesimplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.Address
-import eu.thesimplecloud.api.utils.INameable
 import eu.thesimplecloud.api.utils.INetworkComponent
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
-interface ICloudProcess : INetworkComponent {
+interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
 
     /**
      * Returns the group of the process
      */
-    fun getGroup(): ICloudProcessGroup
+    fun getGroup(): CompletableFuture<ICloudProcessGroup>
 
     /**
      * Returns the node this process is running on
      */
-    fun getNodeRunningOn(): INode
+    fun getNodeRunningOn(): CompletableFuture<INode>
 
     /**
      * Returns the process number
@@ -39,17 +38,17 @@ interface ICloudProcess : INetworkComponent {
     /**
      * Returns the version the process is running with
      */
-    fun getVersion(): IProcessVersion
+    fun getVersion(): CompletableFuture<IProcessVersion>
 
     /**
      * Returns the template this process was started from
      */
-    fun getTemplate(): ITemplate
+    fun getTemplate(): CompletableFuture<ITemplate>
 
     /**
      * Returns the [IJVMArguments] the process used to start
      */
-    fun getJvmArguments(): IJVMArguments
+    fun getJvmArguments(): CompletableFuture<IJVMArguments>
 
     /**
      * Returns the maximum amount of memory this process can use in MB
