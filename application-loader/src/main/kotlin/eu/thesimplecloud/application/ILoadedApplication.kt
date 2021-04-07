@@ -9,12 +9,12 @@ import java.io.File
  * Date: 28.03.2021
  * Time: 18:22
  */
-interface ILoadedApplication <D: IApplicationData, C>{
+interface ILoadedApplication<T> {
 
     fun getFile(): File
 
-    fun getApplicationData(): D
+    fun getApplicationData(): IApplicationData
 
-    fun getLoadedClassInstance(): C
+    fun getLoadedClassInstance(): T
 
 }
