@@ -15,7 +15,7 @@ class LoadedModuleApplication(
     private val file: File,
     private val applicationData: IModuleApplicationData,
     private val loadedClassInstance: AbstractModule
-) : ILoadedApplication<IModuleApplicationData, AbstractModule> {
+) : ILoadedApplication<AbstractModule> {
 
     override fun getFile(): File {
         return file

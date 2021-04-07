@@ -25,13 +25,14 @@ import java.io.File
  */
 @Singleton
 class ModuleApplicationLoader @Inject constructor(
-    private val injector: Injector
-) : AbstractApplicationLoader<IModuleApplicationData>() {
+    private val injector: Injector,
+    jarFileLoader: ModuleJarFileLoader
+) : AbstractApplicationLoader<LoadedModuleApplication>(jarFileLoader) {
 
     override fun loadApplication(
         file: File,
-        applicationData: IModuleApplicationData
-    ): ILoadedApplication<IModuleApplicationData, AbstractModule> {
+        applicationData: IApplicationData
+    ): LoadedModuleApplication {
         val classLoader = createModuleClassLoader(file)
 
         val classNameToLoad = applicationData.getClassNameToLoad()
@@ -39,20 +40,7 @@ class ModuleApplicationLoader @Inject constructor(
         val extensionLoader = ExtensionLoader(injector, classLoader, AbstractModule::class.java)
         val abstractModule = extensionLoader.loadClassInstance(classNameToLoad)
 
-        return LoadedModuleApplication(file, applicationData, abstractModule)
-    }
-
-    override fun loadJsonFileInJar(file: File): IModuleApplicationData {
-        return loadJsonFileInJar(file, "module.json")
-    }
-
-    override fun constructApplicationData(
-        defaultApplicationData: DefaultApplicationData,
-        jsonNode: JsonNode
-    ): IModuleApplicationData {
-        val classNameToLoad = jsonNode.path("abstractModule").textValue()
-            ?: throw InvalidApplicationEntryPointFileException("abstractModule")
-        return ModuleApplicationData(defaultApplicationData, classNameToLoad)
+        return LoadedModuleApplication(file, applicationData as IModuleApplicationData, abstractModule)
     }
 
     override fun createModuleClassLoader(file: File): ClassLoader {
