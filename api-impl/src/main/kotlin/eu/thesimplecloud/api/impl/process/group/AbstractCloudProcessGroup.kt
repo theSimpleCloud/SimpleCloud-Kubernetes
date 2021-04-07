@@ -36,12 +36,9 @@ abstract class AbstractCloudProcessGroup(
     private val stateUpdating: Boolean,
     private val startPriority: Int,
     private val joinPermission: String?,
+    private val onlineCount: Int = 0,
+    private val nodeNamesAllowedToStartOn: List<String>
 ) : ICloudProcessGroup {
-
-    private val nodesAllowedToStartOn = CopyOnWriteArrayList<String>()
-
-    @Volatile
-    private var onlineCount = 0
 
     override fun getMaxMemory(): Int {
         return this.maxMemory
@@ -97,7 +94,7 @@ abstract class AbstractCloudProcessGroup(
     }
 
     override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>> {
-        return CloudAPI.instance.getNodeService().findNodesByName(*this.nodesAllowedToStartOn.toTypedArray())
+        return CloudAPI.instance.getNodeService().findNodesByName(*this.nodeNamesAllowedToStartOn.toTypedArray())
     }
 
     override fun getProcesses(): CompletableFuture<List<ICloudProcess>> {

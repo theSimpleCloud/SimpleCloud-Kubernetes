@@ -1,6 +1,8 @@
 package eu.thesimplecloud.api.impl.process
 
 import eu.thesimplecloud.api.CloudAPI
+import eu.thesimplecloud.api.impl.future.exception.CompletedWithNullException
+import eu.thesimplecloud.api.impl.process.request.ProcessStopRequest
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.ICloudProcess
@@ -21,59 +23,73 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class CloudProcess(
-    private val groupName: String
+    private val groupName: String,
+    private val uniqueId: UUID,
+    private val processNumber: Int,
+    private val state: ProcessState,
+    private val maxMemory: Int,
+    private val usedMemory: Int,
+    private val maxPlayers: Int,
+    private val address: Address,
+    private val static: Boolean,
+    private val processGroupType: ProcessGroupType,
+    private val versionName: String,
+    private val templateName: String,
+    private val nodeNameRunningOn: String,
+    private val jvmArgumentsName: String?,
 ) : ICloudProcess {
 
     override fun getGroup(): CompletableFuture<ICloudProcessGroup> {
-        return CloudAPI.instance.getProcessGroupService().findByName(groupName)
-    }
-
-    override fun getNodeRunningOn(): CompletableFuture<INode> {
-        TODO("Not yet implemented")
+        return CloudAPI.instance.getProcessGroupService().findByName(this.groupName)
     }
 
     override fun getProcessNumber(): Int {
-        TODO("Not yet implemented")
+        return this.processNumber
     }
 
     override fun getState(): ProcessState {
-        TODO("Not yet implemented")
-    }
-
-    override fun getVersion(): CompletableFuture<IProcessVersion> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getTemplate(): CompletableFuture<ITemplate> {
-        TODO("Not yet implemented")
-    }
-
-    override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
-        TODO("Not yet implemented")
+        return this.state
     }
 
     override fun getMaxMemory(): Int {
-        TODO("Not yet implemented")
+        return this.maxMemory
     }
 
     override fun getUsedMemory(): Int {
-        TODO("Not yet implemented")
+        return this.usedMemory
     }
 
     override fun getMaxPlayers(): Int {
-        TODO("Not yet implemented")
+        return this.maxPlayers
     }
 
     override fun getAddress(): Address {
-        TODO("Not yet implemented")
+        return this.address
     }
 
     override fun isStatic(): Boolean {
-        TODO("Not yet implemented")
+        return this.static
     }
 
     override fun getProcessType(): ProcessGroupType {
-        TODO("Not yet implemented")
+        return this.processGroupType
+    }
+
+    override fun getVersion(): CompletableFuture<IProcessVersion> {
+        return CloudAPI.instance.getProcessVersionService().findByName(this.versionName)
+    }
+
+    override fun getTemplate(): CompletableFuture<ITemplate> {
+        return CloudAPI.instance.getTemplateService().findByName(this.templateName)
+    }
+
+    override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
+        if (this.jvmArgumentsName == null) return CompletableFuture.failedFuture(CompletedWithNullException())
+        return CloudAPI.instance.getJvmArgumentsService().findByName(this.jvmArgumentsName)
+    }
+
+    override fun getNodeRunningOn(): CompletableFuture<INode> {
+        return CloudAPI.instance.getNodeService().findNodeByName(this.nodeNameRunningOn)
     }
 
     override fun terminationFuture(): CompletableFuture<Void> {
@@ -85,14 +101,20 @@ class CloudProcess(
     }
 
     override fun createStopRequest(): IProcessStopRequest {
-        TODO("Not yet implemented")
+        return ProcessStopRequest(this)
     }
 
     override fun getUniqueId(): UUID {
-        TODO("Not yet implemented")
+        return this.uniqueId
     }
 
     override fun getName(): String {
-        TODO("Not yet implemented")
+        return this.groupName + "-" + getProcessNumber()
     }
+
+    override fun getIdentifier(): String {
+        return getName()
+    }
+
+
 }

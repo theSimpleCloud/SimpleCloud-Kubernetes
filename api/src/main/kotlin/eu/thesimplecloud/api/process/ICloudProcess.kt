@@ -20,11 +20,6 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
     fun getGroup(): CompletableFuture<ICloudProcessGroup>
 
     /**
-     * Returns the node this process is running on
-     */
-    fun getNodeRunningOn(): CompletableFuture<INode>
-
-    /**
      * Returns the process number
      * e.g The name is Lobby-2 -> 2 would be the process number
      */
@@ -34,21 +29,6 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      * Returns the state of the process
      */
     fun getState(): ProcessState
-
-    /**
-     * Returns the version the process is running with
-     */
-    fun getVersion(): CompletableFuture<IProcessVersion>
-
-    /**
-     * Returns the template this process was started from
-     */
-    fun getTemplate(): CompletableFuture<ITemplate>
-
-    /**
-     * Returns the [IJVMArguments] the process used to start
-     */
-    fun getJvmArguments(): CompletableFuture<IJVMArguments>
 
     /**
      * Returns the maximum amount of memory this process can use in MB
@@ -79,6 +59,26 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      * Returns the process type
      */
     fun getProcessType(): ProcessGroupType
+
+    /**
+     * Returns the version the process is running with
+     */
+    fun getVersion(): CompletableFuture<IProcessVersion>
+
+    /**
+     * Returns the template this process was started from
+     */
+    fun getTemplate(): CompletableFuture<ITemplate>
+
+    /**
+     * Returns the [IJVMArguments] the process used to start
+     */
+    fun getJvmArguments(): CompletableFuture<IJVMArguments>
+
+    /**
+     * Returns the node this process is running on
+     */
+    fun getNodeRunningOn(): CompletableFuture<INode>
 
     /**
      * Returns the termination future

@@ -19,4 +19,10 @@ interface IInternalCloudProcessService : ICloudProcessService {
      */
     fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
 
+    /**
+     * Shuts the [process] down
+     * @return the [ICloudProcess.terminationFuture] of the process
+     */
+    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
+
 }
