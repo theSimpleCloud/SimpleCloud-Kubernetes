@@ -26,7 +26,8 @@ open class CloudServerGroup(
     static: Boolean,
     stateUpdating: Boolean,
     startPriority: Int,
-    joinPermission: String?
+    joinPermission: String?,
+    nodeNamesAllowedToStartOn: List<String>
 ) : AbstractCloudProcessGroup(
     name,
     maxMemory,
@@ -41,7 +42,8 @@ open class CloudServerGroup(
     static,
     stateUpdating,
     startPriority,
-    joinPermission
+    joinPermission,
+    nodeNamesAllowedToStartOn
 ), ICloudServerGroup {
 
     override fun createUpdateRequest(): ICloudServerGroupUpdateRequest {

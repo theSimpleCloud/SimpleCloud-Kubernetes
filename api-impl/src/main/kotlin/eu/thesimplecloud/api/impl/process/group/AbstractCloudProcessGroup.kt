@@ -36,9 +36,11 @@ abstract class AbstractCloudProcessGroup(
     private val stateUpdating: Boolean,
     private val startPriority: Int,
     private val joinPermission: String?,
-    private val onlineCount: Int = 0,
     private val nodeNamesAllowedToStartOn: List<String>
 ) : ICloudProcessGroup {
+
+
+    private val onlineCount: Int = 0
 
     override fun getMaxMemory(): Int {
         return this.maxMemory

@@ -21,7 +21,7 @@ interface IRepository<I : Any, T : IIdentifiable<I>> {
     /**
      * Returns the object found by the specified [identifier]
      */
-    fun find(identifier: I): CompletableFuture<T?>
+    fun find(identifier: I): CompletableFuture<T>
 
     /**
      * Saves the specified [value] and replaces it if needed according to its identifier

@@ -27,6 +27,7 @@ class CloudProxyGroup(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
+    nodeNamesAllowedToStartOn: List<String>,
     private val startPort: Int
 ) : AbstractCloudProcessGroup(
     name,
@@ -42,7 +43,8 @@ class CloudProxyGroup(
     static,
     stateUpdating,
     startPriority,
-    joinPermission
+    joinPermission,
+    nodeNamesAllowedToStartOn
 ), ICloudProxyGroup {
 
     override fun getStartPort(): Int {
