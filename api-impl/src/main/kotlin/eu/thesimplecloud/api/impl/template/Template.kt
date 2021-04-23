@@ -28,4 +28,8 @@ class Template(
     override fun getName(): String {
         return this.name
     }
+
+    override fun getIdentifier(): String {
+        return getName()
+    }
 }
