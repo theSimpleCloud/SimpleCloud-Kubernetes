@@ -3,6 +3,7 @@ package eu.thesimplecloud.api.impl.process.request
 import eu.thesimplecloud.api.impl.process.group.CloudProxyGroup
 import eu.thesimplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.group.proxy.ICloudProxyGroup
 import eu.thesimplecloud.api.process.group.update.ICloudProxyGroupUpdateRequest
@@ -117,7 +118,8 @@ class CloudProxyGroupUpdateRequest(private val proxyGroup: ICloudProxyGroup) :
         version: IProcessVersion,
         template: ITemplate,
         jvmArguments: IJVMArguments?,
-        onlineCountConfiguration: IProcessesOnlineCountConfiguration
+        onlineCountConfiguration: IProcessesOnlineCountConfiguration,
+        nodesAllowedToStartOn: List<INode>
     ): CompletableFuture<ICloudProcessGroup> {
         val proxyGroup = CloudProxyGroup(
             getProcessGroup().getName(),
@@ -134,6 +136,7 @@ class CloudProxyGroupUpdateRequest(private val proxyGroup: ICloudProxyGroup) :
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
+            nodesAllowedToStartOn.map { it.getName() },
             this.startPort
         )
         return InternalCloudAPI.instance.getProcessGroupService().updateGroup(proxyGroup)

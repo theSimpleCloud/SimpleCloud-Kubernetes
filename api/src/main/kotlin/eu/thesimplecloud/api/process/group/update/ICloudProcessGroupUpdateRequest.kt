@@ -1,6 +1,7 @@
 package eu.thesimplecloud.api.process.group.update
 
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.api.template.ITemplate
@@ -84,6 +85,18 @@ interface ICloudProcessGroupUpdateRequest : IRequest<ICloudProcessGroup> {
      * @return this
      */
     fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration>): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the nodes this group shall start on
+     * @return this
+     */
+    fun setNodesAllowedToStartOn(nodes: List<INode>): ICloudProcessGroupUpdateRequest
+
+    /**
+     * Sets the template for the group
+     * @return this
+     */
+    fun setNodesAllowedToStartOn(nodes: CompletableFuture<List<INode>>): ICloudProcessGroupUpdateRequest
 
     /**
      * Sets the maintenance state for the group

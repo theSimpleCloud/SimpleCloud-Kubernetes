@@ -12,6 +12,7 @@ import java.util.*
  * @author Frederick Baier
  *
  * Represents a node currently connected to the cluster
+ * A node will not be available as an object if it is not connected
  *
  */
 interface INode : INetworkComponent, IIdentifiable<String> {

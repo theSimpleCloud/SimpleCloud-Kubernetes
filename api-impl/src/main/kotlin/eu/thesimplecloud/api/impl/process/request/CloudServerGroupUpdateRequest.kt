@@ -4,6 +4,7 @@ import eu.thesimplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.api.impl.process.group.CloudServerGroup
 import eu.thesimplecloud.api.impl.process.request.AbstractCloudProcessGroupUpdateRequest
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.group.server.ICloudServerGroup
 import eu.thesimplecloud.api.process.group.update.ICloudServerGroupUpdateRequest
@@ -26,7 +27,8 @@ open class CloudServerGroupUpdateRequest(serverGroup: ICloudServerGroup) :
         version: IProcessVersion,
         template: ITemplate,
         jvmArguments: IJVMArguments?,
-        onlineCountConfiguration: IProcessesOnlineCountConfiguration
+        onlineCountConfiguration: IProcessesOnlineCountConfiguration,
+        nodesAllowedToStartOn: List<INode>
     ): CompletableFuture<ICloudProcessGroup> {
         val serverGroup = CloudServerGroup(
             getProcessGroup().getName(),
@@ -42,7 +44,8 @@ open class CloudServerGroupUpdateRequest(serverGroup: ICloudServerGroup) :
             getProcessGroup().isStatic(),
             this.stateUpdating,
             this.startPriority,
-            this.joinPermission
+            this.joinPermission,
+            nodesAllowedToStartOn.map { it.getName() }
         )
         return InternalCloudAPI.instance.getProcessGroupService().updateGroup(serverGroup)
     }

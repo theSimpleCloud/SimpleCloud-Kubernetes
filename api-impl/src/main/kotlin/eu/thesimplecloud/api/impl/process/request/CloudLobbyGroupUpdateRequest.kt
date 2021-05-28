@@ -3,6 +3,7 @@ package eu.thesimplecloud.api.impl.process.request
 import eu.thesimplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.api.impl.process.group.CloudLobbyGroup
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.group.lobby.ICloudLobbyGroup
 import eu.thesimplecloud.api.process.group.update.ICloudLobbyGroupUpdateRequest
@@ -117,7 +118,8 @@ class CloudLobbyGroupUpdateRequest(private val lobbyGroup: ICloudLobbyGroup) :
         version: IProcessVersion,
         template: ITemplate,
         jvmArguments: IJVMArguments?,
-        onlineCountConfiguration: IProcessesOnlineCountConfiguration
+        onlineCountConfiguration: IProcessesOnlineCountConfiguration,
+        nodesAllowedToStartOn: List<INode>
     ): CompletableFuture<ICloudProcessGroup> {
         val lobbyGroup = CloudLobbyGroup(
             getProcessGroup().getName(),
@@ -134,7 +136,8 @@ class CloudLobbyGroupUpdateRequest(private val lobbyGroup: ICloudLobbyGroup) :
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            this.lobbyPriority
+            nodesAllowedToStartOn.map { it.getName() },
+            this.lobbyPriority,
         )
         return InternalCloudAPI.instance.getProcessGroupService().updateGroup(lobbyGroup)
     }

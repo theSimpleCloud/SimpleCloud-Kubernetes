@@ -5,6 +5,7 @@ import eu.thesimplecloud.api.impl.future.flatten
 import eu.thesimplecloud.api.impl.future.getNow
 import eu.thesimplecloud.api.impl.future.getNowOrNull
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
@@ -56,7 +57,12 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var jvmArgumentsFuture: CompletableFuture<IJVMArguments> = this.processGroup.getJvmArguments()
 
     @Volatile
-    protected var onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration> = this.processGroup.getProcessOnlineCountConfiguration()
+    protected var onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration> =
+        this.processGroup.getProcessOnlineCountConfiguration()
+
+    @Volatile
+    protected var nodesAllowedToStartOn: CompletableFuture<List<INode>> =
+        this.processGroup.getNodesAllowedToStartServicesOn()
 
     override fun getProcessGroup(): ICloudProcessGroup {
         return this.processGroup
@@ -112,6 +118,16 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         return this
     }
 
+    override fun setNodesAllowedToStartOn(nodes: CompletableFuture<List<INode>>): ICloudProcessGroupUpdateRequest {
+        this.nodesAllowedToStartOn = nodes
+        return this
+    }
+
+    override fun setNodesAllowedToStartOn(nodes: List<INode>): ICloudProcessGroupUpdateRequest {
+        this.nodesAllowedToStartOn = CompletableFuture.completedFuture(nodes)
+        return this
+    }
+
     override fun setMaintenance(maintenance: Boolean): ICloudProcessGroupUpdateRequest {
         this.maintenance = maintenance
         return this
@@ -143,13 +159,20 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun submit(): CompletableFuture<ICloudProcessGroup> {
-        val voidFuture = listOf(this.versionFuture, this.templateFuture, this.jvmArgumentsFuture, this.onlineCountConfigurationFuture).combineToVoidFuture()
+        val voidFuture = listOf(
+            this.versionFuture,
+            this.templateFuture,
+            this.jvmArgumentsFuture,
+            this.onlineCountConfigurationFuture,
+            this.nodesAllowedToStartOn
+        ).combineToVoidFuture()
         return voidFuture.thenApply {
             return@thenApply submit0(
                 this.versionFuture.getNow(),
                 this.templateFuture.getNow(),
                 this.jvmArgumentsFuture.getNowOrNull(),
-                this.onlineCountConfigurationFuture.getNow()
+                this.onlineCountConfigurationFuture.getNow(),
+                this.nodesAllowedToStartOn.getNow()
             )
         }.flatten()
     }
@@ -158,7 +181,8 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         version: IProcessVersion,
         template: ITemplate,
         jvmArguments: IJVMArguments?,
-        onlineCountConfiguration: IProcessesOnlineCountConfiguration
+        onlineCountConfiguration: IProcessesOnlineCountConfiguration,
+        nodesAllowedToStartOn: List<INode>
     ): CompletableFuture<ICloudProcessGroup>
 
 

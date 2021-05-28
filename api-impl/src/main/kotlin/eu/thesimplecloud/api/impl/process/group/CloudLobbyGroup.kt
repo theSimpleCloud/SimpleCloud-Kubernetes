@@ -27,6 +27,7 @@ class CloudLobbyGroup(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
+    nodeNamesAllowedToStartOn: List<String>,
     private val lobbyPriority: Int
 ) : CloudServerGroup(
     name,
@@ -42,7 +43,8 @@ class CloudLobbyGroup(
     static,
     stateUpdating,
     startPriority,
-    joinPermission
+    joinPermission,
+    nodeNamesAllowedToStartOn
 ), ICloudLobbyGroup {
 
     override fun getLobbyPriority(): Int {
