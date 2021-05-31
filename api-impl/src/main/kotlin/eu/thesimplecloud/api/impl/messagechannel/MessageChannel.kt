@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.api.impl.messagechannel
 
+import eu.thesimplecloud.api.impl.ignite.IgniteQueryHandler
 import eu.thesimplecloud.api.impl.messagechannel.request.MultipleReceiverMessageRequest
 import eu.thesimplecloud.api.impl.messagechannel.request.SingleReceiverMessageRequest
 import eu.thesimplecloud.api.messagechannel.IMessageChannel
@@ -36,18 +37,19 @@ import eu.thesimplecloud.api.utils.INetworkComponent
  * @author Frederick Baier
  */
 class MessageChannel<T : Any, R : Any>(
-    private val name: String
+    private val name: String,
+    private val queryHandler: IgniteQueryHandler
 ) : IMessageChannel<T, R> {
 
     @Volatile
     private var messageHandler: IMessageHandler<T, R> = EmptyMessageHandler<T, R>()
 
     override fun createMessageRequest(message: T, receiver: INetworkComponent): IMessageRequest<R> {
-        return SingleReceiverMessageRequest<R>(this.name, message, receiver)
+        return SingleReceiverMessageRequest<R>(this.name, message, receiver, queryHandler)
     }
 
     override fun createMessageRequest(message: T, receivers: List<INetworkComponent>): IMessageRequest<Unit> {
-        return MultipleReceiverMessageRequest(this.name, message, receivers)
+        return MultipleReceiverMessageRequest(this.name, message, receivers, queryHandler)
     }
 
     override fun setMessageHandler(handler: IMessageHandler<T, R>) {

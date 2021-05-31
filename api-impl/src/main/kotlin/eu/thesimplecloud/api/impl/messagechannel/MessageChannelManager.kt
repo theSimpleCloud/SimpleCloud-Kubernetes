@@ -22,6 +22,9 @@
 
 package eu.thesimplecloud.api.impl.messagechannel
 
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.api.impl.ignite.IgniteQueryHandler
 import eu.thesimplecloud.api.messagechannel.IMessageChannel
 import eu.thesimplecloud.api.messagechannel.manager.IMessageChannelManager
 import java.util.concurrent.CopyOnWriteArrayList
@@ -32,12 +35,15 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Time: 10:47
  * @author Frederick Baier
  */
-class MessageChannelManager : IMessageChannelManager {
+@Singleton
+class MessageChannelManager @Inject constructor(
+    private val queryHandler: IgniteQueryHandler
+) : IMessageChannelManager {
 
     private val registeredMessageChannels = CopyOnWriteArrayList<MessageChannel<*, *>>()
 
     override fun <T : Any, R : Any> registerMessageChannel(name: String): IMessageChannel<T, R> {
-        val messageChannel = MessageChannel<T, R>(name)
+        val messageChannel = MessageChannel<T, R>(name, queryHandler)
         this.registeredMessageChannels.add(messageChannel)
         return messageChannel
     }

@@ -1,11 +1,11 @@
 package eu.thesimplecloud.api.impl.repository.processversion
 
-import eu.thesimplecloud.api.impl.ignite.IgniteSupplier
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.api.impl.repository.AbstractIgniteRepository
-import eu.thesimplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.api.repository.process.ICloudProcessRepository
 import eu.thesimplecloud.api.repository.processversion.IProcessVersionRepository
+import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
 
 /**
@@ -14,10 +14,13 @@ import org.apache.ignite.IgniteCache
  * Time: 19:07
  * @author Frederick Baier
  */
-class IgniteProcessVersionRepository : AbstractIgniteRepository<IProcessVersion>(), IProcessVersionRepository {
+@Singleton
+class IgniteProcessVersionRepository @Inject constructor(
+    private val ignite: Ignite
+) : AbstractIgniteRepository<IProcessVersion>(), IProcessVersionRepository {
 
     override fun getCache(): IgniteCache<String, IProcessVersion> {
-        return IgniteSupplier.ignite.getOrCreateCache("cloud-process-versions")
+        return ignite.getOrCreateCache("cloud-process-versions")
     }
 
 

@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.api.impl.ignite
 
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.api.impl.future.exception.CompletedWithNullException
 import eu.thesimplecloud.api.impl.future.timeout.timout
 import eu.thesimplecloud.api.impl.future.toFutureList
@@ -29,6 +31,7 @@ import eu.thesimplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.api.repository.node.INodeRepository
 import eu.thesimplecloud.api.repository.process.ICloudProcessRepository
 import eu.thesimplecloud.api.utils.INetworkComponent
+import org.apache.ignite.Ignite
 import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -40,18 +43,17 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Time: 18:30
  * @author Frederick Baier
  */
-class IgniteQueryHandler(
+@Singleton
+class IgniteQueryHandler @Inject constructor(
     private val messageChannelManager: IMessageChannelManager,
     private val nodeRepository: INodeRepository,
-    private val processRepository: ICloudProcessRepository
+    private val processRepository: ICloudProcessRepository,
+    private val ignite: Ignite
 ) {
-
-    private val ignite = IgniteSupplier.ignite
 
     private val queries = CopyOnWriteArrayList<IgniteQuery>()
 
     init {
-        INSTANCE = this
         startListening()
     }
 
@@ -138,11 +140,6 @@ class IgniteQueryHandler(
         val processFuture: CompletableFuture<out INetworkComponent> =
             processRepository.findProcessByUniqueId(senderNodeId)
         return listOf(nodeFuture, processFuture).toFutureList().thenApply { it.first() }
-    }
-
-    companion object {
-        lateinit var INSTANCE: IgniteQueryHandler
-            private set
     }
 
 }

@@ -1,13 +1,13 @@
 package eu.thesimplecloud.api.impl.repository.process
 
-import eu.thesimplecloud.api.impl.future.nonNull
-import eu.thesimplecloud.api.impl.ignite.IgniteSupplier
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.api.impl.ignite.predicate.NetworkComponentCompareUUIDPredicate
 import eu.thesimplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.api.repository.process.ICloudProcessRepository
+import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
-import org.apache.ignite.cache.query.ScanQuery
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -17,10 +17,13 @@ import java.util.concurrent.CompletableFuture
  * Time: 19:07
  * @author Frederick Baier
  */
-class IgniteCloudProcessRepository : AbstractIgniteRepository<ICloudProcess>(), ICloudProcessRepository {
+@Singleton
+class IgniteCloudProcessRepository @Inject constructor(
+    private val ignite: Ignite
+) : AbstractIgniteRepository<ICloudProcess>(), ICloudProcessRepository {
 
     override fun getCache(): IgniteCache<String, ICloudProcess> {
-        return IgniteSupplier.ignite.getOrCreateCache("cloud-process-groups")
+        return ignite.getOrCreateCache("cloud-process-groups")
     }
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {

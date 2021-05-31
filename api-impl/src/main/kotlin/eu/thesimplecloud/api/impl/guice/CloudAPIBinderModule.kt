@@ -20,27 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.messagechannel.request
+package eu.thesimplecloud.api.impl.guice
 
-import eu.thesimplecloud.api.impl.ignite.IgniteQueryHandler
-import eu.thesimplecloud.api.messagechannel.IMessageRequest
-import eu.thesimplecloud.api.utils.INetworkComponent
-import java.util.concurrent.CompletableFuture
+import com.google.inject.AbstractModule
+import eu.thesimplecloud.api.impl.messagechannel.MessageChannelManager
+import eu.thesimplecloud.api.impl.repository.node.IgniteNodeRepository
+import eu.thesimplecloud.api.impl.repository.process.IgniteCloudProcessRepository
+import eu.thesimplecloud.api.messagechannel.manager.IMessageChannelManager
+import eu.thesimplecloud.api.repository.node.INodeRepository
+import eu.thesimplecloud.api.repository.process.ICloudProcessRepository
+import org.apache.ignite.Ignite
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 29.05.2021
- * Time: 10:48
+ * Date: 31.05.2021
+ * Time: 11:31
  * @author Frederick Baier
  */
-class SingleReceiverMessageRequest<R : Any>(
-    private val topic: String,
-    private val message: Any,
-    private val receiver: INetworkComponent,
-    private val queryHandler: IgniteQueryHandler
-) : IMessageRequest<R> {
+class CloudAPIBinderModule(
+    private val igniteInstance: Ignite
+) : AbstractModule() {
 
-    override fun submit(): CompletableFuture<R> {
-        return queryHandler.sendQuery<R>(topic, message, receiver)
+    override fun configure() {
+        bind(Ignite::class.java).toInstance(igniteInstance)
+        bind(IMessageChannelManager::class.java).to(MessageChannelManager::class.java)
+        bind(INodeRepository::class.java).to(IgniteNodeRepository::class.java)
+        bind(ICloudProcessRepository::class.java).to(IgniteCloudProcessRepository::class.java)
     }
+
 }

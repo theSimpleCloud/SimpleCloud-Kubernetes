@@ -1,11 +1,11 @@
 package eu.thesimplecloud.api.impl.repository.jvmargs
 
-import eu.thesimplecloud.api.impl.ignite.IgniteSupplier
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.repository.jvmargs.IJvmArgumentsRepository
-import eu.thesimplecloud.api.repository.node.INodeRepository
+import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
 
 /**
@@ -14,9 +14,12 @@ import org.apache.ignite.IgniteCache
  * Time: 21:21
  * @author Frederick Baier
  */
-class IgniteJvmArgumentsRepository : AbstractIgniteRepository<IJVMArguments>(), IJvmArgumentsRepository {
+@Singleton
+class IgniteJvmArgumentsRepository @Inject constructor(
+    private val ignite: Ignite
+) : AbstractIgniteRepository<IJVMArguments>(), IJvmArgumentsRepository {
 
     override fun getCache(): IgniteCache<String, IJVMArguments> {
-        return IgniteSupplier.ignite.getOrCreateCache("cloud-jvm-args")
+        return ignite.getOrCreateCache("cloud-jvm-args")
     }
 }

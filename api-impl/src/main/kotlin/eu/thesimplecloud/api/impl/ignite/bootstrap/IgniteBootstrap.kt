@@ -20,27 +20,35 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.messagechannel.request
+package eu.thesimplecloud.api.impl.ignite.bootstrap
 
-import eu.thesimplecloud.api.impl.ignite.IgniteQueryHandler
-import eu.thesimplecloud.api.messagechannel.IMessageRequest
-import eu.thesimplecloud.api.utils.INetworkComponent
-import java.util.concurrent.CompletableFuture
+import org.apache.ignite.Ignite
+import org.apache.ignite.Ignition
+import org.apache.ignite.configuration.IgniteConfiguration
+import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
+import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder
+import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 29.05.2021
- * Time: 10:48
+ * Date: 31.05.2021
+ * Time: 12:02
  * @author Frederick Baier
  */
-class SingleReceiverMessageRequest<R : Any>(
-    private val topic: String,
-    private val message: Any,
-    private val receiver: INetworkComponent,
-    private val queryHandler: IgniteQueryHandler
-) : IMessageRequest<R> {
+class IgniteBootstrap(
+    private val startPort: Int,
+    private val clientMode: Boolean,
+    private val connectAddresses: List<String>
+) {
 
-    override fun submit(): CompletableFuture<R> {
-        return queryHandler.sendQuery<R>(topic, message, receiver)
+
+    fun start(): Ignite {
+        val configuration = IgniteConfiguration()
+        configuration.isClientMode = this.clientMode
+        val ipFinder = TcpDiscoveryVmIpFinder()
+        ipFinder.setAddresses(this.connectAddresses.union(listOf("127.0.0.1:${startPort}")))
+        configuration.discoverySpi = TcpDiscoverySpi().setLocalPort(startPort).setIpFinder(ipFinder)
+        return Ignition.start(configuration)
     }
+
 }

@@ -36,7 +36,8 @@ import java.util.concurrent.CompletableFuture
 class MultipleReceiverMessageRequest(
     private val topic: String,
     private val message: Any,
-    private val receivers: List<INetworkComponent>
+    private val receivers: List<INetworkComponent>,
+    private val queryHandler: IgniteQueryHandler
 ) : IMessageRequest<Unit> {
 
     override fun submit(): CompletableFuture<Unit> {
@@ -47,6 +48,6 @@ class MultipleReceiverMessageRequest(
     }
 
     private fun sendMessage(receiver: INetworkComponent) {
-        IgniteQueryHandler.INSTANCE.sendQuery<Unit>(topic, message, receiver)
+        queryHandler.sendQuery<Unit>(topic, message, receiver)
     }
 }
