@@ -2,6 +2,8 @@ package eu.thesimplecloud.api.repository.process
 
 import eu.thesimplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.api.repository.IRepository
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -9,4 +11,11 @@ import eu.thesimplecloud.api.repository.IRepository
  * Time: 19:26
  * @author Frederick Baier
  */
-interface ICloudProcessRepository : IRepository<String, ICloudProcess>
+interface ICloudProcessRepository : IRepository<String, ICloudProcess> {
+
+    /**
+     * Returns the process found by the specified [uniqueId]
+     */
+    fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess>
+
+}

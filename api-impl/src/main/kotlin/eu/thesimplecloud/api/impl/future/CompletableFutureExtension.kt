@@ -16,9 +16,9 @@ fun <T> CompletableFuture<T?>.nonNull(): CompletableFuture<T> {
     return this.thenApply { it ?: throw CompletedWithNullException() }
 }
 
-fun <T> List<CompletableFuture<T>>.toFutureList(): CompletableFuture<List<T>> {
+fun <T> List<CompletableFuture<out T>>.toFutureList(): CompletableFuture<List<T>> {
     val returnFuture = CompletableFuture<List<T>>()
-    val list = CopyOnWriteArrayList<T>()
+    val list: MutableList<T> = CopyOnWriteArrayList<T>()
     this.map { future ->
         future.handle { _, _ ->
             handleFutureComplete(future, list)
@@ -31,7 +31,7 @@ fun <T> List<CompletableFuture<T>>.toFutureList(): CompletableFuture<List<T>> {
     return returnFuture
 }
 
-private fun <T> handleFutureComplete(future: CompletableFuture<T>, resultList: MutableList<T>) {
+private fun <T> handleFutureComplete(future: CompletableFuture<T>, resultList: MutableList<in T>) {
     if (!future.isCompletedExceptionally) {
         resultList.add(future.get())
     }

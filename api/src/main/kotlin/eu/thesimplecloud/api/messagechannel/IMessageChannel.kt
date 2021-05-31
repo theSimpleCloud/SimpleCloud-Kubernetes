@@ -1,5 +1,6 @@
 package eu.thesimplecloud.api.messagechannel
 
+import eu.thesimplecloud.api.messagechannel.handler.IMessageHandler
 import eu.thesimplecloud.api.utils.INameable
 import eu.thesimplecloud.api.utils.INetworkComponent
 
@@ -8,42 +9,39 @@ import eu.thesimplecloud.api.utils.INetworkComponent
  * Date: 27.03.2021
  * Time: 08:26
  * @author Frederick Baier
+ *
+ * @param T the type to be sent
+ * @param R the type to be received
+ *
  */
-interface IMessageChannel<T : Any> : INameable {
+interface IMessageChannel<T : Any, R: Any> : INameable {
 
     /**
-     * Sends the specified message to all components in the network
+     * Creates a message request
      * @param message the message to be sent
+     * @param receiver the receiver of the message
+     * @return the created message request with the expected response type
      */
-    fun sendMessageToAllComponents(message: T)
+    fun createMessageRequest(message: T, receiver: INetworkComponent): IMessageRequest<R>
 
     /**
-     * Sends a message to the receivers
+     * Creates a message request
      * @param message the message to be sent
-     * @param receivers the receiver components that shall receive the message
+     * @param receivers the receivers of the message
+     * @return the created message request with no response
      */
-    fun sendMessage(message: T, receivers: List<INetworkComponent>)
+    fun createMessageRequest(message: T, receivers: List<INetworkComponent>): IMessageRequest<Unit>
 
     /**
-     * Sends the message to the receiver
-     * @param message the message to be sent
-     * @param receiver the receiver component that shall receive the message
+     * Sets the message handler to be used for incoming messages
+     * The handler is notified every time a message is received
+     * @param handler the message handler to handle icoming messages
      */
-    fun sendMessage(message: T, receiver: INetworkComponent)
+    fun setMessageHandler(handler: IMessageHandler<T, R>)
 
     /**
-     * Registers a listener
-     * The listener is getting notified for every message received
-     * @param listener the listener to be registered
+     * Handles a request
      */
-    fun registerListener(listener: IMessageChannelListener<T>)
-
-    /**
-     * Unregisters a listener
-     * The listener will no longer get notified
-     * If the listener is not registered nothing happens
-     * @param listener the listener to be unregistered
-     */
-    fun unregisterListener(listener: IMessageChannelListener<T>)
+    fun handleRequest(message: T, sender: INetworkComponent): R?
 
 }
