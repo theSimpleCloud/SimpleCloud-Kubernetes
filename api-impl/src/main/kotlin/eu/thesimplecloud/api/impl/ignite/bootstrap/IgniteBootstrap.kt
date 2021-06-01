@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.api.impl.ignite.bootstrap
 
+import eu.thesimplecloud.api.utils.Address
 import org.apache.ignite.Ignite
 import org.apache.ignite.Ignition
 import org.apache.ignite.configuration.IgniteConfiguration
@@ -36,9 +37,9 @@ import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
  * @author Frederick Baier
  */
 class IgniteBootstrap(
-    private val startPort: Int,
+    private val selfHost: Address,
     private val clientMode: Boolean,
-    private val connectAddresses: List<String>
+    private val connectAddresses: List<Address>
 ) {
 
 
@@ -46,9 +47,14 @@ class IgniteBootstrap(
         val configuration = IgniteConfiguration()
         configuration.isClientMode = this.clientMode
         val ipFinder = TcpDiscoveryVmIpFinder()
-        ipFinder.setAddresses(this.connectAddresses.union(listOf("127.0.0.1:${startPort}")))
-        configuration.discoverySpi = TcpDiscoverySpi().setLocalPort(startPort).setIpFinder(ipFinder)
+        ipFinder.setAddresses(getAllAddressesAsString())
+        configuration.discoverySpi = TcpDiscoverySpi().setLocalPort(selfHost.port).setIpFinder(ipFinder)
         return Ignition.start(configuration)
+    }
+
+    private fun getAllAddressesAsString(): Collection<String> {
+        val connectAddressesAsString = this.connectAddresses.map { it.asIpString() }
+        return connectAddressesAsString.union(listOf(selfHost.asIpString()))
     }
 
 }

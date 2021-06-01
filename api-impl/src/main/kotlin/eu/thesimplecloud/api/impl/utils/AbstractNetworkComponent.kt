@@ -20,23 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.ignite.predicate
+package eu.thesimplecloud.api.impl.utils
 
 import eu.thesimplecloud.api.utils.INetworkComponent
-import org.apache.ignite.lang.IgniteBiPredicate
+import java.lang.IllegalStateException
 import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 30.05.2021
- * Time: 13:13
+ * Date: 31.05.2021
+ * Time: 21:45
  * @author Frederick Baier
  */
-class NetworkComponentCompareUUIDPredicate<T : INetworkComponent>(
-    private val compareUUID: UUID
-) : IgniteBiPredicate<String, T> {
+abstract class AbstractNetworkComponent : INetworkComponent {
 
-    override fun apply(uuid: String, networkComponent: T): Boolean {
-        return networkComponent.getUniqueId() == compareUUID
+    @Volatile
+    private var igniteId: UUID ?= null
+
+    override fun getIgniteId(): UUID {
+        return igniteId ?: throw IllegalStateException("Missing ignite id")
     }
+
+    override fun setIgniteId(uuid: UUID) {
+        this.igniteId = uuid
+    }
+
 }

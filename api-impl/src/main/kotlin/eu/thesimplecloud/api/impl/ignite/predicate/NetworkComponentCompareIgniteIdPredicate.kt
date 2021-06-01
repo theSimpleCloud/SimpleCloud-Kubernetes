@@ -20,38 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.node
+package eu.thesimplecloud.api.impl.ignite.predicate
 
-import eu.thesimplecloud.api.impl.utils.AbstractNetworkComponent
-import eu.thesimplecloud.api.node.INode
-import eu.thesimplecloud.api.utils.Address
+import eu.thesimplecloud.api.utils.INetworkComponent
+import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 28.05.2021
- * Time: 11:17
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-class Node(
-    private val address: Address,
-    igniteId: UUID,
-    private val name: String
-) : AbstractNetworkComponent(), INode {
+class NetworkComponentCompareIgniteIdPredicate<T : INetworkComponent>(
+    private val igniteId: UUID
+) : IgniteBiPredicate<String, T> {
 
-    init {
-        setIgniteId(igniteId)
-    }
-
-    override fun getAddress(): Address {
-        return this.address
-    }
-
-    override fun getName(): String {
-        return this.name
-    }
-
-    override fun getIdentifier(): String {
-        return this.getName()
+    override fun apply(uuid: String, networkComponent: T): Boolean {
+        return networkComponent.getIgniteId() == igniteId
     }
 }

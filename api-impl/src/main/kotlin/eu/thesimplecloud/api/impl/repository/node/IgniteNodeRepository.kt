@@ -2,7 +2,7 @@ package eu.thesimplecloud.api.impl.repository.node
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.api.impl.ignite.predicate.NetworkComponentCompareUUIDPredicate
+import eu.thesimplecloud.api.impl.ignite.predicate.NetworkComponentCompareIgniteIdPredicate
 import eu.thesimplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.repository.node.INodeRepository
@@ -27,6 +27,6 @@ class IgniteNodeRepository @Inject constructor(
     }
 
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
-        return executeQueryAndFindFirst(NetworkComponentCompareUUIDPredicate<INode>(uniqueId))
+        return executeQueryAndFindFirst(NetworkComponentCompareIgniteIdPredicate<INode>(uniqueId))
     }
 }

@@ -2,7 +2,7 @@ package eu.thesimplecloud.api.impl.repository.process
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.api.impl.ignite.predicate.NetworkComponentCompareUUIDPredicate
+import eu.thesimplecloud.api.impl.ignite.predicate.NetworkComponentCompareIgniteIdPredicate
 import eu.thesimplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.api.repository.process.ICloudProcessRepository
@@ -27,7 +27,7 @@ class IgniteCloudProcessRepository @Inject constructor(
     }
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
-        return executeQueryAndFindFirst(NetworkComponentCompareUUIDPredicate<ICloudProcess>(uniqueId))
+        return executeQueryAndFindFirst(NetworkComponentCompareIgniteIdPredicate<ICloudProcess>(uniqueId))
     }
 
 

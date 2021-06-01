@@ -10,9 +10,15 @@ import eu.thesimplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.api.repository.IIdentifiable
 import eu.thesimplecloud.api.utils.Address
 import eu.thesimplecloud.api.utils.INetworkComponent
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
+
+    /**
+     * Returns the unique id of the process
+     */
+    fun getUniqueId(): UUID
 
     /**
      * Returns the group of the process

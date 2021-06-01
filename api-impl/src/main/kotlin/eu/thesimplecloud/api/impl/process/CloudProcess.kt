@@ -3,6 +3,7 @@ package eu.thesimplecloud.api.impl.process
 import eu.thesimplecloud.api.CloudAPI
 import eu.thesimplecloud.api.impl.future.exception.CompletedWithNullException
 import eu.thesimplecloud.api.impl.process.request.ProcessStopRequest
+import eu.thesimplecloud.api.impl.utils.AbstractNetworkComponent
 import eu.thesimplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.api.node.INode
 import eu.thesimplecloud.api.process.ICloudProcess
@@ -37,7 +38,7 @@ class CloudProcess(
     private val templateName: String,
     private val nodeNameRunningOn: String,
     private val jvmArgumentsName: String?,
-) : ICloudProcess {
+) : AbstractNetworkComponent(), ICloudProcess {
 
     override fun getGroup(): CompletableFuture<ICloudProcessGroup> {
         return CloudAPI.instance.getProcessGroupService().findByName(this.groupName)

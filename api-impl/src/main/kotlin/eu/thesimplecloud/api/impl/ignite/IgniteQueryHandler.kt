@@ -63,7 +63,7 @@ class IgniteQueryHandler @Inject constructor(
         createIgniteQuery(requestId, future)
 
         val transferObject = IgniteDataTransferObject(topic, requestId, message, false)
-        sendPacket(transferObject, networkComponent.getUniqueId())
+        sendPacket(transferObject, networkComponent.getIgniteId())
         return future
     }
 
@@ -122,7 +122,7 @@ class IgniteQueryHandler @Inject constructor(
         val result = channel.handleRequest(transferObject.message, networkComponent)
         sendPacket(
             IgniteDataTransferObject(transferObject.topic, transferObject.messageId, result, true),
-            networkComponent.getUniqueId()
+            networkComponent.getIgniteId()
         )
     }
 

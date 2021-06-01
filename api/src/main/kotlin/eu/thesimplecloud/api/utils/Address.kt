@@ -9,4 +9,17 @@ package eu.thesimplecloud.api.utils
 class Address(
     val host: String,
     val port: Int
-)
+) {
+
+    fun asIpString(): String {
+        return "${host}:${port}"
+    }
+
+    companion object {
+        fun fromIpString(string: String): Address {
+            val array = string.split(":")
+            return Address(array[0], array[1].toInt())
+        }
+    }
+
+}

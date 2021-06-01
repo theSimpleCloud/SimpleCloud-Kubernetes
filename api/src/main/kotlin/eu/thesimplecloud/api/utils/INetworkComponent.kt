@@ -14,8 +14,13 @@ import java.util.*
 interface INetworkComponent : INameable {
 
     /**
-     * Returns the unique id of this component
+     * Returns the ignite unique id of this component
      */
-    fun getUniqueId(): UUID
+    fun getIgniteId(): UUID
+
+    /**
+     * Sets the ignite id of this component
+     */
+    fun setIgniteId(uuid: UUID)
 
 }
