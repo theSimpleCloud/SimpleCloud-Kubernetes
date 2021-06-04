@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.api.impl.future.timeout
 
+import eu.thesimplecloud.api.impl.future.exception.TimeoutException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.concurrent.thread

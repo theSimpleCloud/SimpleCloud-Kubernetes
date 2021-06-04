@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.future.timeout
+package eu.thesimplecloud.api.impl.future.exception
 
 /**
  * Created by IntelliJ IDEA.
