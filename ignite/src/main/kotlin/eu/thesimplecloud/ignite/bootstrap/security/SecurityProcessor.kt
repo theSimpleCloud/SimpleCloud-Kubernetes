@@ -81,7 +81,6 @@ class SecurityProcessor constructor(ctx: GridKernalContext) : GridProcessorAdapt
 
     @Throws(SecurityException::class)
     override fun authorize(name: String?, perm: SecurityPermission?, securityCtx: SecurityContext?) {
-        //TODO - Here we can check permissions for given cache operation
     }
 
     override fun onSessionExpired(subjId: UUID) {}
