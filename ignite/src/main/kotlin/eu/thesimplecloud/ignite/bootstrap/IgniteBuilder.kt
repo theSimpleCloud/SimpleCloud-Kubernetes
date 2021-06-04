@@ -90,8 +90,6 @@ class IgniteBuilder(
         this.lifecycleBean?.let { configuration.setLifecycleBeans(it) }
         val ignite: Ignite = Ignition.start(configuration)
 
-        //configuration.discoverySpi = TcpDiscoverySpi().setLocalPort(selfHost.port).setIpFinder(createIpFinder())
-        //val ignite = Ignition.start(configuration)
         addEventsToIgnite(ignite)
         return ignite
     }
