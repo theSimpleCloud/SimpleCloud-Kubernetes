@@ -20,41 +20,46 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.api.impl.ignite.bootstrap
+package eu.thesimplecloud.ignite.bootstrap.security
 
-import eu.thesimplecloud.api.utils.Address
-import org.apache.ignite.Ignite
-import org.apache.ignite.Ignition
-import org.apache.ignite.configuration.IgniteConfiguration
+import org.apache.ignite.internal.IgniteNodeAttributes
+import org.apache.ignite.plugin.security.SecurityCredentials
 import org.apache.ignite.spi.discovery.tcp.TcpDiscoverySpi
-import org.apache.ignite.spi.discovery.tcp.ipfinder.multicast.TcpDiscoveryMulticastIpFinder
-import org.apache.ignite.spi.discovery.tcp.ipfinder.vm.TcpDiscoveryVmIpFinder
+import java.lang.Exception
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 31.05.2021
- * Time: 12:02
- * @author Frederick Baier
+ * Date: 04.06.2021
+ * Time: 11:46
  */
-class IgniteBootstrap(
-    private val selfHost: Address,
-    private val clientMode: Boolean,
-    private val connectAddresses: List<Address>
-) {
+class CustomTcpDiscoverySpi : TcpDiscoverySpi() {
+    private var securityCredentials: SecurityCredentials? = null
 
-
-    fun start(): Ignite {
-        val configuration = IgniteConfiguration()
-        configuration.isClientMode = this.clientMode
-        val ipFinder = TcpDiscoveryVmIpFinder()
-        ipFinder.setAddresses(getAllAddressesAsString())
-        configuration.discoverySpi = TcpDiscoverySpi().setLocalPort(selfHost.port).setIpFinder(ipFinder)
-        return Ignition.start(configuration)
+    /**
+     * This method sets [SecurityCredentials]
+     *
+     * @param securityCredentials - security credentials
+     * @return
+     */
+    fun setSecurityCredentials(securityCredentials: SecurityCredentials?): CustomTcpDiscoverySpi {
+        this.securityCredentials = securityCredentials
+        return this
     }
 
-    private fun getAllAddressesAsString(): Collection<String> {
-        val connectAddressesAsString = this.connectAddresses.map { it.asIpString() }
-        return connectAddressesAsString.union(listOf(selfHost.asIpString()))
+    override fun initLocalNode(srvPort: Int, addExtAddrAttr: Boolean) {
+        try {
+            super.initLocalNode(srvPort, addExtAddrAttr)
+            this.setSecurityCredentials()
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
     }
 
+    private fun setSecurityCredentials() {
+        if (securityCredentials != null) {
+            val attributes: MutableMap<String, Any> = HashMap(locNode.attributes)
+            attributes[IgniteNodeAttributes.ATTR_SECURITY_CREDENTIALS] = securityCredentials!!
+            locNode.attributes = attributes
+        }
+    }
 }
