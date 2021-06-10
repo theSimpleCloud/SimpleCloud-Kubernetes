@@ -9,6 +9,9 @@ allprojects {
 
     repositories {
         mavenCentral()
+        maven {
+            setUrl("https://repo.thesimplecloud.eu/artifactory/gradle-release-local/")
+        }
     }
 }
 
@@ -22,6 +25,7 @@ subprojects {
         implementation(kotlin("stdlib"))
         implementation("com.google.inject:guice:5.0.1")
         testImplementation("junit", "junit", "4.12")
+        compileOnly("eu.thesimplecloud.jsonlib:json-lib:1.0.9")
     }
 }
 

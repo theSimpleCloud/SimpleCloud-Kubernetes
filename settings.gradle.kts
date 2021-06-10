@@ -8,3 +8,6 @@ include("application-loader")
 include("container")
 include("container:container-local")
 findProject(":container:container-local")?.name = "container-local"
+include("storage-backend")
+include("storage-backend:storage-backend-ftp")
+findProject(":storage-backend:storage-backend-ftp")?.name = "storage-backend-ftp"
