@@ -26,7 +26,7 @@ class ApplicationClassLoader(
     }
 
     override fun findClass(name: String): Class<*> {
-        if (closed) throw IllegalStateException("ApplicationClassLoader is already closed")
+        if (this.closed) throw IllegalStateException("ApplicationClassLoader is already closed")
         return findClass0(name)
     }
 

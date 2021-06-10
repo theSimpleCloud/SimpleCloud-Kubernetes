@@ -1,20 +1,14 @@
 package eu.thesimplecloud.module.loader
 
-import com.fasterxml.jackson.databind.JsonNode
 import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
-import eu.thesimplecloud.application.ILoadedApplication
-import eu.thesimplecloud.application.data.DefaultApplicationData
-import eu.thesimplecloud.application.data.IApplicationData
-import eu.thesimplecloud.application.exception.InvalidApplicationEntryPointFileException
+import eu.thesimplecloud.application.filecontent.IApplicationFileContent
 import eu.thesimplecloud.application.loader.AbstractApplicationLoader
 import eu.thesimplecloud.application.loader.ApplicationClassLoader
 import eu.thesimplecloud.application.loader.ExtensionLoader
 import eu.thesimplecloud.module.LoadedModuleApplication
-import eu.thesimplecloud.module.data.IModuleApplicationData
-import eu.thesimplecloud.module.data.ModuleApplicationData
 import java.io.File
 
 /**
@@ -31,19 +25,18 @@ class ModuleApplicationLoader @Inject constructor(
 
     override fun loadApplication(
         file: File,
-        applicationData: IApplicationData
+        fileContent: IApplicationFileContent
     ): LoadedModuleApplication {
-        val classLoader = createModuleClassLoader(file)
-
-        val classNameToLoad = applicationData.getClassNameToLoad()
+        val classLoader = createApplicationClassLoader(file)
+        val classNameToLoad = fileContent.getClassNameToLoad()
 
         val extensionLoader = ExtensionLoader(injector, classLoader, AbstractModule::class.java)
         val abstractModule = extensionLoader.loadClassInstance(classNameToLoad)
 
-        return LoadedModuleApplication(file, applicationData as IModuleApplicationData, abstractModule)
+        return LoadedModuleApplication(file, fileContent, abstractModule)
     }
 
-    override fun createModuleClassLoader(file: File): ClassLoader {
+    override fun createApplicationClassLoader(file: File): ClassLoader {
         return ApplicationClassLoader(listOf(file.toURI().toURL()), this::class.java.classLoader)
     }
 

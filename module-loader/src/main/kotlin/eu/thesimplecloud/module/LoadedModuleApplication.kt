@@ -2,7 +2,8 @@ package eu.thesimplecloud.module
 
 import com.google.inject.AbstractModule
 import eu.thesimplecloud.application.ILoadedApplication
-import eu.thesimplecloud.module.data.IModuleApplicationData
+import eu.thesimplecloud.application.filecontent.DefaultApplicationFileContent
+import eu.thesimplecloud.application.filecontent.IApplicationFileContent
 import java.io.File
 
 /**
@@ -13,16 +14,16 @@ import java.io.File
  */
 class LoadedModuleApplication(
     private val file: File,
-    private val applicationData: IModuleApplicationData,
+    private val fileContent: IApplicationFileContent,
     private val loadedClassInstance: AbstractModule
-) : ILoadedApplication<AbstractModule> {
+) : ILoadedApplication {
 
     override fun getFile(): File {
         return file
     }
 
-    override fun getApplicationData(): IModuleApplicationData {
-        return applicationData
+    override fun getApplicationFileContent(): IApplicationFileContent {
+        return fileContent
     }
 
     override fun getLoadedClassInstance(): AbstractModule {
