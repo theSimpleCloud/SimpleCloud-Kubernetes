@@ -20,13 +20,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.ftp
+package eu.thesimplecloud.simplecloud.storagebackend.sftp
 
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.storagebackend.FileReference
-import eu.thesimplecloud.simplecloud.storagebackend.ftp.config.FtpLoginConfiguration
-import eu.thesimplecloud.simplecloud.storagebackend.ftp.util.SplitStringBuilder
+import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpLoginConfiguration
+import eu.thesimplecloud.simplecloud.storagebackend.sftp.util.SplitStringBuilder
 import java.io.File
 
 /**
@@ -36,11 +36,11 @@ import java.io.File
  * @author Frederick Baier
  */
 @Singleton
-class FtpStorageBackend(
-    private val loginConfig: FtpLoginConfiguration
+class SftpStorageBackend(
+    private val loginConfig: SftpLoginConfiguration
 ) : IStorageBackend {
 
-    private val ftpOperation = FtpOperations(loginConfig)
+    private val ftpOperation = SftpOperations(loginConfig)
 
     override fun deleteDirectory(remotePath: String) {
         val filesInDir = this.ftpOperation.listFiles(remotePath)

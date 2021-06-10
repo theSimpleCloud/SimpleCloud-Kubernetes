@@ -22,32 +22,35 @@
 
 package eu.thesimplecloud.simplecloud.api.config
 
-import com.google.gson.Gson
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import com.google.inject.Provider
-import eu.thesimplecloud.jsonlib.JsonLib
 import java.io.File
 
-abstract class AbstractJsonLibConfigLoader<T : Any>(
+abstract class AbstractConfigLoader<T : Any>(
     private val configClass: Class<T>,
     private val configFie: File,
     private val lazyDefaultObject: () -> T,
-    private val saveDefaultOnFistLoad: Boolean,
-    private val gsonToUse: Gson = JsonLib.GSON
+    private val saveDefaultOnFistLoad: Boolean
 ) : Provider<T> {
 
+    private val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+
     fun loadConfig(): T {
-        val objectFromFile = JsonLib.fromJsonFile(configFie, gsonToUse)?.getObjectOrNull(configClass)
-        if (objectFromFile == null) {
-            val defaultObject = lazyDefaultObject()
-            if (saveDefaultOnFistLoad && !doesConfigFileExist())
-                saveConfig(defaultObject)
-            return defaultObject
+        if (!doesConfigFileExist()) {
+            return saveAndLoadDefaultConfig()
         }
-        return objectFromFile
+        return objectMapper.readValue(configFie, configClass)
+    }
+
+    private fun saveAndLoadDefaultConfig(): T {
+        val defaultConfig = this.lazyDefaultObject()
+        saveConfig(defaultConfig)
+        return defaultConfig
     }
 
     fun saveConfig(value: T) {
-        JsonLib.fromObject(value, gsonToUse).saveAsFile(configFie)
+        objectMapper.writeValue(configFie, value)
     }
 
     fun doesConfigFileExist(): Boolean = this.configFie.exists()

@@ -20,24 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.ftp
-
-import com.google.inject.AbstractModule
-import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
-import eu.thesimplecloud.simplecloud.storagebackend.ftp.config.FtpConfigLoader
-import eu.thesimplecloud.simplecloud.storagebackend.ftp.config.FtpLoginConfiguration
+package eu.thesimplecloud.simplecloud.storagebackend.sftp.config
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09.06.2021
- * Time: 17:13
+ * Date: 05.06.2021
+ * Time: 15:14
  * @author Frederick Baier
  */
-class FtpModule : AbstractModule() {
-
-    override fun configure() {
-        bind(FtpLoginConfiguration::class.java).toProvider(FtpConfigLoader::class.java)
-        bind(IStorageBackend::class.java).to(FtpStorageBackend::class.java)
-    }
-
-}
+data class SftpLoginConfiguration(
+    val host: String = "default",
+    val port: Int = 22,
+    val username: String = "default",
+    val password: String = "default"
+)

@@ -20,10 +20,10 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.ftp
+package eu.thesimplecloud.simplecloud.storagebackend.sftp
 
 import eu.thesimplecloud.simplecloud.storagebackend.FileReference
-import eu.thesimplecloud.simplecloud.storagebackend.ftp.config.FtpLoginConfiguration
+import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpLoginConfiguration
 import java.io.File
 import net.schmizz.sshj.SSHClient
 import net.schmizz.sshj.sftp.RemoteResourceInfo
@@ -39,8 +39,8 @@ import net.schmizz.sshj.xfer.FileSystemFile
  * Time: 11:33
  * @author Frederick Baier
  */
-class FtpOperations(
-    private val loginConfig: FtpLoginConfiguration
+class SftpOperations(
+    private val loginConfig: SftpLoginConfiguration
 ) {
 
     private val sftpClient: SFTPClient

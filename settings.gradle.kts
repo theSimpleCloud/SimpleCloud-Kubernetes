@@ -9,5 +9,5 @@ include("container")
 include("container:container-local")
 findProject(":container:container-local")?.name = "container-local"
 include("storage-backend")
-include("storage-backend:storage-backend-ftp")
-findProject(":storage-backend:storage-backend-ftp")?.name = "storage-backend-ftp"
+include("storage-backend:storage-backend-sftp")
+findProject(":storage-backend:storage-backend-sftp")?.name = "storage-backend-sftp"

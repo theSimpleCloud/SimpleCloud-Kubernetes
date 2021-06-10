@@ -22,8 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.api.config
 
-import com.google.gson.Gson
-import eu.thesimplecloud.jsonlib.JsonLib
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.SerializationFeature
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.io.File
 
@@ -37,12 +37,13 @@ abstract class AbstractMultipleConfigLoader<T : INameable>(
     private val clazz: Class<T>,
     private val directory: File,
     private val defaultValues: List<T>,
-    private val saveDefaultOnFirstLoad: Boolean,
-    private val gsonToUse: Gson = JsonLib.GSON
+    private val saveDefaultOnFirstLoad: Boolean
 )  {
 
+    private val objectMapper = ObjectMapper().enable(SerializationFeature.INDENT_OUTPUT)
+
     fun save(value: T) {
-        JsonLib.fromObject(value, gsonToUse).saveAsFile(getFileByObject(value))
+        this.objectMapper.writeValue(getFileByObject(value), value)
     }
 
     fun delete(value: T) {
@@ -51,7 +52,7 @@ abstract class AbstractMultipleConfigLoader<T : INameable>(
 
     fun loadAll(): Set<T> {
         if (!directory.exists() && saveDefaultOnFirstLoad) saveDefaults()
-        return this.directory.listFiles()?.mapNotNull { JsonLib.fromJsonFile(it, gsonToUse)?.getObject(clazz) }?.toSet()
+        return this.directory.listFiles()?.mapNotNull { this.objectMapper.readValue(it, this.clazz) }?.toSet()
             ?: emptySet()
     }
 

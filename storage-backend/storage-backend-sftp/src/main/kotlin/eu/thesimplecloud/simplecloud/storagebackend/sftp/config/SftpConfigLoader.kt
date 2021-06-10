@@ -20,36 +20,20 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.ftp.util
+package eu.thesimplecloud.simplecloud.storagebackend.sftp.config
 
-import java.lang.StringBuilder
+import eu.thesimplecloud.simplecloud.api.config.AbstractConfigLoader
+import java.io.File
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 06.06.2021
- * Time: 10:59
+ * Date: 09.06.2021
+ * Time: 17:18
  * @author Frederick Baier
  */
-object SplitStringBuilder {
-
-    fun buildPossibleStringsSplitBy(string: String, spliterator: String): List<String> {
-        val returnList = ArrayList<String>()
-        val array = string.split(spliterator)
-        for (i in array.indices) {
-            returnList.add(buildListToStringUntilMayIndex(array, i, spliterator))
-        }
-        return returnList
-    }
-
-    private fun buildListToStringUntilMayIndex(array: List<String>, maxIndex: Int, spliterator: String): String {
-        val stringBuilder = StringBuilder()
-        for (i in 0..maxIndex) {
-            stringBuilder.append(array[i])
-            if (i != maxIndex) {
-                stringBuilder.append(spliterator)
-            }
-        }
-        return stringBuilder.toString()
-    }
-
-}
+class SftpConfigLoader : AbstractConfigLoader<SftpLoginConfiguration>(
+    SftpLoginConfiguration::class.java,
+    File("modules/sftp/config.json"),
+    { SftpLoginConfiguration("127.0.0.1", 22, "test", "test") },
+    true
+)
