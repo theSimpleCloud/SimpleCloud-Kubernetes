@@ -4,14 +4,12 @@ plugins {
 }
 
 allprojects {
-
     group = "eu.thesimplecloud"
     version = "3.0.0-SNAPSHOT"
 
     repositories {
         mavenCentral()
     }
-
 }
 
 subprojects {
@@ -26,3 +24,7 @@ subprojects {
         testImplementation("junit", "junit", "4.12")
     }
 }
+
+
+
+
