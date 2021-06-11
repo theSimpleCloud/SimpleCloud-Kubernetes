@@ -16,12 +16,12 @@ class ExtensionLoader<C>(
 
     fun loadClassInstance(classpath: String): C {
         val newClass = loadClass(classpath)
-        return injector.createChildInjector().getInstance(newClass)
+        return this.injector.createChildInjector().getInstance(newClass)
     }
 
     private fun loadClass(classpath: String): Class<out C> {
-        val clazz = Class.forName(classpath, true, classLoader)
-        return clazz.asSubclass(parentClass)
+        val clazz = Class.forName(classpath, true, this.classLoader)
+        return clazz.asSubclass(this.parentClass)
     }
 
 }
