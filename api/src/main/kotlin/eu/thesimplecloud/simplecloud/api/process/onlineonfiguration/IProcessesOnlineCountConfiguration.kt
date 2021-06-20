@@ -23,7 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.process.onlineonfiguration
 
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 
 /**

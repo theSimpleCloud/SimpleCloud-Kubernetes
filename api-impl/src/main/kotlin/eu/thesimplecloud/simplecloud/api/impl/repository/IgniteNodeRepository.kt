@@ -20,31 +20,35 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.repository
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.NetworkComponentCompareIgniteIdPredicate
+import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
+import org.apache.ignite.Ignite
+import org.apache.ignite.IgniteCache
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 21.04.2021
+ * Time: 21:21
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+@Singleton
+class IgniteNodeRepository @Inject constructor(
+    private val ignite: Ignite
+) : AbstractIgniteRepository<INode>(), INodeRepository {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
+    override fun getCache(): IgniteCache<String, INode> {
+        return ignite.getOrCreateCache("cloud-nodes")
+    }
 
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
+        return executeQueryAndFindFirst(NetworkComponentCompareIgniteIdPredicate<INode>(uniqueId))
+    }
 }

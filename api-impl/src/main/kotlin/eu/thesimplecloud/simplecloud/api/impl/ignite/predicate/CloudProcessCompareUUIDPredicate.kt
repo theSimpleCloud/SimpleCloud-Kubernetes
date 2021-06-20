@@ -20,31 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.ignite.predicate
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import java.util.concurrent.CompletableFuture
+import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import org.apache.ignite.lang.IgniteBiPredicate
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+class CloudProcessCompareUUIDPredicate(
+    private val compareId: UUID
+) : IgniteBiPredicate<String, ICloudProcess> {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
-
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
+    override fun apply(uuid: String, process: ICloudProcess): Boolean {
+        return process.getUniqueId() == compareId
+    }
 }

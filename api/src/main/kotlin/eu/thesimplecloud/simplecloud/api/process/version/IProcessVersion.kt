@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.process.version
 
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.net.URL
 

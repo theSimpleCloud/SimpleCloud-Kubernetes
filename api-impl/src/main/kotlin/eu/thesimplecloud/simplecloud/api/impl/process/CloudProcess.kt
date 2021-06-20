@@ -62,6 +62,10 @@ class CloudProcess(
     private val jvmArgumentsName: String?,
 ) : AbstractNetworkComponent(), ICloudProcess {
 
+    override fun getGroupName(): String {
+        return this.groupName
+    }
+
     override fun getGroup(): CompletableFuture<ICloudProcessGroup> {
         return CloudAPI.instance.getProcessGroupService().findByName(this.groupName)
     }

@@ -20,31 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteProcessOnlineCountRepository
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 19.06.2021
+ * Time: 13:48
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+open class DefaultProcessOnlineCountService(
+    protected val igniteRepository: IgniteProcessOnlineCountRepository
+) : IProcessOnlineCountService {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
-
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
+    override fun findProcessOnlineCountConfigurationByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
+        return this.igniteRepository.find(name)
+    }
 }

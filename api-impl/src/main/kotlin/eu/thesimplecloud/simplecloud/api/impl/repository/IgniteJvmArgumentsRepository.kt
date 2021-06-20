@@ -20,31 +20,28 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.repository
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import java.util.concurrent.CompletableFuture
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.repository.IJvmArgumentsRepository
+import org.apache.ignite.Ignite
+import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 21.04.2021
+ * Time: 21:21
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+@Singleton
+class IgniteJvmArgumentsRepository @Inject constructor(
+    private val ignite: Ignite
+) : AbstractIgniteRepository<IJVMArguments>(), IJvmArgumentsRepository {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
-
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
+    override fun getCache(): IgniteCache<String, IJVMArguments> {
+        return ignite.getOrCreateCache("cloud-jvm-args")
+    }
 }

@@ -20,31 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteTemplateRepository
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 20.06.2021
+ * Time: 10:38
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
-
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
-
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
+open class DefaultTemplateService(
+    protected val igniteRepository: IgniteTemplateRepository
+) : ITemplateService {
+    override fun findByName(name: String): CompletableFuture<ITemplate> {
+        return this.igniteRepository.find(name)
+    }
 }

@@ -20,31 +20,35 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.impl.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.service.INodeService
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 11.06.2021
+ * Time: 19:32
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+open class DefaultNodeService (
+    protected val igniteRepository: IgniteNodeRepository
+) : INodeService {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
+    override fun findNodeByName(name: String): CompletableFuture<INode> {
+        return igniteRepository.find(name)
+    }
 
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
+    override fun findNodesByName(vararg names: String): CompletableFuture<List<INode>> {
+        val futures = names.map { findNodeByName(it) }
+        return futures.toFutureList()
+    }
 
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
+        return this.igniteRepository.findNodeByUniqueId(uniqueId)
+    }
 }

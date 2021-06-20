@@ -20,31 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.repository
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import java.util.concurrent.CompletableFuture
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.repository.IRepository
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 27.03.2021
+ * Time: 13:41
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
-
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
-
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
-
-}
+interface ICloudProcessGroupRepository : IRepository<String, ICloudProcessGroup>
