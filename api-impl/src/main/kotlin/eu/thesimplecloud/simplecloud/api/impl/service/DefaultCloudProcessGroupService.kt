@@ -20,31 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 14.06.2021
+ * Time: 13:23
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+open class DefaultCloudProcessGroupService(
+    protected val igniteRepository: IgniteCloudProcessGroupRepository
+) : IInternalCloudProcessGroupService {
 
-    /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
-     */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
+    override fun findByName(name: String): CompletableFuture<ICloudProcessGroup> {
+        return this.igniteRepository.find(name)
+    }
 
-    /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
-     */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
+    override fun updateGroup(group: ICloudProcessGroup) {
+        this.igniteRepository.put(group)
+    }
 
+    override fun deleteGroup(group: ICloudProcessGroup) {
+        this.igniteRepository.remove(group)
+    }
 }

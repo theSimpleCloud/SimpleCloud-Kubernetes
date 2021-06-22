@@ -1,5 +1,6 @@
 package eu.thesimplecloud.simplecloud.api.repository
 
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -26,6 +27,18 @@ interface IRepository<I : Any, T : IIdentifiable<I>> {
     /**
      * Saves the specified [value] and replaces it if needed according to its identifier
      */
-    fun save(value: T)
+    fun put(value: T)
+
+    /**
+     * Removes the value found by the specified [identifier]
+     */
+    fun remove(identifier: I)
+
+    /**
+     * Removes the value found by [value]s identifier
+     */
+    fun remove(value: T) {
+        remove(value.getIdentifier())
+    }
 
 }

@@ -24,11 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.guice
 
 import com.google.inject.AbstractModule
 import eu.thesimplecloud.simplecloud.api.impl.messagechannel.MessageChannelManager
-import eu.thesimplecloud.simplecloud.api.impl.repository.node.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.repository.process.IgniteCloudProcessRepository
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.repository.node.INodeRepository
-import eu.thesimplecloud.simplecloud.api.repository.process.ICloudProcessRepository
 import org.apache.ignite.Ignite
 
 /**
@@ -44,8 +40,6 @@ class CloudAPIBinderModule(
     override fun configure() {
         bind(Ignite::class.java).toInstance(igniteInstance)
         bind(IMessageChannelManager::class.java).to(MessageChannelManager::class.java)
-        bind(INodeRepository::class.java).to(IgniteNodeRepository::class.java)
-        bind(ICloudProcessRepository::class.java).to(IgniteCloudProcessRepository::class.java)
     }
 
 }

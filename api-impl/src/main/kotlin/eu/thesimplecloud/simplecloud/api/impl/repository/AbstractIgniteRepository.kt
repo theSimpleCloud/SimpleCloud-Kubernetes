@@ -23,15 +23,12 @@
 package eu.thesimplecloud.simplecloud.api.impl.repository
 
 import eu.thesimplecloud.simplecloud.api.impl.future.nonNull
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 import org.apache.ignite.IgniteCache
-import org.apache.ignite.cache.query.Query
 import org.apache.ignite.cache.query.ScanQuery
 import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.concurrent.CompletableFuture
-import javax.cache.Cache
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,7 +48,7 @@ abstract class AbstractIgniteRepository<T : IIdentifiable<String>> : IRepository
         return CompletableFuture.supplyAsync { getCache().get(identifier) }.nonNull()
     }
 
-    override fun save(value: T) {
+    override fun put(value: T) {
         getCache().putAsync(value.getIdentifier(), value)
     }
 
@@ -64,6 +61,10 @@ abstract class AbstractIgniteRepository<T : IIdentifiable<String>> : IRepository
 
     protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<String, T>): CompletableFuture<T> {
         return executeQuery(predicate).thenApply { it.first() }
+    }
+
+    override fun remove(identifier: String) {
+        getCache().removeAsync(identifier)
     }
 
 }

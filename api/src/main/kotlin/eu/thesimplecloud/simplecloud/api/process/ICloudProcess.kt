@@ -29,7 +29,7 @@ import eu.thesimplecloud.simplecloud.api.process.request.IProcessStopRequest
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import java.util.*
@@ -41,6 +41,11 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      * Returns the unique id of the process
      */
     fun getUniqueId(): UUID
+
+    /**
+     * Returns the group name of this process
+     */
+    fun getGroupName(): String
 
     /**
      * Returns the group of the process

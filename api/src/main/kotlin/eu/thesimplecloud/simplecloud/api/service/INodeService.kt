@@ -20,31 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.internal.service
+package eu.thesimplecloud.simplecloud.api.service
 
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.service.IService
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:58
+ * Date: 03.04.2021
+ * Time: 17:55
  * @author Frederick Baier
  */
-interface IInternalCloudProcessService : ICloudProcessService {
+interface INodeService : IService {
 
     /**
-     * Starts a new process with the specified [configuration]
-     * @return the newly registered process
+     * Returns the node found by the specified name
      */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
+    fun findNodeByName(name: String): CompletableFuture<INode>
 
     /**
-     * Shuts the [process] down
-     * @return the [ICloudProcess.terminationFuture] of the process
+     * Returns the nodes found by the specified names
      */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
+    fun findNodesByName(vararg names: String): CompletableFuture<List<INode>>
+
+    /**
+     * Returns the node found by the specified [uniqueId]
+     */
+    fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode>
 
 }

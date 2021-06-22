@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.template
 
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 
 /**

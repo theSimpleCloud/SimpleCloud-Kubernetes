@@ -32,7 +32,7 @@ import eu.thesimplecloud.simplecloud.api.process.request.IProcessGroupDeleteRequ
 import eu.thesimplecloud.simplecloud.api.process.request.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.util.concurrent.CompletableFuture
 

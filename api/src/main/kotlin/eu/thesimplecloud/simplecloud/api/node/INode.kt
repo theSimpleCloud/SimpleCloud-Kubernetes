@@ -22,10 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.api.node
 
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
-import java.util.*
 
 /**
  * Created by IntelliJ IDEA.

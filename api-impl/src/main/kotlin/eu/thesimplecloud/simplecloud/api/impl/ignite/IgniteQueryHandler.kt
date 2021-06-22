@@ -28,8 +28,8 @@ import eu.thesimplecloud.simplecloud.api.impl.future.exception.CompletedWithNull
 import eu.thesimplecloud.simplecloud.api.impl.future.timeout.timout
 import eu.thesimplecloud.simplecloud.api.impl.future.toFutureList
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.repository.node.INodeRepository
-import eu.thesimplecloud.simplecloud.api.repository.process.ICloudProcessRepository
+import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import org.apache.ignite.Ignite
 import org.apache.ignite.lang.IgniteBiPredicate
@@ -46,8 +46,8 @@ import java.util.concurrent.CopyOnWriteArrayList
 @Singleton
 class IgniteQueryHandler @Inject constructor(
     private val messageChannelManager: IMessageChannelManager,
-    private val nodeRepository: INodeRepository,
-    private val processRepository: ICloudProcessRepository,
+    private val nodeService: INodeService,
+    private val processService: ICloudProcessService,
     private val ignite: Ignite
 ) {
 
@@ -115,15 +115,23 @@ class IgniteQueryHandler @Inject constructor(
 
     private fun handleQueryWithNetworkComponent(
         networkComponent: INetworkComponent,
-        transferObject: IgniteDataTransferObject
+        queryObject: IgniteDataTransferObject
     ) {
-        val channel = this.messageChannelManager.getMessageChannelByName<Any, Any>(transferObject.topic) ?: return
-        if (transferObject.message == null) throw NullPointerException("Request object cannot be null")
-        val result = channel.handleRequest(transferObject.message, networkComponent)
+        if (queryObject.message == null) throw NullPointerException("Request object cannot be null")
+        val channel = this.messageChannelManager.getMessageChannelByName<Any, Any>(queryObject.topic)
+            ?: return
+        val result = channel.handleRequest(queryObject.message, networkComponent)
         sendPacket(
-            IgniteDataTransferObject(transferObject.topic, transferObject.messageId, result, true),
+            createResultResponseObject(queryObject, result),
             networkComponent.getIgniteId()
         )
+    }
+
+    private fun createResultResponseObject(
+        queryObject: IgniteDataTransferObject,
+        result: Any?
+    ): IgniteDataTransferObject {
+        return IgniteDataTransferObject(queryObject.topic, queryObject.messageId, result, true)
     }
 
     private fun handleResponse(transferObject: IgniteDataTransferObject) {
@@ -136,9 +144,9 @@ class IgniteQueryHandler @Inject constructor(
     }
 
     private fun getNetworkComponentByUniqueId(senderNodeId: UUID): CompletableFuture<out INetworkComponent> {
-        val nodeFuture: CompletableFuture<out INetworkComponent> = nodeRepository.findNodeByUniqueId(senderNodeId)
+        val nodeFuture: CompletableFuture<out INetworkComponent> = this.nodeService.findNodeByUniqueId(senderNodeId)
         val processFuture: CompletableFuture<out INetworkComponent> =
-            processRepository.findProcessByUniqueId(senderNodeId)
+            this.processService.findProcessByUniqueId(senderNodeId)
         return listOf(nodeFuture, processFuture).toFutureList().thenApply { it.first() }
     }
 
