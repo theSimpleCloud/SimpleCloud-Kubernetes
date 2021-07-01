@@ -20,34 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
+package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.restserver.annotation.Controller
+import eu.thesimplecloud.simplecloud.restserver.annotation.RequestBody
+import eu.thesimplecloud.simplecloud.restserver.annotation.RequestMapping
+import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
+import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.service.UsernameAndPasswordCredentials
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 27.06.2021
+ * Time: 17:59
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
+@Controller(1, "login")
+class LoginController @Inject constructor(
+    private val authService: IAuthService
+) : IController {
 
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
+    @RequestMapping(RequestType.POST, "", "")
+    fun handleLogin(@RequestBody credentials: UsernameAndPasswordCredentials): TokenResponse {
+        return TokenResponse(authService.authenticate(credentials))
     }
 
-    open fun hasPermission(permission: String): Boolean {
-        return true
-    }
+    class TokenResponse(val token: String)
+
 
 }

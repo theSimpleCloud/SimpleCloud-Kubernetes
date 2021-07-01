@@ -22,43 +22,34 @@
 
 package eu.thesimplecloud.simplecloud.restserver.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import java.io.File
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 23:22
+ * Date: 27.06.2021
+ * Time: 12:40
  * @author Frederick Baier
  */
-class FileUserRepository : IUserRepository {
+interface IUserService {
 
-    private val directory = File("test/users/")
+    /**
+     * Returns the user found by the specified [name]
+     */
+    fun getUserByName(name: String): User
 
-    private val objectMapper = ObjectMapper()
+    /**
+     * Returns all users
+     */
+    fun getAllUsers(): List<User>
 
-    override fun findAll(): CompletableFuture<List<User>> {
-        return CompletableFuture.supplyAsync {
-            return@supplyAsync this.directory.listFiles().map { objectMapper.readValue(it, User::class.java) }
-        }
-    }
+    /**
+     * Creates a user
+     */
+    fun createUser(user: User)
 
-    override fun find(identifier: String): CompletableFuture<User> {
-        return CompletableFuture.supplyAsync {
-            val file = File(this.directory, "$identifier.json")
-            return@supplyAsync this.objectMapper.readValue(file, User::class.java)
-        }
-    }
+    /**
+     * Returns whether the user exists
+     */
+    fun doesUserExist(username: String): Boolean
 
-    override fun put(value: User) {
-        val file = File(this.directory, "${value.getIdentifier()}.json")
-        this.objectMapper.writeValue(file, value)
-    }
-
-    override fun remove(identifier: String) {
-        val file = File(this.directory, "${identifier}.json")
-        file.delete()
-    }
 }

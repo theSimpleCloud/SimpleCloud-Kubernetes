@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.restserver.controller
 
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
+import java.lang.reflect.InvocationTargetException
 import java.lang.reflect.Method
 
 /**
@@ -41,7 +42,18 @@ data class MethodRoute(
 ) {
 
     fun invokeMethodWithArgs(args: List<Any?>): Any? {
-        return method.invoke(controller, *args.toTypedArray())
+        try {
+            return method.invoke(controller, *args.toTypedArray())
+        } catch (ex: Exception) {
+            rethrowWithoutInvocationTargetException(ex)
+        }
+    }
+
+    private fun rethrowWithoutInvocationTargetException(ex: Exception): Nothing {
+        if (ex is InvocationTargetException) {
+            throw ex.cause ?: ex
+        }
+        throw ex
     }
 
     class MethodRouteParameter(

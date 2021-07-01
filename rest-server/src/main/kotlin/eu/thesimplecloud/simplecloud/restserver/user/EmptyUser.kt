@@ -20,15 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.service
-
-import eu.thesimplecloud.simplecloud.restserver.user.User
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+package eu.thesimplecloud.simplecloud.restserver.user
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 14:53
+ * Date: 27.06.2021
+ * Time: 18:06
  * @author Frederick Baier
  */
-interface IUserRepository : IRepository<String, User>
+object EmptyUser : User("<empty>", "<empty>") {
+
+    override fun hasPermission(permission: String): Boolean {
+        if (permission.isEmpty()) return true
+        return false
+    }
+
+}

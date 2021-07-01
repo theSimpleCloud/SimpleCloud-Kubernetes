@@ -22,13 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.restserver.service
 
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.future.getOrThrowRealExceptionOnFailure
 import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
+import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,9 +39,10 @@ import java.util.concurrent.CompletableFuture
  * Time: 14:52
  * @author Frederick Baier
  */
-class AuthService : IAuthService {
-
-    private val userRepository = FileUserRepository()
+@Singleton
+class AuthService @Inject constructor(
+    private val userRepository: IUserRepository
+) : IAuthService {
 
     override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
         val user = findUserByUserName(usernameAndPasswordCredentials.username)
@@ -57,8 +61,7 @@ class AuthService : IAuthService {
     }
 
     private fun findUserByUserName(username: String): User {
-        return this.userRepository.find(username).get()
-            ?: throwUserNotFound()
+        return this.userRepository.find(username).getOrThrowRealExceptionOnFailure()
     }
 
     private fun throwUserNotFound(): Nothing {

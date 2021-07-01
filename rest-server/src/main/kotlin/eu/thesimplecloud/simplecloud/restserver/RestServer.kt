@@ -22,17 +22,29 @@
 
 package eu.thesimplecloud.simplecloud.restserver
 
+import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.Injector
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
+import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeAll
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeIncoming
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
 import eu.thesimplecloud.simplecloud.restserver.annotation.introspector.AnnotationExcludeIntrospector
 import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.LoginController
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessGroupController
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.UserController
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
 import eu.thesimplecloud.simplecloud.restserver.request.WebRequestHandler
 import eu.thesimplecloud.simplecloud.restserver.service.AuthService
+import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -41,6 +53,7 @@ import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
+import org.apache.ignite.plugin.security.SecurityCredentials
 import java.io.File
 
 
@@ -50,11 +63,12 @@ import java.io.File
  * Time: 16:57
  * @author Frederick Baier
  */
-class RestServer(port: Int) {
+@Singleton
+class RestServer @Inject constructor(
+    private val authService: IAuthService
+) {
 
-    private val authService = AuthService()
-
-    private val server = embeddedServer(Netty, port) {
+    private val server = embeddedServer(Netty, 8000) {
         install(Authentication) {
             jwt {
                 verifier(
@@ -63,11 +77,6 @@ class RestServer(port: Int) {
                 validate { credential ->
                     JWTPrincipal(credential.payload)
                 }
-            }
-        }
-        routing {
-            post("/login") {
-                call.respondText("Request uri: ${JwtConfig.makeToken("admin")}")
             }
         }
     }.start(wait = false)
@@ -119,9 +128,13 @@ class RestServer(port: Int) {
 
 
 fun main() {
+    val injector = Guice.createInjector(RestBinderModule())
     println(File(".").absolutePath)
-    val restServer = RestServer(8000)
-    ControllerHandler(restServer).registerController(TestController())
+    injector.getInstance(RestServer::class.java)
+    injector.getInstance(ControllerHandler::class.java).registerController(TestController::class.java)
+    injector.getInstance(ControllerHandler::class.java).registerController(UserController::class.java)
+    injector.getInstance(ControllerHandler::class.java).registerController(LoginController::class.java)
+    injector.getInstance(ControllerHandler::class.java).registerController(ProcessGroupController::class.java)
     /*
     embeddedServer(Netty, port = 8000) {
         install(Authentication) {

@@ -26,7 +26,9 @@ import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.exception.HttpException
 import eu.thesimplecloud.simplecloud.restserver.exception.MissingPermissionException
+import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
 import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.user.EmptyUser
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
 import io.ktor.http.*
@@ -71,11 +73,12 @@ class WebRequestHandler(
     }
 
     private suspend fun writeResponseObject(any: Any) {
-        call.respondText(RestServer.mapperExcludeOutgoing.writeValueAsString(any))
+        val successResponse = SuccessResponseDto(any)
+        call.respondText(RestServer.mapperExcludeOutgoing.writeValueAsString(successResponse))
     }
 
     private suspend fun handleRequest0() {
-        val user = getUser()
+        val user = getUserOrEmptyUser()
         checkUserPermission(user)
         handleRequestUnchecked(user)
     }
@@ -101,8 +104,12 @@ class WebRequestHandler(
         }
     }
 
-    private fun getUser(): User {
-        return this.authService.getUserFromCall(this.call)
+    private fun getUserOrEmptyUser(): User {
+        try {
+            return this.authService.getUserFromCall(this.call)
+        } catch (e: NotAuthenticatedException) {
+            return EmptyUser
+        }
     }
 
     private fun blockAccess() {

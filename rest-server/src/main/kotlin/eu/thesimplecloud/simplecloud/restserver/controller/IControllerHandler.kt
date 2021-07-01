@@ -30,8 +30,8 @@ package eu.thesimplecloud.simplecloud.restserver.controller
  */
 interface IControllerHandler {
 
-    fun registerController(controller: IController)
+    fun registerController(controllerClass: Class<out IController>)
 
-    fun unregisterController(controller: IController)
+    fun unregisterController(controllerClass: Class<out IController>)
 
 }

@@ -20,34 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
-
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+package eu.thesimplecloud.simplecloud.restserver.request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 27.06.2021
+ * Time: 18:25
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
-
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
-    }
-
-    open fun hasPermission(permission: String): Boolean {
-        return true
-    }
-
-}
+class SuccessResponseDto(val result: Any)

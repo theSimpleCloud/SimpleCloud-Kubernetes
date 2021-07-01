@@ -31,4 +31,8 @@ package eu.thesimplecloud.simplecloud.restserver.service
 data class UsernameAndPasswordCredentials(
     val username: String,
     val password: String
-)
+) {
+
+    private constructor(): this("", "")
+
+}

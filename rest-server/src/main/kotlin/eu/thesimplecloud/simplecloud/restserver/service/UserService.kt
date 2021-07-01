@@ -20,34 +20,42 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
+package eu.thesimplecloud.simplecloud.restserver.service
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.impl.future.getOrThrowRealExceptionOnFailure
+import eu.thesimplecloud.simplecloud.restserver.exception.ElementAlreadyExistException
+import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
+import eu.thesimplecloud.simplecloud.restserver.user.User
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 27.06.2021
+ * Time: 12:44
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
+class UserService @Inject constructor(
+    private val repository: IUserRepository
+) : IUserService {
 
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
+    override fun getUserByName(name: String): User {
+        return this.repository.find(name).getOrThrowRealExceptionOnFailure()
     }
 
-    open fun hasPermission(permission: String): Boolean {
-        return true
+    override fun getAllUsers(): List<User> {
+        return this.repository.findAll().getOrThrowRealExceptionOnFailure()
     }
+
+    override fun createUser(user: User) {
+        if (doesUserExist(user.username)) {
+            throw ElementAlreadyExistException("User does already exist")
+        }
+        this.repository.put(user)
+    }
+
+    override fun doesUserExist(username: String): Boolean {
+        return runCatching { getUserByName(username) }.getOrNull() != null
+    }
+
 
 }

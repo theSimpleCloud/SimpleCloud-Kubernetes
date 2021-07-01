@@ -20,34 +20,47 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
+package eu.thesimplecloud.simplecloud.restserver.dto.cloud
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 01/07/2021
+ * Time: 12:56
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
-
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
-    }
-
-    open fun hasPermission(permission: String): Boolean {
-        return true
-    }
-
-}
+class CloudServerProcessGroupDto(
+    name: String,
+    maxMemory: Int,
+    maxPlayers: Int,
+    maintenance: Boolean,
+    minimumProcessCount: Int,
+    maximumProcessCount: Int,
+    templateName: String,
+    jvmArgumentName: String?,
+    versionName: String,
+    onlineCountConfigurationName: String,
+    static: Boolean,
+    stateUpdating: Boolean,
+    startPriority: Int,
+    joinPermission: String?,
+    nodeNamesAllowedToStartOn: List<String>
+) : BasicCloudProcessGroupDto(
+    name,
+    maxMemory,
+    maxPlayers,
+    maintenance,
+    minimumProcessCount,
+    maximumProcessCount,
+    templateName,
+    jvmArgumentName,
+    versionName,
+    onlineCountConfigurationName,
+    static,
+    stateUpdating,
+    startPriority,
+    joinPermission,
+    nodeNamesAllowedToStartOn,
+    ProcessGroupType.SERVER
+)

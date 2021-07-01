@@ -22,6 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.restserver.controller
 
+import com.google.inject.Inject
+import com.google.inject.Injector
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
 
@@ -32,16 +35,18 @@ import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
  * Time: 09:39
  * @author Frederick Baier
  */
-class ControllerHandler(
-    private val restServer: RestServer
+@Singleton
+class ControllerHandler @Inject constructor(
+    private val restServer: RestServer,
+    private val injector: Injector
 ) : IControllerHandler {
 
-    override fun registerController(controller: IController) {
-        val routes = ControllerLoader(controller).generateRoutes()
+    override fun registerController(controllerClass: Class<out IController>) {
+        val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
         routes.forEach { this.restServer.registerMethodRoute(it) }
     }
 
-    override fun unregisterController(controller: IController) {
+    override fun unregisterController(controllerClass: Class<out IController>) {
         TODO("Not yet implemented")
     }
 

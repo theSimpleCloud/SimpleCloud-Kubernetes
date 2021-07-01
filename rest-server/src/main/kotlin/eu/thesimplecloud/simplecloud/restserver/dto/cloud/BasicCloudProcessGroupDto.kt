@@ -20,34 +20,31 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
+package eu.thesimplecloud.simplecloud.restserver.dto.cloud
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 01/07/2021
+ * Time: 12:57
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
-
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
-    }
-
-    open fun hasPermission(permission: String): Boolean {
-        return true
-    }
-
-}
+open class BasicCloudProcessGroupDto(
+    val name: String,
+    val maxMemory: Int,
+    val maxPlayers: Int,
+    val maintenance: Boolean,
+    val minimumProcessCount: Int,
+    val maximumProcessCount: Int,
+    val templateName: String,
+    val jvmArgumentName: String?,
+    val versionName: String,
+    val onlineCountConfigurationName: String,
+    val static: Boolean,
+    val stateUpdating: Boolean,
+    val startPriority: Int,
+    val joinPermission: String?,
+    val nodeNamesAllowedToStartOn: List<String>,
+    val type: ProcessGroupType
+)

@@ -20,27 +20,48 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.service
+package eu.thesimplecloud.simplecloud.restserver.repository
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import io.ktor.application.*
+import java.io.File
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 14:50
+ * Time: 23:22
  * @author Frederick Baier
  */
-interface IAuthService {
+@Singleton
+class FileUserRepository : IUserRepository {
 
-    /**
-     * Returns the jwt token for the specified credentials
-     */
-    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String
+    private val directory = File("test/users/")
 
-    /**
-     * Returns the user from the specified [call]
-     */
-    fun getUserFromCall(call: ApplicationCall): User
+    private val objectMapper = ObjectMapper()
+
+    override fun findAll(): CompletableFuture<List<User>> {
+        return CompletableFuture.supplyAsync {
+            return@supplyAsync this.directory.listFiles().map { objectMapper.readValue(it, User::class.java) }
+        }
+    }
+
+    override fun find(identifier: String): CompletableFuture<User> {
+        return CompletableFuture.supplyAsync {
+            val file = File(this.directory, "$identifier.json")
+            return@supplyAsync this.objectMapper.readValue(file, User::class.java)
+        }.exceptionally { throw NoSuchElementException("User not found") }
+    }
+
+    override fun put(value: User) {
+        val file = File(this.directory, "${value.getIdentifier()}.json")
+        this.objectMapper.writeValue(file, value)
+    }
+
+    override fun remove(identifier: String) {
+        val file = File(this.directory, "${identifier}.json")
+        file.delete()
+    }
 
 }

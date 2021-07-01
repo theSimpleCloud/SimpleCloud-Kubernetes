@@ -20,33 +20,38 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.user
+package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
-import com.fasterxml.jackson.annotation.JsonIgnore
-import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.restserver.annotation.*
+import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.service.IUserService
+import eu.thesimplecloud.simplecloud.restserver.user.User
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 10:04
+ * Date: 27.06.2021
+ * Time: 12:09
  * @author Frederick Baier
  */
-open class User(
-    val username: String,
-    @WebExcludeOutgoing
-    val password: String
-) : IIdentifiable<String> {
+@Controller(1, "user")
+class UserController @Inject constructor(
+    private val userService: IUserService
+) : IController {
 
-    //Default constructor for jackson
-    private constructor() : this("", "")
-
-    @JsonIgnore
-    override fun getIdentifier(): String {
-        return this.username
+    @RequestMapping(RequestType.GET, "self", "web.user.get.self")
+    fun handleUserGetSelf(@RequestingUser user: User): User {
+        return user
     }
 
-    open fun hasPermission(permission: String): Boolean {
+    @RequestMapping(RequestType.GET, "{name}", "web.user.get.one")
+    fun handleGetByName(@RequestPathParam("name") requestingUserName: String): User {
+        return userService.getUserByName(requestingUserName)
+    }
+
+    @RequestMapping(RequestType.POST, "", "web.user.create")
+    fun handleUserCreate(@RequestBody user: User): Boolean {
+        userService.createUser(user)
         return true
     }
 
