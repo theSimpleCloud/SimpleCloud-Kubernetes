@@ -37,7 +37,7 @@ open class DefaultProcessOnlineCountService(
     protected val igniteRepository: IgniteProcessOnlineCountRepository
 ) : IProcessOnlineCountService {
 
-    override fun findProcessOnlineCountConfigurationByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
+    override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
         return this.igniteRepository.find(name)
     }
 }

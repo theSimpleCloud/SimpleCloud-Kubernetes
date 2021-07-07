@@ -22,13 +22,13 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.impl.future.toFutureList
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.impl.process.request.ProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessRepository
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -62,4 +62,9 @@ abstract class AbstractCloudProcessService(
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
         return this.igniteRepository.findProcessByUniqueId(uniqueId)
     }
+
+    override fun createProcessStartRequest(group: ICloudProcessGroup): IProcessStartRequest {
+        return ProcessStartRequest(this, group)
+    }
+
 }

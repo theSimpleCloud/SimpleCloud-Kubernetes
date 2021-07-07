@@ -22,9 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.request
 
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStopRequest
+import eu.thesimplecloud.simplecloud.api.request.IProcessStopRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -34,6 +34,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class ProcessStopRequest(
+    private val internalService: IInternalCloudProcessService,
     private val process: ICloudProcess
 ) : IProcessStopRequest {
 
@@ -42,6 +43,6 @@ class ProcessStopRequest(
     }
 
     override fun submit(): CompletableFuture<Void> {
-        return InternalCloudAPI.instance.getProcessService().shutdownProcess(this.process)
+        return this.internalService.shutdownProcessInternal(this.process)
     }
 }

@@ -23,7 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.process.group.proxy
 
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.update.ICloudProxyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +34,5 @@ import eu.thesimplecloud.simplecloud.api.process.group.update.ICloudProxyGroupUp
 interface ICloudProxyGroup : ICloudProcessGroup {
 
     fun getStartPort(): Int
-
-    override fun createUpdateRequest(): ICloudProxyGroupUpdateRequest
 
 }

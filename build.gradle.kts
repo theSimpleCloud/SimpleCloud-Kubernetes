@@ -22,6 +22,7 @@ subprojects {
         implementation(kotlin("stdlib"))
         implementation("com.google.inject:guice:5.0.1")
         testImplementation("junit", "junit", "4.12")
+        implementation("com.ea.async:ea-async:1.2.3")
     }
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {

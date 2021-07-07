@@ -23,6 +23,10 @@
 package eu.thesimplecloud.simplecloud.api.service
 
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.group.create.IProcessGroupCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.service.IService
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -36,5 +40,13 @@ import java.util.concurrent.CompletableFuture
 interface ICloudProcessGroupService : IService {
 
     fun findByName(name: String): CompletableFuture<ICloudProcessGroup>
+
+    fun findAll(): CompletableFuture<List<ICloudProcessGroup>>
+
+    fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): IProcessGroupCreateRequest
+
+    fun createGroupDeleteRequest(group: ICloudProcessGroup): IProcessGroupDeleteRequest
+
+    fun createGroupUpdateRequest(group: ICloudProcessGroup): ICloudProcessGroupUpdateRequest
 
 }

@@ -45,6 +45,6 @@ interface IProcessVersion : INameable, IIdentifiable<String> {
     /**
      * Returns the direct download link to a jar file
      */
-    fun getDownloadLink(): URL
+    fun getDownloadLink(): String
 
 }

@@ -23,15 +23,13 @@
 package eu.thesimplecloud.simplecloud.api.impl.process
 
 import eu.thesimplecloud.simplecloud.api.CloudAPI
-import eu.thesimplecloud.simplecloud.api.impl.future.exception.CompletedWithNullException
-import eu.thesimplecloud.simplecloud.api.impl.process.request.ProcessStopRequest
+import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.impl.utils.AbstractNetworkComponent
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStopRequest
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
@@ -125,10 +123,6 @@ class CloudProcess(
 
     override fun startedFuture(): CompletableFuture<Void> {
         TODO("Not yet implemented")
-    }
-
-    override fun createStopRequest(): IProcessStopRequest {
-        return ProcessStopRequest(this)
     }
 
     override fun getUniqueId(): UUID {

@@ -35,14 +35,14 @@ import java.net.URL
 class ProcessVersion(
     private val name: String,
     private val apiType: ProcessAPIType,
-    private val downloadLink: URL
+    private val downloadLink: String
 ) : IProcessVersion {
 
     override fun getProcessApiType(): ProcessAPIType {
         return this.apiType
     }
 
-    override fun getDownloadLink(): URL {
+    override fun getDownloadLink(): String {
         return this.downloadLink
     }
 

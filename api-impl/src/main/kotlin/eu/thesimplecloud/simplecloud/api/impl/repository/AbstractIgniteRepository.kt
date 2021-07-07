@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.repository
 
-import eu.thesimplecloud.simplecloud.api.impl.future.nonNull
+import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 import org.apache.ignite.IgniteCache

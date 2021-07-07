@@ -23,7 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.process.group.lobby
 
 import eu.thesimplecloud.simplecloud.api.process.group.server.ICloudServerGroup
-import eu.thesimplecloud.simplecloud.api.process.group.update.ICloudLobbyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +34,5 @@ import eu.thesimplecloud.simplecloud.api.process.group.update.ICloudLobbyGroupUp
 interface ICloudLobbyGroup : ICloudServerGroup {
 
     fun getLobbyPriority(): Int
-
-    override fun createUpdateRequest(): ICloudLobbyGroupUpdateRequest
 
 }

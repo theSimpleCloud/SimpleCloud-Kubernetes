@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.api.service
 
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.service.IService
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -60,5 +61,10 @@ interface ICloudProcessService : IService {
      * Returns the process found by the specified [uniqueId]
      */
     fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess>
+
+    /**
+     * Creates a request to start a process
+     */
+    fun createProcessStartRequest(group: ICloudProcessGroup): IProcessStartRequest
 
 }

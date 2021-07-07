@@ -28,14 +28,9 @@ import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStartRequest
-import eu.thesimplecloud.simplecloud.api.impl.process.request.ProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.impl.process.request.ProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Created by IntelliJ IDEA.
@@ -80,17 +75,37 @@ abstract class AbstractCloudProcessGroup(
         return this.maintenance
     }
 
+    override fun getTemplateName(): String {
+        return this.templateName
+    }
+
     override fun getTemplate(): CompletableFuture<ITemplate> {
         return CloudAPI.instance.getTemplateService().findByName(this.templateName)
+    }
+
+    override fun getProcessVersionName(): String {
+        return this.versionName
     }
 
     override fun getVersion(): CompletableFuture<IProcessVersion> {
         return CloudAPI.instance.getProcessVersionService().findByName(this.versionName)
     }
 
+    override fun getJvmArgumentsName(): String? {
+        return this.jvmArgumentName
+    }
+
     override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
         if (this.jvmArgumentName == null) return CompletableFuture.failedFuture(NoSuchElementException())
         return CloudAPI.instance.getJvmArgumentsService().findByName(this.jvmArgumentName)
+    }
+
+    override fun getProcessOnlineCountConfigurationName(): String {
+        return this.onlineCountConfigurationName
+    }
+
+    override fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration> {
+        return CloudAPI.instance.getProcessOnlineCountService().findByName(this.onlineCountConfigurationName)
     }
 
     override fun getJoinPermission(): String? {
@@ -117,24 +132,16 @@ abstract class AbstractCloudProcessGroup(
         return this.startPriority
     }
 
+    override fun getNodeNamesAllowedToStartServicesOn(): List<String> {
+        return this.nodeNamesAllowedToStartOn
+    }
+
     override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>> {
         return CloudAPI.instance.getNodeService().findNodesByName(*this.nodeNamesAllowedToStartOn.toTypedArray())
     }
 
     override fun getProcesses(): CompletableFuture<List<ICloudProcess>> {
         return CloudAPI.instance.getProcessService().findProcessesByGroup(this)
-    }
-
-    override fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration> {
-        return CloudAPI.instance.getProcessOnlineCountService().findProcessOnlineCountConfigurationByName(this.onlineCountConfigurationName)
-    }
-
-    override fun createProcessStartRequest(): IProcessStartRequest {
-        return ProcessStartRequest(this)
-    }
-
-    override fun createDeleteRequest(): IProcessGroupDeleteRequest {
-        return ProcessGroupDeleteRequest(this)
     }
 
     override fun getName(): String {
@@ -144,4 +151,5 @@ abstract class AbstractCloudProcessGroup(
     override fun getIdentifier(): String {
         return getName()
     }
+
 }

@@ -24,9 +24,9 @@ package eu.thesimplecloud.simplecloud.api.impl.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.future.exception.CompletedWithNullException
-import eu.thesimplecloud.simplecloud.api.impl.future.timeout.timout
-import eu.thesimplecloud.simplecloud.api.impl.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
+import eu.thesimplecloud.simplecloud.api.future.timeout.timout
+import eu.thesimplecloud.simplecloud.api.future.toFutureList
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService

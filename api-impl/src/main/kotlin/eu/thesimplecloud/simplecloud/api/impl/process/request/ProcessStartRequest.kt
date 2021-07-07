@@ -22,14 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.request
 
-import eu.thesimplecloud.simplecloud.api.impl.future.flatten
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.flatten
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import kotlinx.coroutines.awaitAll
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,6 +41,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class ProcessStartRequest(
+    private val internalService: IInternalCloudProcessService,
     private val processGroup: ICloudProcessGroup
 ) : IProcessStartRequest {
 
@@ -98,9 +101,9 @@ class ProcessStartRequest(
     }
 
     override fun submit(): CompletableFuture<ICloudProcess> {
-        return this.jvmArgumentsFuture.thenCombine(this.templateFuture) { arguments, template ->
-            return@thenCombine startProcess(arguments, template)
-        }.flatten()
+        val jvmArguments = await(this.jvmArgumentsFuture)
+        val template = await(this.templateFuture)
+        return startProcess(jvmArguments, template)
     }
 
     private fun startProcess(arguments: IJVMArguments, template: ITemplate): CompletableFuture<ICloudProcess> {
@@ -110,6 +113,6 @@ class ProcessStartRequest(
             this.maxPlayers,
             arguments.getName()
         )
-        return InternalCloudAPI.instance.getProcessService().startNewProcess(startConfiguration)
+        return this.internalService.startNewProcessInternal(startConfiguration)
     }
 }
