@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.proxy.ICloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate

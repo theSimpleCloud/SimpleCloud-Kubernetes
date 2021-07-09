@@ -20,15 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.group.server
+package eu.thesimplecloud.simplecloud.api.impl.process.factory
 
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudServerGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05.04.2021
- * Time: 21:20
+ * Date: 09/07/2021
+ * Time: 13:17
  * @author Frederick Baier
  */
-interface ICloudServerGroup : ICloudProcessGroup
+interface ICloudProcessFactory {
+
+    fun create(configuration: CloudProcessConfiguration): ICloudProcess
+
+}

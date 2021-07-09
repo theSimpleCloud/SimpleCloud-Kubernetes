@@ -25,17 +25,14 @@ package eu.thesimplecloud.simplecloud.api.process.group
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.util.concurrent.CompletableFuture
+
 
 interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
@@ -83,6 +80,6 @@ interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
     fun getProcesses(): CompletableFuture<List<ICloudProcess>>
 
-    fun toGroupConfiguration(): AbstractCloudProcessGroupConfiguration
+    fun toConfiguration(): AbstractCloudProcessGroupConfiguration
 
 }

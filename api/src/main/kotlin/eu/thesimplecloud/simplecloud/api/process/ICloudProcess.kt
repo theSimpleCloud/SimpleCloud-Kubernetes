@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.api.process
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.IProcessStopRequest
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
@@ -126,6 +126,11 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      * This methods always returns the same [CompletableFuture]
      */
     fun startedFuture(): CompletableFuture<Void>
+
+    /**
+     * Returns the configuration of this group
+     */
+    fun toConfiguration(): CloudProcessConfiguration
 
 
 

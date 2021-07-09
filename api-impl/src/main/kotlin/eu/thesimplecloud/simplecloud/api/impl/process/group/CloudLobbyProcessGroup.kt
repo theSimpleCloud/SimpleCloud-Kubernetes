@@ -24,10 +24,9 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group
 
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudLobbyGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
-import eu.thesimplecloud.simplecloud.api.process.group.lobby.ICloudLobbyGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,68 +34,34 @@ import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUp
  * Time: 09:59
  * @author Frederick Baier
  */
-class CloudLobbyProcessGroup(
-    name: String,
-    maxMemory: Int,
-    maxPlayers: Int,
-    maintenance: Boolean,
-    minimumProcessCount: Int,
-    maximumProcessCount: Int,
-    templateName: String,
-    jvmArgumentName: String?,
-    versionName: String,
-    onlineCountConfigurationName: String,
-    static: Boolean,
-    stateUpdating: Boolean,
-    startPriority: Int,
-    joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>,
-    private val lobbyPriority: Int
-) : CloudServerProcessGroup(
-    name,
-    maxMemory,
-    maxPlayers,
-    maintenance,
-    minimumProcessCount,
-    maximumProcessCount,
-    templateName,
-    jvmArgumentName,
-    versionName,
-    onlineCountConfigurationName,
-    static,
-    stateUpdating,
-    startPriority,
-    joinPermission,
-    nodeNamesAllowedToStartOn
+class CloudLobbyProcessGroup constructor(
+    private val configuration: CloudLobbyProcessGroupConfiguration,
+    private val templateService: ITemplateService,
+    private val processVersionService: IProcessVersionService,
+    private val jvmArgumentsService: IJvmArgumentsService,
+    private val processOnlineCountService: IProcessOnlineCountService,
+    private val nodeService: INodeService,
+    private val processService: ICloudProcessService,
+) : AbstractCloudProcessGroup(
+    configuration,
+    templateService,
+    processVersionService,
+    jvmArgumentsService,
+    processOnlineCountService,
+    nodeService,
+    processService
 ), ICloudLobbyGroup {
 
     override fun getLobbyPriority(): Int {
-        return this.lobbyPriority
+        return this.configuration.lobbyPriority
     }
 
     override fun getProcessGroupType(): ProcessGroupType {
         return ProcessGroupType.LOBBY
     }
 
-    override fun toGroupConfiguration(): AbstractCloudProcessGroupConfiguration {
-        return CloudLobbyProcessGroupConfiguration(
-            this.getName(),
-            this.getMaxMemory(),
-            this.getMaxPlayers(),
-            this.isInMaintenance(),
-            this.getMinimumOnlineProcessCount(),
-            this.getMaximumOnlineProcessCount(),
-            this.getTemplateName(),
-            this.getJvmArgumentsName(),
-            this.getProcessVersionName(),
-            this.getProcessOnlineCountConfigurationName(),
-            this.isStatic(),
-            this.isStateUpdatingEnabled(),
-            this.getStartPriority(),
-            this.getJoinPermission(),
-            this.getNodeNamesAllowedToStartServicesOn(),
-            this.getLobbyPriority()
-        )
+    override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
+        return this.configuration
     }
 
 }

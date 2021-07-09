@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
+import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArguments
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
@@ -38,6 +39,7 @@ class DefaultJvmArgumentsService(
 ) : IJvmArgumentsService {
 
     override fun findByName(name: String): CompletableFuture<IJVMArguments> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { JvmArguments(it) }
     }
 }

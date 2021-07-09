@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.ignite.predicate
 
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import org.apache.ignite.lang.IgniteBiPredicate
@@ -35,9 +36,9 @@ import java.util.*
  */
 class CloudProcessCompareUUIDPredicate(
     private val compareId: UUID
-) : IgniteBiPredicate<String, ICloudProcess> {
+) : IgniteBiPredicate<String, CloudProcessConfiguration> {
 
-    override fun apply(uuid: String, process: ICloudProcess): Boolean {
-        return process.getUniqueId() == compareId
+    override fun apply(uuid: String, configuration: CloudProcessConfiguration): Boolean {
+        return configuration.uniqueId == compareId
     }
 }

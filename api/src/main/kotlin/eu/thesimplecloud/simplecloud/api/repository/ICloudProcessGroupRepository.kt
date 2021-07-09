@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.repository
 
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 
 /**
@@ -31,4 +32,4 @@ import eu.thesimplecloud.simplecloud.api.repository.IRepository
  * Time: 13:41
  * @author Frederick Baier
  */
-interface ICloudProcessGroupRepository : IRepository<String, ICloudProcessGroup>
+interface ICloudProcessGroupRepository : IRepository<String, AbstractCloudProcessGroupConfiguration>

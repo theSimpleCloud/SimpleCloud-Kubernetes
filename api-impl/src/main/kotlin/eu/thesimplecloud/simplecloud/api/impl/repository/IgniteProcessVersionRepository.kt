@@ -26,6 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.IProcessVersionRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
@@ -39,9 +40,9 @@ import org.apache.ignite.IgniteCache
 @Singleton
 class IgniteProcessVersionRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<IProcessVersion>(), IProcessVersionRepository {
+) : AbstractIgniteRepository<ProcessVersionConfiguration>(), IProcessVersionRepository {
 
-    override fun getCache(): IgniteCache<String, IProcessVersion> {
+    override fun getCache(): IgniteCache<String, ProcessVersionConfiguration> {
         return ignite.getOrCreateCache("cloud-process-versions")
     }
 

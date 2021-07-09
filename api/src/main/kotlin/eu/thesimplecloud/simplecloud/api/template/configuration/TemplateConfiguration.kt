@@ -20,16 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.repository
-
-
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-
+package eu.thesimplecloud.simplecloud.api.template.configuration
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 02.04.2021
- * Time: 19:31
+ * Date: 09/07/2021
+ * Time: 11:12
  * @author Frederick Baier
  */
-interface IProcessVersionRepository : IRepository<String, ProcessVersionConfiguration>
+class TemplateConfiguration(
+    val name: String,
+    val parentTemplateName: String?
+)

@@ -26,6 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.IJvmArgumentsRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
@@ -39,9 +40,9 @@ import org.apache.ignite.IgniteCache
 @Singleton
 class IgniteJvmArgumentsRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<IJVMArguments>(), IJvmArgumentsRepository {
+) : AbstractIgniteRepository<JvmArgumentConfiguration>(), IJvmArgumentsRepository {
 
-    override fun getCache(): IgniteCache<String, IJVMArguments> {
+    override fun getCache(): IgniteCache<String, JvmArgumentConfiguration> {
         return ignite.getOrCreateCache("cloud-jvm-args")
     }
 }

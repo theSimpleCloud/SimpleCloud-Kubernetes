@@ -20,19 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.group.lobby
+package eu.thesimplecloud.simplecloud.api.node.configuration
 
-import eu.thesimplecloud.simplecloud.api.process.group.server.ICloudServerGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.utils.Address
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05.04.2021
- * Time: 21:16
+ * Date: 09/07/2021
+ * Time: 11:02
  * @author Frederick Baier
  */
-interface ICloudLobbyGroup : ICloudServerGroup {
-
-    fun getLobbyPriority(): Int
-
-}
+data class NodeConfiguration(
+    val address: Address,
+    val name: String,
+    val igniteId: UUID
+)

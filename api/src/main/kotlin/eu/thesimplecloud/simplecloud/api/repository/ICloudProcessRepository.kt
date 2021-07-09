@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.repository
 
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 import java.util.*
@@ -33,16 +34,16 @@ import java.util.concurrent.CompletableFuture
  * Time: 19:26
  * @author Frederick Baier
  */
-interface ICloudProcessRepository : IRepository<String, ICloudProcess> {
+interface ICloudProcessRepository : IRepository<String, CloudProcessConfiguration> {
 
     /**
      * Returns the process found by the specified [uniqueId]
      */
-    fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess>
+    fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration>
 
     /**
      * Returns all processes found by the specified [groupName]
      */
-    fun findProcessesByGroupName(groupName: String): CompletableFuture<List<ICloudProcess>>
+    fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>>
 
 }

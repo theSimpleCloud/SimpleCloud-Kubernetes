@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.process.group.configuration
 
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 
 /**
  * Created by IntelliJ IDEA.

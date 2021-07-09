@@ -22,17 +22,14 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
 
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyProcessGroup
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.proxy.ICloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
 
@@ -152,8 +149,8 @@ class CloudProxyGroupUpdateRequest(
         onlineCountConfiguration: IProcessesOnlineCountConfiguration,
         nodesAllowedToStartOn: List<String>
     ): CompletableFuture<ICloudProcessGroup> {
-        val proxyGroup = CloudProxyProcessGroup(
-            getProcessGroup().getName(),
+        val updateObj = CloudProxyProcessGroupConfiguration(
+            this.proxyGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
@@ -163,13 +160,13 @@ class CloudProxyGroupUpdateRequest(
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
-            getProcessGroup().isStatic(),
+            this.proxyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            nodesAllowedToStartOn,
+            this.nodesAllowedToStartOn,
             this.startPort
         )
-        return this.internalService.updateGroupInternal(proxyGroup)
+        return this.internalService.updateGroupInternal(updateObj)
     }
 }

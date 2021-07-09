@@ -20,16 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.repository
+package eu.thesimplecloud.simplecloud.api.process.version.configuration
 
-
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 02.04.2021
- * Time: 19:31
+ * Date: 09/07/2021
+ * Time: 11:10
  * @author Frederick Baier
  */
-interface IProcessVersionRepository : IRepository<String, ProcessVersionConfiguration>
+data class ProcessVersionConfiguration(
+    val name: String,
+    val apiType: ProcessAPIType,
+    val downloadLink: String
+)

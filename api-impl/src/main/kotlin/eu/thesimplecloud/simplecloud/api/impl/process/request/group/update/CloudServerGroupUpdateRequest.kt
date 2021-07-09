@@ -22,13 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
 
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerProcessGroup
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.server.ICloudServerGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudServerGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudServerGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
@@ -41,9 +39,9 @@ import java.util.concurrent.CompletableFuture
  * Time: 22:03
  * @author Frederick Baier
  */
-open class CloudServerGroupUpdateRequest(
+class CloudServerGroupUpdateRequest(
     private val internalService: IInternalCloudProcessGroupService,
-    serverGroup: ICloudServerGroup
+    private val serverGroup: ICloudServerGroup
 ) : AbstractCloudProcessGroupUpdateRequest(serverGroup),
     ICloudServerGroupUpdateRequest {
 
@@ -54,8 +52,8 @@ open class CloudServerGroupUpdateRequest(
         onlineCountConfiguration: IProcessesOnlineCountConfiguration,
         nodesAllowedToStartOn: List<String>
     ): CompletableFuture<ICloudProcessGroup> {
-        val serverGroup = CloudServerProcessGroup(
-            getProcessGroup().getName(),
+        val updateObj = CloudServerProcessGroupConfiguration(
+            this.serverGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
@@ -65,12 +63,12 @@ open class CloudServerGroupUpdateRequest(
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
-            getProcessGroup().isStatic(),
+            this.serverGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            nodesAllowedToStartOn
+            this.nodesAllowedToStartOn
         )
-        return this.internalService.updateGroupInternal(serverGroup)
+        return this.internalService.updateGroupInternal(updateObj)
     }
 }

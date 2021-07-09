@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.repository
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 
 /**
@@ -31,4 +32,4 @@ import eu.thesimplecloud.simplecloud.api.repository.IRepository
  * Time: 19:40
  * @author Frederick Baier
  */
-interface IJvmArgumentsRepository : IRepository<String, IJVMArguments>
+interface IJvmArgumentsRepository : IRepository<String, JvmArgumentConfiguration>

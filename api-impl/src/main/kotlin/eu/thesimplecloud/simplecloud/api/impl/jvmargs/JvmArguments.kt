@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.impl.jvmargs
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,19 +32,23 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
  * @author Frederick Baier
  */
 class JvmArguments(
-    private val name: String,
-    private val arguments: List<String>
+    private val configuration: JvmArgumentConfiguration
 ) : IJVMArguments {
 
     override fun getArguments(): List<String> {
-        return this.arguments
+        return this.configuration.arguments
     }
 
     override fun getName(): String {
-        return this.name
+        return this.configuration.name
     }
 
     override fun getIdentifier(): String {
         return getName()
     }
+
+    override fun toConfiguration(): JvmArgumentConfiguration {
+        return this.configuration
+    }
+
 }

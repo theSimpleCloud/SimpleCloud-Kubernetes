@@ -24,10 +24,9 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group
 
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
-import eu.thesimplecloud.simplecloud.api.process.group.proxy.ICloudProxyGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudProxyGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,67 +35,33 @@ import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUp
  * @author Frederick Baier
  */
 class CloudProxyProcessGroup(
-    name: String,
-    maxMemory: Int,
-    maxPlayers: Int,
-    maintenance: Boolean,
-    minimumProcessCount: Int,
-    maximumProcessCount: Int,
-    templateName: String,
-    jvmArgumentName: String?,
-    versionName: String,
-    onlineCountConfigurationName: String,
-    static: Boolean,
-    stateUpdating: Boolean,
-    startPriority: Int,
-    joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>,
-    private val startPort: Int
+    private val configuration: CloudProxyProcessGroupConfiguration,
+    private val templateService: ITemplateService,
+    private val processVersionService: IProcessVersionService,
+    private val jvmArgumentsService: IJvmArgumentsService,
+    private val processOnlineCountService: IProcessOnlineCountService,
+    private val nodeService: INodeService,
+    private val processService: ICloudProcessService,
 ) : AbstractCloudProcessGroup(
-    name,
-    maxMemory,
-    maxPlayers,
-    maintenance,
-    minimumProcessCount,
-    maximumProcessCount,
-    templateName,
-    jvmArgumentName,
-    versionName,
-    onlineCountConfigurationName,
-    static,
-    stateUpdating,
-    startPriority,
-    joinPermission,
-    nodeNamesAllowedToStartOn
+    configuration,
+    templateService,
+    processVersionService,
+    jvmArgumentsService,
+    processOnlineCountService,
+    nodeService,
+    processService
 ), ICloudProxyGroup {
 
     override fun getStartPort(): Int {
-        return this.startPort
+        return this.configuration.startPort
     }
 
     override fun getProcessGroupType(): ProcessGroupType {
         return ProcessGroupType.PROXY
     }
 
-    override fun toGroupConfiguration(): AbstractCloudProcessGroupConfiguration {
-        return CloudProxyProcessGroupConfiguration(
-            this.getName(),
-            this.getMaxMemory(),
-            this.getMaxPlayers(),
-            this.isInMaintenance(),
-            this.getMinimumOnlineProcessCount(),
-            this.getMaximumOnlineProcessCount(),
-            this.getTemplateName(),
-            this.getJvmArgumentsName(),
-            this.getProcessVersionName(),
-            this.getProcessOnlineCountConfigurationName(),
-            this.isStatic(),
-            this.isStateUpdatingEnabled(),
-            this.getStartPriority(),
-            this.getJoinPermission(),
-            this.getNodeNamesAllowedToStartServicesOn(),
-            this.getStartPort()
-        )
+    override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
+        return this.configuration
     }
 
 }

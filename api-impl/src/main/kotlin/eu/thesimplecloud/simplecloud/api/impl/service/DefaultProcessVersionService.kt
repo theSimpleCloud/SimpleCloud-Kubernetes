@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
+import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteProcessVersionRepository
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
@@ -38,6 +39,7 @@ open class DefaultProcessVersionService(
 ) : IProcessVersionService {
 
     override fun findByName(name: String): CompletableFuture<IProcessVersion> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { ProcessVersion(it) }
     }
 }

@@ -20,69 +20,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.group.configuration
+package eu.thesimplecloud.simplecloud.api.process
 
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
+import eu.thesimplecloud.simplecloud.api.utils.Address
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 01/07/2021
- * Time: 12:56
+ * Date: 09/07/2021
+ * Time: 13:06
  * @author Frederick Baier
  */
-class CloudLobbyProcessGroupConfiguration(
-    name: String,
-    maxMemory: Int,
-    maxPlayers: Int,
-    maintenance: Boolean,
-    minimumProcessCount: Int,
-    maximumProcessCount: Int,
-    templateName: String,
-    jvmArgumentName: String?,
-    versionName: String,
-    onlineCountConfigurationName: String,
-    static: Boolean,
-    stateUpdating: Boolean,
-    startPriority: Int,
-    joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>,
-    val lobbyPriority: Int
-) : AbstractCloudProcessGroupConfiguration(
-    name,
-    maxMemory,
-    maxPlayers,
-    maintenance,
-    minimumProcessCount,
-    maximumProcessCount,
-    templateName,
-    jvmArgumentName,
-    versionName,
-    onlineCountConfigurationName,
-    static,
-    stateUpdating,
-    startPriority,
-    joinPermission,
-    nodeNamesAllowedToStartOn,
-    ProcessGroupType.LOBBY
-) {
-
-    private constructor() : this(
-        "",
-        1,
-        1,
-        false,
-        1,
-        1,
-        "",
-        "",
-        "",
-        "",
-        false,
-        false,
-        1,
-        "",
-        emptyList(),
-        1
-    )
-
-}
+data class CloudProcessConfiguration(
+    val groupName: String,
+    val uniqueId: UUID,
+    val processNumber: Int,
+    val state: ProcessState,
+    val maxMemory: Int,
+    val usedMemory: Int,
+    val maxPlayers: Int,
+    val address: Address,
+    val static: Boolean,
+    val processGroupType: ProcessGroupType,
+    val versionName: String,
+    val templateName: String,
+    val nodeNameRunningOn: String,
+    val jvmArgumentsName: String?,
+    val igniteId: UUID?
+)

@@ -22,8 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.repository
 
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,4 +30,4 @@ import eu.thesimplecloud.simplecloud.api.template.ITemplate
  * Time: 12:22
  * @author Frederick Baier
  */
-interface ITemplateRepository : IRepository<String, ITemplate>
+interface ITemplateRepository : IRepository<String, TemplateConfiguration>

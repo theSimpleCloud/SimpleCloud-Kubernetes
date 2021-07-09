@@ -20,15 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.repository
+package eu.thesimplecloud.simplecloud.api.process.group
 
-import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudServerGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 03.04.2021
- * Time: 22:21
+ * Date: 05.04.2021
+ * Time: 21:20
  * @author Frederick Baier
  */
-interface IProcessOnlineCountRepository : IRepository<String, IProcessesOnlineCountConfiguration>
+interface ICloudServerGroup : ICloudProcessGroup

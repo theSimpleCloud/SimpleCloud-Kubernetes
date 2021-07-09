@@ -22,22 +22,21 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.impl.process.request.group.ProcessGroupDeleteRequest
 import eu.thesimplecloud.simplecloud.api.impl.process.request.group.create.ProcessGroupCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudProxyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudServerGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessGroupRepository
-import eu.thesimplecloud.simplecloud.api.impl.utils.CloudProcessGroupFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.validation.GroupConfigurationValidator
-import eu.thesimplecloud.simplecloud.api.process.group.lobby.ICloudLobbyGroup
-import eu.thesimplecloud.simplecloud.api.process.group.proxy.ICloudProxyGroup
-import eu.thesimplecloud.simplecloud.api.process.group.server.ICloudServerGroup
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudServerGroup
 import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
 import eu.thesimplecloud.simplecloud.api.request.group.create.IProcessGroupCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
@@ -57,15 +56,17 @@ open class DefaultCloudProcessGroupService(
 ) : IInternalCloudProcessGroupService {
 
     override fun findByName(name: String): CompletableFuture<ICloudProcessGroup> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { this.processGroupFactory.create(it) }
     }
 
     override fun findAll(): CompletableFuture<List<ICloudProcessGroup>> {
-        return this.igniteRepository.findAll()
+        val completableFuture = this.igniteRepository.findAll()
+        return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it) } }
     }
 
     override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): IProcessGroupCreateRequest {
-        return ProcessGroupCreateRequest(this.groupConfigurationValidator, this, configuration)
+        return ProcessGroupCreateRequest(this, configuration)
     }
 
     override fun createGroupDeleteRequest(group: ICloudProcessGroup): IProcessGroupDeleteRequest {
@@ -81,18 +82,24 @@ open class DefaultCloudProcessGroupService(
         }
     }
 
-    override fun updateGroupInternal(group: ICloudProcessGroup): CompletableFuture<ICloudProcessGroup> {
-        this.igniteRepository.put(group)
+    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<ICloudProcessGroup> {
+        await(this.groupConfigurationValidator.validate(configuration))
+        val group = this.processGroupFactory.create(configuration)
+        return updateGroupInternal0(group)
+    }
+
+    private fun updateGroupInternal0(group: ICloudProcessGroup): CompletableFuture<ICloudProcessGroup> {
+        this.igniteRepository.save(group.getName(), group.toConfiguration())
         return CompletableFuture.completedFuture(group)
     }
 
     override fun deleteGroupInternal(group: ICloudProcessGroup) {
-        this.igniteRepository.remove(group)
+        this.igniteRepository.remove(group.getName())
     }
 
     override fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<ICloudProcessGroup> {
-        val group = this.processGroupFactory.createGroup(configuration)
-        updateGroupInternal(group)
-        return completedFuture(group)
+        await(this.groupConfigurationValidator.validate(configuration))
+        val group = this.processGroupFactory.create(configuration)
+        return updateGroupInternal0(group)
     }
 }

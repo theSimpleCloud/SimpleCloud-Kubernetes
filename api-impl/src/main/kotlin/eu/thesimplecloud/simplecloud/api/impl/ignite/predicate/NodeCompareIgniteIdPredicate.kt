@@ -20,16 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.repository
+package eu.thesimplecloud.simplecloud.api.impl.ignite.predicate
 
-
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import org.apache.ignite.lang.IgniteBiPredicate
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 02.04.2021
- * Time: 19:31
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-interface IProcessVersionRepository : IRepository<String, ProcessVersionConfiguration>
+class NodeCompareIgniteIdPredicate(
+    private val igniteId: UUID
+) : IgniteBiPredicate<String, NodeConfiguration> {
+
+    override fun apply(uuid: String, configuration: NodeConfiguration): Boolean {
+        return configuration.igniteId == igniteId
+    }
+}

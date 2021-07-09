@@ -20,29 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.utils
-
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
-import java.lang.IllegalStateException
-import java.util.*
+package eu.thesimplecloud.simplecloud.api.jvmargs.configuration
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 31.05.2021
- * Time: 21:45
+ * Date: 09/07/2021
+ * Time: 11:02
  * @author Frederick Baier
  */
-abstract class AbstractNetworkComponent : INetworkComponent {
-
-    @Volatile
-    private var igniteId: UUID ?= null
-
-    override fun getIgniteId(): UUID {
-        return igniteId ?: throw IllegalStateException("Missing ignite id")
-    }
-
-    override fun setIgniteId(uuid: UUID) {
-        this.igniteId = uuid
-    }
-
-}
+data class JvmArgumentConfiguration(
+    val name: String,
+    val arguments: List<String>
+)

@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.process.version
 
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import java.net.URL
 
 /**
@@ -33,21 +34,19 @@ import java.net.URL
  * @author Frederick Baier
  */
 class ProcessVersion(
-    private val name: String,
-    private val apiType: ProcessAPIType,
-    private val downloadLink: String
+    private val configuration: ProcessVersionConfiguration
 ) : IProcessVersion {
 
     override fun getProcessApiType(): ProcessAPIType {
-        return this.apiType
+        return this.configuration.apiType
     }
 
     override fun getDownloadLink(): String {
-        return this.downloadLink
+        return this.configuration.downloadLink
     }
 
     override fun getName(): String {
-        return this.name
+        return this.configuration.name
     }
 
     override fun getIdentifier(): String {

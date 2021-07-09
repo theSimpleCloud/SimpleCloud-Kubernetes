@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.impl.service
 
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteTemplateRepository
+import eu.thesimplecloud.simplecloud.api.impl.template.Template
 import eu.thesimplecloud.simplecloud.api.service.ITemplateService
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
@@ -36,7 +37,9 @@ import java.util.concurrent.CompletableFuture
 open class DefaultTemplateService(
     protected val igniteRepository: IgniteTemplateRepository
 ) : ITemplateService {
+
     override fun findByName(name: String): CompletableFuture<ITemplate> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { Template(it, this) }
     }
 }

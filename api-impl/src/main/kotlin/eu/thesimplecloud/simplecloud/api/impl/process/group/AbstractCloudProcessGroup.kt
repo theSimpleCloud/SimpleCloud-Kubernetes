@@ -22,13 +22,14 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
-import eu.thesimplecloud.simplecloud.api.CloudAPI
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
 
@@ -37,115 +38,108 @@ import java.util.concurrent.CompletableFuture
  * Date: 27.03.2021
  * Time: 12:01
  * @author Frederick Baier
- */
-abstract class AbstractCloudProcessGroup(
-    private val name: String,
-    private val maxMemory: Int,
-    private val maxPlayers: Int,
-    private val maintenance: Boolean,
-    private val minimumProcessCount: Int,
-    private val maximumProcessCount: Int,
-    private val templateName: String,
-    private val jvmArgumentName: String?,
-    private val versionName: String,
-    private val onlineCountConfigurationName: String,
-    private val static: Boolean,
-    private val stateUpdating: Boolean,
-    private val startPriority: Int,
-    private val joinPermission: String?,
-    private val nodeNamesAllowedToStartOn: List<String>
+ *
+ * Represents a process group exposed by the api to allow easier accessibility of associated objects
+*/
+abstract class AbstractCloudProcessGroup constructor(
+    private val configuration: AbstractCloudProcessGroupConfiguration,
+    private val templateService: ITemplateService,
+    private val processVersionService: IProcessVersionService,
+    private val jvmArgumentsService: IJvmArgumentsService,
+    private val processOnlineCountService: IProcessOnlineCountService,
+    private val nodeService: INodeService,
+    private val processService: ICloudProcessService,
 ) : ICloudProcessGroup {
 
 
-    private val onlineCount: Int = 0
-
     override fun getMaxMemory(): Int {
-        return this.maxMemory
+        return this.configuration.maxMemory
     }
 
     override fun getMaxPlayers(): Int {
-        return this.maxPlayers
+        return this.configuration.maxPlayers
     }
 
     override fun getOnlinePlayerCount(): Int {
-        return this.onlineCount
+        TODO()
     }
 
     override fun isInMaintenance(): Boolean {
-        return this.maintenance
+        return this.configuration.maintenance
     }
 
     override fun getTemplateName(): String {
-        return this.templateName
+        return this.configuration.templateName
     }
 
     override fun getTemplate(): CompletableFuture<ITemplate> {
-        return CloudAPI.instance.getTemplateService().findByName(this.templateName)
+        return this.templateService.findByName(this.configuration.templateName)
     }
 
     override fun getProcessVersionName(): String {
-        return this.versionName
+        return this.configuration.versionName
     }
 
     override fun getVersion(): CompletableFuture<IProcessVersion> {
-        return CloudAPI.instance.getProcessVersionService().findByName(this.versionName)
+        return this.processVersionService.findByName(this.configuration.versionName)
     }
 
     override fun getJvmArgumentsName(): String? {
-        return this.jvmArgumentName
+        return this.configuration.jvmArgumentName
     }
 
     override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
-        if (this.jvmArgumentName == null) return CompletableFuture.failedFuture(NoSuchElementException())
-        return CloudAPI.instance.getJvmArgumentsService().findByName(this.jvmArgumentName)
+        val jvmArgumentName = this.configuration.jvmArgumentName
+            ?: return CompletableFuture.failedFuture(NoSuchElementException())
+        return this.jvmArgumentsService.findByName(jvmArgumentName)
     }
 
     override fun getProcessOnlineCountConfigurationName(): String {
-        return this.onlineCountConfigurationName
+        return this.configuration.onlineCountConfigurationName
     }
 
     override fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration> {
-        return CloudAPI.instance.getProcessOnlineCountService().findByName(this.onlineCountConfigurationName)
+        return this.processOnlineCountService.findByName(this.configuration.onlineCountConfigurationName)
     }
 
     override fun getJoinPermission(): String? {
-        return this.joinPermission
+        return this.configuration.joinPermission
     }
 
     override fun getMinimumOnlineProcessCount(): Int {
-        return this.minimumProcessCount
+        return this.configuration.minimumProcessCount
     }
 
     override fun getMaximumOnlineProcessCount(): Int {
-        return this.maximumProcessCount
+        return this.configuration.maximumProcessCount
     }
 
     override fun isStatic(): Boolean {
-        return this.static
+        return this.configuration.static
     }
 
     override fun isStateUpdatingEnabled(): Boolean {
-        return this.stateUpdating
+        return this.configuration.stateUpdating
     }
 
     override fun getStartPriority(): Int {
-        return this.startPriority
+        return this.configuration.startPriority
     }
 
     override fun getNodeNamesAllowedToStartServicesOn(): List<String> {
-        return this.nodeNamesAllowedToStartOn
+        return this.configuration.nodeNamesAllowedToStartOn
     }
 
     override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>> {
-        return CloudAPI.instance.getNodeService().findNodesByName(*this.nodeNamesAllowedToStartOn.toTypedArray())
+        return this.nodeService.findNodesByName(*this.configuration.nodeNamesAllowedToStartOn.toTypedArray())
     }
 
     override fun getProcesses(): CompletableFuture<List<ICloudProcess>> {
-        return CloudAPI.instance.getProcessService().findProcessesByGroup(this)
+        return this.processService.findProcessesByGroup(this)
     }
 
     override fun getName(): String {
-        return this.name
+        return this.configuration.name
     }
 
     override fun getIdentifier(): String {

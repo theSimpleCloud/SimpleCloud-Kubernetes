@@ -26,9 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareGroupNamePredicate
 import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareUUIDPredicate
-import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.NetworkComponentCompareIgniteIdPredicate
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
@@ -44,17 +42,17 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class IgniteCloudProcessRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<ICloudProcess>(), ICloudProcessRepository {
+) : AbstractIgniteRepository<CloudProcessConfiguration>(), ICloudProcessRepository {
 
-    override fun getCache(): IgniteCache<String, ICloudProcess> {
+    override fun getCache(): IgniteCache<String, CloudProcessConfiguration> {
         return ignite.getOrCreateCache("cloud-processes")
     }
 
-    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
+    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
         return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))
     }
 
-    override fun findProcessesByGroupName(groupName: String): CompletableFuture<List<ICloudProcess>> {
+    override fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>> {
         return executeQuery(CloudProcessCompareGroupNamePredicate(groupName))
     }
 

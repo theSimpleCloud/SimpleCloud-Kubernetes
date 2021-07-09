@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.impl.service
 
 import eu.thesimplecloud.simplecloud.api.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.impl.node.Node
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteNodeRepository
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.service.INodeService
@@ -40,7 +41,8 @@ open class DefaultNodeService (
 ) : INodeService {
 
     override fun findNodeByName(name: String): CompletableFuture<INode> {
-        return igniteRepository.find(name)
+        val completableFuture = igniteRepository.find(name)
+        return completableFuture.thenApply { Node(it) }
     }
 
     override fun findNodesByName(vararg names: String): CompletableFuture<List<INode>> {
@@ -49,6 +51,7 @@ open class DefaultNodeService (
     }
 
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
-        return this.igniteRepository.findNodeByUniqueId(uniqueId)
+        val completableFuture = this.igniteRepository.findNodeByUniqueId(uniqueId)
+        return completableFuture.thenApply { Node(it) }
     }
 }

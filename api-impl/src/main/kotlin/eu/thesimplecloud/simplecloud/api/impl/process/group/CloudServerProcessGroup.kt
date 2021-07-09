@@ -24,10 +24,9 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group
 
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
-import eu.thesimplecloud.simplecloud.api.process.group.server.ICloudServerGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.request.group.update.CloudServerGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudServerGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudServerGroup
+import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,61 +34,29 @@ import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudServerGroupU
  * Time: 22:17
  * @author Frederick Baier
  */
-open class CloudServerProcessGroup(
-    name: String,
-    maxMemory: Int,
-    maxPlayers: Int,
-    maintenance: Boolean,
-    minimumProcessCount: Int,
-    maximumProcessCount: Int,
-    templateName: String,
-    jvmArgumentName: String?,
-    versionName: String,
-    onlineCountConfigurationName: String,
-    static: Boolean,
-    stateUpdating: Boolean,
-    startPriority: Int,
-    joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>
+class CloudServerProcessGroup constructor(
+    private val configuration: CloudServerProcessGroupConfiguration,
+    private val templateService: ITemplateService,
+    private val processVersionService: IProcessVersionService,
+    private val jvmArgumentsService: IJvmArgumentsService,
+    private val processOnlineCountService: IProcessOnlineCountService,
+    private val nodeService: INodeService,
+    private val processService: ICloudProcessService,
 ) : AbstractCloudProcessGroup(
-    name,
-    maxMemory,
-    maxPlayers,
-    maintenance,
-    minimumProcessCount,
-    maximumProcessCount,
-    templateName,
-    jvmArgumentName,
-    versionName,
-    onlineCountConfigurationName,
-    static,
-    stateUpdating,
-    startPriority,
-    joinPermission,
-    nodeNamesAllowedToStartOn
+    configuration,
+    templateService,
+    processVersionService,
+    jvmArgumentsService,
+    processOnlineCountService,
+    nodeService,
+    processService
 ), ICloudServerGroup {
 
     override fun getProcessGroupType(): ProcessGroupType {
         return ProcessGroupType.SERVER
     }
-    override fun toGroupConfiguration(): AbstractCloudProcessGroupConfiguration {
-        return CloudServerProcessGroupConfiguration(
-            this.getName(),
-            this.getMaxMemory(),
-            this.getMaxPlayers(),
-            this.isInMaintenance(),
-            this.getMinimumOnlineProcessCount(),
-            this.getMaximumOnlineProcessCount(),
-            this.getTemplateName(),
-            this.getJvmArgumentsName(),
-            this.getProcessVersionName(),
-            this.getProcessOnlineCountConfigurationName(),
-            this.isStatic(),
-            this.isStateUpdatingEnabled(),
-            this.getStartPriority(),
-            this.getJoinPermission(),
-            this.getNodeNamesAllowedToStartServicesOn()
-        )
+    override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
+        return this.configuration
     }
 
 

@@ -22,8 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.template
 
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,11 +43,16 @@ interface ITemplate : INameable, IIdentifiable<String> {
     /**
      * Returns the parent template or null if this template has no parent
      */
-    fun getParentTemplate(): ITemplate?
+    fun getParentTemplate(): CompletableFuture<ITemplate>
 
     /**
-     * Returns all [ITemplateInclusion]s for this template
+     * Returns whether this template has a parent
      */
-    fun getTemplateInclusions(): List<ITemplateInclusion>
+    fun hasParent(): Boolean
+
+    /**
+     * Returns the configuration of this template
+     */
+    fun toConfiguration(): TemplateConfiguration
 
 }

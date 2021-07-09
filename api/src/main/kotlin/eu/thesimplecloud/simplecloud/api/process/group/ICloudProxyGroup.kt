@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.group.proxy
+package eu.thesimplecloud.simplecloud.api.process.group
 
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest

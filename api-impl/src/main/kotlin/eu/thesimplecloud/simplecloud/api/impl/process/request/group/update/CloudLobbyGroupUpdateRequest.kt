@@ -22,17 +22,14 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
 
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyProcessGroup
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.lobby.ICloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import java.util.concurrent.CompletableFuture
 
@@ -45,7 +42,7 @@ import java.util.concurrent.CompletableFuture
 class CloudLobbyGroupUpdateRequest(
     private val internalService: IInternalCloudProcessGroupService,
     private val lobbyGroup: ICloudLobbyGroup
-) : CloudServerGroupUpdateRequest(internalService, lobbyGroup),
+) : AbstractCloudProcessGroupUpdateRequest(lobbyGroup),
     ICloudLobbyGroupUpdateRequest {
 
     @Volatile
@@ -152,8 +149,8 @@ class CloudLobbyGroupUpdateRequest(
         onlineCountConfiguration: IProcessesOnlineCountConfiguration,
         nodesAllowedToStartOn: List<String>
     ): CompletableFuture<ICloudProcessGroup> {
-        val lobbyGroup = CloudLobbyProcessGroup(
-            getProcessGroup().getName(),
+        val updateObj = CloudLobbyProcessGroupConfiguration(
+            this.lobbyGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
@@ -163,13 +160,13 @@ class CloudLobbyGroupUpdateRequest(
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
-            getProcessGroup().isStatic(),
+            this.lobbyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            nodesAllowedToStartOn,
-            this.lobbyPriority,
+            this.nodesAllowedToStartOn,
+            this.lobbyPriority
         )
-        return this.internalService.updateGroupInternal(lobbyGroup)
+        return this.internalService.updateGroupInternal(updateObj)
     }
 }

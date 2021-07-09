@@ -41,7 +41,6 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class ProcessGroupCreateRequest(
-    private val groupValidator: GroupConfigurationValidator,
     private val internalService: IInternalCloudProcessGroupService,
     private val configuration: AbstractCloudProcessGroupConfiguration
 ) : IProcessGroupCreateRequest {
@@ -50,7 +49,6 @@ class ProcessGroupCreateRequest(
         if (await(doesGroupExist(configuration.name))) {
             throw IllegalArgumentException("Group already exists")
         }
-        await(this.groupValidator.validate(configuration))
         return this.internalService.createGroupInternal(configuration)
 
     }

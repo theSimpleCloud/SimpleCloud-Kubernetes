@@ -20,23 +20,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.ignite.predicate
-
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
-import org.apache.ignite.lang.IgniteBiPredicate
-import java.util.*
+package eu.thesimplecloud.simplecloud.api.process.group
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 30.05.2021
- * Time: 13:13
+ * Date: 05.04.2021
+ * Time: 21:16
  * @author Frederick Baier
  */
-class NetworkComponentCompareIgniteIdPredicate<T : INetworkComponent>(
-    private val igniteId: UUID
-) : IgniteBiPredicate<String, T> {
+interface ICloudLobbyGroup : ICloudServerGroup {
 
-    override fun apply(uuid: String, networkComponent: T): Boolean {
-        return networkComponent.getIgniteId() == igniteId
-    }
+    fun getLobbyPriority(): Int
+
 }

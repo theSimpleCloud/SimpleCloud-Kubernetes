@@ -1,4 +1,4 @@
-package eu.thesimplecloud.simplecloud.api.process
+package eu.thesimplecloud.simplecloud.api.process.group
 
 /**
  * Created by IntelliJ IDEA.
