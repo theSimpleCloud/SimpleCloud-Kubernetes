@@ -20,19 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.request.process
+
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.utils.IRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 18.03.2021
+ * Time: 14:54
  * @author Frederick Baier
+ *
+ * Request to stop a process
+ *
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+interface IProcessShutdownRequest : IRequest<Void> {
 
-    private constructor() : this("", null)
+    /**
+     * Returns the process to be stopped
+     */
+    fun getProcess(): ICloudProcess
 
 }

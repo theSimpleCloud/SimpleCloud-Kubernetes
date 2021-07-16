@@ -20,18 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request.group.create
+package eu.thesimplecloud.simplecloud.api.impl.request.group
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.flatten
 import eu.thesimplecloud.simplecloud.api.future.isCompletedNormally
-import eu.thesimplecloud.simplecloud.api.internal.InternalCloudAPI
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.validation.GroupConfigurationValidator
-import eu.thesimplecloud.simplecloud.api.request.group.create.IProcessGroupCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupCreateRequest
 import java.util.concurrent.CompletableFuture
 
 /**

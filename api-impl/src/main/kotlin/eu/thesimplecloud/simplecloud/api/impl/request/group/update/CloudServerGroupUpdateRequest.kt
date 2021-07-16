@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
+package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService

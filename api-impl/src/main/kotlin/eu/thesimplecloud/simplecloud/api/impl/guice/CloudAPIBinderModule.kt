@@ -29,6 +29,8 @@ import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
+import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 import org.apache.ignite.Ignite
 
 /**
@@ -44,6 +46,7 @@ class CloudAPIBinderModule(
     override fun configure() {
         bind(Ignite::class.java).toInstance(igniteInstance)
         bind(IMessageChannelManager::class.java).to(MessageChannelManager::class.java)
+        bind(IValidatorService::class.java).to(ValidatorService::class.java)
 
         install(
             FactoryModuleBuilder()

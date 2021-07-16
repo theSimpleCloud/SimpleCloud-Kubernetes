@@ -6,11 +6,12 @@ package eu.thesimplecloud.simplecloud.api.internal.configutation
  * Time: 13:47
  * @author Frederick Baier
  */
-class ProcessStartConfiguration(
+data class ProcessStartConfiguration(
     val groupName: String,
     val processNumber: Int,
     val templateName: String,
-    val maxPlayers: Int,
     val maxMemory: Int,
+    val maxPlayers: Int,
+    val processVersionName: String,
     val jvmArgumentsName: String?
 )

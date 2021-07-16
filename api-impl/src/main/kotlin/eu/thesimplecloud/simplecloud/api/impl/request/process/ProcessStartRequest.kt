@@ -20,18 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request
+package eu.thesimplecloud.simplecloud.api.impl.request.process
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.flatten
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
-import kotlinx.coroutines.awaitAll
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -59,6 +58,9 @@ class ProcessStartRequest(
 
     @Volatile
     private var jvmArgumentsFuture: CompletableFuture<IJVMArguments> = this.processGroup.getJvmArguments()
+
+    @Volatile
+    private var versionFuture: CompletableFuture<IProcessVersion> = this.processGroup.getVersion()
 
     override fun getProcessGroup(): ICloudProcessGroup {
         return this.processGroup
@@ -100,18 +102,36 @@ class ProcessStartRequest(
         return this
     }
 
-    override fun submit(): CompletableFuture<ICloudProcess> {
-        val jvmArguments = await(this.jvmArgumentsFuture)
-        val template = await(this.templateFuture)
-        return startProcess(jvmArguments, template)
+    override fun setProcessVersion(version: IProcessVersion): IProcessStartRequest {
+        this.versionFuture = CompletableFuture.completedFuture(version)
+        return this
     }
 
-    private fun startProcess(arguments: IJVMArguments, template: ITemplate): CompletableFuture<ICloudProcess> {
+    override fun setProcessVersion(versionFuture: CompletableFuture<IProcessVersion>): IProcessStartRequest {
+        this.versionFuture = versionFuture
+        return this
+    }
+
+    override fun submit(): CompletableFuture<ICloudProcess> {
+        val jvmArguments = try {
+            await(this.jvmArgumentsFuture)
+        } catch (ex: Exception) {
+            null
+        }
+        val template = await(this.templateFuture)
+        val version = await(this.versionFuture)
+        return startProcess(jvmArguments, template, version)
+    }
+
+    private fun startProcess(arguments: IJVMArguments?, template: ITemplate, version: IProcessVersion): CompletableFuture<ICloudProcess> {
         val startConfiguration = ProcessStartConfiguration(
-            this.processGroup.getName(), this.processNumber,
-            template.getName(), this.maxPlayers,
+            this.processGroup.getName(),
+            this.processNumber,
+            template.getName(),
+            this.maxMemory,
             this.maxPlayers,
-            arguments.getName()
+            version.getName(),
+            arguments?.getName()
         )
         return this.internalService.startNewProcessInternal(startConfiguration)
     }

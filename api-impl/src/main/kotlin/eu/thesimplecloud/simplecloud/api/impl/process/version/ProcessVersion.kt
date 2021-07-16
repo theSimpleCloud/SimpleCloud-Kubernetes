@@ -52,4 +52,9 @@ class ProcessVersion(
     override fun getIdentifier(): String {
         return getName()
     }
+
+    override fun toConfiguration(): ProcessVersionConfiguration {
+        return this.configuration
+    }
+
 }

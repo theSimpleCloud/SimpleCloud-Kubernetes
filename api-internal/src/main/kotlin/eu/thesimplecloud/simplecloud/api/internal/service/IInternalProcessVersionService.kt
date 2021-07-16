@@ -20,25 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.request
+package eu.thesimplecloud.simplecloud.api.internal.service
 
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.utils.IRequest
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 18.03.2021
- * Time: 14:54
+ * Date: 12/07/2021
+ * Time: 10:11
  * @author Frederick Baier
- *
- * Request to stop a process
- *
  */
-interface IProcessStopRequest : IRequest<Void> {
+interface IInternalProcessVersionService : IProcessVersionService {
 
-    /**
-     * Returns the process to be stopped
-     */
-    fun getProcess(): ICloudProcess
+    fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion>
+
+    fun deleteProcessVersionInternal(processVersion: IProcessVersion)
 
 }

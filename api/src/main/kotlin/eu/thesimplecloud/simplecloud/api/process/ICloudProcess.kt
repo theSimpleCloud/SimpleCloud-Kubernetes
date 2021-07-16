@@ -29,6 +29,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
@@ -132,6 +133,9 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      */
     fun toConfiguration(): CloudProcessConfiguration
 
-
+    /**
+     * Creates a request to stop this service
+     */
+    fun createShutdownRequest(): IProcessShutdownRequest
 
 }

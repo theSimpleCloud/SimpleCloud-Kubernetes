@@ -20,19 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.validator
+
+import com.ea.async.Async.await
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 12/07/2021
+ * Time: 12:34
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+class TemplateValidator @Inject constructor(
+    private val templateService: ITemplateService
+) : IValidator<TemplateConfiguration> {
 
-    private constructor() : this("", null)
+    override fun validate(value: TemplateConfiguration): CompletableFuture<Void> {
+        val parentTemplateName = value.parentTemplateName ?: return voidFuture()
+        await(this.templateService.findByName(parentTemplateName))
+        return voidFuture()
+    }
+
 
 }

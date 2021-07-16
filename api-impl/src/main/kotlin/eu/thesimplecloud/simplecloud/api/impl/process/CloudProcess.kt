@@ -34,6 +34,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import java.util.*
@@ -47,6 +48,7 @@ import java.util.concurrent.CompletableFuture
  */
 class CloudProcess @Inject constructor(
     @Assisted private val configuration: CloudProcessConfiguration,
+    private val processService: ICloudProcessService,
     private val processGroupService: ICloudProcessGroupService,
     private val processVersionService: IProcessVersionService,
     private val templateService: ITemplateService,
@@ -138,6 +140,10 @@ class CloudProcess @Inject constructor(
 
     override fun getIgniteId(): UUID {
         return this.configuration.igniteId ?: throw NullPointerException("Ignite id not set")
+    }
+
+    override fun createShutdownRequest(): IProcessShutdownRequest {
+        return this.processService.createProcessShutdownRequest(this)
     }
 
 }

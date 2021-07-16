@@ -1,5 +1,6 @@
 package eu.thesimplecloud.simplecloud.api.repository
 
+import eu.thesimplecloud.simplecloud.api.future.isCompletedNormally
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import java.util.concurrent.CompletableFuture
 
@@ -33,5 +34,13 @@ interface IRepository<I : Any, T : Any> {
      * Removes the value found by the specified [identifier]
      */
     fun remove(identifier: I)
+
+    /**
+     * Checks whether the specified [identifier] exists
+     */
+    fun doesExist(identifier: I): CompletableFuture<Boolean> {
+        val future = find(identifier)
+        return future.handle { _, _ -> future.isCompletedNormally }
+    }
 
 }

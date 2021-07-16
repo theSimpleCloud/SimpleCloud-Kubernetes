@@ -20,29 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request
+package eu.thesimplecloud.simplecloud.api.request.template
 
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.request.IProcessStopRequest
-import java.util.concurrent.CompletableFuture
+import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.utils.IRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07.04.2021
- * Time: 09:38
+ * Date: 12/07/2021
+ * Time: 10:09
  * @author Frederick Baier
  */
-class ProcessStopRequest(
-    private val internalService: IInternalCloudProcessService,
-    private val process: ICloudProcess
-) : IProcessStopRequest {
-
-    override fun getProcess(): ICloudProcess {
-        return this.process
-    }
-
-    override fun submit(): CompletableFuture<Void> {
-        return this.internalService.shutdownProcessInternal(this.process)
-    }
-}
+interface ITemplateCreateRequest : IRequest<ITemplate>

@@ -20,19 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.internal.service
+
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 12/07/2021
+ * Time: 10:11
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+interface IInternalJvmArgumentsService : IJvmArgumentsService {
 
-    private constructor() : this("", null)
+    fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments>
+
+    fun deleteJvmArgsInternal(jvmArgs: IJVMArguments)
 
 }

@@ -20,19 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.request.jvmargs
+
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.utils.IRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 15/07/2021
+ * Time: 13:34
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+interface IJvmArgumentDeleteRequest : IRequest<Void> {
 
-    private constructor() : this("", null)
+    /**
+     * Returns the [IJVMArguments] to be deleted
+     */
+    fun getJvmArguments(): IJVMArguments
 
 }

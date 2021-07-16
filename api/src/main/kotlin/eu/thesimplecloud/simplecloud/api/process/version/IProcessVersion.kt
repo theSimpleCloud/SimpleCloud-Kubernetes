@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.process.version
 
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.net.URL
@@ -46,5 +47,10 @@ interface IProcessVersion : INameable, IIdentifiable<String> {
      * Returns the direct download link to a jar file
      */
     fun getDownloadLink(): String
+
+    /**
+     * Returns the configuration of this process version
+     */
+    fun toConfiguration(): ProcessVersionConfiguration
 
 }

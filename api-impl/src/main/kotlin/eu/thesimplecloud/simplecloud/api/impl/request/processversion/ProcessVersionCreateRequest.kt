@@ -20,19 +20,31 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.impl.request.processversion
+
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.isCompletedNormally
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 12/07/2021
+ * Time: 10:10
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+class ProcessVersionCreateRequest(
+    private val internalService: IInternalProcessVersionService,
+    private val configuration: ProcessVersionConfiguration
+) : IProcessVersionCreateRequest {
 
-    private constructor() : this("", null)
-
+    override fun submit(): CompletableFuture<IProcessVersion> {
+        if (await(this.internalService.doesExist(configuration.name))) {
+            throw IllegalArgumentException("ProcessVersion does already exist")
+        }
+        return this.internalService.createProcessVersionInternal(this.configuration)
+    }
 }

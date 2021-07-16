@@ -20,19 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.impl.request.group
+
+import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 05.04.2021
+ * Time: 21:43
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+class ProcessGroupDeleteRequest(
+    private val internalService: IInternalCloudProcessGroupService,
+    private val processGroup: ICloudProcessGroup
+) : IProcessGroupDeleteRequest {
+    override fun getProcessGroup(): ICloudProcessGroup {
+        return this.processGroup
+    }
 
-    private constructor() : this("", null)
-
+    override fun submit(): CompletableFuture<Void> {
+        this.internalService.deleteGroupInternal(this.processGroup)
+        return voidFuture()
+    }
 }

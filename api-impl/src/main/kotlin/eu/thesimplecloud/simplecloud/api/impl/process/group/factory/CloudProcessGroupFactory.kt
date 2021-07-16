@@ -30,7 +30,7 @@ import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyProcessGro
 import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.validation.GroupConfigurationValidator
+import eu.thesimplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import eu.thesimplecloud.simplecloud.api.service.*
 
 /**

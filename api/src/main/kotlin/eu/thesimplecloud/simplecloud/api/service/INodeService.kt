@@ -46,6 +46,11 @@ interface INodeService : IService {
     fun findNodesByName(vararg names: String): CompletableFuture<List<INode>>
 
     /**
+     * Returns all nodes found
+     */
+    fun findAll(): CompletableFuture<List<INode>>
+
+    /**
      * Returns the node found by the specified [uniqueId]
      */
     fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode>

@@ -20,19 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.request.processgroup
+
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.utils.IRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 15/07/2021
+ * Time: 13:34
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+interface IProcessVersionDeleteRequest : IRequest<Void> {
 
-    private constructor() : this("", null)
+    /**
+     * Returns the [IProcessVersion] to be deleted
+     */
+    fun getProcessVersion(): IProcessVersion
 
 }

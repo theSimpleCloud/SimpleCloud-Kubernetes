@@ -30,8 +30,12 @@ import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
  * Time: 11:10
  * @author Frederick Baier
  */
-data class ProcessVersionConfiguration(
+class ProcessVersionConfiguration(
     val name: String,
     val apiType: ProcessAPIType,
     val downloadLink: String
-)
+) {
+
+    private constructor() : this("", ProcessAPIType.SPIGOT, "")
+
+}

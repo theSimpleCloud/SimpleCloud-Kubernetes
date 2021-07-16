@@ -28,7 +28,11 @@ package eu.thesimplecloud.simplecloud.api.jvmargs.configuration
  * Time: 11:02
  * @author Frederick Baier
  */
-data class JvmArgumentConfiguration(
+class JvmArgumentConfiguration(
     val name: String,
     val arguments: List<String>
-)
+) {
+
+    private constructor(): this("", emptyList())
+
+}

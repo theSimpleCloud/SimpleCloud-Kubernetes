@@ -50,6 +50,11 @@ open class DefaultNodeService (
         return futures.toFutureList()
     }
 
+    override fun findAll(): CompletableFuture<List<INode>> {
+        val completableFuture = this.igniteRepository.findAll()
+        return completableFuture.thenApply { list -> list.map { Node(it) } }
+    }
+
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
         val completableFuture = this.igniteRepository.findNodeByUniqueId(uniqueId)
         return completableFuture.thenApply { Node(it) }

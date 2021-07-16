@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.group.configuration.validation
+package eu.thesimplecloud.simplecloud.api.validator
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -45,14 +45,14 @@ class GroupConfigurationValidator @Inject constructor(
     private val onlineCountService: IProcessOnlineCountService,
     private val templateService: ITemplateService,
     private val versionService: IProcessVersionService,
-) {
+) : IValidator<AbstractCloudProcessGroupConfiguration> {
 
-    fun validate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
+    override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
         return CompletableFuture.supplyAsync {
-            checkJvmArguments(configuration)
-            checkProcessOnlineCountConfiguration(configuration)
-            checkTemplate(configuration)
-            checkVersion(configuration)
+            checkJvmArguments(value)
+            checkProcessOnlineCountConfiguration(value)
+            checkTemplate(value)
+            checkVersion(value)
             return@supplyAsync null
         }
     }

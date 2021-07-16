@@ -20,19 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.impl.request.process
+
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 07.04.2021
+ * Time: 09:38
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+class ProcessShutdownRequest(
+    private val internalService: IInternalCloudProcessService,
+    private val process: ICloudProcess
+) : IProcessShutdownRequest {
 
-    private constructor() : this("", null)
+    override fun getProcess(): ICloudProcess {
+        return this.process
+    }
 
+    override fun submit(): CompletableFuture<Void> {
+        return this.internalService.shutdownProcessInternal(this.process)
+    }
 }

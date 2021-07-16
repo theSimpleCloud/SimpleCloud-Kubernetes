@@ -20,14 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
+package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nullable
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration

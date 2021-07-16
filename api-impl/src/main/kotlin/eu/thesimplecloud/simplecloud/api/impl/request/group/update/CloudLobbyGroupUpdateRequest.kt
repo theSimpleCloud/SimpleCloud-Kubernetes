@@ -20,14 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.process.request.group.update
+package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
@@ -39,105 +39,105 @@ import java.util.concurrent.CompletableFuture
  * Time: 10:03
  * @author Frederick Baier
  */
-class CloudProxyGroupUpdateRequest(
+class CloudLobbyGroupUpdateRequest(
     private val internalService: IInternalCloudProcessGroupService,
-    private val proxyGroup: ICloudProxyGroup
-) : AbstractCloudProcessGroupUpdateRequest(proxyGroup),
-    ICloudProxyGroupUpdateRequest {
+    private val lobbyGroup: ICloudLobbyGroup
+) : AbstractCloudProcessGroupUpdateRequest(lobbyGroup),
+    ICloudLobbyGroupUpdateRequest {
 
     @Volatile
-    private var startPort = this.proxyGroup.getStartPort()
+    private var lobbyPriority = this.lobbyGroup.getLobbyPriority()
 
-    override fun setStartPort(startPort: Int): ICloudProxyGroupUpdateRequest {
-        this.startPort = startPort
+    override fun setLobbyPriority(lobbyPriority: Int): ICloudLobbyGroupUpdateRequest {
+        this.lobbyPriority = lobbyPriority
         return this
     }
 
-    override fun getProcessGroup(): ICloudProxyGroup {
-        return this.proxyGroup
+    override fun getProcessGroup(): ICloudLobbyGroup {
+        return this.lobbyGroup
     }
 
-    override fun setMaxMemory(memory: Int): ICloudProxyGroupUpdateRequest {
+    override fun setMaxMemory(memory: Int): ICloudLobbyGroupUpdateRequest {
         super.setMaxMemory(memory)
         return this
     }
 
-    override fun setMaxPlayers(players: Int): ICloudProxyGroupUpdateRequest {
+    override fun setMaxPlayers(players: Int): ICloudLobbyGroupUpdateRequest {
         super.setMaxPlayers(players)
         return this
     }
 
-    override fun setVersion(version: IProcessVersion): ICloudProxyGroupUpdateRequest {
+    override fun setVersion(version: IProcessVersion): ICloudLobbyGroupUpdateRequest {
         super.setVersion(version)
         return this
     }
 
-    override fun setVersion(versionFuture: CompletableFuture<IProcessVersion>): ICloudProxyGroupUpdateRequest {
+    override fun setVersion(versionFuture: CompletableFuture<IProcessVersion>): ICloudLobbyGroupUpdateRequest {
         super.setVersion(versionFuture)
         return this
     }
 
-    override fun setTemplate(template: ITemplate): ICloudProxyGroupUpdateRequest {
+    override fun setTemplate(template: ITemplate): ICloudLobbyGroupUpdateRequest {
         super.setTemplate(template)
         return this
     }
 
-    override fun setTemplate(templateFuture: CompletableFuture<ITemplate>): ICloudProxyGroupUpdateRequest {
+    override fun setTemplate(templateFuture: CompletableFuture<ITemplate>): ICloudLobbyGroupUpdateRequest {
         super.setTemplate(templateFuture)
         return this
     }
 
-    override fun setJvmArguments(jvmArguments: IJVMArguments?): ICloudProxyGroupUpdateRequest {
+    override fun setJvmArguments(jvmArguments: IJVMArguments?): ICloudLobbyGroupUpdateRequest {
         super.setJvmArguments(jvmArguments)
         return this
     }
 
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<IJVMArguments>): ICloudProxyGroupUpdateRequest {
+    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<IJVMArguments>): ICloudLobbyGroupUpdateRequest {
         super.setJvmArguments(jvmArgumentsFuture)
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: IProcessesOnlineCountConfiguration): ICloudProxyGroupUpdateRequest {
+    override fun setOnlineCountConfiguration(onlineCountConfiguration: IProcessesOnlineCountConfiguration): ICloudLobbyGroupUpdateRequest {
         super.setOnlineCountConfiguration(onlineCountConfiguration)
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration>): ICloudProxyGroupUpdateRequest {
+    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration>): ICloudLobbyGroupUpdateRequest {
         super.setOnlineCountConfiguration(onlineCountConfigurationFuture)
         return this
     }
 
-    override fun setMaintenance(maintenance: Boolean): ICloudProxyGroupUpdateRequest {
+    override fun setMaintenance(maintenance: Boolean): ICloudLobbyGroupUpdateRequest {
         super.setMaintenance(maintenance)
         return this
     }
 
-    override fun setMinimumOnlineProcessCount(minCount: Int): ICloudProxyGroupUpdateRequest {
+    override fun setMinimumOnlineProcessCount(minCount: Int): ICloudLobbyGroupUpdateRequest {
         super.setMinimumOnlineProcessCount(minCount)
         return this
     }
 
-    override fun setMaximumOnlineProcessCount(maxCount: Int): ICloudProxyGroupUpdateRequest {
+    override fun setMaximumOnlineProcessCount(maxCount: Int): ICloudLobbyGroupUpdateRequest {
         super.setMaximumOnlineProcessCount(maxCount)
         return this
     }
 
-    override fun setJoinPermission(permission: String?): ICloudProxyGroupUpdateRequest {
+    override fun setJoinPermission(permission: String?): ICloudLobbyGroupUpdateRequest {
         super.setJoinPermission(permission)
         return this
     }
 
-    override fun setStateUpdating(stateUpdating: Boolean): ICloudProxyGroupUpdateRequest {
+    override fun setStateUpdating(stateUpdating: Boolean): ICloudLobbyGroupUpdateRequest {
         super.setStateUpdating(stateUpdating)
         return this
     }
 
-    override fun setStartPriority(priority: Int): ICloudProxyGroupUpdateRequest {
+    override fun setStartPriority(priority: Int): ICloudLobbyGroupUpdateRequest {
         super.setStartPriority(priority)
         return this
     }
 
-    override fun setNodesAllowedToStartOn(nodes: List<String>): ICloudProxyGroupUpdateRequest {
+    override fun setNodesAllowedToStartOn(nodes: List<String>): ICloudLobbyGroupUpdateRequest {
         super.setNodesAllowedToStartOn(nodes)
         return this
     }
@@ -149,8 +149,8 @@ class CloudProxyGroupUpdateRequest(
         onlineCountConfiguration: IProcessesOnlineCountConfiguration,
         nodesAllowedToStartOn: List<String>
     ): CompletableFuture<ICloudProcessGroup> {
-        val updateObj = CloudProxyProcessGroupConfiguration(
-            this.proxyGroup.getName(),
+        val updateObj = CloudLobbyProcessGroupConfiguration(
+            this.lobbyGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
@@ -160,12 +160,12 @@ class CloudProxyGroupUpdateRequest(
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
-            this.proxyGroup.isStatic(),
+            this.lobbyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
             this.nodesAllowedToStartOn,
-            this.startPort
+            this.lobbyPriority
         )
         return this.internalService.updateGroupInternal(updateObj)
     }

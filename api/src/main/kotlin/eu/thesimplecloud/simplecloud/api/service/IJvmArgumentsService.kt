@@ -23,6 +23,9 @@
 package eu.thesimplecloud.simplecloud.api.service
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
 import eu.thesimplecloud.simplecloud.api.service.IService
 import java.util.concurrent.CompletableFuture
 
@@ -35,5 +38,13 @@ import java.util.concurrent.CompletableFuture
 interface IJvmArgumentsService : IService {
 
     fun findByName(name: String): CompletableFuture<IJVMArguments>
+
+    fun findAll(): CompletableFuture<List<IJVMArguments>>
+
+    fun doesExist(name: String): CompletableFuture<Boolean>
+
+    fun createJvmArgumentsCreateRequest(configuration: JvmArgumentConfiguration): IJvmArgumentCreateRequest
+
+    fun createJvmArgumentsDeleteRequest(jvmArgs: IJVMArguments): IJvmArgumentDeleteRequest
 
 }

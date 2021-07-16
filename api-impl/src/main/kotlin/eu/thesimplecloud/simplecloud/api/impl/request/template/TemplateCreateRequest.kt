@@ -20,31 +20,36 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.service
+package eu.thesimplecloud.simplecloud.api.impl.request.template
 
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.isCompletedNormally
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService
+import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
+import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 02.04.2021
- * Time: 12:28
+ * Date: 12/07/2021
+ * Time: 10:10
  * @author Frederick Baier
  */
-interface ICloudProcessGroupService : IService {
+class TemplateCreateRequest(
+    private val templateService: IInternalTemplateService,
+    private val configuration: TemplateConfiguration
+) : ITemplateCreateRequest {
 
-    fun findByName(name: String): CompletableFuture<ICloudProcessGroup>
+    override fun submit(): CompletableFuture<ITemplate> {
+        if (await(doesTemplateExist(configuration.name))) {
+            throw IllegalArgumentException("Template does already exist")
+        }
+        return this.templateService.createTemplateInternal(this.configuration)
+    }
 
-    fun findAll(): CompletableFuture<List<ICloudProcessGroup>>
-
-    fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): IProcessGroupCreateRequest
-
-    fun createGroupDeleteRequest(group: ICloudProcessGroup): IProcessGroupDeleteRequest
-
-    fun createGroupUpdateRequest(group: ICloudProcessGroup): ICloudProcessGroupUpdateRequest
-
+    private fun doesTemplateExist(name: String): CompletableFuture<Boolean> {
+        val completableFuture = this.templateService.findByName(name)
+        return completableFuture.handle { _, _ -> completableFuture.isCompletedNormally }
+    }
 }

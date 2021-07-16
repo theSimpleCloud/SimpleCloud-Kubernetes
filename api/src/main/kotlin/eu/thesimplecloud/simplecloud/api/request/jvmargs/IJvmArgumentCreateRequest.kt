@@ -20,27 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.future
+package eu.thesimplecloud.simplecloud.api.request.jvmargs
 
-import eu.thesimplecloud.simplecloud.api.impl.future.exception.CompletedWithNullException
-import java.util.concurrent.CompletableFuture
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.utils.IRequest
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 29.03.2021
- * Time: 23:53
+ * Date: 15/07/2021
+ * Time: 13:34
  * @author Frederick Baier
  */
-
-fun main() {
-    val future = CompletableFuture.completedFuture<Int>(null)
-    println(future.get() ?: "null")
-    val future2 = future.thenApply { it ?: throw CompletedWithNullException() }
-    future2.handle { int, throwable ->
-        println("handle")
-        println(int ?: "int was null")
-        println(throwable::class.java)
-    }
-    future.thenAccept { println(it ?: "null22") }
-    future.nonNull()
-}
+interface IJvmArgumentCreateRequest : IRequest<IJVMArguments>

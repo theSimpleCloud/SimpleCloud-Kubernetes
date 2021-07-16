@@ -20,19 +20,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.validator
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 12/07/2021
+ * Time: 13:40
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+interface IValidatorService {
 
-    private constructor() : this("", null)
+    fun <T> getValidator(clazz: Class<T>): IValidator<T>
 
 }

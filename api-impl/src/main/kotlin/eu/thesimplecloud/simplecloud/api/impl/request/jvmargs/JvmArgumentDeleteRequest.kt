@@ -20,19 +20,36 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.impl.request.jvmargs
+
+import com.ea.async.Async
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
+ * Date: 15/07/2021
+ * Time: 13:35
  * @author Frederick Baier
  */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+class JvmArgumentDeleteRequest(
+    private val internalService: IInternalJvmArgumentsService,
+    private val jvmArguments: IJVMArguments
+) : IJvmArgumentDeleteRequest {
 
-    private constructor() : this("", null)
+    override fun getJvmArguments(): IJVMArguments {
+        return this.jvmArguments
+    }
 
+    override fun submit(): CompletableFuture<Void> {
+        await(this.internalService.findByName(this.jvmArguments.getName()))
+        this.internalService.deleteJvmArgsInternal(this.jvmArguments)
+        return voidFuture()
+    }
 }

@@ -24,8 +24,8 @@ package eu.thesimplecloud.simplecloud.api.service
 
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.IProcessStartRequest
-import eu.thesimplecloud.simplecloud.api.service.IService
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -66,5 +66,15 @@ interface ICloudProcessService : IService {
      * Creates a request to start a process
      */
     fun createProcessStartRequest(group: ICloudProcessGroup): IProcessStartRequest
+
+    /**
+     * Creates a request to stop a service
+     */
+    fun createProcessShutdownRequest(group: ICloudProcess): IProcessShutdownRequest
+
+    /**
+     * Returns all registered processes
+     */
+    fun findAll(): CompletableFuture<List<ICloudProcess>>
 
 }

@@ -20,32 +20,39 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.service
+package eu.thesimplecloud.simplecloud.api.impl.request.processversion
 
+import com.ea.async.Async
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
-import eu.thesimplecloud.simplecloud.api.service.IService
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 02.04.2021
- * Time: 19:32
+ * Date: 15/07/2021
+ * Time: 13:35
  * @author Frederick Baier
  */
-interface IProcessVersionService : IService {
+class ProcessVersionDeleteRequest(
+    private val internalService: IInternalProcessVersionService,
+    private val processVersion: IProcessVersion
+) : IProcessVersionDeleteRequest {
 
-    fun findAll(): CompletableFuture<List<IProcessVersion>>
+    override fun getProcessVersion(): IProcessVersion {
+        return this.processVersion
+    }
 
-    fun findByName(name: String): CompletableFuture<IProcessVersion>
-
-    fun doesExist(name: String): CompletableFuture<Boolean>
-
-    fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): IProcessVersionCreateRequest
-
-    fun createProcessVersionDeleteRequest(processVersion: IProcessVersion): IProcessVersionDeleteRequest
-
+    override fun submit(): CompletableFuture<Void> {
+        await(this.internalService.findByName(this.processVersion.getName()))
+        this.internalService.deleteProcessVersionInternal(this.processVersion)
+        return voidFuture()
+    }
 }

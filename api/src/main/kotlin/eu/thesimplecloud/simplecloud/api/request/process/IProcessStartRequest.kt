@@ -20,11 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.request
+package eu.thesimplecloud.simplecloud.api.request.process
 
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.utils.IRequest
 import java.util.concurrent.CompletableFuture
@@ -58,6 +59,13 @@ interface IProcessStartRequest : IRequest<ICloudProcess> {
     fun setMaxMemory(memory: Int): IProcessStartRequest
 
     /**
+     * Sets the number of the new process
+     * e.g: Lobby-2 -> 2 is the procoess number
+     * @return this
+     */
+    fun setProcessNumber(number: Int): IProcessStartRequest
+
+    /**
      * Sets the template for the new process
      * @return this
      */
@@ -70,13 +78,6 @@ interface IProcessStartRequest : IRequest<ICloudProcess> {
     fun setTemplate(templateFuture: CompletableFuture<ITemplate>): IProcessStartRequest
 
     /**
-     * Sets the number of the new process
-     * e.g: Lobby-2 -> 2 is the procoess number
-     * @return this
-     */
-    fun setProcessNumber(number: Int): IProcessStartRequest
-
-    /**
      * Sets the jvm arguments for the process to start with
      * @return this
      */
@@ -87,5 +88,17 @@ interface IProcessStartRequest : IRequest<ICloudProcess> {
      * @return this
      */
     fun setJvmArguments(argumentsFuture: CompletableFuture<IJVMArguments>): IProcessStartRequest
+
+    /**
+     * Sets the jvm arguments for the process to start with
+     * @return this
+     */
+    fun setProcessVersion(version: IProcessVersion): IProcessStartRequest
+
+    /**
+     * Sets the jvm arguments for the process to start with
+     * @return this
+     */
+    fun setProcessVersion(versionFuture: CompletableFuture<IProcessVersion>): IProcessStartRequest
 
 }
