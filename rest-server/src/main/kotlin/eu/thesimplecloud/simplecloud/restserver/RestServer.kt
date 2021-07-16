@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.restserver
 
+import com.ea.async.Async
 import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
@@ -38,9 +39,7 @@ import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOut
 import eu.thesimplecloud.simplecloud.restserver.annotation.introspector.AnnotationExcludeIntrospector
 import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
-import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.LoginController
-import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessGroupController
-import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.UserController
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
 import eu.thesimplecloud.simplecloud.restserver.request.WebRequestHandler
 import eu.thesimplecloud.simplecloud.restserver.service.AuthService
@@ -123,52 +122,4 @@ class RestServer @Inject constructor(
 
     }
 
-}
-
-
-
-fun main() {
-    val injector = Guice.createInjector(RestBinderModule())
-    println(File(".").absolutePath)
-    injector.getInstance(RestServer::class.java)
-    injector.getInstance(ControllerHandler::class.java).registerController(TestController::class.java)
-    injector.getInstance(ControllerHandler::class.java).registerController(UserController::class.java)
-    injector.getInstance(ControllerHandler::class.java).registerController(LoginController::class.java)
-    injector.getInstance(ControllerHandler::class.java).registerController(ProcessGroupController::class.java)
-    /*
-    embeddedServer(Netty, port = 8000) {
-        install(Authentication) {
-            jwt {
-                verifier(
-                    JwtConfig.verifier
-                )
-                validate { credential ->
-                    //if (credential.payload.issuer.contains("ktor.io")) {
-                    JWTPrincipal(credential.payload)
-                    //} else {
-                    //    null
-
-
-                }
-            }
-        }
-
-        routing {
-
-
-            authenticate {
-                get("/users") {
-                    println(call.principal<JWTPrincipal>()!!.getClaim("id", String::class))
-                    call.respondText("hallo123")
-                }
-
-            }
-            post("/login") {
-                call.respondText("Request uri: ${JwtConfig.makeToken("1")}")
-            }
-
-        }
-    }.start(wait = true)
-
-     */
 }

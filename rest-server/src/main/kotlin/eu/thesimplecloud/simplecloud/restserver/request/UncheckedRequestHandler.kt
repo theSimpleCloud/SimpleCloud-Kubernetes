@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.restserver.request
 
+import com.fasterxml.jackson.databind.JsonNode
+import com.fasterxml.jackson.databind.node.ObjectNode
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestBody
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestPathParam
@@ -30,6 +32,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
 import io.ktor.request.*
+import java.lang.reflect.Parameter
 import java.security.InvalidParameterException
 
 class UncheckedRequestHandler(
@@ -37,6 +40,8 @@ class UncheckedRequestHandler(
     private val call: ApplicationCall,
     private val user: User
 ) {
+
+    private var bodyAsText: String? = null
 
     suspend fun handleRequest(): Any? {
         val parameterValues = mapParameters()
@@ -58,7 +63,7 @@ class UncheckedRequestHandler(
         val annotation = parameter.annotation!!
         return when (annotation) {
             is RequestingUser -> this.user
-            is RequestBody -> RestServer.mapperExcludeIncoming.readValue(this.call.receiveText(), parameter.parameterType)
+            is RequestBody -> getRequestBody(parameter, annotation)
             is RequestPathParam -> {
                 this.call.parameters[annotation.parameterName]
             }
@@ -66,10 +71,61 @@ class UncheckedRequestHandler(
         }
     }
 
+    private suspend fun getRequestBody(
+        parameter: MethodRoute.MethodRouteParameter,
+        requestBodyAnnotation: RequestBody
+    ): Any? {
+        if (requestBodyAnnotation.types.isEmpty()) {
+            return parseBodyToClass(parameter.parameterType)
+        }
+        return getTypedRequestBody(requestBodyAnnotation)
+    }
+
+    private suspend fun getTypedRequestBody(requestBodyAnnotation: RequestBody): Any? {
+        val typeInBody = getTypeInBody()
+        validateTypeInBody(typeInBody, requestBodyAnnotation.types)
+        return getRequestBodyFromType(typeInBody, requestBodyAnnotation)
+    }
+
+    private suspend fun getRequestBodyFromType(
+        typeInBody: String?,
+        requestBodyAnnotation: RequestBody
+    ): Any? {
+        val index = requestBodyAnnotation.types.indexOf(typeInBody)
+        val classToParseTo = requestBodyAnnotation.classes[index]
+        return parseBodyToClass(classToParseTo.java)
+    }
+
+    private suspend fun <T : Any> parseBodyToClass(clazz: Class<T>): T? {
+        return RestServer.mapperExcludeIncoming.readValue(getBodyAsText(), clazz)
+    }
+
+    private suspend fun getTypeInBody(): String? {
+        val jsonBody = getBodyAsJsonNode()
+        return jsonBody.get("type")?.asText()
+    }
+
+    private fun validateTypeInBody(typeInBody: String?, validTypes: Array<String>) {
+        if (typeInBody == null || typeInBody !in validTypes)
+            throw IllegalStateException("Invalid type")
+    }
+
+    private suspend fun getBodyAsJsonNode(): JsonNode {
+        return RestServer.mapperExcludeIncoming.readValue(getBodyAsText(), JsonNode::class.java)
+    }
+
     private fun checkAnnotationIsPresent(parameter: MethodRoute.MethodRouteParameter) {
         if (parameter.annotation == null) {
             throw InvalidParameterException(parameter.parameterType::class.java.name)
         }
+    }
+
+    private suspend fun getBodyAsText(): String {
+        val bodyAsText = this.bodyAsText
+        if (bodyAsText == null) {
+            this.bodyAsText = this.call.receiveText()
+        }
+        return this.bodyAsText!!
     }
 
 

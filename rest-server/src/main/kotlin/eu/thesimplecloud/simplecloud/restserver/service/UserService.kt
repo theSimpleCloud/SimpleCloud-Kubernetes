@@ -22,8 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.restserver.service
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.impl.future.getOrThrowRealExceptionOnFailure
 import eu.thesimplecloud.simplecloud.restserver.exception.ElementAlreadyExistException
 import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
@@ -39,18 +39,18 @@ class UserService @Inject constructor(
 ) : IUserService {
 
     override fun getUserByName(name: String): User {
-        return this.repository.find(name).getOrThrowRealExceptionOnFailure()
+        return await(this.repository.find(name))
     }
 
     override fun getAllUsers(): List<User> {
-        return this.repository.findAll().getOrThrowRealExceptionOnFailure()
+        return await(this.repository.findAll())
     }
 
     override fun createUser(user: User) {
         if (doesUserExist(user.username)) {
             throw ElementAlreadyExistException("User does already exist")
         }
-        this.repository.put(user)
+        this.repository.save(user.getIdentifier(), user)
     }
 
     override fun doesUserExist(username: String): Boolean {

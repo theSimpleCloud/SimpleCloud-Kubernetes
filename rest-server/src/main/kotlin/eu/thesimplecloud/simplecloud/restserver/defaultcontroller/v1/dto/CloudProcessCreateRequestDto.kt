@@ -20,23 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.request
+package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 24.06.2021
- * Time: 15:23
+ * Date: 10/07/2021
+ * Time: 13:37
  * @author Frederick Baier
  */
-data class ErrorResponseDto(
-    val errorClass: String,
-    val error: String
+class CloudProcessCreateRequestDto(
+    val groupName: String,
+    val maxMemory: Int? = null,
+    val maxPlayers: Int? = null,
+    val versionName: String? = null,
+    val templateName: String? = null,
+    val jvmArgumentsName: String? = null,
 ) {
 
-    companion object {
-        fun fromException(ex: Throwable): ErrorResponseDto {
-            return ErrorResponseDto(ex::class.java.name, ex.message ?: "")
-        }
-    }
+    private constructor(): this("")
 
 }

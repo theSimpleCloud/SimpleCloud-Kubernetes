@@ -20,24 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.service
+package eu.thesimplecloud.simplecloud.restserver.service
 
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteProcessOnlineCountRepository
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 19.06.2021
- * Time: 13:48
+ * Date: 04/07/2021
+ * Time: 15:22
  * @author Frederick Baier
  */
-open class DefaultProcessOnlineCountService(
-    protected val igniteRepository: IgniteProcessOnlineCountRepository
-) : IProcessOnlineCountService {
+@Singleton
+class TestProcessesOnlineCountConfiguration(
+    private val name: String
+) : IProcessesOnlineCountConfiguration {
 
-    override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
-        return this.igniteRepository.find(name)
+    override fun calculateOnlineCount(group: ICloudProcessGroup): Int {
+        TODO("Not yet implemented")
+    }
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun getIdentifier(): String {
+        return getName()
     }
 }

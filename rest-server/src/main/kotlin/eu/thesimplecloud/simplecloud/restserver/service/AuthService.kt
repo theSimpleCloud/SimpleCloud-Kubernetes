@@ -22,9 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.restserver.service
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.future.getOrThrowRealExceptionOnFailure
 import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
 import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
@@ -61,7 +61,7 @@ class AuthService @Inject constructor(
     }
 
     private fun findUserByUserName(username: String): User {
-        return this.userRepository.find(username).getOrThrowRealExceptionOnFailure()
+        return await(this.userRepository.find(username))
     }
 
     private fun throwUserNotFound(): Nothing {

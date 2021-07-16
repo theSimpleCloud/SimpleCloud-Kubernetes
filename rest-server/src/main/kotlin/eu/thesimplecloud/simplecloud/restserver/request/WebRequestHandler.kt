@@ -33,6 +33,8 @@ import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
+import java.lang.reflect.InvocationTargetException
+import java.util.concurrent.CompletionException
 
 /**
  * Created by IntelliJ IDEA.
@@ -56,11 +58,22 @@ class WebRequestHandler(
 
     private suspend fun handleException(ex: Exception) {
         ex.printStackTrace()
-        setErrorStatusCode(ex)
-        writeResponseObject(ErrorResponseDto.fromException(ex))
+        val exception = unpackException(ex)
+        setErrorStatusCode(exception)
+        writeErrorResponse(ErrorResponseDto.fromException(exception))
     }
 
-    private fun setErrorStatusCode(exception: Exception) {
+    private fun unpackException(ex: Throwable): Throwable {
+        if (ex is CompletionException) {
+            return unpackException(ex.cause!!)
+        }
+        if (ex is InvocationTargetException) {
+            return unpackException(ex.cause!!)
+        }
+        return ex
+    }
+
+    private fun setErrorStatusCode(exception: Throwable) {
         if (exception is HttpException) {
             writeStatusCode(exception.statusCode)
             return
@@ -75,6 +88,10 @@ class WebRequestHandler(
     private suspend fun writeResponseObject(any: Any) {
         val successResponse = SuccessResponseDto(any)
         call.respondText(RestServer.mapperExcludeOutgoing.writeValueAsString(successResponse))
+    }
+
+    private suspend fun writeErrorResponse(errorResponseDto: ErrorResponseDto) {
+        call.respondText(RestServer.mapperExcludeOutgoing.writeValueAsString(errorResponseDto))
     }
 
     private suspend fun handleRequest0() {

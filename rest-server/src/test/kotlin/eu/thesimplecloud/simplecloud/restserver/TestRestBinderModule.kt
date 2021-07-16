@@ -44,14 +44,30 @@ import eu.thesimplecloud.simplecloud.restserver.service.*
  * Time: 17:01
  * @author Frederick Baier
  */
-class RestBinderModule : AbstractModule() {
+class TestRestBinderModule : AbstractModule() {
 
 
     override fun configure() {
         bind(IUserRepository::class.java).to(FileUserRepository::class.java)
         bind(IAuthService::class.java).to(AuthService::class.java)
         bind(IUserService::class.java).to(UserService::class.java)
+
+
+        bind(ICloudProcessGroupService::class.java).to(TestCloudProcessGroupService::class.java)
+        bind(IJvmArgumentsService::class.java).to(TestJvmArgumentsService::class.java)
+        bind(IProcessOnlineCountService::class.java).to(TestProcessOnlineCountService::class.java)
+        bind(ITemplateService::class.java).to(TestTemplateService::class.java)
+        bind(IProcessVersionService::class.java).to(TestProcessVersionService::class.java)
+        bind(ICloudProcessService::class.java).to(TestCloudProcessService::class.java)
+        bind(INodeService::class.java).to(TestNodeService::class.java)
+
         bind(IValidatorService::class.java).to(ValidatorService::class.java)
+
+        install(
+            FactoryModuleBuilder()
+                .implement(ICloudProcess::class.java, CloudProcess::class.java)
+                .build(ICloudProcessFactory::class.java)
+        )
     }
 
 

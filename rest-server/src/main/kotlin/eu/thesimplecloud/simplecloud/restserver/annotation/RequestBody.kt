@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.restserver.annotation
 
+import kotlin.reflect.KClass
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
@@ -30,4 +32,7 @@ package eu.thesimplecloud.simplecloud.restserver.annotation
  */
 @Retention(AnnotationRetention.RUNTIME)
 @Target(AnnotationTarget.VALUE_PARAMETER)
-annotation class RequestBody
+annotation class RequestBody(
+    val types: Array<String> = [],
+    val classes: Array<KClass<*>> = [],
+)

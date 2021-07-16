@@ -20,23 +20,36 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.request
+package eu.thesimplecloud.simplecloud.restserver.service
+
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.service.INodeService
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 24.06.2021
- * Time: 15:23
+ * Date: 07/07/2021
+ * Time: 20:41
  * @author Frederick Baier
  */
-data class ErrorResponseDto(
-    val errorClass: String,
-    val error: String
-) {
+@Singleton
+class TestNodeService : INodeService {
 
-    companion object {
-        fun fromException(ex: Throwable): ErrorResponseDto {
-            return ErrorResponseDto(ex::class.java.name, ex.message ?: "")
-        }
+    override fun findNodeByName(name: String): CompletableFuture<INode> {
+        TODO("Not yet implemented")
     }
 
+    override fun findNodesByName(vararg names: String): CompletableFuture<List<INode>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findAll(): CompletableFuture<List<INode>> {
+        TODO("Not yet implemented")
+    }
+
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
+        TODO("Not yet implemented")
+    }
 }

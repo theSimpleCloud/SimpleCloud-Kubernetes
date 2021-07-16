@@ -20,28 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.restserver.service
 
-import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.IProcessOnlineCountRepository
-import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
+import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 21:41
+ * Date: 03/07/2021
+ * Time: 19:07
  * @author Frederick Baier
  */
 @Singleton
-class IgniteProcessOnlineCountRepository @Inject constructor(
-    private val ignite: Ignite
-) : AbstractIgniteRepository<IProcessesOnlineCountConfiguration>(), IProcessOnlineCountRepository {
+class TestProcessOnlineCountService : IProcessOnlineCountService {
 
-    override fun getCache(): IgniteCache<String, IProcessesOnlineCountConfiguration> {
-        return ignite.getOrCreateCache("cloud-process-online-count-configurations")
+    override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
+        if (name != "Test") return CompletableFuture.failedFuture(NoSuchElementException(""))
+        return CompletableFuture.completedFuture(TestProcessesOnlineCountConfiguration("Test"))
     }
 }

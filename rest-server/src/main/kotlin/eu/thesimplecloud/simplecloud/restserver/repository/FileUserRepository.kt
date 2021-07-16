@@ -54,8 +54,8 @@ class FileUserRepository : IUserRepository {
         }.exceptionally { throw NoSuchElementException("User not found") }
     }
 
-    override fun put(value: User) {
-        val file = File(this.directory, "${value.getIdentifier()}.json")
+    override fun save(identifier: String, value: User) {
+        val file = File(this.directory, "${identifier}.json")
         this.objectMapper.writeValue(file, value)
     }
 

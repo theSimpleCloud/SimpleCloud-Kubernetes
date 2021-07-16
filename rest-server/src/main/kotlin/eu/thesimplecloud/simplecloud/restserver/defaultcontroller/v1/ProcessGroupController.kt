@@ -22,13 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.impl.future.getOrThrowRealExceptionOnFailure
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.IController
-import eu.thesimplecloud.simplecloud.restserver.dto.cloud.BasicCloudProcessGroupDto
-import eu.thesimplecloud.simplecloud.restserver.dto.cloud.GroupToDtoConverter
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.service.*
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.ProcessGroupUpdateHandler
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,19 +41,69 @@ import eu.thesimplecloud.simplecloud.restserver.dto.cloud.GroupToDtoConverter
  */
 @Controller(1, "cloud/group")
 class ProcessGroupController @Inject constructor(
-    private val groupService: ICloudProcessGroupService
+    private val groupService: ICloudProcessGroupService,
+    private val groupUpdateHandler: ProcessGroupUpdateHandler
 ) : IController {
 
-    @RequestMapping(RequestType.GET, "", "web.cloud.group.get.all")
-    fun handleGroupGetAll(): List<BasicCloudProcessGroupDto> {
-        val groups = this.groupService.findAll().getOrThrowRealExceptionOnFailure()
-        return groups.map { GroupToDtoConverter(it).convert() }
+    @RequestMapping(RequestType.GET, "", "web.cloud.group.get")
+    fun handleGroupGetAll(): List<AbstractCloudProcessGroupConfiguration> {
+        val groups = await(this.groupService.findAll())
+        return groups.map { it.toConfiguration() }
     }
 
-    @RequestMapping(RequestType.GET, "{name}", "web.cloud.group.get.one")
-    fun handleGroupGetOne(@RequestPathParam("name") name: String): BasicCloudProcessGroupDto {
-        val group = this.groupService.findByName(name).getOrThrowRealExceptionOnFailure()
-        return GroupToDtoConverter(group).convert()
+    @RequestMapping(RequestType.GET, "{name}", "web.cloud.group.get")
+    fun handleGroupGetOne(@RequestPathParam("name") name: String): AbstractCloudProcessGroupConfiguration {
+        val group = await(this.groupService.findByName(name))
+        return group.toConfiguration()
     }
+
+    @RequestMapping(RequestType.POST, "", "web.cloud.group.create")
+    fun handleGroupCreate(
+        @RequestBody(
+            types = [
+                "LOBBY",
+                "PROXY",
+                "SERVER"
+            ],
+            classes = [
+                CloudLobbyProcessGroupConfiguration::class,
+                CloudProxyProcessGroupConfiguration::class,
+                CloudServerProcessGroupConfiguration::class
+            ]
+        ) configuration: AbstractCloudProcessGroupConfiguration
+    ): AbstractCloudProcessGroupConfiguration {
+        val completableFuture = this.groupService.createGroupCreateRequest(configuration).submit()
+        val group = await(completableFuture)
+        return group.toConfiguration()
+    }
+
+    @RequestMapping(RequestType.PUT, "", "web.cloud.group.update")
+    fun handleGroupUpdate(
+        @RequestBody(
+            types = [
+                "LOBBY",
+                "PROXY",
+                "SERVER"
+            ],
+            classes = [
+                CloudLobbyProcessGroupConfiguration::class,
+                CloudProxyProcessGroupConfiguration::class,
+                CloudServerProcessGroupConfiguration::class
+            ]
+        ) configuration: AbstractCloudProcessGroupConfiguration
+    ): Boolean {
+        this.groupUpdateHandler.update(configuration)
+        return true
+    }
+
+    @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.group.delete")
+    fun handleDelete(@RequestPathParam("name") groupName: String): Boolean {
+        val group = await(this.groupService.findByName(groupName))
+        val groupDeleteRequest = this.groupService.createGroupDeleteRequest(group)
+        await(groupDeleteRequest.submit())
+        return true
+    }
+
+
 
 }
