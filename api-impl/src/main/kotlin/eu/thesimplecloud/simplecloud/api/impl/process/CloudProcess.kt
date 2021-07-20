@@ -22,19 +22,20 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process
 
-import eu.thesimplecloud.simplecloud.api.CloudAPI
-import eu.thesimplecloud.simplecloud.api.impl.future.exception.CompletedWithNullException
-import eu.thesimplecloud.simplecloud.api.impl.process.request.ProcessStopRequest
-import eu.thesimplecloud.simplecloud.api.impl.utils.AbstractNetworkComponent
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStopRequest
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
+import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -45,78 +46,72 @@ import java.util.concurrent.CompletableFuture
  * Time: 09:14
  * @author Frederick Baier
  */
-class CloudProcess(
-    private val groupName: String,
-    private val uniqueId: UUID,
-    private val processNumber: Int,
-    private val state: ProcessState,
-    private val maxMemory: Int,
-    private val usedMemory: Int,
-    private val maxPlayers: Int,
-    private val address: Address,
-    private val static: Boolean,
-    private val processGroupType: ProcessGroupType,
-    private val versionName: String,
-    private val templateName: String,
-    private val nodeNameRunningOn: String,
-    private val jvmArgumentsName: String?,
-) : AbstractNetworkComponent(), ICloudProcess {
+class CloudProcess @Inject constructor(
+    @Assisted private val configuration: CloudProcessConfiguration,
+    private val processService: ICloudProcessService,
+    private val processGroupService: ICloudProcessGroupService,
+    private val processVersionService: IProcessVersionService,
+    private val templateService: ITemplateService,
+    private val jvmArgumentService: IJvmArgumentsService,
+    private val nodeService: INodeService,
+) : ICloudProcess {
 
     override fun getGroupName(): String {
-        return this.groupName
+        return this.configuration.groupName
     }
 
     override fun getGroup(): CompletableFuture<ICloudProcessGroup> {
-        return CloudAPI.instance.getProcessGroupService().findByName(this.groupName)
+        return this.processGroupService.findByName(getGroupName())
     }
 
     override fun getProcessNumber(): Int {
-        return this.processNumber
+        return this.configuration.processNumber
     }
 
     override fun getState(): ProcessState {
-        return this.state
+        return this.configuration.state
     }
 
     override fun getMaxMemory(): Int {
-        return this.maxMemory
+        return this.configuration.maxMemory
     }
 
     override fun getUsedMemory(): Int {
-        return this.usedMemory
+        return this.configuration.usedMemory
     }
 
     override fun getMaxPlayers(): Int {
-        return this.maxPlayers
+        return this.configuration.maxPlayers
     }
 
     override fun getAddress(): Address {
-        return this.address
+        return this.configuration.address
     }
 
     override fun isStatic(): Boolean {
-        return this.static
+        return this.configuration.static
     }
 
     override fun getProcessType(): ProcessGroupType {
-        return this.processGroupType
+        return this.configuration.processGroupType
     }
 
     override fun getVersion(): CompletableFuture<IProcessVersion> {
-        return CloudAPI.instance.getProcessVersionService().findByName(this.versionName)
+        return this.processVersionService.findByName(this.configuration.versionName)
     }
 
     override fun getTemplate(): CompletableFuture<ITemplate> {
-        return CloudAPI.instance.getTemplateService().findByName(this.templateName)
+        return this.templateService.findByName(this.configuration.templateName)
     }
 
     override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
-        if (this.jvmArgumentsName == null) return CompletableFuture.failedFuture(CompletedWithNullException())
-        return CloudAPI.instance.getJvmArgumentsService().findByName(this.jvmArgumentsName)
+        val jvmArgumentsName = this.configuration.jvmArgumentsName
+            ?: return CompletableFuture.failedFuture(CompletedWithNullException())
+        return this.jvmArgumentService.findByName(jvmArgumentsName)
     }
 
     override fun getNodeRunningOn(): CompletableFuture<INode> {
-        return CloudAPI.instance.getNodeService().findNodeByName(this.nodeNameRunningOn)
+        return this.nodeService.findNodeByName(this.configuration.nodeNameRunningOn)
     }
 
     override fun terminationFuture(): CompletableFuture<Void> {
@@ -127,21 +122,28 @@ class CloudProcess(
         TODO("Not yet implemented")
     }
 
-    override fun createStopRequest(): IProcessStopRequest {
-        return ProcessStopRequest(this)
-    }
-
     override fun getUniqueId(): UUID {
-        return this.uniqueId
+        return this.configuration.uniqueId
     }
 
     override fun getName(): String {
-        return this.groupName + "-" + getProcessNumber()
+        return getGroupName() + "-" + getProcessNumber()
     }
 
     override fun getIdentifier(): String {
         return getName()
     }
 
+    override fun toConfiguration(): CloudProcessConfiguration {
+        return this.configuration
+    }
+
+    override fun getIgniteId(): UUID {
+        return this.configuration.igniteId ?: throw NullPointerException("Ignite id not set")
+    }
+
+    override fun createShutdownRequest(): IProcessShutdownRequest {
+        return this.processService.createProcessShutdownRequest(this)
+    }
 
 }

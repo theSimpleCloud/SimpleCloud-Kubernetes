@@ -22,13 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import eu.thesimplecloud.simplecloud.api.impl.future.toFutureList
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessRepository
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -39,11 +42,13 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 abstract class AbstractCloudProcessService(
+    protected val processFactory: ICloudProcessFactory,
     protected val igniteRepository: IgniteCloudProcessRepository
 ) : IInternalCloudProcessService {
 
     override fun findProcessByName(name: String): CompletableFuture<ICloudProcess> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
     override fun findProcessesByName(vararg names: String): CompletableFuture<List<ICloudProcess>> {
@@ -56,10 +61,21 @@ abstract class AbstractCloudProcessService(
     }
 
     override fun findProcessesByGroup(groupName: String): CompletableFuture<List<ICloudProcess>> {
-        return this.igniteRepository.findProcessesByGroupName(groupName)
+        val processesFuture = this.igniteRepository.findProcessesByGroupName(groupName)
+        return processesFuture.thenApply { list -> list.map { this.processFactory.create(it) } }
     }
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
-        return this.igniteRepository.findProcessByUniqueId(uniqueId)
+        val completableFuture = this.igniteRepository.findProcessByUniqueId(uniqueId)
+        return completableFuture.thenApply { this.processFactory.create(it) }
     }
+
+    override fun createProcessStartRequest(group: ICloudProcessGroup): IProcessStartRequest {
+        return ProcessStartRequest(this, group)
+    }
+
+    override fun createProcessShutdownRequest(group: ICloudProcess): IProcessShutdownRequest {
+        return ProcessShutdownRequest(this, group)
+    }
+
 }

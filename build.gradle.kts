@@ -21,8 +21,15 @@ subprojects {
     dependencies {
         implementation(kotlin("stdlib"))
         implementation("com.google.inject:guice:5.0.1")
+        implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
         testImplementation("junit", "junit", "4.12")
+        implementation("com.ea.async:ea-async:1.2.3")
     }
+
+    tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
+        kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
 }
 
 

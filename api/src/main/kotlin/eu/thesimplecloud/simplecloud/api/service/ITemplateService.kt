@@ -22,8 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.service
 
+import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.service.IService
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,5 +38,11 @@ import java.util.concurrent.CompletableFuture
 interface ITemplateService : IService {
 
     fun findByName(name: String): CompletableFuture<ITemplate>
+
+    fun findAll(): CompletableFuture<List<ITemplate>>
+
+    fun createTemplateCreateRequest(configuration: TemplateConfiguration): ITemplateCreateRequest
+
+    fun createTemplateDeleteRequest(template: ITemplate): ITemplateDeleteRequest
 
 }

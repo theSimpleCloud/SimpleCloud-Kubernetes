@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.node
 
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
@@ -42,6 +43,11 @@ interface INode : INetworkComponent, IIdentifiable<String> {
      * Returns the address of the node
      */
     fun getAddress(): Address
+
+    /**
+     * Returns the configuration of this node
+     */
+    fun toConfiguration(): NodeConfiguration
 
 
 }

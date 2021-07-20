@@ -22,8 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.api.repository
 
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,4 +32,4 @@ import eu.thesimplecloud.simplecloud.api.repository.IRepository
  * Time: 19:31
  * @author Frederick Baier
  */
-interface IProcessVersionRepository : IRepository<String, IProcessVersion>
+interface IProcessVersionRepository : IRepository<String, ProcessVersionConfiguration>

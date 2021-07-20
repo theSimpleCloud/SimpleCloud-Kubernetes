@@ -34,6 +34,6 @@ import java.util.concurrent.CompletableFuture
  */
 interface IProcessOnlineCountService : IService {
 
-    fun findProcessOnlineCountConfigurationByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration>
+    fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration>
 
 }

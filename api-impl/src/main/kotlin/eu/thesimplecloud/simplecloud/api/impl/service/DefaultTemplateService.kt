@@ -22,9 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteTemplateRepository
-import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequest
+import eu.thesimplecloud.simplecloud.api.impl.template.Template
+import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService
+import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,8 +42,33 @@ import java.util.concurrent.CompletableFuture
  */
 open class DefaultTemplateService(
     protected val igniteRepository: IgniteTemplateRepository
-) : ITemplateService {
+) : IInternalTemplateService {
+
     override fun findByName(name: String): CompletableFuture<ITemplate> {
-        return this.igniteRepository.find(name)
+        val completableFuture = this.igniteRepository.find(name)
+        return completableFuture.thenApply { Template(it, this) }
     }
+
+    override fun findAll(): CompletableFuture<List<ITemplate>> {
+        val completableFuture = this.igniteRepository.findAll()
+        return completableFuture.thenApply { list -> list.map { Template(it, this) } }
+    }
+
+    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+        this.igniteRepository.save(configuration.name, configuration)
+        return completedFuture(Template(configuration, this))
+    }
+
+    override fun deleteTemplateInternal(template: ITemplate) {
+        this.igniteRepository.remove(template.getIdentifier())
+    }
+
+    override fun createTemplateCreateRequest(configuration: TemplateConfiguration): ITemplateCreateRequest {
+        return TemplateCreateRequest(this, configuration)
+    }
+
+    override fun createTemplateDeleteRequest(template: ITemplate): ITemplateDeleteRequest {
+        return TemplateDeleteRequest(this, template)
+    }
+
 }

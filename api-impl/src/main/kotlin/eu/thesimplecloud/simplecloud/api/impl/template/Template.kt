@@ -22,8 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.template
 
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.template.ITemplateInclusion
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -33,25 +36,31 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author Frederick Baier
  */
 class Template(
-    private val name: String,
-    private val parent: ITemplate?
+    private val configuration: TemplateConfiguration,
+    private val templateService: ITemplateService
 ) : ITemplate {
 
-    private val templateInclusions = CopyOnWriteArrayList<ITemplateInclusion>()
-
-    override fun getParentTemplate(): ITemplate? {
-        return this.parent
+    override fun getParentTemplate(): CompletableFuture<ITemplate> {
+        if (!hasParent()) {
+            return CompletableFuture.failedFuture(NoSuchElementException("This template has no parent"))
+        }
+        return this.templateService.findByName(this.configuration.parentTemplateName!!)
     }
 
-    override fun getTemplateInclusions(): List<ITemplateInclusion> {
-        return this.templateInclusions
+    override fun hasParent(): Boolean {
+        return this.configuration.parentTemplateName != null
     }
 
     override fun getName(): String {
-        return this.name
+        return this.configuration.name
     }
 
     override fun getIdentifier(): String {
         return getName()
     }
+
+    override fun toConfiguration(): TemplateConfiguration {
+        return this.configuration
+    }
+
 }

@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.repository
 
-import eu.thesimplecloud.simplecloud.api.impl.future.nonNull
+import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 import org.apache.ignite.IgniteCache
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture
  * Time: 19:09
  * @author Frederick Baier
  */
-abstract class AbstractIgniteRepository<T : IIdentifiable<String>> : IRepository<String, T> {
+abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
 
     abstract fun getCache(): IgniteCache<String, T>
 
@@ -48,8 +48,8 @@ abstract class AbstractIgniteRepository<T : IIdentifiable<String>> : IRepository
         return CompletableFuture.supplyAsync { getCache().get(identifier) }.nonNull()
     }
 
-    override fun put(value: T) {
-        getCache().putAsync(value.getIdentifier(), value)
+    override fun save(identifier: String, value: T) {
+        getCache().putAsync(identifier, value)
     }
 
     protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {

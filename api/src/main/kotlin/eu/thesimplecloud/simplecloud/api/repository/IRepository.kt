@@ -1,5 +1,6 @@
 package eu.thesimplecloud.simplecloud.api.repository
 
+import eu.thesimplecloud.simplecloud.api.future.isCompletedNormally
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import java.util.concurrent.CompletableFuture
 
@@ -12,7 +13,7 @@ import java.util.concurrent.CompletableFuture
  *  @param I identifier
  *  @param T type to be stored
  */
-interface IRepository<I : Any, T : IIdentifiable<I>> {
+interface IRepository<I : Any, T : Any> {
 
     /**
      * Returns all values stored
@@ -27,7 +28,7 @@ interface IRepository<I : Any, T : IIdentifiable<I>> {
     /**
      * Saves the specified [value] and replaces it if needed according to its identifier
      */
-    fun put(value: T)
+    fun save(identifier: I, value: T)
 
     /**
      * Removes the value found by the specified [identifier]
@@ -35,10 +36,11 @@ interface IRepository<I : Any, T : IIdentifiable<I>> {
     fun remove(identifier: I)
 
     /**
-     * Removes the value found by [value]s identifier
+     * Checks whether the specified [identifier] exists
      */
-    fun remove(value: T) {
-        remove(value.getIdentifier())
+    fun doesExist(identifier: I): CompletableFuture<Boolean> {
+        val future = find(identifier)
+        return future.handle { _, _ -> future.isCompletedNormally }
     }
 
 }

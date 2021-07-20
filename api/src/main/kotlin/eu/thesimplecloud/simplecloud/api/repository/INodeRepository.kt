@@ -22,8 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.api.repository
 
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -33,11 +33,11 @@ import java.util.concurrent.CompletableFuture
  * Time: 17:54
  * @author Frederick Baier
  */
-interface INodeRepository : IRepository<String, INode> {
+interface INodeRepository : IRepository<String, NodeConfiguration> {
 
     /**
      * Returns the node found by the specified [uniqueId]
      */
-    fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode>
+    fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration>
 
 }

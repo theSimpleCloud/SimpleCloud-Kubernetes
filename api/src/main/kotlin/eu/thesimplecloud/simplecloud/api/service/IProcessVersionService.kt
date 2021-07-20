@@ -23,6 +23,10 @@
 package eu.thesimplecloud.simplecloud.api.service
 
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
 import eu.thesimplecloud.simplecloud.api.service.IService
 import java.util.concurrent.CompletableFuture
 
@@ -34,6 +38,14 @@ import java.util.concurrent.CompletableFuture
  */
 interface IProcessVersionService : IService {
 
+    fun findAll(): CompletableFuture<List<IProcessVersion>>
+
     fun findByName(name: String): CompletableFuture<IProcessVersion>
+
+    fun doesExist(name: String): CompletableFuture<Boolean>
+
+    fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): IProcessVersionCreateRequest
+
+    fun createProcessVersionDeleteRequest(processVersion: IProcessVersion): IProcessVersionDeleteRequest
 
 }

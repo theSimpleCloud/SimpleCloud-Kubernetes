@@ -26,6 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessGroupRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
@@ -39,9 +40,9 @@ import org.apache.ignite.IgniteCache
 @Singleton
 class IgniteCloudProcessGroupRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<ICloudProcessGroup>(), ICloudProcessGroupRepository {
+) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(), ICloudProcessGroupRepository {
 
-    override fun getCache(): IgniteCache<String, ICloudProcessGroup> {
+    override fun getCache(): IgniteCache<String, AbstractCloudProcessGroupConfiguration> {
         return ignite.getOrCreateCache("cloud-process-groups")
     }
 
