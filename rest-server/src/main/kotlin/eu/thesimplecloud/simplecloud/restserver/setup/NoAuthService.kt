@@ -20,34 +20,27 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.controller
+package eu.thesimplecloud.simplecloud.restserver.setup
 
-import com.google.inject.Inject
-import com.google.inject.Injector
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
-
+import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
+import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.service.UsernameAndPasswordCredentials
+import eu.thesimplecloud.simplecloud.restserver.user.User
+import io.ktor.application.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 09:39
+ * Date: 04/08/2021
+ * Time: 20:05
  * @author Frederick Baier
  */
-class ControllerHandler constructor(
-    private val restServer: RestServer,
-    private val injector: Injector
-) : IControllerHandler {
+class NoAuthService : IAuthService {
 
-    override fun registerController(controllerClass: Class<out IController>) {
-        val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
-        routes.forEach { this.restServer.registerMethodRoute(it) }
+    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
+        throw UnsupportedOperationException("Authentication is not supported in setup mode")
     }
 
-    override fun unregisterController(controllerClass: Class<out IController>) {
-        TODO("Not yet implemented")
+    override fun getUserFromCall(call: ApplicationCall): User {
+        throw NotAuthenticatedException()
     }
-
-
 }

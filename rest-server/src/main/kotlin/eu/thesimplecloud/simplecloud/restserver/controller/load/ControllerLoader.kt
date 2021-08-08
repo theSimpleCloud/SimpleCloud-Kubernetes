@@ -27,6 +27,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.IController
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import eu.thesimplecloud.simplecloud.restserver.annotation.Controller
+import eu.thesimplecloud.simplecloud.restserver.controller.VirtualMethod
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 
@@ -61,7 +62,7 @@ class ControllerLoader(
             generatePath(requestMappingAnnotation),
             requestMappingAnnotation.permission,
             parameters,
-            method,
+            VirtualMethod.fromRealMethod(method),
             controller
         )
     }

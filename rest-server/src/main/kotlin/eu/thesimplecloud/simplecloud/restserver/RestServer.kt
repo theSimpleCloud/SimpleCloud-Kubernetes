@@ -22,17 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.restserver
 
-import com.ea.async.Async
-import com.fasterxml.jackson.databind.JavaType
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import com.google.inject.Guice
 import com.google.inject.Inject
 import com.google.inject.Injector
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
-import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeAll
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeIncoming
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
@@ -42,18 +35,24 @@ import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
 import eu.thesimplecloud.simplecloud.restserver.request.WebRequestHandler
-import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
+import io.ktor.client.*
+import io.ktor.client.engine.cio.*
+import io.ktor.client.request.*
+import io.ktor.client.statement.*
 import io.ktor.http.*
+import io.ktor.http.content.*
+import io.ktor.request.*
 import io.ktor.response.*
 import io.ktor.routing.*
 import io.ktor.server.engine.*
 import io.ktor.server.netty.*
-import org.apache.ignite.plugin.security.SecurityCredentials
-import java.io.File
+import io.ktor.util.*
+import io.ktor.utils.io.*
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -62,12 +61,16 @@ import java.io.File
  * Time: 16:57
  * @author Frederick Baier
  */
-@Singleton
 class RestServer @Inject constructor(
-    private val authService: IAuthService
+    private val authService: IAuthService,
+    private val injector: Injector
 ) {
 
+
+    val controllerHandler = ControllerHandler(this, injector)
+
     private val server = embeddedServer(Netty, 8000) {
+        val client = HttpClient(CIO)
         install(Authentication) {
             jwt {
                 verifier(
@@ -75,6 +78,56 @@ class RestServer @Inject constructor(
                 )
                 validate { credential ->
                     JWTPrincipal(credential.payload)
+                }
+            }
+        }
+        routing {
+            route("ui", HttpMethod.Get) {
+                handle {
+                    val uri = this.context.request.uri
+                    println("call on ${uri}")
+                    val replacedUri = uri.replace("/ui", "")
+                    println("calling https://dashboard.thesimplecloud.eu/${replacedUri}")
+                    val response = client.request<HttpResponse>("https://dashboard.thesimplecloud.eu/${replacedUri}")
+                    println(response.status)
+                    val proxiedHeaders = response.headers
+                    val location = proxiedHeaders[HttpHeaders.Location]
+                    val contentType = proxiedHeaders[HttpHeaders.ContentType]
+                    val contentLength = proxiedHeaders[HttpHeaders.ContentLength]
+
+                    if (location != null) {
+                        call.response.header(HttpHeaders.Location, location)
+                    }
+                    println("calling respond")
+                    /*
+                    call.respond(object : OutgoingContent.WriteChannelContent() {
+                        override val contentLength: Long? = contentLength?.toLong()
+                        override val contentType: ContentType? = contentType?.let { ContentType.parse(it) }
+
+                        //                override val headers: Headers = proxiedHeaders
+                        override val headers: Headers = Headers.build {
+                            appendAll(proxiedHeaders)
+                        }
+
+                        override val status: HttpStatusCode? = response.status
+                        override suspend fun writeTo(channel: ByteWriteChannel) {
+                            response.content.copyAndClose(channel)
+                        }
+                    })
+
+                     */
+
+                    call.respond(object : OutgoingContent.WriteChannelContent() {
+                        override val contentLength: Long? = contentLength?.toLong()
+                        override val contentType: ContentType? = contentType?.let { ContentType.parse(it) }
+                        override val headers: Headers = Headers.build {
+                            appendAll(proxiedHeaders.filter { key, _ -> !key.equals(HttpHeaders.ContentType, ignoreCase = true) && !key.equals(HttpHeaders.ContentLength, ignoreCase = true) })
+                        }
+                        override val status: HttpStatusCode? = response.status
+                        override suspend fun writeTo(channel: ByteWriteChannel) {
+                            response.content.copyAndClose(channel)
+                        }
+                    })
                 }
             }
         }
@@ -110,15 +163,32 @@ class RestServer @Inject constructor(
         }
     }
 
+    fun shutdown() {
+        val environment = this.server.application.environment
+        if (environment is ApplicationEngineEnvironment) {
+            environment.stop()
+        }
+    }
+
     companion object {
 
         val mapperExcludeOutgoing = ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
-            .setAnnotationIntrospector(AnnotationExcludeIntrospector(WebExcludeOutgoing::class.java, WebExcludeAll::class.java))
+            .setAnnotationIntrospector(
+                AnnotationExcludeIntrospector(
+                    WebExcludeOutgoing::class.java,
+                    WebExcludeAll::class.java
+                )
+            )
 
         val mapperExcludeIncoming = ObjectMapper()
             .enable(SerializationFeature.INDENT_OUTPUT)
-            .setAnnotationIntrospector(AnnotationExcludeIntrospector(WebExcludeIncoming::class.java, WebExcludeAll::class.java))
+            .setAnnotationIntrospector(
+                AnnotationExcludeIntrospector(
+                    WebExcludeIncoming::class.java,
+                    WebExcludeAll::class.java
+                )
+            )
 
     }
 

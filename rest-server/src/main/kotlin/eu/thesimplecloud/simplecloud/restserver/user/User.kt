@@ -23,6 +23,8 @@
 package eu.thesimplecloud.simplecloud.restserver.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import dev.morphia.annotations.Entity
+import dev.morphia.annotations.Id
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
 import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 
@@ -32,7 +34,9 @@ import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
  * Time: 10:04
  * @author Frederick Baier
  */
+@Entity("web_user")
 open class User(
+    @Id
     val username: String,
     @WebExcludeOutgoing
     val password: String

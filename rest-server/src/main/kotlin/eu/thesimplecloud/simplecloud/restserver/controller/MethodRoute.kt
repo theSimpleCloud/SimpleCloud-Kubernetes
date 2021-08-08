@@ -37,13 +37,13 @@ data class MethodRoute(
     val path: String,
     val permission: String,
     val parameters: List<MethodRouteParameter>,
-    private val method: Method,
+    private val virtualMethod: VirtualMethod,
     private val controller: IController
 ) {
 
     fun invokeMethodWithArgs(args: List<Any?>): Any? {
         try {
-            return method.invoke(controller, *args.toTypedArray())
+            return virtualMethod.invoke(controller, *args.toTypedArray())
         } catch (ex: Exception) {
             rethrowWithoutInvocationTargetException(ex)
         }

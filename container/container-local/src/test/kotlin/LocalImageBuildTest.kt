@@ -2,9 +2,10 @@ import eu.thesimplecloud.simplecloud.container.FileImageInclusion
 import eu.thesimplecloud.simplecloud.container.local.LocalImage
 import eu.thesimplecloud.simplecloud.container.local.LocalImageFactory
 import org.apache.commons.io.FileUtils
-import org.junit.After
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.io.File
 
 /**
@@ -56,10 +57,10 @@ class LocalImageBuildTest {
         val templateDir = createTestTemplateFiles()
         val image = factory.create("Test", listOf(templateDir))
         image.build().join()
-        Assert.assertTrue(File(image.imageDir, "Test1.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test2.txt").exists())
-        Assert.assertFalse(File(image.imageDir, "Test6.txt").exists())
-        Assert.assertFalse(File(image.imageDir, "Test7.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test1.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test2.txt").exists())
+        Assertions.assertFalse(File(image.imageDir, "Test6.txt").exists())
+        Assertions.assertFalse(File(image.imageDir, "Test7.txt").exists())
     }
 
     @Test
@@ -68,10 +69,10 @@ class LocalImageBuildTest {
         val template2Dir = createTest2TemplateFiles()
         val image = factory.create("Test", listOf(templateDir, template2Dir))
         image.build().join()
-        Assert.assertTrue(File(image.imageDir, "Test1.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test2.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test6.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test7.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test1.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test2.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test6.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test7.txt").exists())
     }
 
     @Test
@@ -83,14 +84,14 @@ class LocalImageBuildTest {
         val image = factory.create("Test", listOf(templateDir, template2Dir), listOf(inclusion))
         image.build().join()
         println(image.imageDir.absolutePath)
-        Assert.assertTrue(File(image.imageDir, "Test1.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test2.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test6.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "Test7.txt").exists())
-        Assert.assertTrue(File(image.imageDir, "plugins/extra2.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test1.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test2.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test6.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "Test7.txt").exists())
+        Assertions.assertTrue(File(image.imageDir, "plugins/extra2.txt").exists())
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         val imagesDir = File(LocalImage.IMAGES_DIR)
         FileUtils.deleteDirectory(imagesDir)

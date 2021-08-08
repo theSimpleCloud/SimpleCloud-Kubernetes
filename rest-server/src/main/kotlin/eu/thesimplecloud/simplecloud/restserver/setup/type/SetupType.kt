@@ -20,34 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.controller
+package eu.thesimplecloud.simplecloud.restserver.setup.type
 
-import com.google.inject.Inject
-import com.google.inject.Injector
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
-
+import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
+import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
+import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
+import kotlin.reflect.KClass
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 09:39
+ * Date: 07/08/2021
+ * Time: 18:23
  * @author Frederick Baier
  */
-class ControllerHandler constructor(
-    private val restServer: RestServer,
-    private val injector: Injector
-) : IControllerHandler {
+open class SetupType<T : Any>(
+    val setupName: String,
+    val responseClass: KClass<T>
+) {
 
-    override fun registerController(controllerClass: Class<out IController>) {
-        val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
-        routes.forEach { this.restServer.registerMethodRoute(it) }
+    companion object {
+        val MONGO = SetupType("mongo", MongoSetupResponseBody::class)
+        val FIRST_USER = SetupType("firstuser", FirstUserSetupResponseBody::class)
     }
-
-    override fun unregisterController(controllerClass: Class<out IController>) {
-        TODO("Not yet implemented")
-    }
-
-
 }

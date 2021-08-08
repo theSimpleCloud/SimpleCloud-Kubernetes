@@ -22,52 +22,21 @@
 
 package eu.thesimplecloud.simplecloud.restserver.repository
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import com.google.inject.Inject
 import com.google.inject.Singleton
+import dev.morphia.Datastore
+import dev.morphia.query.Query
+import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import java.io.File
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 23:22
+ * Date: 07/08/2021
+ * Time: 10:10
  * @author Frederick Baier
  */
 @Singleton
-class FileUserRepository : IUserRepository {
-
-    private val directory = File("test/users/")
-
-    private val objectMapper = ObjectMapper()
-
-    override fun findAll(): CompletableFuture<List<User>> {
-        return CompletableFuture.supplyAsync {
-            return@supplyAsync this.directory.listFiles().map { objectMapper.readValue(it, User::class.java) }
-        }
-    }
-
-    override fun find(identifier: String): CompletableFuture<User> {
-        return CompletableFuture.supplyAsync {
-            val file = File(this.directory, "$identifier.json")
-            return@supplyAsync this.objectMapper.readValue(file, User::class.java)
-        }.exceptionally { throw NoSuchElementException("User not found") }
-    }
-
-    override fun save(identifier: String, value: User) {
-        val file = File(this.directory, "${identifier}.json")
-        this.objectMapper.writeValue(file, value)
-    }
-
-    override fun remove(identifier: String) {
-        val file = File(this.directory, "${identifier}.json")
-        file.delete()
-    }
-
-    override fun count(): CompletableFuture<Long> {
-        return CompletableFuture.supplyAsync {
-            return@supplyAsync directory.listFiles().size.toLong()
-        }
-    }
-
-}
+class MongoUserRepository @Inject constructor(
+    datastore: Datastore
+) : DefaultMongoRepository<String, User>(datastore, User::class.java), IUserRepository
