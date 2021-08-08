@@ -43,6 +43,7 @@ import io.ktor.client.*
 import io.ktor.client.engine.cio.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.features.*
 import io.ktor.http.*
 import io.ktor.http.content.*
 import io.ktor.request.*
@@ -71,6 +72,19 @@ class RestServer @Inject constructor(
 
     private val server = embeddedServer(Netty, 8000) {
         val client = HttpClient(CIO)
+        install(CORS) {
+            method(HttpMethod.Options)
+            method(HttpMethod.Get)
+            method(HttpMethod.Post)
+            method(HttpMethod.Put)
+            method(HttpMethod.Delete)
+            method(HttpMethod.Patch)
+            header(HttpHeaders.AccessControlAllowHeaders)
+            header(HttpHeaders.ContentType)
+            header(HttpHeaders.AccessControlAllowOrigin)
+            allowCredentials = true
+            anyHost()
+        }
         install(Authentication) {
             jwt {
                 verifier(
