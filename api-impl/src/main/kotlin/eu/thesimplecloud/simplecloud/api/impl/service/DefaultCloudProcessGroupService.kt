@@ -28,7 +28,7 @@ import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRe
 import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudProxyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudServerGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup

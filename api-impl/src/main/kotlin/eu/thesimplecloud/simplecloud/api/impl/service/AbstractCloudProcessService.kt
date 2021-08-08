@@ -26,7 +26,7 @@ import eu.thesimplecloud.simplecloud.api.future.toFutureList
 import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequest
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteCloudProcessRepository
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup

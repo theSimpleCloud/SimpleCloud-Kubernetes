@@ -20,40 +20,28 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareGroupNamePredicate
-import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareUUIDPredicate
-import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessRepository
+import eu.thesimplecloud.simplecloud.api.repository.ITemplateRepository
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
-import java.util.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 12.06.2021
- * Time: 10:57
+ * Date: 21.04.2021
+ * Time: 19:07
  * @author Frederick Baier
  */
 @Singleton
-class IgniteCloudProcessRepository @Inject constructor(
+class IgniteTemplateRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<CloudProcessConfiguration>(), ICloudProcessRepository {
+) : AbstractIgniteRepository<TemplateConfiguration>(), ITemplateRepository {
 
-    override fun getCache(): IgniteCache<String, CloudProcessConfiguration> {
-        return ignite.getOrCreateCache("cloud-processes")
-    }
-
-    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
-        return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))
-    }
-
-    override fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>> {
-        return executeQuery(CloudProcessCompareGroupNamePredicate(groupName))
+    override fun getCache(): IgniteCache<String, TemplateConfiguration> {
+        return ignite.getOrCreateCache("cloud-templates")
     }
 
 

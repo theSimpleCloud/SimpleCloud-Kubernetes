@@ -20,35 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.NodeCompareIgniteIdPredicate
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+import eu.thesimplecloud.simplecloud.api.repository.IProcessVersionRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
-import java.util.*
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 21.04.2021
- * Time: 21:21
+ * Time: 19:07
  * @author Frederick Baier
  */
 @Singleton
-class IgniteNodeRepository @Inject constructor(
+class IgniteProcessVersionRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<NodeConfiguration>(), INodeRepository {
+) : AbstractIgniteRepository<ProcessVersionConfiguration>(), IProcessVersionRepository {
 
-    override fun getCache(): IgniteCache<String, NodeConfiguration> {
-        return ignite.getOrCreateCache("cloud-nodes")
+    override fun getCache(): IgniteCache<String, ProcessVersionConfiguration> {
+        return ignite.getOrCreateCache("cloud-process-versions")
     }
 
-    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration> {
-        return executeQueryAndFindFirst(NodeCompareIgniteIdPredicate(uniqueId))
-    }
+
 }

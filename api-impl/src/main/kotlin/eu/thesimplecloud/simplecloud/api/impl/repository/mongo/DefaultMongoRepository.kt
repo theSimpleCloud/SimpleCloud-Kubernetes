@@ -20,51 +20,58 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.mongo
 
-import eu.thesimplecloud.simplecloud.api.future.nonNull
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import dev.morphia.Datastore
+import dev.morphia.query.Query
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
-import org.apache.ignite.IgniteCache
-import org.apache.ignite.cache.query.ScanQuery
-import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 19:09
+ * Date: 08/08/2021
+ * Time: 09:58
  * @author Frederick Baier
  */
-abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
-
-    abstract fun getCache(): IgniteCache<String, T>
+open class DefaultMongoRepository<I : Any, T : Any>(
+    private val datastore: Datastore,
+    private val entityClass: Class<T>
+) : IRepository<I, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
-        return CompletableFuture.supplyAsync { getCache().toList().map { it.value } }
-    }
-
-    override fun find(identifier: String): CompletableFuture<T> {
-        return CompletableFuture.supplyAsync { getCache().get(identifier) }.nonNull()
-    }
-
-    override fun save(identifier: String, value: T) {
-        getCache().putAsync(identifier, value)
-    }
-
-    protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {
         return CompletableFuture.supplyAsync {
-            val cursor = getCache().query(ScanQuery(predicate))
-            return@supplyAsync cursor.all.map { it.value }
-        }.nonNull()
+            this.datastore.find(entityClass).toList()
+        }
     }
 
-    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<String, T>): CompletableFuture<T> {
-        return executeQuery(predicate).thenApply { it.first() }
+    override fun find(identifier: I): CompletableFuture<T> {
+        return CompletableFuture.supplyAsync {
+            createIdentifierQuery(identifier)
+                .first() ?: throw NoSuchElementException("Element not found")
+        }
     }
 
-    override fun remove(identifier: String) {
-        getCache().removeAsync(identifier)
+    override fun save(identifier: I, value: T) {
+        CompletableFuture.supplyAsync {
+            this.datastore.save(value)
+        }
     }
 
+    override fun remove(identifier: I) {
+        CompletableFuture.supplyAsync {
+            this.datastore.delete(createIdentifierQuery(identifier))
+        }
+    }
+
+    override fun count(): CompletableFuture<Long> {
+        return CompletableFuture.supplyAsync {
+            this.datastore.find(entityClass).count()
+        }
+    }
+
+    private fun createIdentifierQuery(identifier: I): Query<T> {
+        return this.datastore.createQuery(entityClass)
+            .field("_id")
+            .equal(identifier)
+    }
 }

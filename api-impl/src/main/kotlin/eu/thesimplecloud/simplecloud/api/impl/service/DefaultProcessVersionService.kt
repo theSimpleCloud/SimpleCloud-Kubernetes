@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.service
 
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteProcessVersionRepository
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
 import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequest
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
@@ -32,7 +32,6 @@ import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
-import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
 import java.util.concurrent.CompletableFuture
 
 /**

@@ -20,30 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.NodeCompareIgniteIdPredicate
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 27.03.2021
- * Time: 13:42
+ * Date: 21.04.2021
+ * Time: 21:21
  * @author Frederick Baier
  */
 @Singleton
-class IgniteCloudProcessGroupRepository @Inject constructor(
+class IgniteNodeRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(), ICloudProcessGroupRepository {
+) : AbstractIgniteRepository<NodeConfiguration>(), INodeRepository {
 
-    override fun getCache(): IgniteCache<String, AbstractCloudProcessGroupConfiguration> {
-        return ignite.getOrCreateCache("cloud-process-groups")
+    override fun getCache(): IgniteCache<String, NodeConfiguration> {
+        return ignite.getOrCreateCache("cloud-nodes")
     }
 
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration> {
+        return executeQueryAndFindFirst(NodeCompareIgniteIdPredicate(uniqueId))
+    }
 }

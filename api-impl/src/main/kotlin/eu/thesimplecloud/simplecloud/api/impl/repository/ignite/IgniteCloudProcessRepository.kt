@@ -20,30 +20,40 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.IProcessVersionRepository
+import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareGroupNamePredicate
+import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareUUIDPredicate
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
+import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 19:07
+ * Date: 12.06.2021
+ * Time: 10:57
  * @author Frederick Baier
  */
 @Singleton
-class IgniteProcessVersionRepository @Inject constructor(
+class IgniteCloudProcessRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<ProcessVersionConfiguration>(), IProcessVersionRepository {
+) : AbstractIgniteRepository<CloudProcessConfiguration>(), ICloudProcessRepository {
 
-    override fun getCache(): IgniteCache<String, ProcessVersionConfiguration> {
-        return ignite.getOrCreateCache("cloud-process-versions")
+    override fun getCache(): IgniteCache<String, CloudProcessConfiguration> {
+        return ignite.getOrCreateCache("cloud-processes")
+    }
+
+    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
+        return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))
+    }
+
+    override fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>> {
+        return executeQuery(CloudProcessCompareGroupNamePredicate(groupName))
     }
 
 

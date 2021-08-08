@@ -43,4 +43,9 @@ interface IRepository<I : Any, T : Any> {
         return future.handle { _, _ -> future.isCompletedNormally }
     }
 
+    /**
+     * Returns the count of elements stored in this repository
+     */
+    fun count(): CompletableFuture<Long>
+
 }

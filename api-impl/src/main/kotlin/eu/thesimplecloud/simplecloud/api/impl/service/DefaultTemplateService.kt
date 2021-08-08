@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.service
 
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.repository.IgniteTemplateRepository
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
 import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.impl.template.Template
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService

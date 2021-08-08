@@ -20,31 +20,28 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.AbstractIgniteRepository
-import eu.thesimplecloud.simplecloud.api.repository.ITemplateRepository
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
-import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessGroupRepository
 import org.apache.ignite.Ignite
 import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 19:07
+ * Date: 27.03.2021
+ * Time: 13:42
  * @author Frederick Baier
  */
 @Singleton
-class IgniteTemplateRepository @Inject constructor(
+class IgniteCloudProcessGroupRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<TemplateConfiguration>(), ITemplateRepository {
+) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(), ICloudProcessGroupRepository {
 
-    override fun getCache(): IgniteCache<String, TemplateConfiguration> {
-        return ignite.getOrCreateCache("cloud-templates")
+    override fun getCache(): IgniteCache<String, AbstractCloudProcessGroupConfiguration> {
+        return ignite.getOrCreateCache("cloud-process-groups")
     }
-
 
 }
