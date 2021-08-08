@@ -65,6 +65,7 @@ class NodeStartupSetupHandler() {
     }
 
     fun shutdownRestSetupServer() {
+        this.restSetupManager?.onEndOfAllSetups()
         this.setupRestServer?.shutdown()
     }
 

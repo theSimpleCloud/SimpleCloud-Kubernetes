@@ -33,6 +33,7 @@ import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupRespons
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CopyOnWriteArrayList
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
@@ -51,6 +52,7 @@ class RestSetupManager(
         private set
 
     private val setupNameToFuture = Maps.newConcurrentMap<String, CompletableFuture<Any>>()
+    private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<String>>()
 
     init {
         registerGetCurrentSetupRoute()
@@ -61,7 +63,12 @@ class RestSetupManager(
         this.nextSetup = setupType.setupName
         val future = CompletableFuture<T>()
         this.setupNameToFuture[setupType.setupName] = future as CompletableFuture<Any>
+        completeAllFuturesWaitingForNextSetup(setupType.setupName)
         return future
+    }
+
+    private fun completeAllFuturesWaitingForNextSetup(value: String) {
+        this.futuresWaitingForNextSetup.forEach { it.complete(value) }
     }
 
     private fun registerRoute(setupType: SetupType<*>) {
@@ -98,12 +105,23 @@ class RestSetupManager(
         this.restServer.registerMethodRoute(methodRoute)
     }
 
+    private fun waitForNextSetupName(): CompletableFuture<String> {
+        val future = CompletableFuture<String>()
+        this.futuresWaitingForNextSetup.add(future)
+        return future
+    }
+
+    fun onEndOfAllSetups() {
+        this.nextSetup = "END"
+        completeAllFuturesWaitingForNextSetup("END")
+    }
+
     private fun createVirtualMethod(setupName: String): VirtualMethod {
         return object : VirtualMethod {
 
             override fun invoke(invokeObj: Any, vararg args: Any?): Any {
                 this@RestSetupManager.setupNameToFuture[setupName]?.complete(args[0])
-                return true
+                return waitForNextSetupName().join()
             }
 
         }
