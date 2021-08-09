@@ -112,16 +112,17 @@ class RestSetupManager(
     }
 
     fun onEndOfAllSetups() {
-        this.nextSetup = "END"
-        completeAllFuturesWaitingForNextSetup("END")
+        this.nextSetup = "end"
+        completeAllFuturesWaitingForNextSetup("end")
     }
 
     private fun createVirtualMethod(setupName: String): VirtualMethod {
         return object : VirtualMethod {
 
             override fun invoke(invokeObj: Any, vararg args: Any?): Any {
+                val future = waitForNextSetupName()
                 this@RestSetupManager.setupNameToFuture[setupName]?.complete(args[0])
-                return waitForNextSetupName().join()
+                return future.join()
             }
 
         }

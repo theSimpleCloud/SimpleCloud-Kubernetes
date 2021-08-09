@@ -28,9 +28,7 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.api.module.ModuleType
 import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
-import eu.thesimplecloud.simplecloud.node.repository.MongoModuleRepository
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
