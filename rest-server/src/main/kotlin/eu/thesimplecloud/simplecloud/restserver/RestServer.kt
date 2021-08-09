@@ -121,7 +121,12 @@ class RestServer @Inject constructor(
                         override val contentLength: Long? = contentLength?.toLong()
                         override val contentType: ContentType? = contentType?.let { ContentType.parse(it) }
                         override val headers: Headers = Headers.build {
-                            appendAll(proxiedHeaders.filter { key, _ -> !key.equals(HttpHeaders.ContentType, ignoreCase = true) && !key.equals(HttpHeaders.ContentLength, ignoreCase = true) })
+                            appendAll(proxiedHeaders.filter { key, _ ->
+                                !key.equals(
+                                    HttpHeaders.ContentType,
+                                    ignoreCase = true
+                                ) && !key.equals(HttpHeaders.ContentLength, ignoreCase = true)
+                            })
                         }
                         override val status: HttpStatusCode? = response.status
                         override suspend fun writeTo(channel: ByteWriteChannel) {
@@ -146,7 +151,7 @@ class RestServer @Inject constructor(
             route(methodRoute.path, HttpMethod(methodRoute.requestType.name)) {
                 authenticate {
                     handle {
-                        WebRequestHandler(methodRoute, call, authService).handleRequest()
+                        handleIncomingRequest(methodRoute, call)
                     }
                 }
             }
@@ -157,9 +162,18 @@ class RestServer @Inject constructor(
         this.server.application.routing {
             route(methodRoute.path, HttpMethod(methodRoute.requestType.name)) {
                 handle {
-                    WebRequestHandler(methodRoute, call, authService).handleRequest()
+                    handleIncomingRequest(methodRoute, call)
                 }
             }
+        }
+    }
+
+    private suspend fun handleIncomingRequest(methodRoute: MethodRoute, call: ApplicationCall) {
+        try {
+            val requestBody = call.receiveText()
+            WebRequestHandler(methodRoute, call, requestBody, authService).handleRequest()
+        } catch (ex: RequestAlreadyConsumedException) {
+            //ignored because the request cannot be already consumed here
         }
     }
 

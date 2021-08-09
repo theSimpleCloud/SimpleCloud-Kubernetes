@@ -45,6 +45,7 @@ import java.util.concurrent.CompletionException
 class WebRequestHandler(
     private val methodRoute: MethodRoute,
     private val call: ApplicationCall,
+    private val requestBody: String,
     private val authService: IAuthService
 ) {
 
@@ -101,7 +102,7 @@ class WebRequestHandler(
     }
 
     private suspend fun handleRequestUnchecked(user: User) {
-        val response = UncheckedRequestHandler(methodRoute, call, user).handleRequest()
+        val response = UncheckedRequestHandler(methodRoute, call, user, requestBody).handleRequest()
         handleResponse(response)
     }
 

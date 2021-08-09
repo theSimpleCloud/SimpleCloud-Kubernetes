@@ -38,10 +38,9 @@ import java.security.InvalidParameterException
 class UncheckedRequestHandler(
     private val methodRoute: MethodRoute,
     private val call: ApplicationCall,
-    private val user: User
+    private val user: User,
+    private val requestBody: String
 ) {
-
-    private var bodyAsText: String? = null
 
     suspend fun handleRequest(): Any? {
         val parameterValues = mapParameters()
@@ -97,7 +96,7 @@ class UncheckedRequestHandler(
     }
 
     private suspend fun <T : Any> parseBodyToClass(clazz: Class<T>): T? {
-        return RestServer.mapperExcludeIncoming.readValue(getBodyAsText(), clazz)
+        return RestServer.mapperExcludeIncoming.readValue(this.requestBody, clazz)
     }
 
     private suspend fun getTypeInBody(): String? {
@@ -111,21 +110,13 @@ class UncheckedRequestHandler(
     }
 
     private suspend fun getBodyAsJsonNode(): JsonNode {
-        return RestServer.mapperExcludeIncoming.readValue(getBodyAsText(), JsonNode::class.java)
+        return RestServer.mapperExcludeIncoming.readValue(this.requestBody, JsonNode::class.java)
     }
 
     private fun checkAnnotationIsPresent(parameter: MethodRoute.MethodRouteParameter) {
         if (parameter.annotation == null) {
             throw InvalidParameterException(parameter.parameterType::class.java.name)
         }
-    }
-
-    private suspend fun getBodyAsText(): String {
-        val bodyAsText = this.bodyAsText
-        if (bodyAsText == null) {
-            this.bodyAsText = this.call.receiveText()
-        }
-        return this.bodyAsText!!
     }
 
 

@@ -23,14 +23,9 @@
 package eu.thesimplecloud.simplecloud.restserver
 
 import com.google.inject.AbstractModule
-import com.google.inject.assistedinject.FactoryModuleBuilder
-import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcess
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
-import eu.thesimplecloud.simplecloud.restserver.repository.FileUserRepository
 import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
@@ -48,7 +43,6 @@ class RestBinderModule : AbstractModule() {
 
 
     override fun configure() {
-        bind(IUserRepository::class.java).to(FileUserRepository::class.java)
         bind(IAuthService::class.java).to(AuthService::class.java)
         bind(IUserService::class.java).to(UserService::class.java)
         bind(IValidatorService::class.java).to(ValidatorService::class.java)
