@@ -1,0 +1,6 @@
+{
+  "name":  "Container-Local",
+  "author":  "Wetterbericht",
+  "version":  "0.1",
+  "classToLoad":  "eu.thesimplecloud.simplecloud.container.local.guice.BinderModule"
+}
