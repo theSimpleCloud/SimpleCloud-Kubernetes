@@ -25,11 +25,12 @@ package eu.thesimplecloud.simplecloud.api.process
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStopRequest
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import java.util.*
@@ -41,6 +42,11 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
      * Returns the unique id of the process
      */
     fun getUniqueId(): UUID
+
+    /**
+     * Returns the group name of this process
+     */
+    fun getGroupName(): String
 
     /**
      * Returns the group of the process
@@ -123,10 +129,13 @@ interface ICloudProcess : INetworkComponent, IIdentifiable<String> {
     fun startedFuture(): CompletableFuture<Void>
 
     /**
-     * Creates a request to stop this process
+     * Returns the configuration of this group
      */
-    fun createStopRequest(): IProcessStopRequest
+    fun toConfiguration(): CloudProcessConfiguration
 
-
+    /**
+     * Creates a request to stop this service
+     */
+    fun createShutdownRequest(): IProcessShutdownRequest
 
 }

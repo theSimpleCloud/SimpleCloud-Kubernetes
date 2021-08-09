@@ -25,16 +25,14 @@ package eu.thesimplecloud.simplecloud.api.process.group
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.ProcessGroupType
-import eu.thesimplecloud.simplecloud.api.process.group.update.ICloudProcessGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.process.request.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import java.util.concurrent.CompletableFuture
+
 
 interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
@@ -46,11 +44,21 @@ interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
     fun isInMaintenance(): Boolean
 
+    fun getTemplateName(): String
+
     fun getTemplate(): CompletableFuture<ITemplate>
+
+    fun getProcessVersionName(): String
 
     fun getVersion(): CompletableFuture<IProcessVersion>
 
+    fun getJvmArgumentsName(): String?
+
     fun getJvmArguments(): CompletableFuture<IJVMArguments>
+
+    fun getProcessOnlineCountConfigurationName(): String
+
+    fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration>
 
     fun getProcessGroupType(): ProcessGroupType
 
@@ -66,16 +74,12 @@ interface ICloudProcessGroup : INameable, IIdentifiable<String> {
 
     fun getStartPriority(): Int
 
+    fun getNodeNamesAllowedToStartServicesOn(): List<String>
+
     fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>>
 
     fun getProcesses(): CompletableFuture<List<ICloudProcess>>
 
-    fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration>
-
-    fun createProcessStartRequest(): IProcessStartRequest
-
-    fun createUpdateRequest(): ICloudProcessGroupUpdateRequest
-
-    fun createDeleteRequest(): IProcessGroupDeleteRequest
+    fun toConfiguration(): AbstractCloudProcessGroupConfiguration
 
 }

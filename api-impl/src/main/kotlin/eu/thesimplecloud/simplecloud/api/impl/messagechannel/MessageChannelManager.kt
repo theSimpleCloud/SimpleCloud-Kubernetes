@@ -58,5 +58,6 @@ class MessageChannelManager @Inject constructor(
 
     override fun unregisterMessageChannel(name: String) {
         val messageChannel = getMessageChannelByNameInternal(name)
+        this.registeredMessageChannels.remove(messageChannel)
     }
 }

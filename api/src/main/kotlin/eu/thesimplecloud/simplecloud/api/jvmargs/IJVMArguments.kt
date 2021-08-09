@@ -22,7 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.api.jvmargs
 
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 
 /**
@@ -39,5 +40,10 @@ interface IJVMArguments : INameable, IIdentifiable<String> {
      * Returns the arguments to be applied
      */
     fun getArguments(): List<String>
+
+    /**
+     * Returns the configuration of this jvm arguments
+     */
+    fun toConfiguration(): JvmArgumentConfiguration
 
 }

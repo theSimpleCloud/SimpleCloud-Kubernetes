@@ -1,0 +1,82 @@
+/*
+ * MIT License
+ *
+ * Copyright (C) 2021 The SimpleCloud authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
+
+import eu.thesimplecloud.simplecloud.api.future.nonNull
+import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import org.apache.ignite.IgniteCache
+import org.apache.ignite.cache.query.ScanQuery
+import org.apache.ignite.lang.IgniteBiPredicate
+import java.util.concurrent.CompletableFuture
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 21.04.2021
+ * Time: 19:09
+ * @author Frederick Baier
+ */
+abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
+
+    abstract fun getCache(): IgniteCache<String, T>
+
+    override fun findAll(): CompletableFuture<List<T>> {
+        return CompletableFuture.supplyAsync { getCache().toList().map { it.value } }
+    }
+
+    override fun find(identifier: String): CompletableFuture<T> {
+        return findOrNull(identifier).nonNull()
+    }
+
+    override fun findOrNull(identifier: String): CompletableFuture<T?> {
+        return CompletableFuture.supplyAsync { getCache().get(identifier) }
+    }
+
+    override fun save(identifier: String, value: T): CompletableFuture<Void> {
+        return CompletableFuture.supplyAsync {
+            getCache().put(identifier, value)
+            return@supplyAsync null
+        }
+    }
+
+    protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {
+        return CompletableFuture.supplyAsync {
+            val cursor = getCache().query(ScanQuery(predicate))
+            return@supplyAsync cursor.all.map { it.value }
+        }.nonNull()
+    }
+
+    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<String, T>): CompletableFuture<T> {
+        return executeQuery(predicate).thenApply { it.first() }
+    }
+
+    override fun remove(identifier: String) {
+        getCache().removeAsync(identifier)
+    }
+
+    override fun count(): CompletableFuture<Long> {
+        return CompletableFuture.supplyAsync {
+            return@supplyAsync getCache().sizeLong()
+        }
+    }
+
+}

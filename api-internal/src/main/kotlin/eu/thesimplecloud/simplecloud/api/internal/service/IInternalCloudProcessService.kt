@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.internal.service
 
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.process.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,12 +39,12 @@ interface IInternalCloudProcessService : ICloudProcessService {
      * Starts a new process with the specified [configuration]
      * @return the newly registered process
      */
-    fun startNewProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
+    fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess>
 
     /**
      * Shuts the [process] down
      * @return the [ICloudProcess.terminationFuture] of the process
      */
-    fun shutdownProcess(process: ICloudProcess): CompletableFuture<Void>
+    fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Void>
 
 }

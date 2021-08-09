@@ -22,15 +22,13 @@
 
 package eu.thesimplecloud.simplecloud.api
 
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.repository.group.ICloudProcessGroupRepository
-import eu.thesimplecloud.simplecloud.api.service.group.ICloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.jvmargs.IJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.service.node.INodeService
-import eu.thesimplecloud.simplecloud.api.service.onlinecount.IProcessOnlineCountService
-import eu.thesimplecloud.simplecloud.api.service.process.ICloudProcessService
-import eu.thesimplecloud.simplecloud.api.service.processversion.IProcessVersionService
-import eu.thesimplecloud.simplecloud.api.service.template.ITemplateService
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
 
 /**
  * Created by IntelliJ IDEA.

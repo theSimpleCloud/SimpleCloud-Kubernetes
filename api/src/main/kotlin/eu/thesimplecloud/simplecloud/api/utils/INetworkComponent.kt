@@ -18,9 +18,4 @@ interface INetworkComponent : INameable {
      */
     fun getIgniteId(): UUID
 
-    /**
-     * Sets the ignite id of this component
-     */
-    fun setIgniteId(uuid: UUID)
-
 }

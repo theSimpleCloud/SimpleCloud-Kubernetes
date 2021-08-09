@@ -22,10 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.api.node
 
-import eu.thesimplecloud.simplecloud.api.repository.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
-import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,5 +44,9 @@ interface INode : INetworkComponent, IIdentifiable<String> {
      */
     fun getAddress(): Address
 
+    /**
+     * Returns the configuration of this node
+     */
+    fun toConfiguration(): NodeConfiguration
 
 }

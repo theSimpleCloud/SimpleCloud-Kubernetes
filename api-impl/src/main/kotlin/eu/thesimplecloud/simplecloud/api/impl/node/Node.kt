@@ -22,8 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.node
 
-import eu.thesimplecloud.simplecloud.api.impl.utils.AbstractNetworkComponent
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import java.util.*
 
@@ -34,24 +35,27 @@ import java.util.*
  * @author Frederick Baier
  */
 class Node(
-    private val address: Address,
-    igniteId: UUID,
-    private val name: String
-) : AbstractNetworkComponent(), INode {
+    private val configuration: NodeConfiguration
+) : INode {
 
-    init {
-        setIgniteId(igniteId)
+    override fun getIgniteId(): UUID {
+        return this.configuration.igniteId
     }
 
     override fun getAddress(): Address {
-        return this.address
+        return this.configuration.address
     }
 
     override fun getName(): String {
-        return this.name
+        return this.configuration.name
     }
 
     override fun getIdentifier(): String {
         return this.getName()
     }
+
+    override fun toConfiguration(): NodeConfiguration {
+        return this.configuration
+    }
+
 }
