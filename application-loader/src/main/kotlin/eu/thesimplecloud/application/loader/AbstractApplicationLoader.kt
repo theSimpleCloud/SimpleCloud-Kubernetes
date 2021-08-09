@@ -17,9 +17,13 @@ abstract class AbstractApplicationLoader<T : ILoadedApplication>(
     fun loadAllApplications(directory: File): List<T> {
         require(directory.isDirectory)
         return directory.listFiles()?.map {
-            val applicationData = jarFileLoader.loadJsonFileInJar(it)
-            loadApplication(it, applicationData)
+            loadApplication(it)
         } ?: emptyList()
+    }
+
+    fun loadApplication(file: File): T {
+        val applicationData = jarFileLoader.loadJsonFileInJar(file)
+        return loadApplication(file, applicationData)
     }
 
     abstract fun loadApplication(file: File, fileContent: IApplicationFileContent): T
