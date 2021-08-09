@@ -41,6 +41,7 @@ subprojects {
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         implementation("com.ea.async:ea-async:1.2.4")
+        slim("dev.morphia.morphia:morphia-core:2.2.1")
         //implementation("io.github.slimjar:slimjar:1.2.4")
     }
 

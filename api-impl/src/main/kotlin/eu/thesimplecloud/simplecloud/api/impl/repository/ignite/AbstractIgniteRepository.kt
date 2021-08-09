@@ -44,11 +44,18 @@ abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
     }
 
     override fun find(identifier: String): CompletableFuture<T> {
-        return CompletableFuture.supplyAsync { getCache().get(identifier) }.nonNull()
+        return findOrNull(identifier).nonNull()
     }
 
-    override fun save(identifier: String, value: T) {
-        getCache().putAsync(identifier, value)
+    override fun findOrNull(identifier: String): CompletableFuture<T?> {
+        return CompletableFuture.supplyAsync { getCache().get(identifier) }
+    }
+
+    override fun save(identifier: String, value: T): CompletableFuture<Void> {
+        return CompletableFuture.supplyAsync {
+            getCache().put(identifier, value)
+            return@supplyAsync null
+        }
     }
 
     protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {

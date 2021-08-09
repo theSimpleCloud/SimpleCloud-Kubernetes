@@ -24,6 +24,8 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.mongo
 
 import dev.morphia.Datastore
 import dev.morphia.query.Query
+import dev.morphia.query.experimental.filters.Filters
+import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
 import java.util.concurrent.CompletableFuture
 
@@ -45,21 +47,25 @@ open class DefaultMongoRepository<I : Any, T : Any>(
     }
 
     override fun find(identifier: I): CompletableFuture<T> {
+        return findOrNull(identifier).nonNull()
+    }
+
+    override fun findOrNull(identifier: I): CompletableFuture<T?> {
         return CompletableFuture.supplyAsync {
-            createIdentifierQuery(identifier)
-                .first() ?: throw NoSuchElementException("Element not found")
+            createIdentifierQuery(identifier).first()
         }
     }
 
-    override fun save(identifier: I, value: T) {
-        CompletableFuture.supplyAsync {
+    override fun save(identifier: I, value: T): CompletableFuture<Void> {
+        return CompletableFuture.supplyAsync {
             this.datastore.save(value)
+            return@supplyAsync null
         }
     }
 
     override fun remove(identifier: I) {
         CompletableFuture.supplyAsync {
-            this.datastore.delete(createIdentifierQuery(identifier))
+            createIdentifierQuery(identifier).delete()
         }
     }
 
@@ -70,8 +76,7 @@ open class DefaultMongoRepository<I : Any, T : Any>(
     }
 
     private fun createIdentifierQuery(identifier: I): Query<T> {
-        return this.datastore.createQuery(entityClass)
-            .field("_id")
-            .equal(identifier)
+        return this.datastore.find(entityClass)
+            .filter(Filters.eq("_id", identifier))
     }
 }
