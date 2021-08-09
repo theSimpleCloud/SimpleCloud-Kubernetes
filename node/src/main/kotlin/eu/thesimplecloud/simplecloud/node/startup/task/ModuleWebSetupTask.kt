@@ -20,39 +20,45 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.setup.task
+package eu.thesimplecloud.simplecloud.node.startup.task
 
-import com.ea.async.Async
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
+import eu.thesimplecloud.simplecloud.api.module.ModuleType
+import eu.thesimplecloud.simplecloud.node.repository.IModuleRepository
+import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
-import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
+import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07/08/2021
- * Time: 00:06
+ * Date: 08/08/2021
+ * Time: 09:52
  * @author Frederick Baier
  */
-class MongoDbSetupTask(
-    private val restSetupManager: RestSetupManager
-) : Task<String>() {
+class ModuleWebSetupTask(
+    private val setupManager: RestSetupManager,
+    private val moduleRepository: IModuleRepository,
+    private val moduleType: ModuleType
+): Task<Void>() {
 
     override fun getName(): String {
-        return "mongo_setup"
+        return "module_setup"
     }
 
-    override fun run(): CompletableFuture<String> {
-        val setupFuture = this.restSetupManager.setNextSetup(SetupType.MONGO)
-        val mongoSetupResponseBody = await(setupFuture)
-        return completedFuture(mongoSetupResponseBody.connectionString)
+    override fun run(): CompletableFuture<Void> {
+        return waitForModuleSetup(moduleType)
     }
 
-
+    private fun waitForModuleSetup(moduleType: ModuleType): CompletableFuture<Void> {
+        val setupName = "module/${moduleType.name.lowercase().replace("_", "")}"
+        val setupFuture = this.setupManager.setNextSetup(SetupType(setupName, ModuleSetupResponseBody::class))
+        val response = await(setupFuture)
+        return this.moduleRepository.save(moduleType, ModuleEntity(moduleType, response.downloadURL))
+    }
 
 }

@@ -23,7 +23,10 @@
 package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.ea.async.Async.await
+import com.google.inject.Guice
+import com.google.inject.Injector
 import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.voidFuture
 import eu.thesimplecloud.simplecloud.api.module.ModuleType
 import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
@@ -55,14 +58,15 @@ class NodeStartupTask(
     override fun run(): CompletableFuture<Void> {
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        await(loadModules(datastore))
+        val injector = await(loadModulesAndCreateGuiceInjector(datastore))
         this.nodeSetupHandler.shutdownRestSetupServer()
         return voidFuture()
     }
 
-    private fun loadModules(datastore: Datastore): CompletableFuture<Void> {
-        //return this.taskSubmitter.submit(LoadModulesTask(datastore, nodeSetupHandler))
-        return voidFuture()
+    private fun loadModulesAndCreateGuiceInjector(datastore: Datastore): CompletableFuture<Injector> {
+        val loadedModules = await(this.taskSubmitter.submit(LoadModulesTask(datastore, nodeSetupHandler)))
+        val guiceModules = loadedModules.map { it.getLoadedClassInstance() }
+        return completedFuture(Guice.createInjector(guiceModules))
     }
 
     private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Void> {
@@ -77,18 +81,7 @@ class NodeStartupTask(
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
-        val mongoFileHandler = MongoConfigurationFileHandler(startArguments.mongoDbConnectionString)
-        if (!mongoFileHandler.isConnectionStringAvailable()) {
-            await(this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) { MongoDbSetupTask(it) })
-        }
-        return startMongoDbClient(mongoFileHandler.loadConnectionString()!!)
-    }
-
-    private fun startMongoDbClient(connectionString: String): CompletableFuture<Datastore> {
-        val future = this.taskSubmitter.submit(MongoDbStartTask(connectionString))
-        val mongoDatastore = await(future)
-        mongoDatastore.ensureIndexes()
-        return CompletableFuture.completedFuture(mongoDatastore)
+        return this.taskSubmitter.submit(MongoDbSafeStartTask(this.startArguments.mongoDbConnectionString, this.nodeSetupHandler))
     }
 
 

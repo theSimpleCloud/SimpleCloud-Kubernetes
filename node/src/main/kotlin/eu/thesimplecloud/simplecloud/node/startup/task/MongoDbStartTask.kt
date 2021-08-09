@@ -22,17 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.task
 
-import com.mongodb.MongoClient
-import com.mongodb.MongoClientOptions
-import com.mongodb.MongoClientSettings
-import com.mongodb.MongoClientURI
+import com.mongodb.*
 import com.mongodb.client.MongoClients
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.task.Task
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 import dev.morphia.Morphia
+import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import org.bson.internal.CodecRegistryHelper
+import java.util.concurrent.TimeUnit
 
 
 /**
@@ -42,31 +41,27 @@ import org.bson.internal.CodecRegistryHelper
  * @author Frederick Baier
  */
 class MongoDbStartTask(
-    private val connectionString: String
+    connectionString: String
 ) : Task<Datastore>() {
+
+    private val connectionString = ConnectionString(connectionString)
 
     override fun getName(): String {
         return "start_mongo_client"
     }
 
     override fun run(): CompletableFuture<Datastore> {
-        val morphia = Morphia()
-        val mongoClientURI = createMongoClientURI()
-        val mongoClient = createMongoClient(mongoClientURI)
-        val datastore = morphia.createDatastore(mongoClient, mongoClientURI.database)
+        val mongoClient = MongoClients.create(createClientSettings())
+        val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
         return CompletableFuture.completedFuture(datastore)
     }
 
-    private fun createMongoClient(mongoClientURI: MongoClientURI): MongoClient {
-        return MongoClient(mongoClientURI)
-    }
-
-    private fun createMongoClientURI(): MongoClientURI {
-        return MongoClientURI(
-            this.connectionString,
-            MongoClientOptions.Builder()
-                .serverSelectionTimeout(5000)
-        )
+    private fun createClientSettings(): MongoClientSettings {
+        return MongoClientSettings.builder().applyToSocketSettings {
+            it.readTimeout(5, TimeUnit.SECONDS)
+        }.applyToClusterSettings {
+            it.serverSelectionTimeout(5, TimeUnit.SECONDS)
+        }.applyConnectionString(this.connectionString).build()
     }
 
 }

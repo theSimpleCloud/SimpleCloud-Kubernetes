@@ -44,7 +44,7 @@ class NodeStartupSetupHandler() {
     @Volatile
     private var restSetupManager: RestSetupManager? = null
 
-    fun executeSetupTask(taskSubmitter: TaskSubmitter, function: (RestSetupManager) -> Task<Void>): CompletableFuture<Void> {
+    fun <T> executeSetupTask(taskSubmitter: TaskSubmitter, function: (RestSetupManager) -> Task<T>): CompletableFuture<T> {
         val restSetupManager = await(getRestSetupManager(taskSubmitter))
         val task = function(restSetupManager)
         return taskSubmitter.submit(task)

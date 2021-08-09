@@ -20,39 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.setup.task
+package eu.thesimplecloud.simplecloud.node.util
 
-import com.ea.async.Async
-import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
-import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
-import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
-import eu.thesimplecloud.simplecloud.task.Task
-import java.util.concurrent.CompletableFuture
+import java.io.File
+import java.io.IOException
+import java.net.URL
+import java.nio.file.Files
+import java.nio.file.Paths
+import java.nio.file.StandardCopyOption
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07/08/2021
- * Time: 00:06
+ * Date: 08/08/2021
+ * Time: 22:13
  * @author Frederick Baier
  */
-class MongoDbSetupTask(
-    private val restSetupManager: RestSetupManager
-) : Task<String>() {
+object Downloader {
 
-    override fun getName(): String {
-        return "mongo_setup"
+    @Throws(IOException::class)
+    fun userAgentDownload(url: String, file: File) {
+        file.parentFile?.mkdirs()
+        val urlConnection = URL(url).openConnection()
+        urlConnection.setRequestProperty("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:58.0) Gecko/20100101 Firefox/58.0")
+        urlConnection.connect()
+        Files.copy(urlConnection.getInputStream(), Paths.get(file.absolutePath), StandardCopyOption.REPLACE_EXISTING)
     }
-
-    override fun run(): CompletableFuture<String> {
-        val setupFuture = this.restSetupManager.setNextSetup(SetupType.MONGO)
-        val mongoSetupResponseBody = await(setupFuture)
-        return completedFuture(mongoSetupResponseBody.connectionString)
-    }
-
-
 
 }

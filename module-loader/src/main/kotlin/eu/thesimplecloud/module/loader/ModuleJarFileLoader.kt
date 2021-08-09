@@ -12,7 +12,7 @@ import eu.thesimplecloud.application.loader.AbstractJarFileLoader
  * Time: 21:15
  */
 @Singleton
-class ModuleJarFileLoader: AbstractJarFileLoader<DefaultApplicationFileContent>(
+class ModuleJarFileLoader : AbstractJarFileLoader<DefaultApplicationFileContent>(
     "module.json"
 ) {
 

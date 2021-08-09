@@ -55,4 +55,8 @@ class MongoConfigurationFileHandler(
         this.objectMapper.writeValue(file, MongoFileConfiguration(connectionString))
     }
 
+    fun deleteFile() {
+        this.file.delete()
+    }
+
 }
