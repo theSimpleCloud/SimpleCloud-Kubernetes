@@ -16,6 +16,4 @@ dependencies {
     implementation("io.ktor:ktor-auth:1.6.2")
     implementation("io.ktor:ktor-auth-jwt:1.6.2")
 
-    implementation("dev.morphia.morphia:core:1.6.1")
-
 }
