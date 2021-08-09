@@ -20,22 +20,20 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.future
-
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
+package eu.thesimplecloud.simplecloud.api.module
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05/07/2021
- * Time: 22:06
+ * Date: 07/08/2021
+ * Time: 20:19
  * @author Frederick Baier
  */
+enum class ModuleType {
 
-fun <T> completedFuture(any: T): CompletableFuture<T> {
-    return CompletableFuture.completedFuture(any)
-}
+    CONTAINER,
 
-fun voidFuture(): CompletableFuture<Void> {
-    return CompletableFuture.completedFuture(null)
+    STORAGE_BACKEND,
+
+    PROCESS_ONLINE_COUNT_CALCULATOR
+
 }

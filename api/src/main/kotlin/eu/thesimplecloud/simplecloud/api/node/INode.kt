@@ -49,5 +49,4 @@ interface INode : INetworkComponent, IIdentifiable<String> {
      */
     fun toConfiguration(): NodeConfiguration
 
-
 }

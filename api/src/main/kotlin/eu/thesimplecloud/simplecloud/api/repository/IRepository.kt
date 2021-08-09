@@ -26,9 +26,14 @@ interface IRepository<I : Any, T : Any> {
     fun find(identifier: I): CompletableFuture<T>
 
     /**
+     * Returns the object found by the specified [identifier] or null
+     */
+    fun findOrNull(identifier: I): CompletableFuture<T?>
+
+    /**
      * Saves the specified [value] and replaces it if needed according to its identifier
      */
-    fun save(identifier: I, value: T)
+    fun save(identifier: I, value: T): CompletableFuture<Void>
 
     /**
      * Removes the value found by the specified [identifier]
