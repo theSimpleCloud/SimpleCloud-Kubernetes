@@ -2,7 +2,7 @@ plugins {
     java
     id ("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("jvm") version "1.5.20"
-    id ("io.github.slimjar") version "1.2.1"
+    id ("io.github.slimjar") version "1.2.2"
 }
 
 allprojects {
@@ -27,7 +27,7 @@ allprojects {
     }
 
     dependencies {
-        implementation("io.github.slimjar:slimjar:1.2.4")
+        implementation("io.github.slimjar:slimjar:1.2.5")
     }
 
 }
@@ -41,7 +41,7 @@ subprojects {
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         implementation("com.ea.async:ea-async:1.2.4")
-        slim("dev.morphia.morphia:morphia-core:2.2.1")
+        implementation("dev.morphia.morphia:morphia-core:2.2.1")
         //implementation("io.github.slimjar:slimjar:1.2.4")
     }
 

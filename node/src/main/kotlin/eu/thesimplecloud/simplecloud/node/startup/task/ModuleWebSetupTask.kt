@@ -23,14 +23,12 @@
 package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
 import eu.thesimplecloud.simplecloud.api.module.ModuleType
 import eu.thesimplecloud.simplecloud.node.repository.IModuleRepository
 import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
@@ -56,7 +54,7 @@ class ModuleWebSetupTask(
 
     private fun waitForModuleSetup(moduleType: ModuleType): CompletableFuture<Void> {
         val setupName = "module/${moduleType.name.lowercase().replace("_", "")}"
-        val setupFuture = this.setupManager.setNextSetup(SetupType(setupName, ModuleSetupResponseBody::class))
+        val setupFuture = this.setupManager.setNextSetup(Setup(setupName, emptyArray<String>(), ModuleSetupResponseBody::class))
         val response = await(setupFuture)
         return this.moduleRepository.save(moduleType, ModuleEntity(moduleType, response.downloadURL))
     }

@@ -28,11 +28,13 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
-import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
+import eu.thesimplecloud.simplecloud.node.startup.task.docker.DockerInstallTask
+import eu.thesimplecloud.simplecloud.node.startup.task.docker.DockerSafeInstallTask
+import eu.thesimplecloud.simplecloud.node.startup.task.docker.EnsureInsideDockerAndDockerIsAccessibleTask
+import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
@@ -54,6 +56,7 @@ class NodeStartupTask(
     }
 
     override fun run(): CompletableFuture<Void> {
+        await(this.taskSubmitter.submit(EnsureInsideDockerAndDockerIsAccessibleTask()))
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
         val injector = await(loadModulesAndCreateGuiceInjector(datastore))

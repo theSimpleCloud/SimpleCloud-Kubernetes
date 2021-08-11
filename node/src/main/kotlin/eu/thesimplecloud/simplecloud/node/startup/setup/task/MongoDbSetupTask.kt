@@ -22,15 +22,14 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
-import com.ea.async.Async
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
+import eu.thesimplecloud.simplecloud.node.startup.task.docker.MongoDockerContainerCreateTask
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import eu.thesimplecloud.simplecloud.task.Task
+import java.io.File
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -48,11 +47,34 @@ class MongoDbSetupTask(
     }
 
     override fun run(): CompletableFuture<String> {
-        val setupFuture = this.restSetupManager.setNextSetup(SetupType.MONGO)
+        val setupFuture = this.restSetupManager.setNextSetup(createSetup())
         val mongoSetupResponseBody = await(setupFuture)
+        if (mongoSetupResponseBody.mongoMode == MongoSetupResponseBody.MongoMode.CREATE) {
+            val newConnectionString = await(createMongoDockerContainer(mongoSetupResponseBody))
+            return completedFuture(newConnectionString)
+        }
         return completedFuture(mongoSetupResponseBody.connectionString)
     }
 
+    private fun createSetup(): Setup<MongoSetupResponseBody> {
+        return Setup("mongo", getMongoModePossibilities(), MongoSetupResponseBody::class)
+    }
+
+    private fun getMongoModePossibilities(): Array<MongoSetupResponseBody.MongoMode> {
+        if (isDockerAvailable()) {
+            return MongoSetupResponseBody.MongoMode.values()
+        }
+        return arrayOf(MongoSetupResponseBody.MongoMode.EXTERNAL)
+    }
+
+    private fun isDockerAvailable(): Boolean {
+        return File("/var/run/docker.sock").exists()
+    }
+
+    private fun createMongoDockerContainer(mongoSetupResponseBody: MongoSetupResponseBody): CompletableFuture<String> {
+        if (!isDockerAvailable()) throw IllegalStateException("Cannot create mongodb container because docker is not available")
+        return this.taskSubmitter.submit(MongoDockerContainerCreateTask(mongoSetupResponseBody))
+    }
 
 
 }

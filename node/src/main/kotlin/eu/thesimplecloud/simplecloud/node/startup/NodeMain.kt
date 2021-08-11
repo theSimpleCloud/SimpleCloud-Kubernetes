@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.node.startup
 
 
 import io.github.slimjar.app.builder.ApplicationBuilder
+import io.github.slimjar.app.builder.IsolationConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,6 +34,7 @@ import io.github.slimjar.app.builder.ApplicationBuilder
  */
 
 fun main(args: Array<String>) {
-    ApplicationBuilder.appending("SimpleCloud").build()
+    println("before Dependency Install")
+    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
     NodeStartArgumentParserMain().main(args)
 }

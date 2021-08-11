@@ -20,48 +20,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.task
+package eu.thesimplecloud.simplecloud.node.startup.task.docker
 
-import com.mongodb.*
-import com.mongodb.client.MongoClients
-import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.future.voidFuture
 import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
+import java.io.File
 import java.util.concurrent.CompletableFuture
-import dev.morphia.Morphia
-import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
-import org.bson.internal.CodecRegistryHelper
-import java.util.concurrent.TimeUnit
-
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05/08/2021
- * Time: 10:01
+ * Date: 09/08/2021
+ * Time: 22:45
  * @author Frederick Baier
  */
-class MongoDbStartTask(
-    connectionString: String
-) : Task<Datastore>() {
-
-    private val connectionString = ConnectionString(connectionString)
-
+class DockerSafeInstallTask : Task<Void>() {
     override fun getName(): String {
-        return "start_mongo_client"
+        return "docker_safe_install"
     }
 
-    override fun run(): CompletableFuture<Datastore> {
-        val mongoClient = MongoClients.create(createClientSettings())
-        val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
-        return CompletableFuture.completedFuture(datastore)
+    override fun run(): CompletableFuture<Void> {
+        if (isWindows()) return voidFuture()
+        val dockerSocketFile = File("/var/run/docker.sock")
+        if (dockerSocketFile.exists()) return voidFuture()
+        return this.taskSubmitter.submit(DockerInstallTask())
     }
 
-    private fun createClientSettings(): MongoClientSettings {
-        return MongoClientSettings.builder().applyToSocketSettings {
-            it.readTimeout(5, TimeUnit.SECONDS)
-        }.applyToClusterSettings {
-            it.serverSelectionTimeout(5, TimeUnit.SECONDS)
-        }.applyConnectionString(this.connectionString).build()
+    private fun isWindows(): Boolean {
+        return System.getProperty("os.name").lowercase().contains("windows")
     }
 
 }

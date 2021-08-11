@@ -20,43 +20,48 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.setup.task
+package eu.thesimplecloud.simplecloud.node.startup.task.mongo
 
-import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
-import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
-import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.restserver.user.User
+import com.mongodb.*
+import com.mongodb.client.MongoClients
+import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.task.Task
+import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
+import dev.morphia.Morphia
+import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
+import org.bson.internal.CodecRegistryHelper
+import java.util.concurrent.TimeUnit
+
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07/08/2021
- * Time: 00:06
+ * Date: 05/08/2021
+ * Time: 10:01
  * @author Frederick Baier
  */
-class FirstWebUserSetupTask(
-    private val restSetupManager: RestSetupManager,
-    private val userRepository: IUserRepository
-) : Task<Void>() {
+class MongoDbStartTask(
+    connectionString: String
+) : Task<Datastore>() {
+
+    private val connectionString = ConnectionString(connectionString)
 
     override fun getName(): String {
-        return "fist_web_user_setup"
+        return "start_mongo_client"
     }
 
-    override fun run(): CompletableFuture<Void> {
-        val setupFuture = this.restSetupManager.setNextSetup(Setup.FIRST_USER)
-        val responseBody = await(setupFuture)
-        saveResponseToMongoDatabase(responseBody)
-        return voidFuture()
+    override fun run(): CompletableFuture<Datastore> {
+        val mongoClient = MongoClients.create(createClientSettings())
+        val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
+        return CompletableFuture.completedFuture(datastore)
     }
 
-    private fun saveResponseToMongoDatabase(response: FirstUserSetupResponseBody) {
-        val user = User(response.username, response.password)
-        this.userRepository.save(user.getIdentifier(), user)
+    private fun createClientSettings(): MongoClientSettings {
+        return MongoClientSettings.builder().applyToSocketSettings {
+            it.readTimeout(5, TimeUnit.SECONDS)
+        }.applyToClusterSettings {
+            it.serverSelectionTimeout(5, TimeUnit.SECONDS)
+        }.applyConnectionString(this.connectionString).build()
     }
 
 }

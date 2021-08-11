@@ -20,43 +20,46 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.setup.task
+package eu.thesimplecloud.simplecloud.node.startup.task.docker
 
-import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
-import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
-import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.restserver.user.User
+import eu.thesimplecloud.simplecloud.node.util.Downloader
 import eu.thesimplecloud.simplecloud.task.Task
+import org.tinylog.Logger
+import java.io.BufferedReader
+import java.io.File
+import java.io.InputStreamReader
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07/08/2021
- * Time: 00:06
+ * Date: 09/08/2021
+ * Time: 22:45
  * @author Frederick Baier
  */
-class FirstWebUserSetupTask(
-    private val restSetupManager: RestSetupManager,
-    private val userRepository: IUserRepository
-) : Task<Void>() {
+class DockerInstallTask : Task<Void>() {
 
     override fun getName(): String {
-        return "fist_web_user_setup"
+        return "docker_install"
     }
 
     override fun run(): CompletableFuture<Void> {
-        val setupFuture = this.restSetupManager.setNextSetup(Setup.FIRST_USER)
-        val responseBody = await(setupFuture)
-        saveResponseToMongoDatabase(responseBody)
+        Logger.warn("The cloud is about to INSTALL DOCKER", "")
+        Logger.warn("If you want to abort press Ctrl+C. Waiting 20 seconds.", "")
+        Thread.sleep(20_000)
+        Downloader.userAgentDownload("https://get.docker.com/", File("install-docker.sh"))
+        executeAndWatchLog("chmod 777 install-docker.sh")
+        executeAndWatchLog("./install-docker.sh")
         return voidFuture()
     }
 
-    private fun saveResponseToMongoDatabase(response: FirstUserSetupResponseBody) {
-        val user = User(response.username, response.password)
-        this.userRepository.save(user.getIdentifier(), user)
+    private fun executeAndWatchLog(command: String) {
+        val process = Runtime.getRuntime().exec(command)
+        val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
+        while (process.isAlive) {
+            val log = bufferedReader.readLine()
+            Logger.info("[Docker] {}", log)
+        }
     }
 
 }

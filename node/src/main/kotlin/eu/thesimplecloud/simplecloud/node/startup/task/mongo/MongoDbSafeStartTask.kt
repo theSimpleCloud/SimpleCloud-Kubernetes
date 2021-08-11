@@ -20,16 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.task
+package eu.thesimplecloud.simplecloud.node.startup.task.mongo
 
-import com.ea.async.Async
 import com.ea.async.Async.await
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
-import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
