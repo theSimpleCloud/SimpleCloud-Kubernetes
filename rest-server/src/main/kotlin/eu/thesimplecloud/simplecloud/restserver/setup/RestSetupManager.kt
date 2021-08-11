@@ -29,12 +29,10 @@ import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
 import eu.thesimplecloud.simplecloud.restserver.controller.IController
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.controller.VirtualMethod
-import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.type.SetupType
+import eu.thesimplecloud.simplecloud.restserver.setup.response.CurrentSetupRequestResponse
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
 
 /**
@@ -48,38 +46,38 @@ class RestSetupManager(
 ) {
 
     @Volatile
-    var nextSetup: String? = null
+    var currentSetup: Setup<*>? = null
         private set
 
     private val setupNameToFuture = Maps.newConcurrentMap<String, CompletableFuture<Any>>()
-    private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<String>>()
+    private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<CurrentSetupRequestResponse>>()
 
     init {
         registerGetCurrentSetupRoute()
     }
 
-    fun <T : Any> setNextSetup(setupType: SetupType<T>): CompletableFuture<T> {
-        registerRoute(setupType)
-        this.nextSetup = setupType.setupName
+    fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T> {
+        registerRoute(setup)
+        this.currentSetup = setup
         val future = CompletableFuture<T>()
-        this.setupNameToFuture[setupType.setupName] = future as CompletableFuture<Any>
-        completeAllFuturesWaitingForNextSetup(setupType.setupName)
+        this.setupNameToFuture[setup.setupName] = future as CompletableFuture<Any>
+        completeAllFuturesWaitingForNextSetup(CurrentSetupRequestResponse(setup))
         return future
     }
 
-    private fun completeAllFuturesWaitingForNextSetup(value: String) {
-        this.futuresWaitingForNextSetup.forEach { it.complete(value) }
+    private fun completeAllFuturesWaitingForNextSetup(response: CurrentSetupRequestResponse) {
+        this.futuresWaitingForNextSetup.forEach { it.complete(response) }
     }
 
-    private fun registerRoute(setupType: SetupType<*>) {
+    private fun registerRoute(setup: Setup<*>) {
         val requestBody = RequestBody::class.createInstance()
-        val methodRouteParameter = MethodRoute.MethodRouteParameter(setupType.responseClass.java, requestBody)
+        val methodRouteParameter = MethodRoute.MethodRouteParameter(setup.responseClass.java, requestBody)
         val methodRoute = MethodRoute(
             RequestType.POST,
-            "setup/${setupType.setupName}",
+            "setup/${setup.setupName}",
             "",
             listOf(methodRouteParameter),
-            createVirtualMethod(setupType.setupName),
+            createVirtualMethod(setup.setupName),
             object : IController {}
         )
 
@@ -87,9 +85,10 @@ class RestSetupManager(
     }
 
     private fun registerGetCurrentSetupRoute() {
-        val virtualMethod = object: VirtualMethod {
+        val virtualMethod = object : VirtualMethod {
             override fun invoke(invokeObj: Any, vararg args: Any?): Any? {
-                return this@RestSetupManager.nextSetup
+                val currentSetup = this@RestSetupManager.currentSetup ?: return null
+                return CurrentSetupRequestResponse(currentSetup)
             }
 
         }
@@ -99,21 +98,21 @@ class RestSetupManager(
             "",
             emptyList(),
             virtualMethod,
-            object: IController {}
+            object : IController {}
         )
 
         this.restServer.registerMethodRoute(methodRoute)
     }
 
-    private fun waitForNextSetupName(): CompletableFuture<String> {
-        val future = CompletableFuture<String>()
+    private fun waitForNextSetupName(): CompletableFuture<CurrentSetupRequestResponse> {
+        val future = CompletableFuture<CurrentSetupRequestResponse>()
         this.futuresWaitingForNextSetup.add(future)
         return future
     }
 
     fun onEndOfAllSetups() {
-        this.nextSetup = "end"
-        completeAllFuturesWaitingForNextSetup("end")
+        this.currentSetup = Setup.END
+        completeAllFuturesWaitingForNextSetup(CurrentSetupRequestResponse(Setup.END))
     }
 
     private fun createVirtualMethod(setupName: String): VirtualMethod {

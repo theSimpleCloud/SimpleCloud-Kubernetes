@@ -70,7 +70,7 @@ class RestServer @Inject constructor(
 
     val controllerHandler = ControllerHandler(this, injector)
 
-    private val server = embeddedServer(Netty, 8000) {
+    private val server = embeddedServer(Netty, 8008) {
         val client = HttpClient(CIO)
         install(CORS) {
             method(HttpMethod.Options)

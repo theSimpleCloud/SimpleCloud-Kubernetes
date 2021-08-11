@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.restserver.setup.type
 
 import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import kotlin.reflect.KClass
 
@@ -33,13 +32,14 @@ import kotlin.reflect.KClass
  * Time: 18:23
  * @author Frederick Baier
  */
-open class SetupType<T : Any>(
+open class Setup<T : Any>(
     val setupName: String,
+    val additionalContent: Any,
     val responseClass: KClass<T>
 ) {
 
     companion object {
-        val MONGO = SetupType("mongo", MongoSetupResponseBody::class)
-        val FIRST_USER = SetupType("firstuser", FirstUserSetupResponseBody::class)
+        val FIRST_USER = Setup("firstuser", emptyArray<String>(), FirstUserSetupResponseBody::class)
+        val END = Setup("end", "", String::class)
     }
 }
