@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.restserver.request
 
+import eu.thesimplecloud.simplecloud.api.utils.future.FutureOriginException
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.exception.HttpException
@@ -70,6 +71,9 @@ class WebRequestHandler(
             return unpackException(ex.cause!!)
         }
         if (ex is InvocationTargetException) {
+            return unpackException(ex.cause!!)
+        }
+        if (ex is FutureOriginException) {
             return unpackException(ex.cause!!)
         }
         return ex
