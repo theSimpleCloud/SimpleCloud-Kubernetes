@@ -20,8 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.container.local
+package eu.thesimplecloud.simplecloud.container.docker
 
+import com.github.dockerjava.api.DockerClient
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import java.io.File
@@ -29,20 +33,18 @@ import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07.04.2021
- * Time: 21:17
+ * Date: 11/08/2021
+ * Time: 15:01
  * @author Frederick Baier
  */
-class LocalContainer(
-    private val name: String,
-    private val image: LocalImage,
-    private val startCommand: String,
-    private val stopCommand: String,
+class DockerContainer @Inject constructor(
+    @Assisted private val name: String,
+    @Assisted private val image: IImage,
+    @Assisted private val containerSpec: ContainerSpec,
+    private val dockerClient: DockerClient
 ) : IContainer {
 
-    private val workingDir = File("$CONTAINERS_DIR$name/")
-
-    private val executor = LocalContainerExecutor(startCommand, stopCommand, image, workingDir)
+    private val executor = DockerContainerExecutor(name, image, containerSpec, dockerClient)
 
     override fun getName(): String {
         return this.name
@@ -57,6 +59,7 @@ class LocalContainer(
     }
 
     override fun start() {
+        println("DockerContainer start")
         this.executor.startContainer()
     }
 
@@ -69,7 +72,7 @@ class LocalContainer(
     }
 
     override fun forceShutdown() {
-        this.executor.forceShutdown()
+        return this.executor.killContainer()
     }
 
     override fun isRunning(): Boolean {
@@ -79,9 +82,4 @@ class LocalContainer(
     override fun getLogs(): List<String> {
         return this.executor.getLogs()
     }
-
-    companion object {
-        const val CONTAINERS_DIR = "containers/"
-    }
-
 }

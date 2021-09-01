@@ -23,8 +23,9 @@ interface IImage {
 
     /**
      * Builds this image if the image has not been built yet
+     * @return an identifier for the built image
      */
-    fun build(): CompletableFuture<Void>
+    fun build(): CompletableFuture<String>
 
     /**
      * The factory to build images
@@ -34,12 +35,12 @@ interface IImage {
         /**
          * Creates an image
          * @param name the name of the image
-         * @param directories the directories to create the image from
+         * @param imageBuildInstructions the instructions to build the image from
          */
         fun create(
             name: String,
-            directories: List<File>,
-            inclusions: List<IImageInclusion> = emptyList()
+            buildDir: File,
+            imageBuildInstructions: ImageBuildInstructions,
         ): IImage
 
     }

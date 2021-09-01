@@ -20,9 +20,40 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation(project(":api"))
+package eu.thesimplecloud.simplecloud.container.docker
 
+import com.github.dockerjava.api.DockerClient
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
+import java.io.File
+import java.util.concurrent.CompletableFuture
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 11/08/2021
+ * Time: 15:03
+ * @author Frederick Baier
+ */
+class DockerImage @Inject constructor(
+    @Assisted private val name: String,
+    @Assisted private val buildDir: File,
+    @Assisted imageBuildInstructions: ImageBuildInstructions,
+    dockerClient: DockerClient
+) : IImage {
+
+    private val imageBuilder = DockerImageBuilder(name, buildDir, imageBuildInstructions, dockerClient)
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun isBuilt(): Boolean {
+        return this.imageBuilder.isBuilt()
+    }
+
+    override fun build(): CompletableFuture<String> {
+        return this.imageBuilder.build()
+    }
 }

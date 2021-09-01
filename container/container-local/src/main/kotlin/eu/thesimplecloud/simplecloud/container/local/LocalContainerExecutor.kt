@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.container.local
 
+import eu.thesimplecloud.simplecloud.api.future.toUnitFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
@@ -74,14 +76,14 @@ class LocalContainerExecutor(
             .thenAccept { image.copyBuildImageTo(this.workingDir) }
     }
 
-    fun shutdownContainer(): CompletableFuture<Void> {
+    fun shutdownContainer(): CompletableFuture<Unit> {
         executeCommand(this.stopCommand)
         return this.terminationFuture()
     }
 
-    fun terminationFuture(): CompletableFuture<Void> {
-        if (!this.isContainerRunning()) return CompletableFuture.completedFuture(null)
-        return this.process!!.onExit().thenAccept { }
+    fun terminationFuture(): CompletableFuture<Unit> {
+        if (!this.isContainerRunning()) return unitFuture()
+        return this.process!!.onExit().toUnitFuture()
     }
 
     fun isContainerRunning(): Boolean {

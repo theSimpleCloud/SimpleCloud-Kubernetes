@@ -20,25 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.container.local
+package eu.thesimplecloud.simplecloud.container.docker
 
+import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.core.DefaultDockerClientConfig
+import com.github.dockerjava.core.DockerClientBuilder
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.container.IImageInclusion
-import org.apache.commons.io.FileUtils
+import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
 import java.io.File
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 09.04.2021
- * Time: 11:34
+ * Date: 11/08/2021
+ * Time: 17:22
  * @author Frederick Baier
  */
-class LocalImageBuilder(
-    private val imageDir: File,
-    private val directories: List<File>,
-    private val inclusions: List<IImageInclusion>
+class DockerImageBuilder(
+    private val name: String,
+    private val buildDir: File,
+    private val buildInstructions: ImageBuildInstructions,
+    private val dockerClient: DockerClient
 ) {
 
     @Volatile
@@ -68,33 +72,24 @@ class LocalImageBuilder(
 
     private fun runBuildInCompletableFuture(): CompletableFuture<String> {
         return CloudCompletableFuture.supplyAsync {
-            executeBuild()
-            return@supplyAsync ""
+            return@supplyAsync executeBuild()
         }.nonNull()
     }
 
-    private fun executeBuild() {
-        copyDirectoriesIntoImageDirectory()
-        includeInclusions()
+    private fun executeBuild(): String {
+        createDockerFile()
+        val command = dockerClient.buildImageCmd()
+            .withBaseDirectory(this.buildDir)
+            .withDockerfile(File(this.buildDir, "Dockerfile"))
+            .withTags(setOf(this.name))
+
+        return command.start().awaitImageId()
     }
 
-    private fun includeInclusions() {
-        this.inclusions.forEach {
-            includeInclusion(it)
-        }
+    private fun createDockerFile(): File {
+        val buildInstructionsAsString = this.buildInstructions.getAllInstructions().joinToString("\n")
+        val dockerFile = File(this.buildDir, "Dockerfile")
+        dockerFile.writeText(buildInstructionsAsString)
+        return dockerFile
     }
-
-    private fun includeInclusion(inclusion: IImageInclusion) {
-        val fileToInclude = inclusion.getFile()
-        val pathInImage = inclusion.getPathInImage()
-        val destFile = File(this.imageDir, pathInImage)
-        FileUtils.copyFile(fileToInclude, destFile)
-    }
-
-    private fun copyDirectoriesIntoImageDirectory() {
-        this.directories.forEach {
-            FileUtils.copyDirectory(it, this.imageDir)
-        }
-    }
-
 }

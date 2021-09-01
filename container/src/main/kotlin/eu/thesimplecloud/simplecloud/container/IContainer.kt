@@ -34,12 +34,12 @@ interface IContainer {
      * Shuts this container down
      * @return [terminationFuture]
      */
-    fun shutdown(): CompletableFuture<Void>
+    fun shutdown(): CompletableFuture<Unit>
 
     /**
      * Returns a future that completes when the container was terminated
      */
-    fun terminationFuture(): CompletableFuture<Void>
+    fun terminationFuture(): CompletableFuture<Unit>
 
     /**
      * Shuts this container down immediately
@@ -62,12 +62,10 @@ interface IContainer {
         /**
          * Creates a container
          */
-        fun createContainer(
+        fun create(
             name: String,
             image: IImage,
-            startCommand: String,
-            stopCommand: String,
-            portToExpose: Int
+            containerSpec: ContainerSpec
         ): IContainer
 
     }

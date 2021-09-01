@@ -52,7 +52,7 @@ class LocalImage(
         return this.localImageBuilder.isBuilt()
     }
 
-    override fun build(): CompletableFuture<Void> {
+    override fun build(): CompletableFuture<String> {
         return this.localImageBuilder.build()
     }
 

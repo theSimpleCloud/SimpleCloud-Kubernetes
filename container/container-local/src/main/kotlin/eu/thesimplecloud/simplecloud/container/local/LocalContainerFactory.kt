@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.container.local
 
+import eu.thesimplecloud.simplecloud.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 
@@ -33,14 +34,7 @@ import eu.thesimplecloud.simplecloud.container.IImage
  */
 class LocalContainerFactory : IContainer.Factory {
 
-    override fun createContainer(
-        name: String,
-        image: IImage,
-        startCommand: String,
-        stopCommand: String,
-        portToExpose: Int
-    ): IContainer {
-        require(image is LocalImage) { "Image must be a LocalImage" }
-        return LocalContainer(name, image, startCommand, stopCommand)
+    override fun create(name: String, image: IImage, containerSpec: ContainerSpec): IContainer {
+        TODO("Not yet implemented")
     }
 }

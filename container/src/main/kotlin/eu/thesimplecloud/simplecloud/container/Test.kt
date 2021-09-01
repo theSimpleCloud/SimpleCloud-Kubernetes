@@ -20,9 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
-    implementation(project(":api"))
+package eu.thesimplecloud.simplecloud.container
 
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 12/08/2021
+ * Time: 08:51
+ * @author Frederick Baier
+ */
+
+
+fun main() {
+
+    println(listOf("test", "test123").joinToString("\", \"", "[\"", "\"]"))
 }

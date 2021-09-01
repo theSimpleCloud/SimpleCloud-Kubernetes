@@ -16,6 +16,7 @@ import java.io.File
  */
 class LocalImageBuildTest {
 
+    /*
     private val testDir = File("imageBuildTest/")
     private val templatesDir = File("imageBuildTest/templates/")
     private val extraDir = File("imageBuildTest/extras/")
@@ -97,6 +98,8 @@ class LocalImageBuildTest {
         FileUtils.deleteDirectory(imagesDir)
         FileUtils.deleteDirectory(testDir)
     }
+
+     */
 
 
 

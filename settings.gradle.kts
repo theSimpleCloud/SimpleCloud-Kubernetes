@@ -15,3 +15,5 @@ findProject(":storage-backend:storage-backend-sftp")?.name = "storage-backend-sf
 include("rest-server")
 include("node")
 include("task")
+include("container:container-docker")
+findProject(":container:container-docker")?.name = "container-docker"

@@ -20,24 +20,52 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.container.local
+package eu.thesimplecloud.simplecloud.container
 
-import eu.thesimplecloud.simplecloud.container.IImage
-import eu.thesimplecloud.simplecloud.container.IImageInclusion
-import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
-import java.io.File
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07.04.2021
- * Time: 21:39
+ * Date: 12/08/2021
+ * Time: 12:02
  * @author Frederick Baier
  */
-class LocalImageFactory : IImage.Factory {
+class ContainerSpec {
 
-    override fun create(name: String, buildDir: File, imageBuildInstructions: ImageBuildInstructions): IImage {
-        TODO("Not yet implemented")
+    val volumeBindings = CopyOnWriteArrayList<VolumeBinding>()
+    val portBindings = CopyOnWriteArrayList<PortBinding>()
+
+    @Volatile
+    var maxMemory: Int = -1
+        private set
+
+    fun withBindVolume(hostPath: String, containerPath: String): ContainerSpec {
+        this.volumeBindings.add(VolumeBinding(hostPath, containerPath))
+        return this
     }
 
+    fun withPortBinding(hostPort: Int, containerPort: Int): ContainerSpec {
+        this.portBindings.add(PortBinding(hostPort, containerPort))
+        return this
+    }
+
+    /**
+     * Sets the max memory in MB
+     */
+    fun withMaxMemory(maxMemory: Int): ContainerSpec {
+        require(maxMemory > 100) { "MaxMemory must be greater than 100" }
+        this.maxMemory = maxMemory
+        return this
+    }
+
+    class PortBinding(
+        val hostPort: Int,
+        val containerPort: Int
+    )
+
+    class VolumeBinding(
+        val hostPath: String,
+        val containerPath: String
+    )
 
 }
