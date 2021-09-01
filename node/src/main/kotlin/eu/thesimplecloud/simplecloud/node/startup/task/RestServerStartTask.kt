@@ -25,8 +25,10 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 import com.google.inject.Guice
 import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import eu.thesimplecloud.simplecloud.restserver.RestBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
+import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import eu.thesimplecloud.simplecloud.restserver.setup.SetupRestServerBinderModule
 import eu.thesimplecloud.simplecloud.task.Task
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
@@ -38,20 +40,34 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:22
  * @author Frederick Baier
  */
-class SetupRestServerStartTask : Task<RestServer>() {
+class RestServerStartTask(
+    private val injector: Injector
+) : Task<RestServer>() {
 
     override fun getName(): String {
-        return "start_setup_rest_server"
+        return "start_rest_server"
     }
 
     override fun run(): CompletableFuture<RestServer> {
         val injector = initGuice()
         val restServer = injector.getInstance(RestServer::class.java)
+        registerController(restServer.controllerHandler)
         return CloudCompletableFuture.completedFuture(restServer)
     }
 
+    private fun registerController(controllerHandler: ControllerHandler) {
+        controllerHandler.registerController(UserController::class.java)
+        controllerHandler.registerController(LoginController::class.java)
+        controllerHandler.registerController(ProcessGroupController::class.java)
+        controllerHandler.registerController(ProcessController::class.java)
+        controllerHandler.registerController(TemplateController::class.java)
+        controllerHandler.registerController(JvmArgumentsController::class.java)
+        controllerHandler.registerController(ProcessVersionController::class.java)
+        controllerHandler.registerController(NodeController::class.java)
+    }
+
     private fun initGuice(): Injector {
-        return Guice.createInjector(SetupRestServerBinderModule())
+        return this.injector.createChildInjector(RestBinderModule())
     }
 
 

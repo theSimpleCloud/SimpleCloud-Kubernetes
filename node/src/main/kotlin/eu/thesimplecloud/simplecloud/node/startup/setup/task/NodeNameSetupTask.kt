@@ -20,39 +20,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.task
+package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
-import com.google.inject.Guice
-import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
-import eu.thesimplecloud.simplecloud.restserver.setup.SetupRestServerBinderModule
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 11:22
+ * Date: 07/08/2021
+ * Time: 00:06
  * @author Frederick Baier
  */
-class SetupRestServerStartTask : Task<RestServer>() {
+class NodeNameSetupTask(
+    private val restSetupManager: RestSetupManager
+) : Task<String>() {
 
     override fun getName(): String {
-        return "start_setup_rest_server"
+        return "node_name_setup"
     }
 
-    override fun run(): CompletableFuture<RestServer> {
-        val injector = initGuice()
-        val restServer = injector.getInstance(RestServer::class.java)
-        return CloudCompletableFuture.completedFuture(restServer)
+    override fun run(): CompletableFuture<String> {
+        val setupFuture = this.restSetupManager.setNextSetup(Setup.NODE_NAME)
+        val responseBody = await(setupFuture)
+        return completedFuture(responseBody.nodeName)
     }
-
-    private fun initGuice(): Injector {
-        return Guice.createInjector(SetupRestServerBinderModule())
-    }
-
 
 }

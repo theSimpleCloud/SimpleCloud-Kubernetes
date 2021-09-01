@@ -24,16 +24,11 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.ea.async.Async.await
 import com.google.inject.Guice
-import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.module.LoadedModuleApplication
 import eu.thesimplecloud.module.loader.ModuleApplicationLoader
-import eu.thesimplecloud.module.loader.ModuleJarFileLoader
-import eu.thesimplecloud.simplecloud.api.CloudAPI
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
 import eu.thesimplecloud.simplecloud.api.module.ModuleType
-import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import eu.thesimplecloud.simplecloud.node.repository.MongoModuleRepository
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.util.Downloader
@@ -65,7 +60,8 @@ class LoadModulesTask(
     }
 
     override fun run(): CompletableFuture<List<LoadedModuleApplication>> {
-        val loadedModuleApplications = ModuleType.values().map {
+        //TODO remove filter
+        val loadedModuleApplications = ModuleType.values().filter { it == ModuleType.CONTAINER }.map {
             await(loadModuleByType(it))
         }
         return completedFuture(loadedModuleApplications)
@@ -97,7 +93,7 @@ class LoadModulesTask(
         return File(modulesDir, moduleType.name + ".jar")
     }
 
-    private fun executeModuleSetupInWeb(moduleType: ModuleType): CompletableFuture<Void> {
+    private fun executeModuleSetupInWeb(moduleType: ModuleType): CompletableFuture<Unit> {
         return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
             ModuleWebSetupTask(it, moduleRepository, moduleType)
         }

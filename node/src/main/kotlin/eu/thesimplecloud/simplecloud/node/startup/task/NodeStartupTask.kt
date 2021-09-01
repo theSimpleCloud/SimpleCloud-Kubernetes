@@ -26,15 +26,19 @@ import com.ea.async.Async.await
 import com.google.inject.Guice
 import com.google.inject.Injector
 import dev.morphia.Datastore
+import eu.thesimplecloud.module.LoadedModuleApplication
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
-import eu.thesimplecloud.simplecloud.node.startup.task.docker.DockerInstallTask
-import eu.thesimplecloud.simplecloud.node.startup.task.docker.DockerSafeInstallTask
 import eu.thesimplecloud.simplecloud.node.startup.task.docker.EnsureInsideDockerAndDockerIsAccessibleTask
 import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
+import eu.thesimplecloud.simplecloud.node.util.SingleInstanceAnnotatedBinderModule
+import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
@@ -47,7 +51,7 @@ import java.util.concurrent.CompletableFuture
  */
 class NodeStartupTask(
     private val startArguments: NodeStartArgumentParserMain
-) : Task<Void>() {
+) : Task<Injector>() {
 
     private val nodeSetupHandler: NodeStartupSetupHandler = NodeStartupSetupHandler()
 
@@ -55,22 +59,42 @@ class NodeStartupTask(
         return "node_startup"
     }
 
-    override fun run(): CompletableFuture<Void> {
+    override fun run(): CompletableFuture<Injector> {
         await(this.taskSubmitter.submit(EnsureInsideDockerAndDockerIsAccessibleTask()))
+        val nodeName = await(loadNodeName())
+        val address = await(loadAddress())
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val injector = await(loadModulesAndCreateGuiceInjector(datastore))
+        val injector = await(loadModulesAndCreateGuiceInjector(datastore, nodeName, address))
         this.nodeSetupHandler.shutdownRestSetupServer()
-        return voidFuture()
+        return completedFuture(injector)
     }
 
-    private fun loadModulesAndCreateGuiceInjector(datastore: Datastore): CompletableFuture<Injector> {
-        val loadedModules = await(this.taskSubmitter.submit(LoadModulesTask(datastore, nodeSetupHandler)))
+    private fun loadNodeName(): CompletableFuture<String> {
+        return this.taskSubmitter.submit(LoadNodeNameSafeTask(this.nodeSetupHandler, this.startArguments.randomNodeName))
+    }
+
+    private fun loadAddress(): CompletableFuture<Address> {
+        return this.taskSubmitter.submit(LoadAddressSafeTask(this.nodeSetupHandler, this.startArguments.bindAddress))
+    }
+
+    private fun loadModulesAndCreateGuiceInjector(datastore: Datastore, nodeName: String, address: Address): CompletableFuture<Injector> {
+        val loadedModules = await(loadModules(datastore))
         val guiceModules = loadedModules.map { it.getLoadedClassInstance() }
-        return completedFuture(Guice.createInjector(guiceModules))
+        val injector = Guice.createInjector(
+            SingleInstanceBinderModule(Datastore::class.java, datastore),
+            SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
+            SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
+            *guiceModules.toTypedArray()
+        )
+        return completedFuture(injector)
     }
 
-    private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Void> {
+    private fun loadModules(datastore: Datastore): CompletableFuture<List<LoadedModuleApplication>> {
+        return this.taskSubmitter.submit(LoadModulesTask(datastore, this.nodeSetupHandler))
+    }
+
+    private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Unit> {
         val mongoRepository = MongoUserRepository(datastore)
         val count = await(mongoRepository.count())
         if (count == 0L) {
@@ -78,11 +102,16 @@ class NodeStartupTask(
                 FirstWebUserSetupTask(it, mongoRepository)
             })
         }
-        return voidFuture()
+        return unitFuture()
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
-        return this.taskSubmitter.submit(MongoDbSafeStartTask(this.startArguments.mongoDbConnectionString, this.nodeSetupHandler))
+        return this.taskSubmitter.submit(
+            MongoDbSafeStartTask(
+                this.startArguments.mongoDbConnectionString,
+                this.nodeSetupHandler
+            )
+        )
     }
 
 

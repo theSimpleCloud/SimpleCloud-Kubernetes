@@ -29,7 +29,12 @@ import eu.thesimplecloud.simplecloud.task.Task
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 import dev.morphia.Morphia
+import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
+import org.bson.codecs.configuration.CodecRegistries
+import org.bson.codecs.pojo.ClassModel
+import org.bson.codecs.pojo.PojoCodecProvider
 import org.bson.internal.CodecRegistryHelper
 import java.util.concurrent.TimeUnit
 
@@ -51,13 +56,21 @@ class MongoDbStartTask(
     }
 
     override fun run(): CompletableFuture<Datastore> {
+        println(connectionString.toString())
         val mongoClient = MongoClients.create(createClientSettings())
         val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
-        return CompletableFuture.completedFuture(datastore)
+        return CloudCompletableFuture.completedFuture(datastore)
     }
 
     private fun createClientSettings(): MongoClientSettings {
-        return MongoClientSettings.builder().applyToSocketSettings {
+        val pojoCodecRegistry = CodecRegistries.fromProviders(
+            PojoCodecProvider.builder().automatic(true).build(),
+            //PojoCodecProvider.builder().register(ClassModel.builder(Address::class.java).idPropertyName())
+        )
+        val codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry)
+        return MongoClientSettings.builder()
+            .codecRegistry(codecRegistry)
+            .applyToSocketSettings {
             it.readTimeout(5, TimeUnit.SECONDS)
         }.applyToClusterSettings {
             it.serverSelectionTimeout(5, TimeUnit.SECONDS)

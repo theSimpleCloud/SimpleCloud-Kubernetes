@@ -23,9 +23,9 @@
 package eu.thesimplecloud.simplecloud.node.startup
 
 import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.default
-import com.github.ajalt.clikt.parameters.options.option
+import com.github.ajalt.clikt.parameters.options.*
 import com.github.ajalt.clikt.parameters.types.enum
+import eu.thesimplecloud.simplecloud.api.utils.Address
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,11 +39,14 @@ class NodeStartArgumentParserMain : CliktCommand() {
         .enum<WebinterfaceMode>()
         .default(WebinterfaceMode.DOCKER)
 
-    //mongodb
     val mongoDbConnectionString: String? by option(help = "Sets the connection string for MongoDB")
+
+    val bindAddress: Address? by option(help = "Sets the address for the node to bind to").convert { Address.fromIpString(it) }
+    val randomNodeName: Boolean by option(help = "Let the node generate a random name").flag()
 
 
     override fun run() {
         NodeStartup(this).start()
     }
+
 }

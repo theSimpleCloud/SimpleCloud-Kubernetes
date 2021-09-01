@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.task.docker
 
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.node.util.Downloader
 import eu.thesimplecloud.simplecloud.task.Task
 import org.tinylog.Logger
@@ -37,20 +37,20 @@ import java.util.concurrent.CompletableFuture
  * Time: 22:45
  * @author Frederick Baier
  */
-class DockerInstallTask : Task<Void>() {
+class DockerInstallTask : Task<Unit>() {
 
     override fun getName(): String {
         return "docker_install"
     }
 
-    override fun run(): CompletableFuture<Void> {
+    override fun run(): CompletableFuture<Unit> {
         Logger.warn("The cloud is about to INSTALL DOCKER", "")
         Logger.warn("If you want to abort press Ctrl+C. Waiting 20 seconds.", "")
         Thread.sleep(20_000)
         Downloader.userAgentDownload("https://get.docker.com/", File("install-docker.sh"))
         executeAndWatchLog("chmod 777 install-docker.sh")
         executeAndWatchLog("./install-docker.sh")
-        return voidFuture()
+        return unitFuture()
     }
 
     private fun executeAndWatchLog(command: String) {

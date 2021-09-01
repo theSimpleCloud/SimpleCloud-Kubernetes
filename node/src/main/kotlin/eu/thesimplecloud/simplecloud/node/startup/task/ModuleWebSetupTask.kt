@@ -42,17 +42,17 @@ class ModuleWebSetupTask(
     private val setupManager: RestSetupManager,
     private val moduleRepository: IModuleRepository,
     private val moduleType: ModuleType
-): Task<Void>() {
+): Task<Unit>() {
 
     override fun getName(): String {
         return "module_setup"
     }
 
-    override fun run(): CompletableFuture<Void> {
+    override fun run(): CompletableFuture<Unit> {
         return waitForModuleSetup(moduleType)
     }
 
-    private fun waitForModuleSetup(moduleType: ModuleType): CompletableFuture<Void> {
+    private fun waitForModuleSetup(moduleType: ModuleType): CompletableFuture<Unit> {
         val setupName = "module/${moduleType.name.lowercase().replace("_", "")}"
         val setupFuture = this.setupManager.setNextSetup(Setup(setupName, emptyArray<String>(), ModuleSetupResponseBody::class))
         val response = await(setupFuture)

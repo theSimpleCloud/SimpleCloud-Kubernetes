@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.node.startup.task.mongo
 import com.ea.async.Async.await
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
@@ -84,7 +85,7 @@ class MongoDbSafeStartTask(
     private fun startMongoDbClient(connectionString: String): CompletableFuture<Datastore> {
         val future = this.taskSubmitter.submit(MongoDbStartTask(connectionString))
         val mongoDatastore = await(future)
-        return CompletableFuture.completedFuture(mongoDatastore)
+        return CloudCompletableFuture.completedFuture(mongoDatastore)
     }
 
     private fun saveResponseToFile(connectionString: String) {

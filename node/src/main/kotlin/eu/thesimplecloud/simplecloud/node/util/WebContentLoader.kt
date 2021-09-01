@@ -20,30 +20,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver
+package eu.thesimplecloud.simplecloud.node.util
 
-import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
-import eu.thesimplecloud.simplecloud.restserver.user.User
-import eu.thesimplecloud.simplecloud.restserver.annotation.Controller
+import java.net.URL
+import java.util.*
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 09:10
- * @author Frederick Baier
- */
-@Controller(1, "test", "")
-class TestController : IController {
+object WebContentLoader {
 
-    @RequestMapping(RequestType.GET, "{test}", "reyst")
-    fun handleGet(@RequestingUser user: User, @RequestPathParam("test") test: String): User {
-        return user
-    }
-
-    @RequestMapping(RequestType.GET, "", "reyst")
-    fun handleGet(@RequestingUser user: User, @RequestBody bodyUser: User): User {
-        return bodyUser
+    fun loadContent(urlString: String): String {
+        val url = URL(urlString)
+        val scanner = Scanner(url.openStream())
+        val stringBuffer = StringBuffer()
+        while (scanner.hasNext()) {
+            stringBuffer.append(scanner.next())
+        }
+        return stringBuffer.toString()
     }
 
 }

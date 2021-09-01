@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.task.docker
 
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -33,13 +33,13 @@ import java.util.concurrent.CompletableFuture
  * Time: 07:31
  * @author Frederick Baier
  */
-class EnsureInsideDockerAndDockerIsAccessibleTask : Task<Void>() {
+class EnsureInsideDockerAndDockerIsAccessibleTask : Task<Unit>() {
 
     override fun getName(): String {
         return "ensure_inside_docker"
     }
 
-    override fun run(): CompletableFuture<Void> {
+    override fun run(): CompletableFuture<Unit> {
         val insideDocker = File("/.dockerenv").exists()
         val dockerAccessible = File("/var/run/docker.sock").exists()
         if (!insideDocker) {
@@ -48,6 +48,6 @@ class EnsureInsideDockerAndDockerIsAccessibleTask : Task<Void>() {
         if (!dockerAccessible) {
             throw IllegalStateException("/var/run/docker.sock must be accessible")
         }
-        return voidFuture()
+        return unitFuture()
     }
 }

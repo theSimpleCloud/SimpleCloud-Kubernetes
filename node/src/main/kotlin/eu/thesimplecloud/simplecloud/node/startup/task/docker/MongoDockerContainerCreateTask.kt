@@ -23,16 +23,14 @@
 package eu.thesimplecloud.simplecloud.node.startup.task.docker
 
 import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.exception.DockerException
 import com.github.dockerjava.api.model.*
 import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientBuilder
 import com.mongodb.MongoClientURI
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.task.Task
-import java.io.BufferedReader
-import java.io.InputStreamReader
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -101,11 +99,13 @@ class MongoDockerContainerCreateTask(
         return this.dockerClient.listNetworksCmd().exec().firstOrNull { it.name == "simplecloud_network" }
     }
 
+    private fun getContainerIdByName(name: String): String? {
+        return this.dockerClient.listContainersCmd().exec().firstOrNull { it.names.contains(name) }?.id
+    }
+
     private fun getOwnContainerId(): String {
-        val process = Runtime.getRuntime().exec("cat /proc/self/cgroup")
-        val bufferedReader = BufferedReader(InputStreamReader(process.inputStream))
-        val lines = bufferedReader.readLines()
-        return getContainerIdFromLine(lines[2])
+        println("All: ${System.getenv()}")
+        return System.getenv("HOSTNAME")
     }
 
     private fun getContainerIdFromLine(line: String): String {
@@ -115,10 +115,14 @@ class MongoDockerContainerCreateTask(
 
 
     private fun joinContainerInNetwork(containerId: String, networkId: String) {
-        this.dockerClient.connectToNetworkCmd()
+        val command = this.dockerClient.connectToNetworkCmd()
             .withContainerId(containerId)
             .withNetworkId(networkId)
-            .exec()
+        try {
+            command.exec()
+        } catch (e: DockerException) {
+            //ignore because then the container is already in the network
+        }
     }
 
     private fun pullImage(repository: String, tag: String) {

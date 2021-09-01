@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.startup
 
 import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.startup.task.SetupRestServerStartTask
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
@@ -51,17 +52,17 @@ class NodeStartupSetupHandler() {
     }
 
     private fun getRestSetupManager(taskSubmitter: TaskSubmitter): CompletableFuture<RestSetupManager> {
-        if (this.restSetupManager != null) return CompletableFuture.completedFuture(this.restSetupManager!!)
+        if (this.restSetupManager != null) return CloudCompletableFuture.completedFuture(this.restSetupManager!!)
         val restServer = await(startRestSetupServerIfNeeded(taskSubmitter))
         this.restSetupManager = RestSetupManager(restServer)
-        return CompletableFuture.completedFuture(this.restSetupManager!!)
+        return CloudCompletableFuture.completedFuture(this.restSetupManager!!)
     }
 
     private fun startRestSetupServerIfNeeded(taskSubmitter: TaskSubmitter): CompletableFuture<RestServer> {
-        if (this.setupRestServer != null) return CompletableFuture.completedFuture(this.setupRestServer!!)
+        if (this.setupRestServer != null) return CloudCompletableFuture.completedFuture(this.setupRestServer!!)
         val restServerFuture = taskSubmitter.submit(SetupRestServerStartTask())
         this.setupRestServer = await(restServerFuture)
-        return CompletableFuture.completedFuture(this.setupRestServer!!)
+        return CloudCompletableFuture.completedFuture(this.setupRestServer!!)
     }
 
     fun shutdownRestSetupServer() {

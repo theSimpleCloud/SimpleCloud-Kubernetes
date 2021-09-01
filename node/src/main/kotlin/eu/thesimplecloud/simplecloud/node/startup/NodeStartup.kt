@@ -22,9 +22,18 @@
 
 package eu.thesimplecloud.simplecloud.node.startup
 
+import com.google.inject.Injector
+import eu.thesimplecloud.simplecloud.container.ContainerSpec
+import eu.thesimplecloud.simplecloud.container.IContainer
+import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
+import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnectTask
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
 import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import eu.thesimplecloud.simplecloud.task.TaskExecutorServiceImpl
+import org.apache.commons.io.FileUtils
+import java.io.File
+import java.util.concurrent.CompletableFuture
 
 
 /**
@@ -41,9 +50,44 @@ class NodeStartup(
     private val taskSubmitter = taskExecutorService.createSubmitter("SYSTEM")
 
     fun start() {
-        this.taskSubmitter.submit(NodeStartupTask(this.startArguments))
+        this.taskSubmitter.submit(NodeStartupTask(this.startArguments)).thenAccept {
+            executeClusterConnect(it)
+        }
     }
 
+    private fun executeClusterConnect(injector: Injector) {
+        val task = injector.getInstance(NodeClusterConnectTask::class.java)
+        this.taskSubmitter.submit(task)
+    }
 
+    fun executeImageBuild(injector: Injector) {
+        println("after inject")
+        val imageFactory = injector.getInstance(IImage.Factory::class.java)
+        val containerFactory = injector.getInstance(IContainer.Factory::class.java)
+        val buildDir = File("./buildDirTemp")
+        FileUtils.copyDirectory(File("/mnt/ssd/1.16-Server"), buildDir)
+
+        val image = imageFactory.create("test",
+            buildDir,
+            ImageBuildInstructions()
+                .from("adoptopenjdk:16.0.1_9-jdk-hotspot")
+                .copy(".", "/home/myserver/")
+                .expose(25565)
+                .workdir("/home/myserver/")
+                .cmd("java", "-jar", "/home/myserver/Paper-1.16.5.jar")
+        )
+        println("image created")
+        val container = containerFactory.create(
+            "mc-server",
+            image,
+            ContainerSpec()
+                .withPortBinding(25565, 25565)
+                .withMaxMemory(1500)
+        )
+        println("container created")
+
+        container.start()
+        println("container start")
+    }
 
 }

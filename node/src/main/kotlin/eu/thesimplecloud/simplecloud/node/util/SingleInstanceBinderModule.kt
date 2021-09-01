@@ -20,33 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup.task.docker
+package eu.thesimplecloud.simplecloud.node.util
 
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.task.Task
-import java.io.File
-import java.util.concurrent.CompletableFuture
+import com.google.inject.AbstractModule
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 09/08/2021
- * Time: 22:45
- * @author Frederick Baier
- */
-class DockerSafeInstallTask : Task<Unit>() {
-    override fun getName(): String {
-        return "docker_safe_install"
-    }
+class SingleInstanceBinderModule<T>(
+    private val clazz: Class<T>,
+    private val instance: T
+) : AbstractModule() {
 
-    override fun run(): CompletableFuture<Unit> {
-        if (isWindows()) return unitFuture()
-        val dockerSocketFile = File("/var/run/docker.sock")
-        if (dockerSocketFile.exists()) return unitFuture()
-        return this.taskSubmitter.submit(DockerInstallTask())
-    }
-
-    private fun isWindows(): Boolean {
-        return System.getProperty("os.name").lowercase().contains("windows")
+    override fun configure() {
+        bind(this.clazz).toInstance(this.instance)
     }
 
 }
