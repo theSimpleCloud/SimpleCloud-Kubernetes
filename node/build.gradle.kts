@@ -14,6 +14,7 @@ dependencies {
     implementation(project(":api-internal"))
     implementation(project(":task"))
     implementation(project(":container"))
+    implementation(project(":ignite"))
 
 }
 
