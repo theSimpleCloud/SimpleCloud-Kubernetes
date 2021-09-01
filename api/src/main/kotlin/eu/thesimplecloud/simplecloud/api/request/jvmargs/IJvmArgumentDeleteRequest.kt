@@ -31,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.utils.IRequest
  * Time: 13:34
  * @author Frederick Baier
  */
-interface IJvmArgumentDeleteRequest : IRequest<Void> {
+interface IJvmArgumentDeleteRequest : IRequest<Unit> {
 
     /**
      * Returns the [IJVMArguments] to be deleted

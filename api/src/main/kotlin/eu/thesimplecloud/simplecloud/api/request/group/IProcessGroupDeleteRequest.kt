@@ -31,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.utils.IRequest
  * Time: 15:18
  * @author Frederick Baier
  */
-interface IProcessGroupDeleteRequest : IRequest<Void> {
+interface IProcessGroupDeleteRequest : IRequest<Unit> {
 
     /**
      * Returns the process group this request will start a process of

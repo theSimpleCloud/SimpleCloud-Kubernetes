@@ -34,7 +34,7 @@ import eu.thesimplecloud.simplecloud.api.utils.IRequest
  * Request to stop a process
  *
  */
-interface IProcessShutdownRequest : IRequest<Void> {
+interface IProcessShutdownRequest : IRequest<Unit> {
 
     /**
      * Returns the process to be stopped

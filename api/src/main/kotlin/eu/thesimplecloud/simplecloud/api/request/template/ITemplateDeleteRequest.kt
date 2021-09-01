@@ -31,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.utils.IRequest
  * Time: 11:02
  * @author Frederick Baier
  */
-interface ITemplateDeleteRequest : IRequest<Void> {
+interface ITemplateDeleteRequest : IRequest<Unit> {
 
     /**
      * Returns the template to be deleted

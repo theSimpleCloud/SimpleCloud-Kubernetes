@@ -31,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.utils.IRequest
  * Time: 13:34
  * @author Frederick Baier
  */
-interface IProcessVersionDeleteRequest : IRequest<Void> {
+interface IProcessVersionDeleteRequest : IRequest<Unit> {
 
     /**
      * Returns the [IProcessVersion] to be deleted
