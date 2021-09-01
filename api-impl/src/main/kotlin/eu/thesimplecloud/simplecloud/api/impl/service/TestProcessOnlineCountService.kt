@@ -20,24 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
+package eu.thesimplecloud.simplecloud.api.impl.service
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.repository.ITemplateRepository
-import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
-import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 19:07
- * @author Frederick Baier
- */
-@Singleton
-class IgniteTemplateRepository @Inject constructor(
-    private val ignite: Ignite
-) : AbstractIgniteRepository<TemplateConfiguration>(
-    ignite.getOrCreateCache("cloud-templates")
-), ITemplateRepository
+class TestProcessOnlineCountService : IProcessOnlineCountService {
+    override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
+        return completedFuture(ProcessOnlineCountConfiguration())
+    }
+
+    class ProcessOnlineCountConfiguration: IProcessesOnlineCountConfiguration {
+        override fun calculateOnlineCount(group: ICloudProcessGroup): Int {
+            return 1
+        }
+
+        override fun getName(): String {
+            return "one"
+        }
+
+        override fun getIdentifier(): String {
+            return "one"
+        }
+
+    }
+
+}

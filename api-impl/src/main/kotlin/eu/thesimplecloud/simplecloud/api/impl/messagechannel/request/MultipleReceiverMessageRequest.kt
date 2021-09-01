@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.messagechannel.request
 
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
 import eu.thesimplecloud.simplecloud.api.messagechannel.IMessageRequest
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
@@ -44,7 +45,7 @@ class MultipleReceiverMessageRequest(
         this.receivers.forEach { receiver ->
             sendMessage(receiver)
         }
-        return CompletableFuture.completedFuture(Unit)
+        return unitFuture()
     }
 
     private fun sendMessage(receiver: INetworkComponent) {

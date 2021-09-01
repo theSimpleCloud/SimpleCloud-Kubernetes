@@ -36,6 +36,6 @@ interface IValidator<out T> {
      * Checks the specified [value] for validity
      * @return a future that indicates whether the [value] is valid
      */
-    fun validate(value: @UnsafeVariance T): CompletableFuture<Void>
+    fun validate(value: @UnsafeVariance T): CompletableFuture<Unit>
 
 }

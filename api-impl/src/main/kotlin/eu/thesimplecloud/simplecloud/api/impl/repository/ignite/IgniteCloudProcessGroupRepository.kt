@@ -38,10 +38,6 @@ import org.apache.ignite.IgniteCache
 @Singleton
 class IgniteCloudProcessGroupRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(), ICloudProcessGroupRepository {
-
-    override fun getCache(): IgniteCache<String, AbstractCloudProcessGroupConfiguration> {
-        return ignite.getOrCreateCache("cloud-process-groups")
-    }
-
-}
+) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(
+    ignite.getOrCreateCache("cloud-process-groups")
+), ICloudProcessGroupRepository

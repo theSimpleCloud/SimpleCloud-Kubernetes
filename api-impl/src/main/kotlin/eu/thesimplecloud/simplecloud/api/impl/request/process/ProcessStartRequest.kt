@@ -31,6 +31,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -77,7 +78,7 @@ class ProcessStartRequest(
     }
 
     override fun setTemplate(template: ITemplate): IProcessStartRequest {
-        this.templateFuture = CompletableFuture.completedFuture(template)
+        this.templateFuture = CloudCompletableFuture.completedFuture(template)
         return this
     }
 
@@ -93,7 +94,7 @@ class ProcessStartRequest(
     }
 
     override fun setJvmArguments(arguments: IJVMArguments): IProcessStartRequest {
-        this.jvmArgumentsFuture = CompletableFuture.completedFuture(arguments)
+        this.jvmArgumentsFuture = CloudCompletableFuture.completedFuture(arguments)
         return this
     }
 
@@ -103,7 +104,7 @@ class ProcessStartRequest(
     }
 
     override fun setProcessVersion(version: IProcessVersion): IProcessStartRequest {
-        this.versionFuture = CompletableFuture.completedFuture(version)
+        this.versionFuture = CloudCompletableFuture.completedFuture(version)
         return this
     }
 

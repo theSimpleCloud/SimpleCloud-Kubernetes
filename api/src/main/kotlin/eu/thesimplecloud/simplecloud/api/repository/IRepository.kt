@@ -33,7 +33,7 @@ interface IRepository<I : Any, T : Any> {
     /**
      * Saves the specified [value] and replaces it if needed according to its identifier
      */
-    fun save(identifier: I, value: T): CompletableFuture<Void>
+    fun save(identifier: I, value: T): CompletableFuture<Unit>
 
     /**
      * Removes the value found by the specified [identifier]

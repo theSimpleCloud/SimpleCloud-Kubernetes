@@ -31,6 +31,8 @@ import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import org.checkerframework.checker.units.qual.C
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -74,7 +76,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var templateFuture: CompletableFuture<ITemplate> = this.processGroup.getTemplate()
 
     @Volatile
-    protected var jvmArgumentsFuture: CompletableFuture<IJVMArguments> = this.processGroup.getJvmArguments()
+    protected var jvmArgumentsFuture: CompletableFuture<IJVMArguments?> = this.processGroup.getJvmArguments() as CompletableFuture<IJVMArguments?>
 
     @Volatile
     protected var onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration> =
@@ -98,7 +100,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun setVersion(version: IProcessVersion): ICloudProcessGroupUpdateRequest {
-        this.versionFuture = CompletableFuture.completedFuture(version)
+        this.versionFuture = CloudCompletableFuture.completedFuture(version)
         return this
     }
 
@@ -108,7 +110,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun setTemplate(template: ITemplate): ICloudProcessGroupUpdateRequest {
-        this.templateFuture = CompletableFuture.completedFuture(template)
+        this.templateFuture = CloudCompletableFuture.completedFuture(template)
         return this
     }
 
@@ -118,17 +120,17 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun setJvmArguments(jvmArguments: IJVMArguments?): ICloudProcessGroupUpdateRequest {
-        this.jvmArgumentsFuture = CompletableFuture.completedFuture(jvmArguments)
+        this.jvmArgumentsFuture = CloudCompletableFuture.completedFuture(jvmArguments)
         return this
     }
 
     override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<IJVMArguments>): ICloudProcessGroupUpdateRequest {
-        this.jvmArgumentsFuture = jvmArgumentsFuture
+        this.jvmArgumentsFuture = jvmArgumentsFuture as CompletableFuture<IJVMArguments?>
         return this
     }
 
     override fun setOnlineCountConfiguration(onlineCountConfiguration: IProcessesOnlineCountConfiguration): ICloudProcessGroupUpdateRequest {
-        this.onlineCountConfigurationFuture = CompletableFuture.completedFuture(onlineCountConfiguration).nonNull()
+        this.onlineCountConfigurationFuture = CloudCompletableFuture.completedFuture(onlineCountConfiguration)
         return this
     }
 

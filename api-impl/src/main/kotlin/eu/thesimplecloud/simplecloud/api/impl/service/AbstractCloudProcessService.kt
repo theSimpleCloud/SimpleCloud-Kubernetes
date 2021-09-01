@@ -46,6 +46,13 @@ abstract class AbstractCloudProcessService(
     protected val igniteRepository: IgniteCloudProcessRepository
 ) : IInternalCloudProcessService {
 
+    override fun findAll(): CompletableFuture<List<ICloudProcess>> {
+        val allProcessConfigurations = this.igniteRepository.findAll()
+        return allProcessConfigurations.thenApply { configuration ->
+            configuration.map { this.processFactory.create(it) }
+        }
+    }
+
     override fun findProcessByName(name: String): CompletableFuture<ICloudProcess> {
         val completableFuture = this.igniteRepository.find(name)
         return completableFuture.thenApply { this.processFactory.create(it) }

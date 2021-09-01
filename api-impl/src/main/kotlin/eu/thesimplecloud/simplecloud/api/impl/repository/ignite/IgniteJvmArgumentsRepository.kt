@@ -38,9 +38,6 @@ import org.apache.ignite.IgniteCache
 @Singleton
 class IgniteJvmArgumentsRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<JvmArgumentConfiguration>(), IJvmArgumentsRepository {
-
-    override fun getCache(): IgniteCache<String, JvmArgumentConfiguration> {
-        return ignite.getOrCreateCache("cloud-jvm-args")
-    }
-}
+) : AbstractIgniteRepository<JvmArgumentConfiguration>(
+    ignite.getOrCreateCache("cloud-jvm-args")
+), IJvmArgumentsRepository

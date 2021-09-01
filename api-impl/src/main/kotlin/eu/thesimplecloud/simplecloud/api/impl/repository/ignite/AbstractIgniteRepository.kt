@@ -22,8 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
+import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.ScanQuery
 import org.apache.ignite.lang.IgniteBiPredicate
@@ -35,12 +37,12 @@ import java.util.concurrent.CompletableFuture
  * Time: 19:09
  * @author Frederick Baier
  */
-abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
-
-    abstract fun getCache(): IgniteCache<String, T>
+abstract class AbstractIgniteRepository<T : Any>(
+    private val igniteCache: IgniteCache<String, T>
+) : IRepository<String, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
-        return CompletableFuture.supplyAsync { getCache().toList().map { it.value } }
+        return CloudCompletableFuture.supplyAsync { this.igniteCache.toList().map { it.value } }.nonNull()
     }
 
     override fun find(identifier: String): CompletableFuture<T> {
@@ -48,19 +50,18 @@ abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
     }
 
     override fun findOrNull(identifier: String): CompletableFuture<T?> {
-        return CompletableFuture.supplyAsync { getCache().get(identifier) }
+        return CloudCompletableFuture.supplyAsync { this.igniteCache.get(identifier) }
     }
 
-    override fun save(identifier: String, value: T): CompletableFuture<Void> {
-        return CompletableFuture.supplyAsync {
-            getCache().put(identifier, value)
-            return@supplyAsync null
+    override fun save(identifier: String, value: T): CompletableFuture<Unit> {
+        return CloudCompletableFuture.runAsync {
+            this.igniteCache.put(identifier, value)
         }
     }
 
     protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {
-        return CompletableFuture.supplyAsync {
-            val cursor = getCache().query(ScanQuery(predicate))
+        return CloudCompletableFuture.supplyAsync {
+            val cursor = this.igniteCache.query(ScanQuery(predicate))
             return@supplyAsync cursor.all.map { it.value }
         }.nonNull()
     }
@@ -70,13 +71,21 @@ abstract class AbstractIgniteRepository<T : Any> : IRepository<String, T> {
     }
 
     override fun remove(identifier: String) {
-        getCache().removeAsync(identifier)
+        this.igniteCache.removeAsync(identifier)
     }
 
     override fun count(): CompletableFuture<Long> {
-        return CompletableFuture.supplyAsync {
-            return@supplyAsync getCache().sizeLong()
-        }
+        return CloudCompletableFuture.supplyAsync {
+            return@supplyAsync this.igniteCache.sizeLong()
+        }.nonNull()
+    }
+
+    fun registerListener(listener: AbstractCacheEntryListener<String, T>) {
+        listener.register(this.igniteCache)
+    }
+
+    fun unregisterListener(listener: AbstractCacheEntryListener<String, T>) {
+        listener.unregister(this.igniteCache)
     }
 
 }

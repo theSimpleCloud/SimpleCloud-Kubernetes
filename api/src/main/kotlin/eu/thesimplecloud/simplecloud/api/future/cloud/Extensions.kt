@@ -20,34 +20,31 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.future
+package eu.thesimplecloud.simplecloud.api.future.cloud
 
+import eu.thesimplecloud.simplecloud.api.future.copyTo
 import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
+import eu.thesimplecloud.simplecloud.api.future.handleFutureComplete
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.lang.NullPointerException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
-import java.util.concurrent.ExecutionException
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 29.03.2021
- * Time: 23:50
- * @author Frederick Baier
- */
+
+//CloudCompletableFuture
 
 
 /**
  * Creates a not nullable future
  */
-fun <T> CompletableFuture<T?>.nonNull(): CompletableFuture<T> {
+fun <T> CloudCompletableFuture<T?>.nonNull(): CloudCompletableFuture<T> {
     return this.thenApply { it ?: throw CompletedWithNullException() }
 }
 
 /**
  * Creates a nullable future
  */
-fun <T> CompletableFuture<T>.nullable(): CompletableFuture<T?> {
+fun <T> CloudCompletableFuture<T>.nullable(): CloudCompletableFuture<T?> {
     val returnFuture = CloudCompletableFuture<T?>()
     this.handle { value, throwable ->
         if (this.isCompletedExceptionally) {
@@ -60,7 +57,7 @@ fun <T> CompletableFuture<T>.nullable(): CompletableFuture<T?> {
     return returnFuture
 }
 
-fun <T> List<CompletableFuture<out T>>.toFutureList(): CompletableFuture<List<T>> {
+fun <T> List<CloudCompletableFuture<out T>>.toFutureList(): CloudCompletableFuture<List<T>> {
     val returnFuture = CloudCompletableFuture<List<T>>()
     val list: MutableList<T> = CopyOnWriteArrayList<T>()
     this.map { future ->
@@ -75,13 +72,7 @@ fun <T> List<CompletableFuture<out T>>.toFutureList(): CompletableFuture<List<T>
     return returnFuture
 }
 
-fun <T> handleFutureComplete(future: CompletableFuture<T>, resultList: MutableList<in T>) {
-    if (!future.isCompletedExceptionally) {
-        resultList.add(future.get())
-    }
-}
-
-fun <T> CompletableFuture<CompletableFuture<T>>.flatten(): CompletableFuture<T> {
+fun <T> CloudCompletableFuture<CompletableFuture<T>>.flatten(): CloudCompletableFuture<T> {
     val returnFuture = CloudCompletableFuture<T>()
     this.handle { result, throwable ->
         if (this.isCompletedExceptionally) {
@@ -93,7 +84,7 @@ fun <T> CompletableFuture<CompletableFuture<T>>.flatten(): CompletableFuture<T> 
     return returnFuture
 }
 
-fun <T> CompletableFuture<T>.copyTo(otherFuture: CompletableFuture<T>) {
+fun <T> CloudCompletableFuture<T>.copyTo(otherFuture: CompletableFuture<T>) {
     this.handle { result, throwable ->
         if (otherFuture.isDone) return@handle
 
@@ -105,7 +96,7 @@ fun <T> CompletableFuture<T>.copyTo(otherFuture: CompletableFuture<T>) {
     }
 }
 
-fun List<CompletableFuture<*>>.combineToVoidFuture(): CompletableFuture<Void> {
+fun List<CloudCompletableFuture<*>>.combineToVoidFuture(): CloudCompletableFuture<Void> {
     val returnFuture = CloudCompletableFuture<Void>()
 
     for (future in this) {
@@ -119,21 +110,21 @@ fun List<CompletableFuture<*>>.combineToVoidFuture(): CompletableFuture<Void> {
     return returnFuture
 }
 
-fun <T> CompletableFuture<T>.getNow(): T {
+fun <T> CloudCompletableFuture<T>.getNow(): T {
     if (!this.isDone || this.isCompletedExceptionally) {
         throw NullPointerException("Future is not completed yet or completed exceptionally")
     }
     return this.getNow(null)!!
 }
 
-fun <T> CompletableFuture<T>.getNowOrNull(): T? {
+fun <T> CloudCompletableFuture<T>.getNowOrNull(): T? {
     return this.getNow(null)
 }
 
-val CompletableFuture<*>.isCompletedNormally: Boolean
+val CloudCompletableFuture<*>.isCompletedNormally: Boolean
     get() = this.isDone && !this.isCompletedExceptionally
 
-fun CompletableFuture<*>.toUnitFuture(): CompletableFuture<Unit> {
+fun CloudCompletableFuture<*>.toUnitFuture(): CloudCompletableFuture<Unit> {
     val resultFuture = CloudCompletableFuture<Unit>()
     this.handle { _, throwable ->
         if (isCompletedExceptionally) {

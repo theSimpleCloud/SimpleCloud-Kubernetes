@@ -42,7 +42,7 @@ class ProcessShutdownRequest(
         return this.process
     }
 
-    override fun submit(): CompletableFuture<Void> {
+    override fun submit(): CompletableFuture<Unit> {
         return this.internalService.shutdownProcessInternal(this.process)
     }
 }

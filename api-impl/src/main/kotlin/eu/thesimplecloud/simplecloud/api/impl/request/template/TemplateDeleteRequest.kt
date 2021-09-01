@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.template
 
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService
 import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
@@ -43,8 +43,8 @@ class TemplateDeleteRequest(
         return this.template
     }
 
-    override fun submit(): CompletableFuture<Void> {
+    override fun submit(): CompletableFuture<Unit> {
         this.templateService.deleteTemplateInternal(this.template)
-        return voidFuture()
+        return unitFuture()
     }
 }

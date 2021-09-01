@@ -42,11 +42,9 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class IgniteCloudProcessRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<CloudProcessConfiguration>(), ICloudProcessRepository {
-
-    override fun getCache(): IgniteCache<String, CloudProcessConfiguration> {
-        return ignite.getOrCreateCache("cloud-processes")
-    }
+) : AbstractIgniteRepository<CloudProcessConfiguration>(
+    ignite.getOrCreateCache("cloud-processes")
+), ICloudProcessRepository {
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
         return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))

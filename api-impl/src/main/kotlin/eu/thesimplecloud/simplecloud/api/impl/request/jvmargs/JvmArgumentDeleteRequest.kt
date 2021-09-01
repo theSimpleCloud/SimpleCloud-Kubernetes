@@ -22,13 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.jvmargs
 
-import com.ea.async.Async
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
 import java.util.concurrent.CompletableFuture
 
@@ -47,9 +44,9 @@ class JvmArgumentDeleteRequest(
         return this.jvmArguments
     }
 
-    override fun submit(): CompletableFuture<Void> {
+    override fun submit(): CompletableFuture<Unit> {
         await(this.internalService.findByName(this.jvmArguments.getName()))
         this.internalService.deleteJvmArgsInternal(this.jvmArguments)
-        return voidFuture()
+        return unitFuture()
     }
 }

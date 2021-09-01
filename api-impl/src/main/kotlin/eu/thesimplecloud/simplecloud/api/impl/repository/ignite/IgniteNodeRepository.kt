@@ -41,11 +41,9 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class IgniteNodeRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<NodeConfiguration>(), INodeRepository {
-
-    override fun getCache(): IgniteCache<String, NodeConfiguration> {
-        return ignite.getOrCreateCache("cloud-nodes")
-    }
+) : AbstractIgniteRepository<NodeConfiguration>(
+    ignite.getOrCreateCache("cloud-nodes")
+), INodeRepository {
 
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration> {
         return executeQueryAndFindFirst(NodeCompareIgniteIdPredicate(uniqueId))

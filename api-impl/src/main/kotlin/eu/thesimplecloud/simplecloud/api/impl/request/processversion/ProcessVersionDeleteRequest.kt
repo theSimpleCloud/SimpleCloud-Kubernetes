@@ -22,16 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.processversion
 
-import com.ea.async.Async
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
 import java.util.concurrent.CompletableFuture
 
@@ -50,9 +44,9 @@ class ProcessVersionDeleteRequest(
         return this.processVersion
     }
 
-    override fun submit(): CompletableFuture<Void> {
+    override fun submit(): CompletableFuture<Unit> {
         await(this.internalService.findByName(this.processVersion.getName()))
         this.internalService.deleteProcessVersionInternal(this.processVersion)
-        return voidFuture()
+        return unitFuture()
     }
 }

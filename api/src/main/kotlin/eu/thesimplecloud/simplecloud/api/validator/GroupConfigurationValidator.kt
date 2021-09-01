@@ -25,12 +25,13 @@ package eu.thesimplecloud.simplecloud.api.validator
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.voidFuture
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
 import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -47,35 +48,34 @@ class GroupConfigurationValidator @Inject constructor(
     private val versionService: IProcessVersionService,
 ) : IValidator<AbstractCloudProcessGroupConfiguration> {
 
-    override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
-        return CompletableFuture.supplyAsync {
+    override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+        return CloudCompletableFuture.runAsync {
             checkJvmArguments(value)
             checkProcessOnlineCountConfiguration(value)
             checkTemplate(value)
             checkVersion(value)
-            return@supplyAsync null
         }
     }
 
-    private fun checkJvmArguments(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
-        val jvmArgumentName = configuration.jvmArgumentName ?: return voidFuture()
+    private fun checkJvmArguments(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+        val jvmArgumentName = configuration.jvmArgumentName ?: return unitFuture()
         await(this.jvmArgumentsService.findByName(jvmArgumentName))
-        return voidFuture()
+        return unitFuture()
     }
 
-    private fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
+    private fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         await(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
-        return voidFuture()
+        return unitFuture()
     }
 
-    private fun checkTemplate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
+    private fun checkTemplate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         await(this.templateService.findByName(configuration.templateName))
-        return voidFuture()
+        return unitFuture()
     }
 
-    private fun checkVersion(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Void> {
+    private fun checkVersion(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         await(this.versionService.findByName(configuration.versionName))
-        return voidFuture()
+        return unitFuture()
     }
 
 }

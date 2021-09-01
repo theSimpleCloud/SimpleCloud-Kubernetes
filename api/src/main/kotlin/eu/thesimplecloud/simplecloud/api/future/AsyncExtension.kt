@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.future
 
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionStage
 
@@ -33,9 +34,9 @@ import java.util.concurrent.CompletionStage
  */
 
 fun <T> completedFuture(any: T): CompletableFuture<T> {
-    return CompletableFuture.completedFuture(any)
+    return CloudCompletableFuture.completedFuture(any)
 }
 
-fun voidFuture(): CompletableFuture<Void> {
-    return CompletableFuture.completedFuture(null)
+fun unitFuture(): CompletableFuture<Unit> {
+    return CloudCompletableFuture.completedFuture(Unit)
 }

@@ -25,8 +25,10 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.mongo
 import dev.morphia.Datastore
 import dev.morphia.query.Query
 import dev.morphia.query.experimental.filters.Filters
+import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,9 +43,9 @@ open class DefaultMongoRepository<I : Any, T : Any>(
 ) : IRepository<I, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.datastore.find(entityClass).toList()
-        }
+        }.nonNull()
     }
 
     override fun find(identifier: I): CompletableFuture<T> {
@@ -51,28 +53,27 @@ open class DefaultMongoRepository<I : Any, T : Any>(
     }
 
     override fun findOrNull(identifier: I): CompletableFuture<T?> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             createIdentifierQuery(identifier).first()
         }
     }
 
-    override fun save(identifier: I, value: T): CompletableFuture<Void> {
-        return CompletableFuture.supplyAsync {
+    override fun save(identifier: I, value: T): CompletableFuture<Unit> {
+        return CloudCompletableFuture.runAsync {
             this.datastore.save(value)
-            return@supplyAsync null
         }
     }
 
     override fun remove(identifier: I) {
-        CompletableFuture.supplyAsync {
+        CloudCompletableFuture.supplyAsync {
             createIdentifierQuery(identifier).delete()
         }
     }
 
     override fun count(): CompletableFuture<Long> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.datastore.find(entityClass).count()
-        }
+        }.nonNull()
     }
 
     private fun createIdentifierQuery(identifier: I): Query<T> {
