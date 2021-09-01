@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.IController
@@ -46,7 +47,7 @@ class UserController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "{name}", "web.user.get.one")
     fun handleGetByName(@RequestPathParam("name") requestingUserName: String): User {
-        return userService.getUserByName(requestingUserName)
+        return await(userService.getUserByName(requestingUserName))
     }
 
     @RequestMapping(RequestType.POST, "", "web.user.create")

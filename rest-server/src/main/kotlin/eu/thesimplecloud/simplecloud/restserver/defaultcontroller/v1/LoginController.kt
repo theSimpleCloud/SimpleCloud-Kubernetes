@@ -44,7 +44,8 @@ class LoginController @Inject constructor(
 
     @RequestMapping(RequestType.POST, "", "")
     fun handleLogin(@RequestBody credentials: UsernameAndPasswordCredentials): TokenResponse {
-        return TokenResponse(authService.authenticate(credentials))
+        val token = authService.authenticate(credentials).join()
+        return TokenResponse(token)
     }
 
     class TokenResponse(val token: String)

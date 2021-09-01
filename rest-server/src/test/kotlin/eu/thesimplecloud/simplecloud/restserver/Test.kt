@@ -37,25 +37,26 @@ import java.io.File
  */
 class Test {
 
-    @Test
-    fun test() {
-        Async.init()
-        val injector = Guice.createInjector(TestRestBinderModule())
-        println(File(".").absolutePath)
-        injector.getInstance(RestServer::class.java)
-        val controllerHandler = injector.getInstance(ControllerHandler::class.java)
-        controllerHandler.registerController(TestController::class.java)
-        controllerHandler.registerController(UserController::class.java)
-        controllerHandler.registerController(LoginController::class.java)
-        controllerHandler.registerController(ProcessGroupController::class.java)
-        controllerHandler.registerController(ProcessController::class.java)
-        controllerHandler.registerController(TemplateController::class.java)
-        controllerHandler.registerController(JvmArgumentsController::class.java)
-        controllerHandler.registerController(ProcessVersionController::class.java)
-        controllerHandler.registerController(NodeController::class.java)
-        while (true) {
 
-        }
+
+
+}
+
+fun main() {
+    Async.init()
+    val injector = Guice.createInjector(TestRestBinderModule())
+    println(File(".").absolutePath)
+    val restServer = injector.getInstance(RestServer::class.java)
+    val controllerHandler = restServer.controllerHandler
+    controllerHandler.registerController(UserController::class.java)
+    controllerHandler.registerController(LoginController::class.java)
+    controllerHandler.registerController(ProcessGroupController::class.java)
+    controllerHandler.registerController(ProcessController::class.java)
+    controllerHandler.registerController(TemplateController::class.java)
+    controllerHandler.registerController(JvmArgumentsController::class.java)
+    controllerHandler.registerController(ProcessVersionController::class.java)
+    controllerHandler.registerController(NodeController::class.java)
+    while (true) {
+
     }
-
 }

@@ -24,8 +24,10 @@ package eu.thesimplecloud.simplecloud.restserver.service
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.future.toFutureList
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessStartRequest
@@ -39,6 +41,7 @@ import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -80,7 +83,7 @@ class TestCloudProcessService @Inject constructor(
     }
 
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             val process = this.processFactory.create(
                 CloudProcessConfiguration(
                     configuration.groupName,
@@ -102,18 +105,18 @@ class TestCloudProcessService @Inject constructor(
             )
             this.nameToProcess[process.getName()] = process
             process
-        }
+        }.nonNull()
     }
 
-    override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Void> {
+    override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {
         this.nameToProcess.remove(process.getName())
-        return CompletableFuture.completedFuture(null)
+        return unitFuture()
     }
 
     override fun findProcessByName(name: String): CompletableFuture<ICloudProcess> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.nameToProcess[name] ?: throw NoSuchElementException("Process does not exist")
-        }
+        }.nonNull()
     }
 
     override fun findProcessesByName(vararg names: String): CompletableFuture<List<ICloudProcess>> {
@@ -125,13 +128,13 @@ class TestCloudProcessService @Inject constructor(
     }
 
     override fun findProcessesByGroup(groupName: String): CompletableFuture<List<ICloudProcess>> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.filter { it.getGroupName() == groupName }
-        }
+        }.nonNull()
     }
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.firstOrNull { it.getUniqueId() == uniqueId }
         }.nonNull()
     }
@@ -145,7 +148,7 @@ class TestCloudProcessService @Inject constructor(
     }
 
     override fun findAll(): CompletableFuture<List<ICloudProcess>> {
-        return CompletableFuture.completedFuture(this.nameToProcess.values.toList())
+        return CloudCompletableFuture.completedFuture(this.nameToProcess.values.toList())
     }
 
 

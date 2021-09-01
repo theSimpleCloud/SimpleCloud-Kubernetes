@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.restserver.service
 
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,11 +37,11 @@ interface IAuthService {
     /**
      * Returns the jwt token for the specified credentials
      */
-    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String
+    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
 
     /**
      * Returns the user from the specified [call]
      */
-    fun getUserFromCall(call: ApplicationCall): User
+    fun getUserFromCall(call: ApplicationCall): CompletableFuture<User>
 
 }

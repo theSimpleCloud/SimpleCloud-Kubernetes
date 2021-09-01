@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.restserver.service
 
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequest
@@ -33,6 +34,7 @@ import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -55,9 +57,9 @@ class TestProcessVersionService : IInternalProcessVersionService {
     }
 
     override fun findByName(name: String): CompletableFuture<IProcessVersion> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.nameToProcessVersion[name] ?: throw NoSuchElementException("ProcessVersion '${name}' does not exist")
-        }
+        }.nonNull()
     }
 
     override fun doesExist(name: String): CompletableFuture<Boolean> {
@@ -65,13 +67,13 @@ class TestProcessVersionService : IInternalProcessVersionService {
     }
 
     override fun findAll(): CompletableFuture<List<IProcessVersion>> {
-        return CompletableFuture.completedFuture(this.nameToProcessVersion.values.toList())
+        return CloudCompletableFuture.completedFuture(this.nameToProcessVersion.values.toList())
     }
 
     override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion> {
         val processVersion = ProcessVersion(configuration)
         this.nameToProcessVersion[processVersion.getName()] = processVersion
-        return CompletableFuture.completedFuture(processVersion)
+        return CloudCompletableFuture.completedFuture(processVersion)
     }
 
     override fun deleteProcessVersionInternal(processVersion: IProcessVersion) {

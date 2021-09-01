@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.service
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.impl.template.Template
@@ -33,6 +34,7 @@ import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
@@ -58,20 +60,20 @@ class TestTemplateService @Inject constructor(
     }
 
     override fun findByName(name: String): CompletableFuture<ITemplate> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.nameToTemplate[name] ?: throw NoSuchElementException("Template '${name}' does not exist")
-        }
+        }.nonNull()
     }
 
     override fun findAll(): CompletableFuture<List<ITemplate>> {
-        return CompletableFuture.completedFuture(this.nameToTemplate.values.toList())
+        return CloudCompletableFuture.completedFuture(this.nameToTemplate.values.toList())
     }
 
     override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
         await(this.validator.validate(configuration))
         val template = Template(configuration, this)
         this.nameToTemplate[template.getName()] = template
-        return CompletableFuture.completedFuture(template)
+        return CloudCompletableFuture.completedFuture(template)
     }
 
     override fun deleteTemplateInternal(template: ITemplate) {

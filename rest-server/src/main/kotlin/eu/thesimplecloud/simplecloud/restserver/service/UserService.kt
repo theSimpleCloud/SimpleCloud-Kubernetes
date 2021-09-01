@@ -27,6 +27,7 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.restserver.exception.ElementAlreadyExistException
 import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,12 +39,12 @@ class UserService @Inject constructor(
     private val repository: IUserRepository
 ) : IUserService {
 
-    override fun getUserByName(name: String): User {
-        return await(this.repository.find(name))
+    override fun getUserByName(name: String): CompletableFuture<User> {
+        return this.repository.find(name)
     }
 
-    override fun getAllUsers(): List<User> {
-        return await(this.repository.findAll())
+    override fun getAllUsers(): CompletableFuture<List<User>> {
+        return this.repository.findAll()
     }
 
     override fun createUser(user: User) {

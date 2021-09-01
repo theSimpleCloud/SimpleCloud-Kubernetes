@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.service
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupDeleteRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequest
@@ -40,6 +41,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ICloudServerGroup
 import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
 import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -78,17 +80,17 @@ class TestCloudProcessGroupService @Inject constructor(
 
     private fun updateGroupInternal0(group: ICloudProcessGroup): CompletableFuture<ICloudProcessGroup> {
         this.groups[group.getIdentifier()] = group
-        return CompletableFuture.completedFuture(group)
+        return CloudCompletableFuture.completedFuture(group)
     }
 
     override fun findByName(name: String): CompletableFuture<ICloudProcessGroup> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.groups[name] ?: throw NoSuchElementException("Group does not exist")
-        }
+        }.nonNull()
     }
 
     override fun findAll(): CompletableFuture<List<ICloudProcessGroup>> {
-        return CompletableFuture.supplyAsync { this.groups.values.toList() }
+        return CloudCompletableFuture.supplyAsync { this.groups.values.toList() }.nonNull()
     }
 
     override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): IProcessGroupCreateRequest {

@@ -20,30 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver
+package eu.thesimplecloud.simplecloud.restserver.setup.body
 
-import com.google.inject.AbstractModule
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
-import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
-import eu.thesimplecloud.simplecloud.restserver.service.AuthService
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
-import eu.thesimplecloud.simplecloud.restserver.service.IUserService
-import eu.thesimplecloud.simplecloud.restserver.service.UserService
+class NodeNameSetupResponseBody(
+    val nodeName: String
+) {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 27.06.2021
- * Time: 17:01
- * @author Frederick Baier
- */
-class RestBinderModule : AbstractModule() {
-
-
-    override fun configure() {
-        bind(IUserRepository::class.java).to(MongoUserRepository::class.java)
-        bind(IUserService::class.java).to(UserService::class.java)
-        bind(IAuthService::class.java).to(AuthService::class.java)
-    }
-
+    private constructor() : this("")
 
 }

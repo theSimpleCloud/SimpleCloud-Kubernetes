@@ -22,8 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.restserver.setup.type
 
+import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
+import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeNameSetupResponseBody
 import kotlin.reflect.KClass
 
 /**
@@ -40,6 +42,8 @@ open class Setup<T : Any>(
 
     companion object {
         val FIRST_USER = Setup("firstuser", emptyArray<String>(), FirstUserSetupResponseBody::class)
+        val NODE_NAME = Setup("name", emptyArray<String>(), NodeNameSetupResponseBody::class)
+        val NODE_ADDRESS = Setup("address", emptyArray<String>(), Address::class)
         val END = Setup("end", "", String::class)
     }
 }

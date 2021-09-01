@@ -30,7 +30,6 @@ import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
-import eu.thesimplecloud.simplecloud.restserver.repository.FileUserRepository
 import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
@@ -48,7 +47,6 @@ class TestRestBinderModule : AbstractModule() {
 
 
     override fun configure() {
-        bind(IUserRepository::class.java).to(FileUserRepository::class.java)
         bind(IAuthService::class.java).to(AuthService::class.java)
         bind(IUserService::class.java).to(UserService::class.java)
 

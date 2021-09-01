@@ -33,6 +33,7 @@ import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
 import io.ktor.http.*
 import io.ktor.response.*
+import kotlinx.coroutines.future.await
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletionException
 
@@ -122,9 +123,9 @@ class WebRequestHandler(
         }
     }
 
-    private fun getUserOrEmptyUser(): User {
+    private suspend fun getUserOrEmptyUser(): User {
         try {
-            return this.authService.getUserFromCall(this.call)
+            return this.authService.getUserFromCall(this.call).await()
         } catch (e: NotAuthenticatedException) {
             return EmptyUser
         }

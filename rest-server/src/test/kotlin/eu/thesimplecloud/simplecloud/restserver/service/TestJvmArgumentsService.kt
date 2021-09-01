@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.restserver.service
 
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArguments
 import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequest
@@ -32,6 +33,7 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
+import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -64,9 +66,9 @@ class TestJvmArgumentsService : IInternalJvmArgumentsService {
     }
 
     override fun findByName(name: String): CompletableFuture<IJVMArguments> {
-        return CompletableFuture.supplyAsync {
+        return CloudCompletableFuture.supplyAsync {
             this.nameToJvmArgs[name] ?: throw NoSuchElementException("JvmArgs '${name}' does not exist")
-        }
+        }.nonNull()
     }
 
     override fun findAll(): CompletableFuture<List<IJVMArguments>> {

@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.restserver.service
 
 import eu.thesimplecloud.simplecloud.restserver.user.User
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,12 +36,12 @@ interface IUserService {
     /**
      * Returns the user found by the specified [name]
      */
-    fun getUserByName(name: String): User
+    fun getUserByName(name: String): CompletableFuture<User>
 
     /**
      * Returns all users
      */
-    fun getAllUsers(): List<User>
+    fun getAllUsers(): CompletableFuture<List<User>>
 
     /**
      * Creates a user

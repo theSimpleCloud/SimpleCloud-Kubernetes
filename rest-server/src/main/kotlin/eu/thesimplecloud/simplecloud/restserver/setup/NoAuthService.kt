@@ -27,6 +27,7 @@ import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
 import eu.thesimplecloud.simplecloud.restserver.service.UsernameAndPasswordCredentials
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,11 +37,11 @@ import io.ktor.application.*
  */
 class NoAuthService : IAuthService {
 
-    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
-        throw UnsupportedOperationException("Authentication is not supported in setup mode")
+    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String> {
+        throw UnsupportedOperationException("Authentication is currently not available")
     }
 
-    override fun getUserFromCall(call: ApplicationCall): User {
+    override fun getUserFromCall(call: ApplicationCall): CompletableFuture<User> {
         throw NotAuthenticatedException()
     }
 }
