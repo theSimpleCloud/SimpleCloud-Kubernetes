@@ -41,7 +41,7 @@ class ValidatorService @Inject constructor(
 
     private val clazzToValidator = mapOf<Class<*>, Class<out IValidator<*>>>(
         AbstractCloudProcessGroupConfiguration::class.java to GroupConfigurationValidator::class.java,
-        TemplateConfiguration::class.java to TemplateValidator::class.java
+        TemplateConfiguration::class.java to TemplateConfigurationValidator::class.java
     )
 
     override fun <T> getValidator(clazz: Class<T>): IValidator<T> {

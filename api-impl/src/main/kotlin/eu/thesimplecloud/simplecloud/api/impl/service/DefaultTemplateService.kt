@@ -22,8 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
@@ -34,6 +33,7 @@ import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import eu.thesimplecloud.simplecloud.api.validator.TemplateConfigurationValidator
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -43,6 +43,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 open class DefaultTemplateService(
+    private val templateConfigurationValidator: TemplateConfigurationValidator,
     private val igniteRepository: IgniteTemplateRepository
 ) : IInternalTemplateService {
 
@@ -57,6 +58,7 @@ open class DefaultTemplateService(
     }
 
     override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+        await(this.templateConfigurationValidator.validate(configuration))
         this.igniteRepository.save(configuration.name, configuration)
         return completedFuture(Template(configuration, this))
     }

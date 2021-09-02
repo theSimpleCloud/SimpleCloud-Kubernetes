@@ -35,13 +35,17 @@ import java.util.concurrent.CompletableFuture
  * Time: 12:34
  * @author Frederick Baier
  */
-class TemplateValidator @Inject constructor(
+class TemplateConfigurationValidator @Inject constructor(
     private val templateService: ITemplateService
 ) : IValidator<TemplateConfiguration> {
 
     override fun validate(value: TemplateConfiguration): CompletableFuture<Unit> {
         val parentTemplateName = value.parentTemplateName ?: return unitFuture()
-        await(this.templateService.findByName(parentTemplateName))
+        try {
+            await(this.templateService.findByName(parentTemplateName))
+        } catch (e: Exception) {
+            throw NoSuchElementException("Template '${parentTemplateName}' does not exist")
+        }
         return unitFuture()
     }
 
