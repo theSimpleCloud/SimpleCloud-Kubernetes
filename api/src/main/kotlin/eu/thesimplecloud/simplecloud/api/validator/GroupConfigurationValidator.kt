@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.api.validator
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
@@ -32,6 +33,8 @@ import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
 import eu.thesimplecloud.simplecloud.api.service.ITemplateService
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import eu.thesimplecloud.simplecloud.api.utils.future.FutureOriginException
+import java.lang.Exception
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -50,31 +53,53 @@ class GroupConfigurationValidator @Inject constructor(
 
     override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         return CloudCompletableFuture.runAsync {
-            checkJvmArguments(value)
-            checkProcessOnlineCountConfiguration(value)
-            checkTemplate(value)
-            checkVersion(value)
+            await(checkJvmArguments(value))
+            await(checkProcessOnlineCountConfiguration(value))
+            await(checkTemplate(value))
+            await(checkVersion(value))
         }
     }
 
     private fun checkJvmArguments(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         val jvmArgumentName = configuration.jvmArgumentName ?: return unitFuture()
-        await(this.jvmArgumentsService.findByName(jvmArgumentName))
+        try {
+            await(this.jvmArgumentsService.findByName(jvmArgumentName))
+        } catch (e: CompletedWithNullException) {
+            throw NoSuchElementException("JvmArgumentName '${jvmArgumentName}' does not exist")
+        }
         return unitFuture()
     }
 
     private fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        await(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
+        val onlineCountConfigurationName = configuration.onlineCountConfigurationName
+        try {
+            await(this.onlineCountService.findByName(onlineCountConfigurationName))
+        } catch (e: Exception) {
+            throw NoSuchElementException("OnlineCountConfiguration '${onlineCountConfigurationName}' does not exist")
+        }
         return unitFuture()
     }
 
     private fun checkTemplate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        await(this.templateService.findByName(configuration.templateName))
+        val templateName = configuration.templateName
+        try {
+            println("check template")
+            await(this.templateService.findByName(templateName))
+        } catch (e: Exception) {
+            println("throwing")
+            throw NoSuchElementException("Template '${templateName}' does not exist")
+        }
+        println("not thrown for ${templateName}")
         return unitFuture()
     }
 
     private fun checkVersion(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        await(this.versionService.findByName(configuration.versionName))
+        val versionName = configuration.versionName
+        try {
+            await(this.versionService.findByName(versionName))
+        } catch (e: Exception) {
+            throw NoSuchElementException("Version '${versionName}' does not exist")
+        }
         return unitFuture()
     }
 
