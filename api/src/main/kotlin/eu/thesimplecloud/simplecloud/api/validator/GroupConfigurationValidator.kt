@@ -83,13 +83,10 @@ class GroupConfigurationValidator @Inject constructor(
     private fun checkTemplate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         val templateName = configuration.templateName
         try {
-            println("check template")
             await(this.templateService.findByName(templateName))
         } catch (e: Exception) {
-            println("throwing")
             throw NoSuchElementException("Template '${templateName}' does not exist")
         }
-        println("not thrown for ${templateName}")
         return unitFuture()
     }
 
