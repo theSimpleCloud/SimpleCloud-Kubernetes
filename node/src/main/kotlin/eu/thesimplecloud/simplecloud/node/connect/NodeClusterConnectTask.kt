@@ -33,9 +33,10 @@ import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
-import eu.thesimplecloud.simplecloud.node.service.NodeCloudProcessService
+import eu.thesimplecloud.simplecloud.node.mongo.MongoPersistentNodeRepository
+import eu.thesimplecloud.simplecloud.node.mongo.PersistentNodeEntity
+import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
-import eu.thesimplecloud.simplecloud.node.util.WebContentLoader
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.task.Task
 import org.apache.ignite.Ignite
@@ -68,7 +69,16 @@ class NodeClusterConnectTask @Inject constructor(
     }
 
     private fun createFinalInjector(ignite: Ignite): Injector {
-        return injector.createChildInjector(CloudAPIBinderModule(ignite, NodeCloudProcessService::class.java))
+        val cloudAPIBinderModule = CloudAPIBinderModule(
+            ignite,
+            JvmArgumentsServiceImpl::class.java,
+            NodeServiceImpl::class.java,
+            ProcessVersionServiceImpl::class.java,
+            TemplateServiceImpl::class.java,
+            CloudProcessServiceImpl::class.java,
+            CloudProcessGroupServiceImpl::class.java
+        )
+        return injector.createChildInjector(cloudAPIBinderModule)
     }
 
     private fun startIgnite(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<Ignite> {

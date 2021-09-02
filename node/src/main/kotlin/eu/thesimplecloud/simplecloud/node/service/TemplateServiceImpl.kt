@@ -20,18 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.mongo
+package eu.thesimplecloud.simplecloud.node.service
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 17:51
- * @author Frederick Baier
- */
-class MongoFileConfiguration(
-    val connectionString: String?
-) {
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
+import eu.thesimplecloud.simplecloud.api.impl.service.DefaultTemplateService
 
-    private constructor() : this("")
-
-}
+class TemplateServiceImpl @Inject constructor(
+    igniteRepository: IgniteTemplateRepository
+) : DefaultTemplateService(igniteRepository)

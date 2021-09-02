@@ -20,19 +20,11 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.connect
+package eu.thesimplecloud.simplecloud.node.mongo
 
-import dev.morphia.annotations.*
-import eu.thesimplecloud.simplecloud.api.utils.Address
+import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
 
-@Entity("nodes")
-class PersistentNodeEntity(
-    @Id
-    val name: String,
-    val address: Address,
-    val isConnected: Boolean
-) {
-
-    private constructor(): this("", Address.fromIpString("127.0.0.1:0"), false)
-
-}
+class MongoPersistentNodeRepository(
+    datastore: Datastore
+) : DefaultMongoRepository<String, PersistentNodeEntity>(datastore, PersistentNodeEntity::class.java)

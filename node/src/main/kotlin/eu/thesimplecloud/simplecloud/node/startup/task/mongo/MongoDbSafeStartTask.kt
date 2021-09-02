@@ -26,7 +26,7 @@ import com.ea.async.Async.await
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.node.mongo.MongoConfigurationFileHandler
+import eu.thesimplecloud.simplecloud.node.mongo.file.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
 import eu.thesimplecloud.simplecloud.task.Task

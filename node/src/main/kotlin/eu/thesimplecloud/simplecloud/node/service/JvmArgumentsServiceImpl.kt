@@ -20,11 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.connect
+package eu.thesimplecloud.simplecloud.node.service
 
-import dev.morphia.Datastore
-import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
+import eu.thesimplecloud.simplecloud.api.impl.service.DefaultJvmArgumentsService
 
-class MongoPersistentNodeRepository(
-    datastore: Datastore
-) : DefaultMongoRepository<String, PersistentNodeEntity>(datastore, PersistentNodeEntity::class.java)
+class JvmArgumentsServiceImpl @Inject constructor(
+    igniteRepository: IgniteJvmArgumentsRepository
+) : DefaultJvmArgumentsService(
+    igniteRepository
+) {
+}

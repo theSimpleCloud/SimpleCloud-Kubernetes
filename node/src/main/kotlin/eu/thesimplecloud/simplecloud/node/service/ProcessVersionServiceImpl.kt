@@ -20,43 +20,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.mongo
+package eu.thesimplecloud.simplecloud.node.service
 
-import com.fasterxml.jackson.databind.ObjectMapper
-import java.io.File
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
+import eu.thesimplecloud.simplecloud.api.impl.service.DefaultProcessVersionService
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 17:49
- * @author Frederick Baier
- */
-class MongoConfigurationFileHandler(
-    private val connectionStringFromArgument: String?
-) {
-
-    private val file = File("mongoDatabase.json")
-    private val objectMapper = ObjectMapper()
-
-    fun loadConnectionString(): String? {
-        if (this.connectionStringFromArgument != null)
-            return this.connectionStringFromArgument
-        if (!this.file.exists())
-            return null
-
-        return this.objectMapper.readValue(this.file, MongoFileConfiguration::class.java).connectionString
-    }
-
-    fun isConnectionStringAvailable(): Boolean {
-        return loadConnectionString() != null
-    }
-
-    fun saveConnectionString(connectionString: String) {
-        this.objectMapper.writeValue(file, MongoFileConfiguration(connectionString))
-    }
-
-    fun deleteFile() {
-        this.file.delete()
-    }
-
+class ProcessVersionServiceImpl @Inject constructor(
+    igniteRepository: IgniteProcessVersionRepository
+) : DefaultProcessVersionService(igniteRepository) {
 }

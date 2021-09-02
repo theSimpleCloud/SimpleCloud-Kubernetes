@@ -71,14 +71,23 @@ class NodeStartupTask(
     }
 
     private fun loadNodeName(): CompletableFuture<String> {
-        return this.taskSubmitter.submit(LoadNodeNameSafeTask(this.nodeSetupHandler, this.startArguments.randomNodeName))
+        return this.taskSubmitter.submit(
+            LoadNodeNameSafeTask(
+                this.nodeSetupHandler,
+                this.startArguments.randomNodeName
+            )
+        )
     }
 
     private fun loadAddress(): CompletableFuture<Address> {
         return this.taskSubmitter.submit(LoadAddressSafeTask(this.nodeSetupHandler, this.startArguments.bindAddress))
     }
 
-    private fun loadModulesAndCreateGuiceInjector(datastore: Datastore, nodeName: String, address: Address): CompletableFuture<Injector> {
+    private fun loadModulesAndCreateGuiceInjector(
+        datastore: Datastore,
+        nodeName: String,
+        address: Address
+    ): CompletableFuture<Injector> {
         val loadedModules = await(loadModules(datastore))
         val guiceModules = loadedModules.map { it.getLoadedClassInstance() }
         val injector = Guice.createInjector(
@@ -98,11 +107,15 @@ class NodeStartupTask(
         val mongoRepository = MongoUserRepository(datastore)
         val count = await(mongoRepository.count())
         if (count == 0L) {
-            await(this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-                FirstWebUserSetupTask(it, mongoRepository)
-            })
+            return executeFirstUserSetup(mongoRepository)
         }
         return unitFuture()
+    }
+
+    private fun executeFirstUserSetup(mongoRepository: MongoUserRepository): CompletableFuture<Unit> {
+        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
+            FirstWebUserSetupTask(it, mongoRepository)
+        }
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {

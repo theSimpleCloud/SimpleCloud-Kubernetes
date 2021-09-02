@@ -20,27 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.mongo
 
-import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import java.util.concurrent.CompletableFuture
+import dev.morphia.annotations.*
+import eu.thesimplecloud.simplecloud.api.utils.Address
 
-class NodeCloudProcessService @Inject constructor(
-    processFactory: ICloudProcessFactory,
-    igniteRepository: IgniteCloudProcessRepository
-) : AbstractCloudProcessService(
-    processFactory, igniteRepository
+@Entity("nodes")
+class PersistentNodeEntity(
+    @Id
+    val name: String,
+    val address: Address,
+    val isConnected: Boolean
 ) {
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        TODO("Not yet implemented")
-    }
 
-    override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {
-        TODO("Not yet implemented")
-    }
+    private constructor(): this("", Address.fromIpString("127.0.0.1:0"), false)
+
 }
