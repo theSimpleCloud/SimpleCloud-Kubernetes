@@ -30,7 +30,6 @@ import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFacto
 import eu.thesimplecloud.simplecloud.api.impl.service.*
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
@@ -44,7 +43,12 @@ import org.apache.ignite.Ignite
  */
 class CloudAPIBinderModule(
     private val igniteInstance: Ignite,
-    private val cloudProcessServiceImplClass: Class<out AbstractCloudProcessService>
+    private val jvmArgumentsServiceClass: Class<out IJvmArgumentsService>,
+    private val nodeServiceClass: Class<out INodeService>,
+    private val processVersionServiceClass: Class<out IProcessVersionService>,
+    private val templateServiceClass: Class<out ITemplateService>,
+    private val cloudProcessServiceClass: Class<out ICloudProcessService>,
+    private val cloudProcessGroupServiceClass: Class<out ICloudProcessGroupService>,
 ) : AbstractModule() {
 
     override fun configure() {
@@ -57,13 +61,14 @@ class CloudAPIBinderModule(
         )
 
         bind(IValidatorService::class.java).to(ValidatorService::class.java)
-        bind(IJvmArgumentsService::class.java).to(JvmArgumentsService::class.java)
-        bind(INodeService::class.java).to(NodeService::class.java)
-        bind(IProcessVersionService::class.java).to(ProcessVersionService::class.java)
-        bind(ITemplateService::class.java).to(TemplateService::class.java)
-        bind(ICloudProcessService::class.java).to(this.cloudProcessServiceImplClass)
-        bind(IProcessOnlineCountService::class.java).to(TestProcessOnlineCountService::class.java)
-        bind(ICloudProcessGroupService::class.java).to(CloudProcessGroupService::class.java)
+
+        bind(IJvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)
+        bind(INodeService::class.java).to(this.nodeServiceClass)
+        bind(IProcessVersionService::class.java).to(this.processVersionServiceClass)
+        bind(ITemplateService::class.java).to(this.templateServiceClass)
+        bind(ICloudProcessService::class.java).to(this.cloudProcessServiceClass)
+        bind(IProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
+        bind(ICloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
 
         bind(IMessageChannelManager::class.java).to(MessageChannelManager::class.java)
 

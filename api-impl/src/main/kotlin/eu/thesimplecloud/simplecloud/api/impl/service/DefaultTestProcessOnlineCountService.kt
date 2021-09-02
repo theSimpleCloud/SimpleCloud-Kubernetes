@@ -28,7 +28,7 @@ import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOn
 import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
 
-class TestProcessOnlineCountService : IProcessOnlineCountService {
+open class DefaultTestProcessOnlineCountService : IProcessOnlineCountService {
     override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
         return completedFuture(ProcessOnlineCountConfiguration())
     }
