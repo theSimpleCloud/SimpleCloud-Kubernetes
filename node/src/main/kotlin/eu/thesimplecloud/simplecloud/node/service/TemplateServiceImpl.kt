@@ -25,7 +25,33 @@ package eu.thesimplecloud.simplecloud.node.service
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultTemplateService
+import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
+import eu.thesimplecloud.simplecloud.api.validator.TemplateConfigurationValidator
+import eu.thesimplecloud.simplecloud.node.mongo.template.MongoTemplateRepository
+import eu.thesimplecloud.simplecloud.node.mongo.template.TemplateEntity
+import java.util.concurrent.CompletableFuture
 
 class TemplateServiceImpl @Inject constructor(
-    igniteRepository: IgniteTemplateRepository
-) : DefaultTemplateService(igniteRepository)
+    templateConfigurationValidator: TemplateConfigurationValidator,
+    igniteRepository: IgniteTemplateRepository,
+    private val mongoRepository: MongoTemplateRepository
+) : DefaultTemplateService(templateConfigurationValidator, igniteRepository) {
+
+    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+        val result = super.createTemplateInternal(configuration)
+        saveToDatabase(configuration)
+        return result
+    }
+
+    private fun saveToDatabase(configuration: TemplateConfiguration) {
+        val entity = TemplateEntity(configuration.name, configuration.parentTemplateName)
+        this.mongoRepository.save(configuration.name, entity)
+    }
+
+    override fun deleteTemplateInternal(template: ITemplate) {
+        super.deleteTemplateInternal(template)
+        this.mongoRepository.remove(template.getName())
+    }
+
+}

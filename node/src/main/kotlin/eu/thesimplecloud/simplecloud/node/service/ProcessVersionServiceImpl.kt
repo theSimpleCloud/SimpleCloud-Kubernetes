@@ -25,8 +25,31 @@ package eu.thesimplecloud.simplecloud.node.service
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultProcessVersionService
+import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
+import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersionRepository
+import eu.thesimplecloud.simplecloud.node.mongo.processversion.ProcessVersionEntity
+import java.util.concurrent.CompletableFuture
 
 class ProcessVersionServiceImpl @Inject constructor(
-    igniteRepository: IgniteProcessVersionRepository
+    igniteRepository: IgniteProcessVersionRepository,
+    private val mongoRepository: MongoProcessVersionRepository
 ) : DefaultProcessVersionService(igniteRepository) {
+
+    override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion> {
+        val result =  super.createProcessVersionInternal(configuration)
+        saveToDatabase(configuration)
+        return result
+    }
+
+    private fun saveToDatabase(configuration: ProcessVersionConfiguration) {
+        val entity = ProcessVersionEntity(configuration.name, configuration.apiType, configuration.downloadLink)
+        this.mongoRepository.save(configuration.name, entity)
+    }
+
+    override fun deleteProcessVersionInternal(processVersion: IProcessVersion) {
+        super.deleteProcessVersionInternal(processVersion)
+        this.mongoRepository.remove(processVersion.getName())
+    }
+
 }

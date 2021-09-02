@@ -20,11 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.mongo
+package eu.thesimplecloud.simplecloud.node.mongo.template
 
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
 
-class MongoPersistentNodeRepository(
+@Singleton
+class MongoTemplateRepository @Inject constructor(
     datastore: Datastore
-) : DefaultMongoRepository<String, PersistentNodeEntity>(datastore, PersistentNodeEntity::class.java)
+) : DefaultMongoRepository<String, TemplateEntity>(datastore, TemplateEntity::class.java)

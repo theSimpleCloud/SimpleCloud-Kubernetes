@@ -33,8 +33,8 @@ import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
-import eu.thesimplecloud.simplecloud.node.mongo.MongoPersistentNodeRepository
-import eu.thesimplecloud.simplecloud.node.mongo.PersistentNodeEntity
+import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
+import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.restserver.RestServer
@@ -61,6 +61,15 @@ class NodeClusterConnectTask @Inject constructor(
         val ignite = await(startIgnite(nodeRepository))
         val finalInjector = createFinalInjector(ignite)
         await(startRestServer(finalInjector))
+        await(checkForFirstNodeInCluster(ignite, finalInjector))
+        return unitFuture()
+    }
+
+    private fun checkForFirstNodeInCluster(ignite: Ignite, injector: Injector): CompletableFuture<Unit> {
+        if (ignite.cluster().nodes().size == 1) {
+            val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
+            await(this.taskSubmitter.submit(nodeInitRepositoriesTask))
+        }
         return unitFuture()
     }
 

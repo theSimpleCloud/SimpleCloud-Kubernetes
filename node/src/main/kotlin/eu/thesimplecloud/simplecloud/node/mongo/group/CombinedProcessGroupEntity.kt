@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.mongo
+package eu.thesimplecloud.simplecloud.node.mongo.group
 
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
@@ -28,6 +28,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 
 @Entity("groups")
 class CombinedProcessGroupEntity(
@@ -52,10 +53,94 @@ class CombinedProcessGroupEntity(
     val startPort: Int = -1
 ) {
 
+    private constructor() : this(
+        "<>",
+        1,
+        1,
+        false,
+        1,
+        1,
+        "",
+        "",
+        "",
+        "",
+        false,
+        false,
+        1,
+        "",
+        emptyList(),
+        ProcessGroupType.PROXY
+    )
+
+    fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
+        when (type) {
+            ProcessGroupType.LOBBY -> {
+                return CloudLobbyProcessGroupConfiguration(
+                    this.name,
+                    this.maxMemory,
+                    this.maxPlayers,
+                    this.maintenance,
+                    this.minimumProcessCount,
+                    this.maximumProcessCount,
+                    this.templateName,
+                    this.jvmArgumentName,
+                    this.versionName,
+                    this.onlineCountConfigurationName,
+                    this.static,
+                    this.stateUpdating,
+                    this.startPriority,
+                    this.joinPermission,
+                    this.nodeNamesAllowedToStartOn,
+                    this.lobbyPriority
+                )
+            }
+            ProcessGroupType.PROXY -> {
+                return CloudProxyProcessGroupConfiguration(
+                    this.name,
+                    this.maxMemory,
+                    this.maxPlayers,
+                    this.maintenance,
+                    this.minimumProcessCount,
+                    this.maximumProcessCount,
+                    this.templateName,
+                    this.jvmArgumentName,
+                    this.versionName,
+                    this.onlineCountConfigurationName,
+                    this.static,
+                    this.stateUpdating,
+                    this.startPriority,
+                    this.joinPermission,
+                    this.nodeNamesAllowedToStartOn,
+                    this.startPort
+                )
+            }
+            ProcessGroupType.SERVER -> {
+                return CloudServerProcessGroupConfiguration(
+                    this.name,
+                    this.maxMemory,
+                    this.maxPlayers,
+                    this.maintenance,
+                    this.minimumProcessCount,
+                    this.maximumProcessCount,
+                    this.templateName,
+                    this.jvmArgumentName,
+                    this.versionName,
+                    this.onlineCountConfigurationName,
+                    this.static,
+                    this.stateUpdating,
+                    this.startPriority,
+                    this.joinPermission,
+                    this.nodeNamesAllowedToStartOn
+                )
+            }
+        }
+    }
+
     companion object {
         fun fromGroupConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CombinedProcessGroupEntity {
             val startPort = if (configuration is CloudProxyProcessGroupConfiguration) configuration.startPort else -1
-            val lobbyPriority = if (configuration is CloudLobbyProcessGroupConfiguration) configuration.lobbyPriority else -1
+            val lobbyPriority =
+                if (configuration is CloudLobbyProcessGroupConfiguration) configuration.lobbyPriority else -1
             return CombinedProcessGroupEntity(
                 configuration.name,
                 configuration.maxMemory,

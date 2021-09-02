@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.mongo
+package eu.thesimplecloud.simplecloud.node.mongo.jvmargs
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -28,6 +28,7 @@ import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
 
 @Singleton
-class MongoGroupsRepository @Inject constructor(
+class MongoJvmArgumentsRepository @Inject constructor(
     datastore: Datastore
-) : DefaultMongoRepository<String, CombinedProcessGroupEntity>(datastore, CombinedProcessGroupEntity::class.java)
+) : DefaultMongoRepository<String, JvmArgumentsEntity>(datastore, JvmArgumentsEntity::class.java){
+}

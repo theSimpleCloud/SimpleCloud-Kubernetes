@@ -25,10 +25,33 @@ package eu.thesimplecloud.simplecloud.node.service
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
+import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.JvmArgumentsEntity
+import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
+import java.util.concurrent.CompletableFuture
 
 class JvmArgumentsServiceImpl @Inject constructor(
-    igniteRepository: IgniteJvmArgumentsRepository
+    igniteRepository: IgniteJvmArgumentsRepository,
+    private val mongoRepository: MongoJvmArgumentsRepository
 ) : DefaultJvmArgumentsService(
     igniteRepository
 ) {
+
+    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments> {
+        val result =  super.createJvmArgsInternal(configuration)
+        saveToDatabase(configuration)
+        return result
+    }
+
+    private fun saveToDatabase(configuration: JvmArgumentConfiguration) {
+        val entity = JvmArgumentsEntity(configuration.name, configuration.arguments)
+        this.mongoRepository.save(configuration.name, entity)
+    }
+
+    override fun deleteJvmArgsInternal(jvmArgs: IJVMArguments) {
+        super.deleteJvmArgsInternal(jvmArgs)
+        this.mongoRepository.remove(jvmArgs.getName())
+    }
+
 }

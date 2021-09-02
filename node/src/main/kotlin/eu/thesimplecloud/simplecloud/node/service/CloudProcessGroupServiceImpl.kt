@@ -28,15 +28,15 @@ import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProce
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.validator.GroupConfigurationValidator
-import eu.thesimplecloud.simplecloud.node.mongo.CombinedProcessGroupEntity
-import eu.thesimplecloud.simplecloud.node.mongo.MongoGroupsRepository
+import eu.thesimplecloud.simplecloud.node.mongo.group.CombinedProcessGroupEntity
+import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import java.util.concurrent.CompletableFuture
 
 class CloudProcessGroupServiceImpl @Inject constructor(
     groupConfigurationValidator: GroupConfigurationValidator,
     igniteRepository: IgniteCloudProcessGroupRepository,
     processGroupFactory: CloudProcessGroupFactory,
-    private val mongoGroupsRepository: MongoGroupsRepository
+    private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository
 ) : DefaultCloudProcessGroupService(
     groupConfigurationValidator, igniteRepository, processGroupFactory
 ) {
@@ -53,12 +53,12 @@ class CloudProcessGroupServiceImpl @Inject constructor(
     }
 
     private fun deleteGroupInDatabase(group: ICloudProcessGroup) {
-        this.mongoGroupsRepository.remove(group.getName())
+        this.mongoCloudProcessGroupRepository.remove(group.getName())
     }
 
     private fun saveToDatabase(group: ICloudProcessGroup) {
         val combinedProcessGroupEntity = CombinedProcessGroupEntity.fromGroupConfiguration(group.toConfiguration())
-        this.mongoGroupsRepository.save(group.getName(), combinedProcessGroupEntity)
+        this.mongoCloudProcessGroupRepository.save(group.getName(), combinedProcessGroupEntity)
     }
 
 
