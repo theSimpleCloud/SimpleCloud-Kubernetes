@@ -195,6 +195,7 @@ class RestServer @Inject constructor(
         val environment = this.server.application.environment
         if (environment is ApplicationEngineEnvironment) {
             environment.stop()
+            this.server.stop(3000, 5000)
         }
     }
 
