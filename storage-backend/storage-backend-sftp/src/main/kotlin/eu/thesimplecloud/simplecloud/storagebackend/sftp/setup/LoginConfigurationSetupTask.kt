@@ -20,22 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.sftp.config
+package eu.thesimplecloud.simplecloud.storagebackend.sftp.setup
 
-import dev.morphia.annotations.Entity
-import dev.morphia.annotations.Id
+import com.ea.async.Async.await
+import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
+import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpLoginConfiguration
+import eu.thesimplecloud.simplecloud.task.Task
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 05.06.2021
- * Time: 15:14
- * @author Frederick Baier
- */
-@Entity("ftp_config")
-class SftpLoginConfiguration(
-    @Id
-    val host: String = "default",
-    val port: Int = 22,
-    val username: String = "default",
-    val password: String = "default"
-)
+class LoginConfigurationSetupTask(
+    private val restSetupManager: RestSetupManager
+) : Task<SftpLoginConfiguration>() {
+
+    private val setup = Setup("ftp", "", SftpLoginConfiguration::class)
+
+    override fun getName(): String {
+        return "setup_sftp_config"
+    }
+
+    override fun run(): CompletableFuture<SftpLoginConfiguration> {
+        return this.restSetupManager.setNextSetup(this.setup)
+    }
+}

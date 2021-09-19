@@ -22,10 +22,20 @@
 
 package eu.thesimplecloud.simplecloud.storagebackend.sftp
 
+import com.ea.async.Async.await
 import com.google.inject.AbstractModule
+import com.google.inject.Inject
+import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.config.mongo.MongoConfigProvider
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
-import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpConfigLoader
 import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpLoginConfiguration
+import eu.thesimplecloud.simplecloud.storagebackend.sftp.setup.LoginConfigurationSetupTask
+import eu.thesimplecloud.simplecloud.task.TaskExecutorService
+import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,11 +43,34 @@ import eu.thesimplecloud.simplecloud.storagebackend.sftp.config.SftpLoginConfigu
  * Time: 17:13
  * @author Frederick Baier
  */
-class SftpModule : AbstractModule() {
+class SftpModule @Inject constructor(
+    private val nodeSetupHandler: NodeStartupSetupHandler,
+    private val datastore: Datastore,
+    private val taskExecutor: TaskExecutorService
+) : AbstractModule() {
+
+    private val taskSubmitter = this.taskExecutor.createSubmitter("SFTP-MODULE")
+
+    private val mongoConfigProvider =
+        MongoConfigProvider(this.datastore, SftpLoginConfiguration::class.java) { SftpLoginConfiguration() }
 
     override fun configure() {
-        bind(SftpLoginConfiguration::class.java).toProvider(SftpConfigLoader::class.java)
+        if (!this.mongoConfigProvider.doesConfigExist())
+            executeSetup()
+
+        bind(SftpLoginConfiguration::class.java).toProvider(this.mongoConfigProvider)
         bind(IStorageBackend::class.java).to(SftpStorageBackend::class.java)
+    }
+
+    private fun executeSetup(){
+        val result = executeSetupTask().join()
+        this.mongoConfigProvider.saveToDatabase(result)
+    }
+
+    private fun executeSetupTask(): CompletableFuture<SftpLoginConfiguration> {
+        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
+            LoginConfigurationSetupTask(it)
+        }
     }
 
 }

@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.storagebackend.sftp
 
+import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.storagebackend.FileReference
@@ -36,7 +37,7 @@ import java.io.File
  * @author Frederick Baier
  */
 @Singleton
-class SftpStorageBackend(
+class SftpStorageBackend @Inject constructor(
     private val loginConfig: SftpLoginConfiguration
 ) : IStorageBackend {
 

@@ -20,22 +20,35 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.sftp.config
+package eu.thesimplecloud.simplecloud.api.config.mongo
 
-import dev.morphia.annotations.Entity
-import dev.morphia.annotations.Id
+import com.google.inject.Provider
+import dev.morphia.Datastore
+import java.util.function.Supplier
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 05.06.2021
- * Time: 15:14
- * @author Frederick Baier
- */
-@Entity("ftp_config")
-class SftpLoginConfiguration(
-    @Id
-    val host: String = "default",
-    val port: Int = 22,
-    val username: String = "default",
-    val password: String = "default"
-)
+class MongoConfigProvider<T>(
+    private val datastore: Datastore,
+    private val entityClass: Class<T>,
+    private val defaultObjectSupplier: Supplier<T>
+) : Provider<T> {
+
+    override fun get(): T {
+        return this.datastore.find(this.entityClass).first() ?: return saveDefaultObject()
+    }
+
+    private fun saveDefaultObject(): T {
+        val defaultObject = this.defaultObjectSupplier.get()
+        saveToDatabase(defaultObject)
+        return defaultObject
+    }
+
+    fun saveToDatabase(value: T) {
+        this.datastore.find(this.entityClass).delete()
+        this.datastore.save(value)
+    }
+
+    fun doesConfigExist(): Boolean {
+        return this.datastore.find(this.entityClass).count() != 0L
+    }
+
+}
