@@ -20,16 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.task
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
+import eu.thesimplecloud.simplecloud.task.Task
+import java.util.concurrent.CompletableFuture
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
-) : DefaultNodeService(
-    igniteRepository
-)
+class SyncAllTemplatesTask @Inject constructor(
+    private val templateService: ITemplateService,
+    private val storageBackend: IStorageBackend
+) : Task<Unit>() {
+    override fun getName(): String {
+        return "synchronize_all_templates"
+    }
+
+    override fun run(): CompletableFuture<Unit> {
+        val templates = await(this.templateService.findAll())
+        templates.forEach {
+            await(this.taskSubmitter.submit(SingleTemplateSyncTask(it, this.storageBackend)))
+        }
+        return unitFuture()
+    }
+}

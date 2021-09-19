@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.container.local
 
+import eu.thesimplecloud.simplecloud.container.ContainerAndPath
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import java.io.File
@@ -78,6 +79,10 @@ class LocalContainer(
 
     override fun getLogs(): List<String> {
         return this.executor.getLogs()
+    }
+
+    override fun copyFromContainer(source: String, dest: File) {
+        TODO("Not yet implemented")
     }
 
     companion object {

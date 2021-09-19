@@ -20,16 +20,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.util
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
+class OwnContainerIdProvider(
+    val containerId: String
+) {
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
-) : DefaultNodeService(
-    igniteRepository
-)
+    companion object {
+        @Volatile
+        var INSTANCE = OwnContainerIdProvider(System.getenv("HOSTNAME"))
+            private set
+
+        fun setContainerId(containerId: String) {
+            this.INSTANCE = OwnContainerIdProvider(containerId)
+        }
+
+    }
+
+}

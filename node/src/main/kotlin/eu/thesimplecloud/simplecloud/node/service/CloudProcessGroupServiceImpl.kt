@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.service
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultCloudProcessGroupService
@@ -32,6 +33,7 @@ import eu.thesimplecloud.simplecloud.node.mongo.group.CombinedProcessGroupEntity
 import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import java.util.concurrent.CompletableFuture
 
+@Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
     groupConfigurationValidator: GroupConfigurationValidator,
     igniteRepository: IgniteCloudProcessGroupRepository,
@@ -42,7 +44,7 @@ class CloudProcessGroupServiceImpl @Inject constructor(
 ) {
 
     override fun updateGroupInternal0(group: ICloudProcessGroup): CompletableFuture<ICloudProcessGroup> {
-        val result =  super.updateGroupInternal0(group)
+        val result = super.updateGroupInternal0(group)
         saveToDatabase(group)
         return result
     }

@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.service
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultJvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
@@ -31,6 +32,7 @@ import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.JvmArgumentsEntity
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
 import java.util.concurrent.CompletableFuture
 
+@Singleton
 class JvmArgumentsServiceImpl @Inject constructor(
     igniteRepository: IgniteJvmArgumentsRepository,
     private val mongoRepository: MongoJvmArgumentsRepository
@@ -39,7 +41,7 @@ class JvmArgumentsServiceImpl @Inject constructor(
 ) {
 
     override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments> {
-        val result =  super.createJvmArgsInternal(configuration)
+        val result = super.createJvmArgsInternal(configuration)
         saveToDatabase(configuration)
         return result
     }

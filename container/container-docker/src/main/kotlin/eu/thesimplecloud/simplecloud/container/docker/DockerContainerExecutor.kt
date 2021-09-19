@@ -23,12 +23,13 @@
 package eu.thesimplecloud.simplecloud.container.docker
 
 import com.github.dockerjava.api.DockerClient
-import com.github.dockerjava.api.model.Bind
-import com.github.dockerjava.api.model.HostConfig
-import com.github.dockerjava.api.model.PortBinding
-import com.google.common.base.Functions
+import com.github.dockerjava.api.async.ResultCallback
+import com.github.dockerjava.api.model.*
 import eu.thesimplecloud.simplecloud.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.container.IImage
+import org.apache.commons.io.FileUtils
+import java.io.Closeable
+import java.io.File
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -59,7 +60,33 @@ class DockerContainerExecutor(
     private fun startContainerWithImageId(imageId: String) {
         val containerId = createContainer(imageId)
         this.containerId = containerId
+        startListening()
         startThisContainer()
+    }
+
+    private fun startListening() {
+        this.dockerClient.eventsCmd()
+            .withEventFilter("stop", "die")
+            .withEventTypeFilter(EventType.CONTAINER)
+            .withContainerFilter(this.containerId)
+            .exec(object: ResultCallback<Event> {
+                override fun close() {
+                }
+
+                override fun onStart(closeable: Closeable?) {
+                }
+
+                override fun onNext(event: Event) {
+                    this@DockerContainerExecutor.terminationFuture.complete(Unit)
+                }
+
+                override fun onError(throwable: Throwable?) {
+                }
+
+                override fun onComplete() {
+                }
+
+            })
     }
 
     fun executeCommand(command: String) {
@@ -116,6 +143,12 @@ class DockerContainerExecutor(
 
     fun getLogs(): List<String> {
         TODO()
+    }
+
+    fun copyFromContainer(source: String, dest: File) {
+        val inputStream = this.dockerClient.copyArchiveFromContainerCmd(this.containerName, source)
+            .exec()
+        FileUtils.copyInputStreamToFile(inputStream, dest)
     }
 
 }

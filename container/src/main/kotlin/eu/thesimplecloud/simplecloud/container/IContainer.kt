@@ -1,5 +1,6 @@
 package eu.thesimplecloud.simplecloud.container
 
+import java.io.File
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -55,6 +56,11 @@ interface IContainer {
      * Returns the logs saved
      */
     fun getLogs(): List<String>
+
+    /**
+     * Copies a file from this container to the specified [dest]
+     */
+    fun copyFromContainer(source: String, dest: File)
 
 
     interface Factory {

@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.container.docker
 import com.github.dockerjava.api.DockerClient
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.container.ContainerAndPath
 import eu.thesimplecloud.simplecloud.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
@@ -81,5 +82,9 @@ class DockerContainer @Inject constructor(
 
     override fun getLogs(): List<String> {
         return this.executor.getLogs()
+    }
+
+    override fun copyFromContainer(source: String, dest: File) {
+        this.executor.copyFromContainer(source, dest)
     }
 }

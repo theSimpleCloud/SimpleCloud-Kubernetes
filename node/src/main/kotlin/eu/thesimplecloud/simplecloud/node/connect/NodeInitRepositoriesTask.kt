@@ -65,7 +65,7 @@ class NodeInitRepositoriesTask @Inject constructor(
         val jvmArgs = await(this.mongoJvmArgumentsRepository.findAll())
         val configurations = jvmArgs.map { JvmArgumentConfiguration(it.name, it.arguments) }
         for (config in configurations) {
-            this.igniteJvmArgumentsRepository.save(config.name, config)
+            await(this.igniteJvmArgumentsRepository.save(config.name, config))
         }
         return unitFuture()
     }
@@ -74,7 +74,7 @@ class NodeInitRepositoriesTask @Inject constructor(
         val versions = await(this.mongoProcessVersionRepository.findAll())
         val configurations = versions.map { ProcessVersionConfiguration(it.name, it.apiType, it.downloadLink) }
         for (config in configurations) {
-            this.igniteProcessVersionRepository.save(config.name, config)
+            await(this.igniteProcessVersionRepository.save(config.name, config))
         }
         return unitFuture()
     }
@@ -83,7 +83,7 @@ class NodeInitRepositoriesTask @Inject constructor(
         val templates = await(this.mongoTemplateRepository.findAll())
         val configurations = templates.map { TemplateConfiguration(it.name, it.parentTemplateName) }
         for (config in configurations) {
-            this.igniteTemplateRepository.save(config.name, config)
+            await(this.igniteTemplateRepository.save(config.name, config))
         }
         return unitFuture()
     }
@@ -92,7 +92,7 @@ class NodeInitRepositoriesTask @Inject constructor(
         val groups = await(this.mongoCloudProcessGroupRepository.findAll())
         val groupConfigurations = groups.map { it.toConfiguration() }
         for (config in groupConfigurations) {
-            this.igniteGroupRepository.save(config.name, config)
+            await(this.igniteGroupRepository.save(config.name, config))
         }
         return unitFuture()
     }

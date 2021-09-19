@@ -24,6 +24,8 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.ea.async.Async.await
 import com.google.inject.Guice
+import com.google.inject.Inject
+import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.module.LoadedModuleApplication
 import eu.thesimplecloud.module.loader.ModuleApplicationLoader
@@ -42,14 +44,15 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:58
  * @author Frederick Baier
  */
-class LoadModulesTask(
+class LoadModulesTask @Inject constructor(
     private val datastore: Datastore,
-    private val nodeSetupHandler: NodeStartupSetupHandler
+    private val nodeSetupHandler: NodeStartupSetupHandler,
+    private val injector: Injector
 ) : Task<List<LoadedModuleApplication>>() {
 
     private val moduleRepository = MongoModuleRepository(datastore)
     private val modulesDir = File("modules/")
-    private val moduleApplicationLoader = Guice.createInjector().getInstance(ModuleApplicationLoader::class.java)
+    private val moduleApplicationLoader = this.injector.getInstance(ModuleApplicationLoader::class.java)
 
     init {
         this.modulesDir.mkdirs()
@@ -61,7 +64,7 @@ class LoadModulesTask(
 
     override fun run(): CompletableFuture<List<LoadedModuleApplication>> {
         //TODO remove filter
-        val loadedModuleApplications = ModuleType.values().filter { it == ModuleType.CONTAINER }.map {
+        val loadedModuleApplications = ModuleType.values().filter { it != ModuleType.PROCESS_ONLINE_COUNT_CALCULATOR }.map {
             await(loadModuleByType(it))
         }
         return completedFuture(loadedModuleApplications)

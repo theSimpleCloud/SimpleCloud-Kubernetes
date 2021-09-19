@@ -20,20 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.storagebackend.sftp.config
+package eu.thesimplecloud.simplecloud.node.connect
 
-import eu.thesimplecloud.simplecloud.api.config.AbstractConfigLoader
-import java.io.File
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import eu.thesimplecloud.simplecloud.task.Task
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 09.06.2021
- * Time: 17:18
- * @author Frederick Baier
- */
-class SftpConfigLoader : AbstractConfigLoader<SftpLoginConfiguration>(
-    SftpLoginConfiguration::class.java,
-    File("modules/sftp/config.json"),
-    { SftpLoginConfiguration("127.0.0.1", 22, "test", "test") },
-    true
-)
+class SelfNodeWriteTask(
+    private val repository: IgniteNodeRepository,
+    private val nodeConfiguration: NodeConfiguration
+) : Task<Unit>() {
+    override fun getName(): String {
+        return "self_node_write_task"
+    }
+
+    override fun run(): CompletableFuture<Unit> {
+        this.repository.save(nodeConfiguration.name, nodeConfiguration)
+        return unitFuture()
+    }
+}

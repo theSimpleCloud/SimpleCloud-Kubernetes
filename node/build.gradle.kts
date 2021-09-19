@@ -15,6 +15,7 @@ dependencies {
     implementation(project(":task"))
     implementation(project(":container"))
     implementation(project(":ignite"))
+    implementation(project(":storage-backend"))
 
 }
 

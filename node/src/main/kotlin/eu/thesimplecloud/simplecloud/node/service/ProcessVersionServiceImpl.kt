@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.service
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultProcessVersionService
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
@@ -31,13 +32,14 @@ import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersi
 import eu.thesimplecloud.simplecloud.node.mongo.processversion.ProcessVersionEntity
 import java.util.concurrent.CompletableFuture
 
+@Singleton
 class ProcessVersionServiceImpl @Inject constructor(
     igniteRepository: IgniteProcessVersionRepository,
     private val mongoRepository: MongoProcessVersionRepository
 ) : DefaultProcessVersionService(igniteRepository) {
 
     override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion> {
-        val result =  super.createProcessVersionInternal(configuration)
+        val result = super.createProcessVersionInternal(configuration)
         saveToDatabase(configuration)
         return result
     }

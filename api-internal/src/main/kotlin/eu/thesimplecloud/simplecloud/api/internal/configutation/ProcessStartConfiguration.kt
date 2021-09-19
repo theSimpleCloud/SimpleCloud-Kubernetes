@@ -14,4 +14,10 @@ data class ProcessStartConfiguration(
     val maxPlayers: Int,
     val processVersionName: String,
     val jvmArgumentsName: String?
-)
+) {
+
+    fun isProcessNumberSet(): Boolean {
+        return this.processNumber != -1
+    }
+
+}

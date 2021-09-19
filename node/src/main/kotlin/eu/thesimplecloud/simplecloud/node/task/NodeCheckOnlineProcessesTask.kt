@@ -20,16 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.task
 
+import com.ea.async.Async.await
 import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
+import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.task.Task
+import java.util.concurrent.CompletableFuture
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
-) : DefaultNodeService(
-    igniteRepository
-)
+class NodeCheckOnlineProcessesTask @Inject constructor(
+    private val groupService: ICloudProcessGroupService,
+    private val processService: ICloudProcessService
+) : Task<Unit>() {
+    override fun getName(): String {
+        return "node_check_online_processes"
+    }
+
+    override fun run(): CompletableFuture<Unit> {
+        val groups = await(this.groupService.findAll())
+        groups.forEach {
+            await(ProcessGroupHandler(it, processService).handle())
+        }
+        return unitFuture()
+    }
+}

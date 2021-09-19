@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.service
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultTemplateService
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
@@ -32,6 +33,7 @@ import eu.thesimplecloud.simplecloud.node.mongo.template.MongoTemplateRepository
 import eu.thesimplecloud.simplecloud.node.mongo.template.TemplateEntity
 import java.util.concurrent.CompletableFuture
 
+@Singleton
 class TemplateServiceImpl @Inject constructor(
     templateConfigurationValidator: TemplateConfigurationValidator,
     igniteRepository: IgniteTemplateRepository,

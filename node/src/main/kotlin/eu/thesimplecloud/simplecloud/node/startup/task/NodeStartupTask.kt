@@ -40,7 +40,9 @@ import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTas
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceAnnotatedBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
+import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.Task
+import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -65,9 +67,24 @@ class NodeStartupTask(
         val address = await(loadAddress())
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val injector = await(loadModulesAndCreateGuiceInjector(datastore, nodeName, address))
+        val intermediateInjector = createIntermediateInjectorToLoadModules(datastore, nodeName, address)
+        val injector = await(loadModulesAndCreateGuiceInjector(intermediateInjector))
         this.nodeSetupHandler.shutdownRestSetupServer()
         return completedFuture(injector)
+    }
+
+    private fun createIntermediateInjectorToLoadModules(
+        datastore: Datastore,
+        nodeName: String,
+        address: Address
+    ): Injector {
+        return Guice.createInjector(
+            SingleInstanceBinderModule(Datastore::class.java, datastore),
+            SingleInstanceBinderModule(TaskExecutorService::class.java, this.taskSubmitter.getExecutorService()),
+            SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
+            SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
+            SingleInstanceBinderModule(NodeStartupSetupHandler::class.java, this.nodeSetupHandler)
+        )
     }
 
     private fun loadNodeName(): CompletableFuture<String> {
@@ -84,23 +101,17 @@ class NodeStartupTask(
     }
 
     private fun loadModulesAndCreateGuiceInjector(
-        datastore: Datastore,
-        nodeName: String,
-        address: Address
+        intermediateInjector: Injector
     ): CompletableFuture<Injector> {
-        val loadedModules = await(loadModules(datastore))
+        val loadedModules = await(loadModules(intermediateInjector))
         val guiceModules = loadedModules.map { it.getLoadedClassInstance() }
-        val injector = Guice.createInjector(
-            SingleInstanceBinderModule(Datastore::class.java, datastore),
-            SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
-            SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
-            *guiceModules.toTypedArray()
-        )
+        val injector = intermediateInjector.createChildInjector(*guiceModules.toTypedArray())
         return completedFuture(injector)
     }
 
-    private fun loadModules(datastore: Datastore): CompletableFuture<List<LoadedModuleApplication>> {
-        return this.taskSubmitter.submit(LoadModulesTask(datastore, this.nodeSetupHandler))
+    private fun loadModules(intermediateInjector: Injector): CompletableFuture<List<LoadedModuleApplication>> {
+        val loadModulesTask = intermediateInjector.getInstance(LoadModulesTask::class.java)
+        return this.taskSubmitter.submit(loadModulesTask)
     }
 
     private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Unit> {

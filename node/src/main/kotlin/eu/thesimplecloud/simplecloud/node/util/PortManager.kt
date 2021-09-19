@@ -20,16 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.util
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
+import java.util.concurrent.CopyOnWriteArrayList
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
-) : DefaultNodeService(
-    igniteRepository
-)
+object PortManager {
+
+    private val occupiedPorts = CopyOnWriteArrayList<Int>()
+
+    fun getVacantPort(startPort: Int = START_PORT): Int {
+        var startPort = startPort
+        while (isPortOccupied(startPort))
+            startPort++
+        return startPort
+    }
+
+    private fun isPortOccupied(port: Int): Boolean {
+        return this.occupiedPorts.contains(port)
+    }
+
+    fun freePort(port: Int) {
+        this.occupiedPorts.remove(port)
+    }
+
+
+    const val START_PORT = 60_000
+
+}

@@ -28,6 +28,8 @@ import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
@@ -37,8 +39,13 @@ import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeReposito
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
+import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
+import eu.thesimplecloud.simplecloud.node.task.SyncAllTemplatesTask
+import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
+import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.Task
+import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
 import java.util.concurrent.CompletableFuture
@@ -51,6 +58,7 @@ class NodeClusterConnectTask @Inject constructor(
     @NodeBindAddress private val nodeBindAddress: Address,
 ) : Task<Unit>() {
 
+
     override fun getName(): String {
         return "node_cluster_connect"
     }
@@ -61,11 +69,33 @@ class NodeClusterConnectTask @Inject constructor(
         val ignite = await(startIgnite(nodeRepository))
         val finalInjector = createFinalInjector(ignite)
         await(startRestServer(finalInjector))
-        await(checkForFirstNodeInCluster(ignite, finalInjector))
+        await(checkForFirstNodeInCluster(finalInjector, ignite))
+        await(writeSelfNodeInRepository(finalInjector, ignite))
+        await(synchronizeTemplates(finalInjector))
+        await(checkOnlineProcesses(finalInjector))
         return unitFuture()
     }
 
-    private fun checkForFirstNodeInCluster(ignite: Ignite, injector: Injector): CompletableFuture<Unit> {
+    private fun synchronizeTemplates(injector: Injector): CompletableFuture<Unit> {
+        val task = injector.getInstance(SyncAllTemplatesTask::class.java)
+        return this.taskSubmitter.submit(task)
+    }
+
+    private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+        return this.taskSubmitter.submit(
+            SelfNodeWriteTask(
+                injector.getInstance(IgniteNodeRepository::class.java),
+                NodeConfiguration(this.nodeBindAddress, this.nodeName, ignite.cluster().localNode().id())
+            )
+        )
+    }
+
+    private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
+        val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
+        return this.taskSubmitter.submit(nodeCheckOnlineProcessesTask)
+    }
+
+    private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
         if (ignite.cluster().nodes().size == 1) {
             val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
             await(this.taskSubmitter.submit(nodeInitRepositoriesTask))
@@ -87,7 +117,12 @@ class NodeClusterConnectTask @Inject constructor(
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java
         )
-        return injector.createChildInjector(cloudAPIBinderModule)
+        val executorService = this.taskSubmitter.getExecutorService()
+        val systemSubmitter = executorService.createSubmitter("SYSTEM")
+        return injector.createChildInjector(
+            cloudAPIBinderModule,
+            SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter)
+        )
     }
 
     private fun startIgnite(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<Ignite> {

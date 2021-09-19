@@ -20,16 +20,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.service
+package eu.thesimplecloud.simplecloud.node.util
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
+import java.io.File
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
-) : DefaultNodeService(
-    igniteRepository
-)
+object ZipUtil {
+
+    fun unzipTar(tar: File, unzipDir: File) {
+        val processBuilder = ProcessBuilder("tar", "xvf", tar.absolutePath)
+        processBuilder.directory(unzipDir)
+        processBuilder.start().waitFor()
+    }
+
+}

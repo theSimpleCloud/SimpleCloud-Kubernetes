@@ -29,6 +29,7 @@ import com.github.dockerjava.core.DefaultDockerClientConfig
 import com.github.dockerjava.core.DockerClientBuilder
 import com.mongodb.MongoClientURI
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.node.util.OwnContainerIdProvider
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
@@ -49,7 +50,7 @@ class MongoDockerContainerCreateTask(
 
     override fun run(): CompletableFuture<String> {
         val networkId = getNetworkIdOrCreate(dockerClient)
-        val ownContainerId = getOwnContainerId()
+        val ownContainerId = OwnContainerIdProvider.INSTANCE.containerId
 
         joinContainerInNetwork(ownContainerId, networkId)
         pullImage("docker.io/bitnami/mongodb", "latest")
@@ -101,11 +102,6 @@ class MongoDockerContainerCreateTask(
 
     private fun getContainerIdByName(name: String): String? {
         return this.dockerClient.listContainersCmd().exec().firstOrNull { it.names.contains(name) }?.id
-    }
-
-    private fun getOwnContainerId(): String {
-        println("All: ${System.getenv()}")
-        return System.getenv("HOSTNAME")
     }
 
     private fun getContainerIdFromLine(line: String): String {

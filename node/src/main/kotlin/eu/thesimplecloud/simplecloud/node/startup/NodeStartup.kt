@@ -23,12 +23,18 @@
 package eu.thesimplecloud.simplecloud.node.startup
 
 import com.google.inject.Injector
+import com.google.inject.Key
+import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
+import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnectTask
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
+import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import eu.thesimplecloud.simplecloud.task.TaskExecutorServiceImpl
 import org.apache.commons.io.FileUtils
@@ -47,7 +53,7 @@ class NodeStartup(
 ) {
 
     private val taskExecutorService: TaskExecutorService = TaskExecutorServiceImpl("DEFAULT")
-    private val taskSubmitter = taskExecutorService.createSubmitter("SYSTEM")
+    private val taskSubmitter = taskExecutorService.createSubmitter("STARTUP")
 
     fun start() {
         this.taskSubmitter.submit(NodeStartupTask(this.startArguments)).thenAccept {
@@ -56,7 +62,20 @@ class NodeStartup(
     }
 
     private fun executeClusterConnect(injector: Injector) {
-        val task = injector.getInstance(NodeClusterConnectTask::class.java)
+        try {
+            executeClusterConnect0(injector)
+        } catch (e: Exception) {
+            e.printStackTrace()
+        }
+    }
+
+    private fun executeClusterConnect0(injector: Injector) {
+        val task = NodeClusterConnectTask(
+            injector,
+            injector.getInstance(Datastore::class.java),
+            injector.getInstance(Key.get(String::class.java, NodeName::class.java)),
+            injector.getInstance(Key.get(Address::class.java, NodeBindAddress::class.java)),
+        )
         this.taskSubmitter.submit(task)
     }
 
