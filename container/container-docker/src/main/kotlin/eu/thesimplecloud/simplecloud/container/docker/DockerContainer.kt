@@ -87,4 +87,9 @@ class DockerContainer @Inject constructor(
     override fun copyFromContainer(source: String, dest: File) {
         this.executor.copyFromContainer(source, dest)
     }
+
+    override fun deleteOnShutdown() {
+        this.executor.deleteContainerOnShutdown()
+    }
+
 }

@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.process.version
 
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersionLoadType
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import java.net.URL
 
@@ -41,8 +42,16 @@ class ProcessVersion(
         return this.configuration.apiType
     }
 
+    override fun getLoadType(): ProcessVersionLoadType {
+        return this.configuration.loadType
+    }
+
     override fun getDownloadLink(): String {
         return this.configuration.downloadLink
+    }
+
+    override fun getJavBaseImageName(): String {
+        return this.configuration.javaBaseImageName
     }
 
     override fun getName(): String {

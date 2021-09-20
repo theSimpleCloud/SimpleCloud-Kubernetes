@@ -25,15 +25,18 @@ package eu.thesimplecloud.simplecloud.node.mongo.processversion
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersionLoadType
 
 @Entity("process_versions")
 class ProcessVersionEntity(
     @Id
     val name: String,
     val apiType: ProcessAPIType,
-    val downloadLink: String
+    val loadType: ProcessVersionLoadType,
+    val downloadLink: String,
+    val javaBaseImageName: String,
 ) {
 
-    private constructor() : this("", ProcessAPIType.BUNGEECORD, "")
+    private constructor() : this("", ProcessAPIType.BUNGEECORD, ProcessVersionLoadType.DIRECT, "", "")
 
 }

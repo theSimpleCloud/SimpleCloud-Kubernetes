@@ -62,6 +62,11 @@ interface IContainer {
      */
     fun copyFromContainer(source: String, dest: File)
 
+    /**
+     * Deletes the container once it stops or dies
+     */
+    fun deleteOnShutdown()
+
 
     interface Factory {
 

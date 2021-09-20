@@ -72,7 +72,9 @@ class NodeInitRepositoriesTask @Inject constructor(
 
     private fun initProcessVersions(): CompletableFuture<Unit> {
         val versions = await(this.mongoProcessVersionRepository.findAll())
-        val configurations = versions.map { ProcessVersionConfiguration(it.name, it.apiType, it.downloadLink) }
+        val configurations = versions.map {
+            ProcessVersionConfiguration(it.name, it.apiType, it.loadType, it.downloadLink, it.javaBaseImageName)
+        }
         for (config in configurations) {
             await(this.igniteProcessVersionRepository.save(config.name, config))
         }

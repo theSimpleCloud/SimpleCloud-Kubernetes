@@ -37,10 +37,13 @@ import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
+import eu.thesimplecloud.simplecloud.node.process.IProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.MountingProcessStarter
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
 import eu.thesimplecloud.simplecloud.node.task.SyncAllTemplatesTask
+import eu.thesimplecloud.simplecloud.node.util.SingleClassBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
@@ -121,7 +124,8 @@ class NodeClusterConnectTask @Inject constructor(
         val systemSubmitter = executorService.createSubmitter("SYSTEM")
         return injector.createChildInjector(
             cloudAPIBinderModule,
-            SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter)
+            SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter),
+            SingleClassBinderModule(IProcessStarter::class.java, MountingProcessStarter::class.java)
         )
     }
 

@@ -46,4 +46,25 @@ interface IJVMArguments : INameable, IIdentifiable<String> {
      */
     fun toConfiguration(): JvmArgumentConfiguration
 
+    companion object {
+        val EMPTY = object : IJVMArguments {
+            override fun getArguments(): List<String> {
+                return emptyList()
+            }
+
+            override fun toConfiguration(): JvmArgumentConfiguration {
+                return JvmArgumentConfiguration(getName(), getArguments())
+            }
+
+            override fun getName(): String {
+                return "<empty>"
+            }
+
+            override fun getIdentifier(): String {
+                return "<empty>"
+            }
+
+        }
+    }
+
 }

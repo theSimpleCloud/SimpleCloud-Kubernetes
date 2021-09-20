@@ -35,7 +35,7 @@ import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
-class PaperJarProvider(
+class PaperclipJarProvider(
     private val processVersion: IProcessVersion,
     private val containerFactory: IContainer.Factory,
     private val imageFactory: IImage.Factory,
@@ -63,7 +63,7 @@ class PaperJarProvider(
             "test2",
             tmpPaperclipDir,
             ImageBuildInstructions()
-                .from("adoptopenjdk:16.0.1_9-jdk-hotspot")
+                .from(this.processVersion.getJavBaseImageName())
                 .workdir("/app/")
                 .copy(".", "/app/")
                 .cmd("java", "-jar", "/app/paperclip.jar")
@@ -78,6 +78,7 @@ class PaperJarProvider(
 
     private fun executeContainer(container: IContainer): CompletableFuture<Unit> {
         container.start()
+        container.deleteOnShutdown()
         return container.terminationFuture()
     }
 

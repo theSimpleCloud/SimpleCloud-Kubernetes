@@ -29,8 +29,10 @@ import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.container.IImageRepository
 import eu.thesimplecloud.simplecloud.container.docker.DockerContainer
 import eu.thesimplecloud.simplecloud.container.docker.DockerImage
+import eu.thesimplecloud.simplecloud.container.docker.DockerImageRepository
 
 /**
  * Created by IntelliJ IDEA.
@@ -44,6 +46,7 @@ class BinderModule : AbstractModule() {
         val dockerConfig = DefaultDockerClientConfig.createDefaultConfigBuilder().build()
         val dockerClient = DockerClientBuilder.getInstance(dockerConfig).build()
         bind(DockerClient::class.java).toInstance(dockerClient)
+        bind(IImageRepository::class.java).to(DockerImageRepository::class.java)
 
         install(
             FactoryModuleBuilder()

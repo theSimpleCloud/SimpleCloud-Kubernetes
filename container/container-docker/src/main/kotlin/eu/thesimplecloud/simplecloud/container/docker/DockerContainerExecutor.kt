@@ -69,7 +69,7 @@ class DockerContainerExecutor(
             .withEventFilter("stop", "die")
             .withEventTypeFilter(EventType.CONTAINER)
             .withContainerFilter(this.containerId)
-            .exec(object: ResultCallback<Event> {
+            .exec(object : ResultCallback<Event> {
                 override fun close() {
                 }
 
@@ -124,6 +124,7 @@ class DockerContainerExecutor(
         val volumeBindings = this.containerSpec.volumeBindings
             .map { Bind.parse("${it.hostPath}:${it.containerPath}") }
 
+        val memoryInBytes = this.containerSpec.maxMemory * 1024 * 1024.toLong()
         val createContainerCmd = dockerClient.createContainerCmd(imageId)
             .withName(this.containerName)
             .withHostName(this.containerName)
@@ -131,7 +132,10 @@ class DockerContainerExecutor(
                 HostConfig.newHostConfig()
                     .withPortBindings(portBindings)
                     .withBinds(volumeBindings)
-                    .withMemory(this.containerSpec.maxMemory * 1024 * 1024.toLong()) //Memory must be in Bytes
+                    //memorySwap is the amount of combined memory and swap.
+                    //This gives the container the same amount of swap as ram
+                    .withMemorySwap(memoryInBytes * 2)
+                    .withMemory(memoryInBytes)
             )
 
         return createContainerCmd.exec().id
@@ -149,6 +153,17 @@ class DockerContainerExecutor(
         val inputStream = this.dockerClient.copyArchiveFromContainerCmd(this.containerName, source)
             .exec()
         FileUtils.copyInputStreamToFile(inputStream, dest)
+    }
+
+    fun deleteContainerOnShutdown() {
+        this.terminationFuture().thenAccept {
+            deleteContainer()
+        }
+    }
+
+    private fun deleteContainer() {
+        this.dockerClient.removeContainerCmd(this.containerId!!)
+            .exec()
     }
 
 }

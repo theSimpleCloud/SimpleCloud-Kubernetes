@@ -20,56 +20,53 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.task
+package eu.thesimplecloud.simplecloud.node.process
 
 import com.ea.async.Async.await
+import com.google.inject.Inject
+import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersionLoadType
 import eu.thesimplecloud.simplecloud.container.*
-import eu.thesimplecloud.simplecloud.node.util.Downloader
-import eu.thesimplecloud.simplecloud.task.Task
+import org.apache.commons.io.FileUtils
 import java.io.File
+import java.io.FileNotFoundException
+import java.lang.IllegalStateException
+import java.util.*
 import java.util.concurrent.CompletableFuture
 
-class ProcessVersionProvisionTask(
-    private val processVersion: IProcessVersion,
+@Singleton
+class MountingProcessStarter @Inject constructor(
     private val containerFactory: IContainer.Factory,
-    private val imageFactory: IImage.Factory
-) : Task<File>() {
+    private val imageFactory: IImage.Factory,
+    private val imageRepository: IImageRepository
+) : IProcessStarter {
 
-    private val versionsDir = File("processVersions/")
-    private val processVersionFile = File(versionsDir, processVersion.getName() + ".jar")
+    private val hostContainerPathFile = File("hostContainerPath.txt")
+    private val hostContainerPath: String
 
-    override fun getName(): String {
-        return "process_version_provision_${processVersion.getName()}"
+    init {
+        if (!this.hostContainerPathFile.exists())
+            throw FileNotFoundException("File 'hostContainerPath.txt' does not exist")
+        this.hostContainerPath = this.hostContainerPathFile.readText()
     }
 
-    override fun run(): CompletableFuture<File> {
-        if (!isJarProvided())
-            await(provideJar())
-        return completedFuture(this.processVersionFile)
+    override fun startProcess(process: ICloudProcess, serverJar: File): CompletableFuture<Unit> {
+        val version = await(process.getVersion())
+        val singleMountingProcessStarter = SingleMountingProcessStarter(
+            this.imageRepository,
+            this.containerFactory,
+            this.imageFactory,
+            this.hostContainerPath,
+            process,
+            version,
+            serverJar
+        )
+        await(singleMountingProcessStarter.startProcess())
+        return unitFuture()
     }
-
-    private fun isJarProvided(): Boolean {
-        return this.processVersionFile.exists()
-    }
-
-    private fun provideJar(): CompletableFuture<Unit> {
-        return if (this.processVersion.getLoadType() == ProcessVersionLoadType.PAPERCLIP) {
-            PaperclipJarProvider(this.processVersion, this.containerFactory, this.imageFactory, this.processVersionFile)
-                .provideJar()
-        } else {
-            downloadJar()
-            return unitFuture()
-        }
-
-    }
-
-    private fun downloadJar() {
-        Downloader.userAgentDownload(this.processVersion.getDownloadLink(), this.processVersionFile)
-    }
-
 
 }

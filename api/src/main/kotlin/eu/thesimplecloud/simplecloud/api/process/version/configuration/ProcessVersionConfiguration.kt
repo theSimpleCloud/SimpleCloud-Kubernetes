@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.process.version.configuration
 
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersionLoadType
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,9 +34,11 @@ import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
 class ProcessVersionConfiguration(
     val name: String,
     val apiType: ProcessAPIType,
-    val downloadLink: String
+    val loadType: ProcessVersionLoadType,
+    val downloadLink: String,
+    val javaBaseImageName: String,
 ) {
 
-    private constructor() : this("", ProcessAPIType.SPIGOT, "")
+    private constructor() : this("", ProcessAPIType.SPIGOT, ProcessVersionLoadType.DIRECT, "", "")
 
 }

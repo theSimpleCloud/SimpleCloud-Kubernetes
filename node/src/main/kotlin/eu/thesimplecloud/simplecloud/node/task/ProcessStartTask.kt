@@ -29,6 +29,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.node.process.IProcessStarter
 import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
@@ -37,7 +38,8 @@ import java.util.concurrent.CompletableFuture
 class ProcessStartTask(
     private val process: ICloudProcess,
     private val containerFactory: IContainer.Factory,
-    private val imageFactory: IImage.Factory
+    private val imageFactory: IImage.Factory,
+    private val processStarter: IProcessStarter
 ) : Task<Unit>() {
 
     override fun getName(): String {
@@ -45,13 +47,13 @@ class ProcessStartTask(
     }
 
     override fun run(): CompletableFuture<Unit> {
-        val group = await(process.getGroup())
         val template = await(process.getTemplate())
         val version = await(process.getVersion())
         val templateCopyTask = TemplateCopyTask(template, File("tmp/${process.getName()}"))
         await(this.taskSubmitter.submit(templateCopyTask))
         val processVersionProvisionTask = ProcessVersionProvisionTask(version, containerFactory, imageFactory)
-        await(this.taskSubmitter.submit(processVersionProvisionTask))
+        val serverJar = await(this.taskSubmitter.submit(processVersionProvisionTask))
+        await(this.processStarter.startProcess(this.process, serverJar))
         return unitFuture()
     }
 

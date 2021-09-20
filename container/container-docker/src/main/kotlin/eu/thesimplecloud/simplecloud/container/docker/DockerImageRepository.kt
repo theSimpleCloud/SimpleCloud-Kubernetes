@@ -20,47 +20,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.version
+package eu.thesimplecloud.simplecloud.container.docker
 
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
-import eu.thesimplecloud.simplecloud.api.utils.INameable
-import java.net.URL
+import com.github.dockerjava.api.DockerClient
+import com.github.dockerjava.api.model.Image
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.container.BuiltImage
+import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.container.IImageRepository
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 15.03.2021
- * Time: 10:24
- * @author Frederick Baier
- *
- * Represents a version processes can be executed with
- *
- */
-interface IProcessVersion : INameable, IIdentifiable<String> {
+@Singleton
+class DockerImageRepository @Inject constructor(
+    private val dockerClient: DockerClient,
+) : IImageRepository {
 
-    /**
-     * Returns the api type
-     */
-    fun getProcessApiType(): ProcessAPIType
+    override fun getImageByName(name: String): CompletableFuture<IImage> {
+        return CompletableFuture.supplyAsync {
+            val image = findDockerImage(name)
+            return@supplyAsync BuiltImage(name, image.id)
+        }
+    }
 
-    /**
-     * Returns the load type
-     */
-    fun getLoadType(): ProcessVersionLoadType
-
-    /**
-     * Returns the direct download link to a jar file
-     */
-    fun getDownloadLink(): String
-
-    /**
-     * Returns the name of the java base image
-     */
-    fun getJavBaseImageName(): String
-
-    /**
-     * Returns the configuration of this process version
-     */
-    fun toConfiguration(): ProcessVersionConfiguration
+    private fun findDockerImage(name: String): Image {
+        val images = this.dockerClient.listImagesCmd()
+            .exec()
+        return images.first { it.repoTags?.contains(name) ?: false }
+    }
 
 }

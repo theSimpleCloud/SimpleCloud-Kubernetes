@@ -38,6 +38,7 @@ import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
+import eu.thesimplecloud.simplecloud.node.process.IProcessStarter
 import eu.thesimplecloud.simplecloud.node.task.CloudProcessCreationTask
 import eu.thesimplecloud.simplecloud.node.task.ProcessStartTask
 import eu.thesimplecloud.simplecloud.node.util.UncaughtExceptions
@@ -52,8 +53,6 @@ class CloudProcessServiceImpl @Inject constructor(
     private val taskSubmitter: TaskSubmitter,
     private val groupService: ICloudProcessGroupService,
     private val nodeService: INodeService,
-    private val containerFactory: IContainer.Factory,
-    private val imageFactory: IImage.Factory,
     private val injector: Injector
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
@@ -67,7 +66,13 @@ class CloudProcessServiceImpl @Inject constructor(
     }
 
     private fun startProcess(process: ICloudProcess) {
-        this.taskSubmitter.submit(ProcessStartTask(process, this.containerFactory, this.imageFactory))
+        this.taskSubmitter.submit(
+            ProcessStartTask(
+                process,
+                this.injector.getInstance(IContainer.Factory::class.java),
+                this.injector.getInstance(IImage.Factory::class.java),
+                this.injector.getInstance(IProcessStarter::class.java)
+            ))
             .exceptionally { UncaughtExceptions.handle(it) }
     }
 

@@ -45,7 +45,13 @@ class ProcessVersionServiceImpl @Inject constructor(
     }
 
     private fun saveToDatabase(configuration: ProcessVersionConfiguration) {
-        val entity = ProcessVersionEntity(configuration.name, configuration.apiType, configuration.downloadLink)
+        val entity = ProcessVersionEntity(
+            configuration.name,
+            configuration.apiType,
+            configuration.loadType,
+            configuration.downloadLink,
+            configuration.javaBaseImageName
+        )
         this.mongoRepository.save(configuration.name, entity)
     }
 

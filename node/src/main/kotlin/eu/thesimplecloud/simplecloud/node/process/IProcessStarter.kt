@@ -20,47 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.process.version
+package eu.thesimplecloud.simplecloud.node.process
 
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
-import eu.thesimplecloud.simplecloud.api.utils.INameable
-import java.net.URL
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import java.io.File
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 15.03.2021
- * Time: 10:24
- * @author Frederick Baier
- *
- * Represents a version processes can be executed with
- *
- */
-interface IProcessVersion : INameable, IIdentifiable<String> {
+interface IProcessStarter {
 
-    /**
-     * Returns the api type
-     */
-    fun getProcessApiType(): ProcessAPIType
-
-    /**
-     * Returns the load type
-     */
-    fun getLoadType(): ProcessVersionLoadType
-
-    /**
-     * Returns the direct download link to a jar file
-     */
-    fun getDownloadLink(): String
-
-    /**
-     * Returns the name of the java base image
-     */
-    fun getJavBaseImageName(): String
-
-    /**
-     * Returns the configuration of this process version
-     */
-    fun toConfiguration(): ProcessVersionConfiguration
+    fun startProcess(process: ICloudProcess, serverJar: File): CompletableFuture<Unit>
 
 }

@@ -85,6 +85,10 @@ class LocalContainer(
         TODO("Not yet implemented")
     }
 
+    override fun deleteOnShutdown() {
+        TODO("Not yet implemented")
+    }
+
     companion object {
         const val CONTAINERS_DIR = "containers/"
     }
