@@ -29,8 +29,10 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
@@ -85,8 +87,8 @@ class NodeClusterConnectTask @Inject constructor(
 
     private fun initializeMessageChannels(injector: Injector): CompletableFuture<Unit> {
         val messageChannelManager = injector.getInstance(IMessageChannelManager::class.java)
-        messageChannelManager.registerMessageChannel<String, Unit>("start_process")
-            .setMessageHandler(StartProcessMessageHandler(injector))
+        messageChannelManager.registerMessageChannel<ProcessStartConfiguration, ICloudProcess>("start_process")
+            .setMessageHandler(injector.getInstance(StartProcessMessageHandler::class.java))
         return unitFuture()
     }
 

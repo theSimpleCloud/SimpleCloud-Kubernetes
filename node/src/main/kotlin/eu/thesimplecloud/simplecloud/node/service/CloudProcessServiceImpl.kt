@@ -53,34 +53,23 @@ class CloudProcessServiceImpl @Inject constructor(
     processFactory: ICloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
     private val taskSubmitter: TaskSubmitter,
-    private val groupService: ICloudProcessGroupService,
     private val nodeService: INodeService,
     private val injector: Injector
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        val process = await(createProcess(configuration))
-        await(updateProcessToCluster(process))
-        MultiNodeProcessStarter(this.taskSubmitter, this.nodeService, process, this.injector).startProcess()
-        return completedFuture(process)
-    }
-
-    private fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
-        return this.igniteRepository.save(process.getName(), process.toConfiguration())
-    }
-
-    private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        return this.taskSubmitter.submit(
-            CloudProcessCreationTask(
-                configuration,
-                this,
-                this.groupService,
-                this.nodeService,
-                this.processFactory,
-                this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
-            )
+        val processStarter = MultiNodeProcessStarter(
+            this.taskSubmitter,
+            this.nodeService,
+            configuration,
+            this.injector
         )
+        return processStarter.startProcess()
+    }
+
+    fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
+        return this.igniteRepository.save(process.getName(), process.toConfiguration())
     }
 
     override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {

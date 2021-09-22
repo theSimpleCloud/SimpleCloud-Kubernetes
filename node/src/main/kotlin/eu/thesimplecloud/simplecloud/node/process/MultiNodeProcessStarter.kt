@@ -24,39 +24,41 @@ package eu.thesimplecloud.simplecloud.node.process
 
 import com.ea.async.Async.await
 import com.google.inject.Injector
+import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.node.task.NodeToStartProcessSelectionTask
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
+import java.util.concurrent.CompletableFuture
 
 class MultiNodeProcessStarter(
     private val taskSubmitter: TaskSubmitter,
     private val nodeService: INodeService,
-    private val process: ICloudProcess,
+    private val configuration: ProcessStartConfiguration,
     private val injector: Injector
 ) {
 
     private val messageChannelManager = this.injector.getInstance(IMessageChannelManager::class.java)
 
-    fun startProcess() {
+    fun startProcess(): CompletableFuture<ICloudProcess> {
         val node = selectNodeForProcess()
-        startProcessOnNode(node)
+        return startProcessOnNode(node)
     }
 
     private fun selectNodeForProcess(): INode {
         return await(this.taskSubmitter.submit(
             NodeToStartProcessSelectionTask(
-                this.process.getMaxMemory(),
+                this.configuration.maxMemory,
                 this.nodeService
             )
         ))
     }
 
-    private fun startProcessOnNode(node: INode) {
-        val messageChannel = this.messageChannelManager.getMessageChannelByName<String, Unit>("start_process")!!
-        messageChannel.createMessageRequest(this.process.getName(), node).submit()
+    private fun startProcessOnNode(node: INode): CompletableFuture<ICloudProcess> {
+        val messageChannel = this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, ICloudProcess>("start_process")!!
+        return messageChannel.createMessageRequest(configuration, node).submit()
     }
 
 }

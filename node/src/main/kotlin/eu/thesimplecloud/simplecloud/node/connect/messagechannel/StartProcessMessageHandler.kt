@@ -23,44 +23,72 @@
 package eu.thesimplecloud.simplecloud.node.connect.messagechannel
 
 import com.ea.async.Async.await
+import com.google.inject.Inject
 import com.google.inject.Injector
+import com.google.inject.Key
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IMessageHandler
 import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
+import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
+import eu.thesimplecloud.simplecloud.node.service.CloudProcessServiceImpl
+import eu.thesimplecloud.simplecloud.node.task.CloudProcessCreationTask
 import eu.thesimplecloud.simplecloud.node.task.ProcessStartTask
 import eu.thesimplecloud.simplecloud.node.util.SelfNodeGetter
 import eu.thesimplecloud.simplecloud.node.util.UncaughtExceptions
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
-class StartProcessMessageHandler(
-    private val injector: Injector
-) : IMessageHandler<String, Unit> {
+class StartProcessMessageHandler @Inject constructor(
+    private val injector: Injector,
+    private val nodeService: INodeService,
+    private val taskSubmitter: TaskSubmitter,
+    private val nodeRepository: IgniteNodeRepository,
+    private val processService: CloudProcessServiceImpl,
+    private val groupService: ICloudProcessGroupService,
+    private val processFactory: ICloudProcessFactory,
+) : IMessageHandler<ProcessStartConfiguration, ICloudProcess> {
 
-    private val nodeService: INodeService = this.injector.getInstance(INodeService::class.java)
-    private val taskSubmitter: TaskSubmitter = this.injector.getInstance(TaskSubmitter::class.java)
-    private val processService: ICloudProcessService = this.injector.getInstance(ICloudProcessService::class.java)
-    private val nodeRepository: INodeRepository = this.injector.getInstance(IgniteNodeRepository::class.java)
-
-    override fun handleMessage(message: String, sender: INetworkComponent): CompletableFuture<Unit> {
-        val process = await(this.processService.findProcessByName(message))
+    override fun handleMessage(message: ProcessStartConfiguration, sender: INetworkComponent): CompletableFuture<ICloudProcess> {
+        val process = await(createProcess(message))
+        await(updateProcessToCluster(process))
         await(increaseUsedMemoryOnSelfNode(process.getMaxMemory()))
         startProcess(process)
-        return unitFuture()
+        return completedFuture(process)
     }
 
-    private fun startProcess(process: ICloudProcess): CompletableFuture<Unit> {
+    private fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
+        return this.processService.updateProcessToCluster(process)
+    }
+
+    private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
+        return this.taskSubmitter.submit(
+            CloudProcessCreationTask(
+                configuration,
+                this.processService,
+                this.groupService,
+                this.nodeService,
+                this.processFactory,
+                this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
+            )
+        )
+    }
+
+    private fun startProcess(process: ICloudProcess) {
         this.taskSubmitter.submit(
             ProcessStartTask(
                 process,
@@ -69,7 +97,6 @@ class StartProcessMessageHandler(
                 this.injector.getInstance(IContainerProcessStarter::class.java)
             )
         ).exceptionally { UncaughtExceptions.handle(it) }
-        return unitFuture()
     }
 
     private fun increaseUsedMemoryOnSelfNode(increaseAmount: Int): CompletableFuture<Unit> {
