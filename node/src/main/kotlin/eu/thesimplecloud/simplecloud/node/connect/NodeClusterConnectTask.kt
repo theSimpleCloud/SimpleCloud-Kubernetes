@@ -29,16 +29,19 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
+import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
-import eu.thesimplecloud.simplecloud.node.process.IProcessStarter
-import eu.thesimplecloud.simplecloud.node.process.MountingProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.container.MountingContainerProcessStarter
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
@@ -46,7 +49,6 @@ import eu.thesimplecloud.simplecloud.node.task.SyncAllTemplatesTask
 import eu.thesimplecloud.simplecloud.node.util.SingleClassBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.Task
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import org.apache.ignite.Ignite
@@ -59,6 +61,7 @@ class NodeClusterConnectTask @Inject constructor(
     private val datastore: Datastore,
     @NodeName private val nodeName: String,
     @NodeBindAddress private val nodeBindAddress: Address,
+    @NodeMaxMemory private val nodeMaxMemory: Int,
 ) : Task<Unit>() {
 
 
@@ -72,10 +75,18 @@ class NodeClusterConnectTask @Inject constructor(
         val ignite = await(startIgnite(nodeRepository))
         val finalInjector = createFinalInjector(ignite)
         await(startRestServer(finalInjector))
+        await(initializeMessageChannels(finalInjector))
         await(checkForFirstNodeInCluster(finalInjector, ignite))
         await(writeSelfNodeInRepository(finalInjector, ignite))
         await(synchronizeTemplates(finalInjector))
         await(checkOnlineProcesses(finalInjector))
+        return unitFuture()
+    }
+
+    private fun initializeMessageChannels(injector: Injector): CompletableFuture<Unit> {
+        val messageChannelManager = injector.getInstance(IMessageChannelManager::class.java)
+        messageChannelManager.registerMessageChannel<String, Unit>("start_process")
+            .setMessageHandler(StartProcessMessageHandler(injector))
         return unitFuture()
     }
 
@@ -88,7 +99,13 @@ class NodeClusterConnectTask @Inject constructor(
         return this.taskSubmitter.submit(
             SelfNodeWriteTask(
                 injector.getInstance(IgniteNodeRepository::class.java),
-                NodeConfiguration(this.nodeBindAddress, this.nodeName, ignite.cluster().localNode().id())
+                NodeConfiguration(
+                    this.nodeBindAddress,
+                    this.nodeName,
+                    ignite.cluster().localNode().id(),
+                    this.nodeMaxMemory,
+                    0
+                )
             )
         )
     }
@@ -125,7 +142,7 @@ class NodeClusterConnectTask @Inject constructor(
         return injector.createChildInjector(
             cloudAPIBinderModule,
             SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter),
-            SingleClassBinderModule(IProcessStarter::class.java, MountingProcessStarter::class.java)
+            SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java)
         )
     }
 

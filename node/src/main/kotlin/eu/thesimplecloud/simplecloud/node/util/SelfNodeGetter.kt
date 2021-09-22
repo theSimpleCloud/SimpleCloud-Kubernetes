@@ -20,14 +20,21 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.process
+package eu.thesimplecloud.simplecloud.node.util
 
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import java.io.File
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import java.util.concurrent.CompletableFuture
 
-interface IProcessStarter {
+class SelfNodeGetter @Inject constructor(
+    private val nodeService: INodeService,
+    @NodeName private val nodeName: String
+) {
 
-    fun startProcess(process: ICloudProcess, serverJar: File): CompletableFuture<Unit>
+    fun getSelfNode(): CompletableFuture<INode> {
+        return this.nodeService.findNodeByName(this.nodeName)
+    }
 
 }

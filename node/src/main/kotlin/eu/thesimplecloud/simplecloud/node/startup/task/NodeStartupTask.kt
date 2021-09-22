@@ -31,6 +31,7 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
@@ -65,9 +66,10 @@ class NodeStartupTask(
         await(this.taskSubmitter.submit(EnsureInsideDockerAndDockerIsAccessibleTask()))
         val nodeName = await(loadNodeName())
         val address = await(loadAddress())
+        val maxMemory = await(loadMaxMemory())
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val intermediateInjector = createIntermediateInjectorToLoadModules(datastore, nodeName, address)
+        val intermediateInjector = createIntermediateInjectorToLoadModules(datastore, nodeName, address, maxMemory)
         val injector = await(loadModulesAndCreateGuiceInjector(intermediateInjector))
         this.nodeSetupHandler.shutdownRestSetupServer()
         return completedFuture(injector)
@@ -76,13 +78,15 @@ class NodeStartupTask(
     private fun createIntermediateInjectorToLoadModules(
         datastore: Datastore,
         nodeName: String,
-        address: Address
+        address: Address,
+        nodeMaxMemory: Int
     ): Injector {
         return Guice.createInjector(
             SingleInstanceBinderModule(Datastore::class.java, datastore),
             SingleInstanceBinderModule(TaskExecutorService::class.java, this.taskSubmitter.getExecutorService()),
             SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
             SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
+            SingleInstanceAnnotatedBinderModule(Int::class.java, nodeMaxMemory, NodeMaxMemory::class.java),
             SingleInstanceBinderModule(NodeStartupSetupHandler::class.java, this.nodeSetupHandler)
         )
     }
@@ -92,6 +96,15 @@ class NodeStartupTask(
             LoadNodeNameSafeTask(
                 this.nodeSetupHandler,
                 this.startArguments.randomNodeName
+            )
+        )
+    }
+
+    private fun loadMaxMemory(): CompletableFuture<Int> {
+        return this.taskSubmitter.submit(
+            LoadMaxMemorySafeTask(
+                this.nodeSetupHandler,
+                this.startArguments.maxMemory
             )
         )
     }

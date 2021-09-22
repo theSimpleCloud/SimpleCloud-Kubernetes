@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.process
+package eu.thesimplecloud.simplecloud.node.process.container
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
@@ -54,7 +54,6 @@ class SingleMountingProcessStarter(
         copyServerJarInTmpDir()
         val container = createContainer(image)
         container.start()
-        container.deleteOnShutdown()
         return unitFuture()
     }
 

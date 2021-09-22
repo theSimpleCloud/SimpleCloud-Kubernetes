@@ -31,6 +31,7 @@ import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnectTask
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
@@ -75,6 +76,7 @@ class NodeStartup(
             injector.getInstance(Datastore::class.java),
             injector.getInstance(Key.get(String::class.java, NodeName::class.java)),
             injector.getInstance(Key.get(Address::class.java, NodeBindAddress::class.java)),
+            injector.getInstance(Key.get(Int::class.java, NodeMaxMemory::class.java)),
         )
         this.taskSubmitter.submit(task)
     }

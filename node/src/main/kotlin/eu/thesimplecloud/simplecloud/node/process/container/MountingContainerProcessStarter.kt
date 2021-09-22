@@ -20,30 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.process
+package eu.thesimplecloud.simplecloud.node.process.container
 
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.container.*
-import org.apache.commons.io.FileUtils
 import java.io.File
 import java.io.FileNotFoundException
-import java.lang.IllegalStateException
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Singleton
-class MountingProcessStarter @Inject constructor(
+class MountingContainerProcessStarter @Inject constructor(
     private val containerFactory: IContainer.Factory,
     private val imageFactory: IImage.Factory,
     private val imageRepository: IImageRepository
-) : IProcessStarter {
+) : IContainerProcessStarter {
 
     private val hostContainerPathFile = File("hostContainerPath.txt")
     private val hostContainerPath: String

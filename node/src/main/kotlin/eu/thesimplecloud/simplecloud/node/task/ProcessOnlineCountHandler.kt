@@ -31,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import java.util.concurrent.CompletableFuture
 
-class ProcessGroupHandler(
+class ProcessOnlineCountHandler(
     private val group: ICloudProcessGroup,
     private val processService: ICloudProcessService
 ) {

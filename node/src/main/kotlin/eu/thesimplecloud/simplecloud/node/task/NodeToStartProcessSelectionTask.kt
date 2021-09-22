@@ -23,37 +23,32 @@
 package eu.thesimplecloud.simplecloud.node.task
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.container.IContainer
-import eu.thesimplecloud.simplecloud.container.IImage
-import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
+import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.task.Task
-import java.io.File
+import org.apache.ignite.Ignite
+import org.apache.ignite.cluster.ClusterNode
 import java.util.concurrent.CompletableFuture
 
-class ProcessStartTask(
-    private val process: ICloudProcess,
-    private val containerFactory: IContainer.Factory,
-    private val imageFactory: IImage.Factory,
-    private val processStarter: IContainerProcessStarter
-) : Task<Unit>() {
-
+class NodeToStartProcessSelectionTask(
+    private val requiredMemoryInMb: Int,
+    private val nodeService: INodeService
+) : Task<INode>() {
     override fun getName(): String {
-        return "start_process"
+        return "node_to_start_process_selection"
     }
 
-    override fun run(): CompletableFuture<Unit> {
-        val template = await(process.getTemplate())
-        val version = await(process.getVersion())
-        val templateCopyTask = TemplateCopyTask(template, File("tmp/${process.getName()}"))
-        await(this.taskSubmitter.submit(templateCopyTask))
-        val processVersionProvisionTask = ProcessVersionProvisionTask(version, containerFactory, imageFactory)
-        val serverJar = await(this.taskSubmitter.submit(processVersionProvisionTask))
-        await(this.processStarter.startProcess(this.process, serverJar))
-        return unitFuture()
+    override fun run(): CompletableFuture<INode> {
+        val allNodes = await(this.nodeService.findAll())
+        val sortedNodes = allNodes.sortedByDescending { calculateUsedMemoryPercentage(it) }
+        val selectedNode = sortedNodes.first { it.hasMemoryAvailable(this.requiredMemoryInMb) }
+        return completedFuture(selectedNode)
     }
 
-
-
+    private fun calculateUsedMemoryPercentage(node: INode): Double {
+        return node.getUsedMemoryInMB().toDouble() / node.getMaxMemoryInMB()
+    }
 }

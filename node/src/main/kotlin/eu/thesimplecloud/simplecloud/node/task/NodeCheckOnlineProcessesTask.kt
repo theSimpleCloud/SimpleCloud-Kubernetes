@@ -41,7 +41,7 @@ class NodeCheckOnlineProcessesTask @Inject constructor(
     override fun run(): CompletableFuture<Unit> {
         val groups = await(this.groupService.findAll())
         groups.forEach {
-            await(ProcessGroupHandler(it, processService).handle())
+            await(ProcessOnlineCountHandler(it, processService).handle())
         }
         return unitFuture()
     }

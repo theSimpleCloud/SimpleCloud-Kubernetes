@@ -20,32 +20,31 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.setup.type
+package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
+import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeMaxMemoryResponseBody
-import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeNameSetupResponseBody
-import kotlin.reflect.KClass
+import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
+import eu.thesimplecloud.simplecloud.task.Task
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 07/08/2021
- * Time: 18:23
+ * Time: 00:06
  * @author Frederick Baier
  */
-open class Setup<T : Any>(
-    val setupName: String,
-    val additionalContent: Any,
-    val responseClass: KClass<T>
-) {
+class MaxMemorySetupTask(
+    private val restSetupManager: RestSetupManager
+) : Task<NodeMaxMemoryResponseBody>() {
 
-    companion object {
-        val FIRST_USER = Setup("firstuser", emptyArray<String>(), FirstUserSetupResponseBody::class)
-        val NODE_NAME = Setup("name", emptyArray<String>(), NodeNameSetupResponseBody::class)
-        val NODE_ADDRESS = Setup("address", emptyArray<String>(), Address::class)
-        val NODE_MAX_MEMORY = Setup("maxmemory", emptyArray<String>(), NodeMaxMemoryResponseBody::class)
-        val END = Setup("end", "", String::class)
+    override fun getName(): String {
+        return "node_max_memory_setup"
     }
+
+    override fun run(): CompletableFuture<NodeMaxMemoryResponseBody> {
+        return restSetupManager.setNextSetup(Setup.NODE_MAX_MEMORY)
+    }
+
 }

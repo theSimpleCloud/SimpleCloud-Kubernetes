@@ -32,17 +32,19 @@ import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFacto
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
+import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.container.IContainer
 import eu.thesimplecloud.simplecloud.container.IImage
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
-import eu.thesimplecloud.simplecloud.node.process.IProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.MultiNodeProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
 import eu.thesimplecloud.simplecloud.node.task.CloudProcessCreationTask
+import eu.thesimplecloud.simplecloud.node.task.NodeToStartProcessSelectionTask
 import eu.thesimplecloud.simplecloud.node.task.ProcessStartTask
 import eu.thesimplecloud.simplecloud.node.util.UncaughtExceptions
-import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
@@ -58,33 +60,27 @@ class CloudProcessServiceImpl @Inject constructor(
     processFactory, igniteRepository
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        println("Would start service")
         val process = await(createProcess(configuration))
-        this.igniteRepository.save(process.getName(), process.toConfiguration())
-        startProcess(process)
+        await(updateProcessToCluster(process))
+        MultiNodeProcessStarter(this.taskSubmitter, this.nodeService, process, this.injector).startProcess()
         return completedFuture(process)
     }
 
-    private fun startProcess(process: ICloudProcess) {
-        this.taskSubmitter.submit(
-            ProcessStartTask(
-                process,
-                this.injector.getInstance(IContainer.Factory::class.java),
-                this.injector.getInstance(IImage.Factory::class.java),
-                this.injector.getInstance(IProcessStarter::class.java)
-            ))
-            .exceptionally { UncaughtExceptions.handle(it) }
+    private fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
+        return this.igniteRepository.save(process.getName(), process.toConfiguration())
     }
 
     private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        return this.taskSubmitter.submit(CloudProcessCreationTask(
-            configuration,
-            this,
-            this.groupService,
-            this.nodeService,
-            this.processFactory,
-            this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
-        ))
+        return this.taskSubmitter.submit(
+            CloudProcessCreationTask(
+                configuration,
+                this,
+                this.groupService,
+                this.nodeService,
+                this.processFactory,
+                this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
+            )
+        )
     }
 
     override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {

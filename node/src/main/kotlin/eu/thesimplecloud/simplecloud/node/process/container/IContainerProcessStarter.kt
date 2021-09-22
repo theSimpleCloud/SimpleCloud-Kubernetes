@@ -20,35 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.node.process.container
 
-import com.github.ajalt.clikt.core.CliktCommand
-import com.github.ajalt.clikt.parameters.options.*
-import com.github.ajalt.clikt.parameters.types.enum
-import com.github.ajalt.clikt.parameters.types.int
-import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import java.io.File
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 10:08
- * @author Frederick Baier
- */
-class NodeStartArgumentParserMain : CliktCommand() {
+interface IContainerProcessStarter {
 
-    val webinterfaceMode: WebinterfaceMode by option(help = "Sets the mode for the webinterface")
-        .enum<WebinterfaceMode>()
-        .default(WebinterfaceMode.DOCKER)
-
-    val mongoDbConnectionString: String? by option(help = "Sets the connection string for MongoDB")
-
-    val bindAddress: Address? by option(help = "Sets the address for the node to bind to").convert { Address.fromIpString(it) }
-    val maxMemory: Int? by option(help = "Let the node generate a random name").int()
-    val randomNodeName: Boolean by option(help = "Let the node generate a random name").flag()
-
-
-    override fun run() {
-        NodeStartup(this).start()
-    }
+    fun startProcess(process: ICloudProcess, serverJar: File): CompletableFuture<Unit>
 
 }
