@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.api.messagechannel
 import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IMessageHandler
 import eu.thesimplecloud.simplecloud.api.utils.INameable
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -57,13 +58,13 @@ interface IMessageChannel<T : Any, R: Any> : INameable {
     /**
      * Sets the message handler to be used for incoming messages
      * The handler is notified every time a message is received
-     * @param handler the message handler to handle icoming messages
+     * @param handler the message handler to handle incoming messages
      */
     fun setMessageHandler(handler: IMessageHandler<T, R>)
 
     /**
      * Handles a request
      */
-    fun handleRequest(message: T, sender: INetworkComponent): R?
+    fun handleRequest(message: T, sender: INetworkComponent): CompletableFuture<R>
 
 }

@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.future
 
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CompletionStage
+import kotlin.Exception
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,6 +35,10 @@ import java.util.concurrent.CompletionStage
 
 fun <T> completedFuture(any: T): CompletableFuture<T> {
     return CloudCompletableFuture.completedFuture(any)
+}
+
+fun <T> failedFuture(exception: Exception): CompletableFuture<T> {
+    return CloudCompletableFuture.failedFuture(exception)
 }
 
 fun unitFuture(): CompletableFuture<Unit> {

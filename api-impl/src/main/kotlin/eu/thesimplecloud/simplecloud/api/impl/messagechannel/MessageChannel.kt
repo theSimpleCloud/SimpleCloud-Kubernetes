@@ -29,6 +29,7 @@ import eu.thesimplecloud.simplecloud.api.messagechannel.IMessageChannel
 import eu.thesimplecloud.simplecloud.api.messagechannel.IMessageRequest
 import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IMessageHandler
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -60,7 +61,7 @@ class MessageChannel<T : Any, R : Any>(
         return this.name
     }
 
-    override fun handleRequest(message: T, sender: INetworkComponent): R? {
+    override fun handleRequest(message: T, sender: INetworkComponent): CompletableFuture<R> {
         return this.messageHandler.handleMessage(message, sender)
     }
 }

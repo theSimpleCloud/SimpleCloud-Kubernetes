@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.messagechannel.handler
 
 import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,6 +44,6 @@ interface IMessageHandler<T : Any, R : Any> {
      * @param sender the sender of the message
      * @return the response
      */
-    fun handleMessage(message: T, sender: INetworkComponent): R?
+    fun handleMessage(message: T, sender: INetworkComponent): CompletableFuture<R>
 
 }

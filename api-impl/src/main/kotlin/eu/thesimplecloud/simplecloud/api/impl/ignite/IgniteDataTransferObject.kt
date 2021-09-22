@@ -33,6 +33,6 @@ import java.util.*
 data class IgniteDataTransferObject(
     val topic: String,
     val messageId: UUID,
-    val message: Any?,
+    val message: Result<Any>,
     val isResponse: Boolean
 )

@@ -34,5 +34,7 @@ import java.util.*
 data class NodeConfiguration(
     val address: Address,
     val name: String,
-    val igniteId: UUID
+    val igniteId: UUID,
+    val maxMemoryInMB: Int,
+    val usedMemoryInMB: Int,
 )
