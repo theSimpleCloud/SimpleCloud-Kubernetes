@@ -46,7 +46,6 @@ abstract class Task<T> {
 
     /**
      * This method gets called when the task is being executed.
-     * @param taskSubmitter
      * @return a [CompletableFuture] completing with the result
      */
     abstract fun run(): CompletableFuture<T>
