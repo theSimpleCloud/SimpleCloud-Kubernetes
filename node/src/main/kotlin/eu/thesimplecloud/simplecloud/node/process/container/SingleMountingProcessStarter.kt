@@ -28,6 +28,7 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
 import eu.thesimplecloud.simplecloud.container.*
 import org.apache.commons.io.FileUtils
 import java.io.File
@@ -60,33 +61,42 @@ class SingleMountingProcessStarter(
     private fun createContainer(image: IImage): IContainer {
         val hostRunDir = File(this.hostContainerPath)
         val tmpDirOnHost = File(hostRunDir, tmpDir.path)
+        val containerPort = determineContainerPort()
         return this.containerFactory.create(
             process.getName(),
             image,
             ContainerSpec()
-                .withPortBinding(process.getAddress().port, 25565)
+                .withPortBinding(process.getAddress().port, containerPort)
                 .withMaxMemory(process.getMaxMemory())
                 .withBindVolume(tmpDirOnHost.absolutePath, "/app/")
         )
     }
 
+    private fun determineContainerPort(): Int {
+        return when (this.version.getProcessApiType()) {
+            ProcessAPIType.BUNGEECORD -> 25577
+            else -> 25565
+        }
+    }
+
     private fun createStartFile(): CompletableFuture<Unit> {
         val startFile = File(this.tmpDir, "start.sh")
-        startFile.writeText(getStartFileContent())
+        startFile.writeText(await(getStartFileContent()))
         startFile.setExecutable(true)
         return unitFuture()
     }
 
-    private fun getStartFileContent(): String {
-        return "java ${getJvmArgumentsAsString()}-jar server.jar"
+    private fun getStartFileContent(): CompletableFuture<String> {
+        val jvmArgsAsString = await(getJvmArgumentsAsString())
+        return completedFuture("java ${jvmArgsAsString}-jar server.jar")
     }
 
-    private fun getJvmArgumentsAsString(): String {
+    private fun getJvmArgumentsAsString(): CompletableFuture<String> {
         val jvmArgs = await(getJvmArgumentsOrEmptyObject())
         return if (jvmArgs.getArguments().isEmpty())
-            ""
+            completedFuture("")
         else
-            jvmArgs.getArguments().joinToString(" ") + " "
+            completedFuture(jvmArgs.getArguments().joinToString(" ") + " ")
     }
 
     private fun getJvmArgumentsOrEmptyObject(): CompletableFuture<IJVMArguments> {
@@ -121,7 +131,8 @@ class SingleMountingProcessStarter(
             tmpDir,
             ImageBuildInstructions()
                 .from(version.getJavBaseImageName())
-                .expose(25565)
+                .expose(MC_DEFAULT_PORT)
+                .expose(BUNGEE_DEFAULT_PORT)
                 .workdir("/app/")
                 .cmd("/bin/sh", "start.sh")
         )
@@ -129,6 +140,9 @@ class SingleMountingProcessStarter(
 
     companion object {
         const val DEFAULT_IMAGE_PREFIX = "simplecloud-default-"
+
+        const val MC_DEFAULT_PORT = 25565
+        const val BUNGEE_DEFAULT_PORT = 25577
     }
 
 }

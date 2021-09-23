@@ -58,7 +58,7 @@ class MultiNodeProcessStarter(
 
     private fun startProcessOnNode(node: INode): CompletableFuture<ICloudProcess> {
         val messageChannel = this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, ICloudProcess>("start_process")!!
-        return messageChannel.createMessageRequest(configuration, node).submit()
+        return messageChannel.createMessageRequest(this.configuration, node).submit()
     }
 
 }
