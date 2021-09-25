@@ -20,18 +20,29 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.plugin.startup
 
+import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
+import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import org.apache.ignite.Ignite
+import org.apache.ignite.plugin.security.SecurityCredentials
 
+class CloudPlugin {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
+    fun onEnable() {
+        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
+        val ignite = startIgnite(simpleCloudFileContent)
 
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
+    }
+
+    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
+        val igniteBuilder = IgniteBuilder(
+            fileContent.selfAddress,
+            true,
+            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
+        )
+        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
+        return igniteBuilder.start()
+    }
+
 }

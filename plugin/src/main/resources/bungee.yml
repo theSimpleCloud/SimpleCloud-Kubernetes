@@ -1,0 +1,5 @@
+name: SimpleCloud-Plugin
+version: 1.0
+author: Wetterbericht
+
+main: eu.thesimplecloud.simplecloud.plugin.proxy.type.bungee.CloudBungeePlugin

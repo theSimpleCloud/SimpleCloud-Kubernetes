@@ -94,7 +94,8 @@ class StartProcessMessageHandler @Inject constructor(
                 process,
                 this.injector.getInstance(IContainer.Factory::class.java),
                 this.injector.getInstance(IImage.Factory::class.java),
-                this.injector.getInstance(IContainerProcessStarter::class.java)
+                this.injector.getInstance(IContainerProcessStarter::class.java),
+                this.injector
             )
         ).exceptionally { UncaughtExceptions.handle(it) }
     }

@@ -17,3 +17,4 @@ include("node")
 include("task")
 include("container:container-docker")
 findProject(":container:container-docker")?.name = "container-docker"
+include("plugin")

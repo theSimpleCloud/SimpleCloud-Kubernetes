@@ -41,7 +41,6 @@ import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTas
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceAnnotatedBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
-import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.Task
 import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import java.util.concurrent.CompletableFuture

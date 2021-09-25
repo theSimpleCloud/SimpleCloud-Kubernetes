@@ -20,18 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.plugin.proxy.request.login
+
+import eu.thesimplecloud.simplecloud.api.player.ICloudPlayer
+import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+
+class PlayerLoginRequestHandler(
+    private val request: IPlayerConnection,
+) {
+    fun handle(): ICloudPlayer {
+        TODO()
+    }
 
 
-
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
-
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
 }

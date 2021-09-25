@@ -20,18 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.plugin.startup
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
+import java.io.File
 
+class SimpleCloudFileLoader {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
+    private val objectMapper = ObjectMapper()
 
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
+    fun loadContent(): SimpleCloudFileContent {
+        return this.objectMapper.readValue(FILE, SimpleCloudFileContent::class.java)
+    }
+
+    companion object {
+        val FILE = File("SIMPLE-CLOUD.json")
+    }
+
 }

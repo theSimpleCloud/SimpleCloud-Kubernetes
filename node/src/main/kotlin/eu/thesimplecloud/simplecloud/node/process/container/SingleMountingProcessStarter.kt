@@ -88,7 +88,17 @@ class SingleMountingProcessStarter(
 
     private fun getStartFileContent(): CompletableFuture<String> {
         val jvmArgsAsString = await(getJvmArgumentsAsString())
-        return completedFuture("java ${jvmArgsAsString}-jar server.jar")
+        return completedFuture("java ${jvmArgsAsString}${getIgniteArgs()} -jar server.jar")
+    }
+
+    private fun getIgniteArgs(): String {
+        return "--add-exports=java.base/jdk.internal.misc=ALL-UNNAMED " +
+                "--add-exports=java.base/sun.nio.ch=ALL-UNNAMED" +
+                "--add-exports=java.management/com.sun.jmx.mbeanserver=ALL-UNNAMED " +
+                "--add-exports=jdk.internal.jvmstat/sun.jvmstat.monitor=ALL-UNNAMED " +
+                "--add-exports=java.base/sun.reflect.generics.reflectiveObjects=ALL-UNNAMED " +
+                "--add-opens=jdk.management/com.sun.management.internal=ALL-UNNAMED " +
+                "--illegal-access=permit"
     }
 
     private fun getJvmArgumentsAsString(): CompletableFuture<String> {

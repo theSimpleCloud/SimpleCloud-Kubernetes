@@ -20,18 +20,13 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.api.impl.util
 
+class ClusterKey(
+    val login: String,
+    val password: String
+) {
 
+    private constructor(): this("", "")
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
-
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
 }

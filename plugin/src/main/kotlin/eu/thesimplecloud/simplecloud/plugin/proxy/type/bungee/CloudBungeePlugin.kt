@@ -20,18 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.plugin.proxy.type.bungee
 
+import eu.thesimplecloud.simplecloud.plugin.startup.CloudPlugin
+import net.md_5.bungee.api.plugin.Plugin
 
+class CloudBungeePlugin : Plugin() {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
+    override fun onEnable() {
+        CloudPlugin().onEnable()
+    }
 
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
+    override fun onDisable() {
+
+    }
+
 }

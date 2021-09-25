@@ -51,9 +51,6 @@ class TestProcessVersionService : IInternalProcessVersionService {
     private val nameToProcessVersion = ConcurrentHashMap<String, IProcessVersion>()
 
     init {
-        this.nameToProcessVersion["Lobby"] = ProcessVersion(
-            ProcessVersionConfiguration("Test", ProcessAPIType.SPIGOT, "https://test.net")
-        )
     }
 
     override fun findByName(name: String): CompletableFuture<IProcessVersion> {

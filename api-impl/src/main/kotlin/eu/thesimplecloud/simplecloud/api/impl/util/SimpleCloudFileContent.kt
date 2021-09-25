@@ -20,18 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.api.impl.util
 
+import eu.thesimplecloud.simplecloud.api.utils.Address
 
+class SimpleCloudFileContent(
+    val nodeAddress: Address,
+    val processName: String,
+    val selfAddress: Address,
+    val clusterKey: ClusterKey
+) {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
+    private constructor(): this(
+        Address("", -1),
+        "Nix-1",
+        Address("", -1),
+        ClusterKey("", "")
+    )
 
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
 }

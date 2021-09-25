@@ -38,7 +38,7 @@ import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
-import eu.thesimplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
+import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
@@ -74,8 +74,9 @@ class NodeClusterConnectTask @Inject constructor(
     override fun run(): CompletableFuture<Unit> {
         val nodeRepository = MongoPersistentNodeRepository(this.datastore)
         await(editOrInsertSelfNode(nodeRepository))
-        val ignite = await(startIgnite(nodeRepository))
-        val finalInjector = createFinalInjector(ignite)
+        val clusterKey = await(loadClusterKey())
+        val ignite = await(startIgnite(nodeRepository, clusterKey))
+        val finalInjector = createFinalInjector(ignite, clusterKey)
         await(startRestServer(finalInjector))
         await(initializeMessageChannels(finalInjector))
         await(checkForFirstNodeInCluster(finalInjector, ignite))
@@ -129,7 +130,7 @@ class NodeClusterConnectTask @Inject constructor(
         return this.taskSubmitter.submit(RestServerStartTask(injector))
     }
 
-    private fun createFinalInjector(ignite: Ignite): Injector {
+    private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
         val cloudAPIBinderModule = CloudAPIBinderModule(
             ignite,
             JvmArgumentsServiceImpl::class.java,
@@ -144,21 +145,22 @@ class NodeClusterConnectTask @Inject constructor(
         return injector.createChildInjector(
             cloudAPIBinderModule,
             SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter),
-            SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java)
+            SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
+            SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
         )
     }
 
-    private fun startIgnite(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<Ignite> {
+    private fun startIgnite(nodeRepository: MongoPersistentNodeRepository, clusterKey: ClusterKey): CompletableFuture<Ignite> {
         val addresses = await(getOtherNodesAddressesToConnectTo(nodeRepository))
-        val clusterKey = await(loadClusterKey())
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
             .withAddressesToConnectTo(*addresses.toTypedArray())
         return completedFuture(igniteBuilder.start())
     }
 
-    private fun loadClusterKey(): CompletableFuture<ClusterKeyEntity> {
-        return NodeClusterKeyLoader(this.datastore).loadClusterKey()
+    private fun loadClusterKey(): CompletableFuture<ClusterKey> {
+        val clusterKeyEntity = await(NodeClusterKeyLoader(this.datastore).loadClusterKey())
+        return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
     }
 
     private fun getOtherNodesAddressesToConnectTo(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<List<Address>> {

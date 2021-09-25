@@ -20,18 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.startup
+package eu.thesimplecloud.simplecloud.plugin.proxy
 
+import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
+import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 
+interface IProxyController {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 20/07/2021
- * Time: 11:56
- * @author Frederick Baier
- */
+    fun handleLogin(request: IPlayerConnection)
 
-fun main(args: Array<String>) {
-    //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
-    NodeStartArgumentParserMain().main(args)
+    fun handlePostLogin(request: IPlayerConnection)
+
+    fun handleDisconnect(request: IPlayerConnection)
+
+    fun handleServerPreConnect(request: ServerPreConnectRequest)
+
+    fun handleServerConnected(request: ServerConnectedRequest)
+
+    fun handleServerKick(request: ServerKickRequest)
+
 }

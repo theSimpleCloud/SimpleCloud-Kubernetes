@@ -1,8 +1,7 @@
 plugins {
     java
     id ("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("jvm") version "1.5.20"
-    id ("io.github.slimjar") version "1.2.2"
+    kotlin("jvm") version "1.5.31"
 }
 
 allprojects {
@@ -13,7 +12,6 @@ allprojects {
         plugin("java")
         plugin("org.jetbrains.kotlin.jvm")
         plugin("com.github.johnrengelman.shadow")
-        plugin("io.github.slimjar")
     }
 
     repositories {
@@ -24,10 +22,9 @@ allprojects {
         maven {
             setUrl("https://repo.vshnv.tech/")
         }
-    }
-
-    dependencies {
-        implementation("io.github.slimjar:slimjar:1.2.5")
+        maven {
+            setUrl("https://oss.sonatype.org/content/repositories/snapshots")
+        }
     }
 
 }
@@ -35,7 +32,7 @@ allprojects {
 subprojects {
 
     dependencies {
-        implementation(kotlin("stdlib"))
+        implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
         implementation("com.google.inject:guice:5.0.1")
         implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
