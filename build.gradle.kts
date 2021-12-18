@@ -25,6 +25,9 @@ allprojects {
         maven {
             setUrl("https://oss.sonatype.org/content/repositories/snapshots")
         }
+        maven {
+            setUrl("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+        }
     }
 
 }

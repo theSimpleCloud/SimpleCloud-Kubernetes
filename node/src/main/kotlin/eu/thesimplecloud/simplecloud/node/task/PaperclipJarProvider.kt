@@ -25,10 +25,10 @@ package eu.thesimplecloud.simplecloud.node.task
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.container.ContainerSpec
-import eu.thesimplecloud.simplecloud.container.IContainer
-import eu.thesimplecloud.simplecloud.container.IImage
-import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
+import eu.thesimplecloud.simplecloud.container.container.ContainerSpec
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
+import eu.thesimplecloud.simplecloud.container.image.ImageBuildInstructions
 import eu.thesimplecloud.simplecloud.node.util.Downloader
 import eu.thesimplecloud.simplecloud.node.util.ZipUtil
 import org.apache.commons.io.FileUtils

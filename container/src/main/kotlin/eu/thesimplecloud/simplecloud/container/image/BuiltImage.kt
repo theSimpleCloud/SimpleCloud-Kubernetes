@@ -20,28 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.plugin.startup
+package eu.thesimplecloud.simplecloud.container.image
 
-import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
-import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
+import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import java.util.concurrent.CompletableFuture
 
-class CloudPlugin {
+class BuiltImage(
+    private val name: String,
+    private val imageId: String
+) : IImage {
 
-    fun onEnable() {
-        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
-        val ignite = startIgnite(simpleCloudFileContent)
+    override fun getName(): String {
+        return this.name
     }
 
-    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
-        val igniteBuilder = IgniteBuilder(
-            fileContent.selfAddress,
-            true,
-            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
-        )
-        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
-        return igniteBuilder.start()
+    override fun isBuilt(): Boolean {
+        return true
     }
 
+    override fun build(): CompletableFuture<String> {
+        return completedFuture(imageId)
+    }
 }

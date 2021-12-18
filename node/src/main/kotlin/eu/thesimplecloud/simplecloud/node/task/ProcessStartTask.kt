@@ -28,8 +28,8 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.template.ITemplate
-import eu.thesimplecloud.simplecloud.container.IContainer
-import eu.thesimplecloud.simplecloud.container.IImage
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
 import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
 import eu.thesimplecloud.simplecloud.task.Task
 import org.apache.commons.io.FileUtils

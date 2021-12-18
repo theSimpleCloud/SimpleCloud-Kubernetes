@@ -26,21 +26,19 @@ import com.google.inject.Injector
 import com.google.inject.Key
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.container.ContainerSpec
-import eu.thesimplecloud.simplecloud.container.IContainer
-import eu.thesimplecloud.simplecloud.container.IImage
-import eu.thesimplecloud.simplecloud.container.ImageBuildInstructions
+import eu.thesimplecloud.simplecloud.container.container.ContainerSpec
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
+import eu.thesimplecloud.simplecloud.container.image.ImageBuildInstructions
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnectTask
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
-import eu.thesimplecloud.simplecloud.storagebackend.IStorageBackend
 import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import eu.thesimplecloud.simplecloud.task.TaskExecutorServiceImpl
 import org.apache.commons.io.FileUtils
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 
 /**

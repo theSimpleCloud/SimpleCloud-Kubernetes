@@ -20,28 +20,45 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.plugin.startup
+package eu.thesimplecloud.simplecloud.container.service
 
-import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
-import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
+import eu.thesimplecloud.simplecloud.container.Label
+import java.util.concurrent.CopyOnWriteArrayList
 
-class CloudPlugin {
+class ServiceSpec {
 
-    fun onEnable() {
-        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
-        val ignite = startIgnite(simpleCloudFileContent)
+    val labels = CopyOnWriteArrayList<Label>()
+
+    @Volatile
+    var containerPort: Int = -1
+        private set
+
+    @Volatile
+    var clusterPort: Int = -1
+        private set
+
+    @Volatile
+    var publicPort: Int = -1
+        private set
+
+    fun withClusterPort(port: Int): ServiceSpec {
+        this.clusterPort = port
+        return this
     }
 
-    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
-        val igniteBuilder = IgniteBuilder(
-            fileContent.selfAddress,
-            true,
-            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
-        )
-        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
-        return igniteBuilder.start()
+    fun withContainerPort(port: Int): ServiceSpec {
+        this.containerPort = port
+        return this
+    }
+
+    fun withPublicPort(port: Int): ServiceSpec {
+        this.publicPort = port
+        return this
+    }
+
+    fun withLabels(vararg labels: Label): ServiceSpec {
+        this.labels.addAll(labels)
+        return this
     }
 
 }

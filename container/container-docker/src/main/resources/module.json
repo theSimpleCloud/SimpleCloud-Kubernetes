@@ -1,6 +1,0 @@
-{
-  "name":  "Container-Docker",
-  "author":  "Wetterbericht",
-  "version":  "0.1",
-  "classToLoad":  "eu.thesimplecloud.simplecloud.container.docker.guice.BinderModule"
-}

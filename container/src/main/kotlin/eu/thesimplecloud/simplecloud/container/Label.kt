@@ -20,28 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.plugin.startup
+package eu.thesimplecloud.simplecloud.container
 
-import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
-import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
+class Label(
+    val name: String
+) {
 
-class CloudPlugin {
-
-    fun onEnable() {
-        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
-        val ignite = startIgnite(simpleCloudFileContent)
-    }
-
-    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
-        val igniteBuilder = IgniteBuilder(
-            fileContent.selfAddress,
-            true,
-            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
-        )
-        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
-        return igniteBuilder.start()
+    fun getNamePair(): Pair<String, String> {
+        return "simplecloud" to name
     }
 
 }

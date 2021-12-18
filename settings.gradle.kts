@@ -18,3 +18,6 @@ include("task")
 include("container:container-docker")
 findProject(":container:container-docker")?.name = "container-docker"
 include("plugin")
+include("container-kubernetes")
+include("container:container-kubernetes")
+findProject(":container:container-kubernetes")?.name = "container-kubernetes"

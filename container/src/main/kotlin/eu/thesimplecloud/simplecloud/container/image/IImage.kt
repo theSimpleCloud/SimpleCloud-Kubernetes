@@ -20,28 +20,52 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.plugin.startup
+package eu.thesimplecloud.simplecloud.container.image
 
-import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
-import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
+import java.io.File
+import java.util.concurrent.CompletableFuture
 
-class CloudPlugin {
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 07.04.2021
+ * Time: 20:52
+ * @author Frederick Baier
+ */
+interface IImage {
 
-    fun onEnable() {
-        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
-        val ignite = startIgnite(simpleCloudFileContent)
-    }
+    /**
+     * Returns the name of this image
+     */
+    fun getName(): String
 
-    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
-        val igniteBuilder = IgniteBuilder(
-            fileContent.selfAddress,
-            true,
-            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
-        )
-        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
-        return igniteBuilder.start()
+    /**
+     * Returns whether this image was built
+     */
+    fun isBuilt(): Boolean
+
+    /**
+     * Builds this image if the image has not been built yet
+     * @return an identifier for the built image
+     */
+    fun build(): CompletableFuture<String>
+
+    /**
+     * The factory to build images
+     */
+    interface Factory {
+
+        /**
+         * Creates an image
+         * @param name the name of the image
+         * @param persistentVolumePath the path to the dir that gets mounted into the build container
+         * @param imageBuildInstructions the instructions to build the image from
+         */
+        fun create(
+            name: String,
+            persistentVolumePath: String,
+            imageBuildInstructions: ImageBuildInstructions,
+        ): IImage
+
     }
 
 }

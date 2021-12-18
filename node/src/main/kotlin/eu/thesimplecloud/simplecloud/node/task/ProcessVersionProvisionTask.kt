@@ -27,7 +27,8 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersionLoadType
-import eu.thesimplecloud.simplecloud.container.*
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
 import eu.thesimplecloud.simplecloud.node.util.Downloader
 import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File

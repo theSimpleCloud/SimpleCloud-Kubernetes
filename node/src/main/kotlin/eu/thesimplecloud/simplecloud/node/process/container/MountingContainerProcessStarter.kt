@@ -27,7 +27,9 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.container.*
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
+import eu.thesimplecloud.simplecloud.container.image.IImageRepository
 import java.io.File
 import java.io.FileNotFoundException
 import java.util.concurrent.CompletableFuture

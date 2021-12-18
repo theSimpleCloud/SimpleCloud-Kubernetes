@@ -30,6 +30,11 @@ import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
 import eu.thesimplecloud.simplecloud.container.*
+import eu.thesimplecloud.simplecloud.container.container.ContainerSpec
+import eu.thesimplecloud.simplecloud.container.container.IContainer
+import eu.thesimplecloud.simplecloud.container.image.IImage
+import eu.thesimplecloud.simplecloud.container.image.IImageRepository
+import eu.thesimplecloud.simplecloud.container.image.ImageBuildInstructions
 import org.apache.commons.io.FileUtils
 import java.io.File
 import java.util.*
