@@ -24,7 +24,6 @@ package eu.thesimplecloud.simplecloud.restserver.controller
 
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
 import java.lang.reflect.InvocationTargetException
-import java.lang.reflect.Method
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,7 +37,7 @@ data class MethodRoute(
     val permission: String,
     val parameters: List<MethodRouteParameter>,
     private val virtualMethod: VirtualMethod,
-    private val controller: IController
+    private val controller: Controller
 ) {
 
     fun invokeMethodWithArgs(args: List<Any?>): Any? {

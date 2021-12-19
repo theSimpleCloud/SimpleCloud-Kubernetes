@@ -22,14 +22,12 @@
 
 package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
-import com.ea.async.Async
 import com.ea.async.Async.await
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,10 +35,10 @@ import eu.thesimplecloud.simplecloud.restserver.controller.IController
  * Time: 22:09
  * @author Frederick Baier
  */
-@Controller(1, "cloud/processversion")
+@RestController(1, "cloud/processversion")
 class ProcessVersionController @Inject constructor(
     private val processVersionService: IProcessVersionService,
-) : IController {
+) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.processversion.get")
     fun handleGetAll(): List<ProcessVersionConfiguration> {

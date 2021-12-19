@@ -27,7 +27,7 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.ProcessCreateHandler
 
@@ -37,11 +37,11 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.Pro
  * Time: 19:57
  * @author Frederick Baier
  */
-@Controller(1, "cloud/process")
+@RestController(1, "cloud/process")
 class ProcessController @Inject constructor(
     private val processService: ICloudProcessService,
     private val processCreateHandler: ProcessCreateHandler
-) : IController {
+) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.process.get")
     fun handleGetAll(): List<CloudProcessConfiguration> {

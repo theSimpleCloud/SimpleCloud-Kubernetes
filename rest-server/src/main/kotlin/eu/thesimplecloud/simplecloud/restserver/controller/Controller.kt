@@ -20,37 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.service
-
-import eu.thesimplecloud.simplecloud.restserver.user.User
-import java.util.concurrent.CompletableFuture
+package eu.thesimplecloud.simplecloud.restserver.controller
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 27.06.2021
- * Time: 12:40
+ * Date: 23.06.2021
+ * Time: 09:40
  * @author Frederick Baier
  */
-interface IUserService {
-
-    /**
-     * Returns the user found by the specified [name]
-     */
-    fun getUserByName(name: String): CompletableFuture<User>
-
-    /**
-     * Returns all users
-     */
-    fun getAllUsers(): CompletableFuture<List<User>>
-
-    /**
-     * Creates a user
-     */
-    fun createUser(user: User)
-
-    /**
-     * Returns whether the user exists
-     */
-    fun doesUserExist(username: String): Boolean
-
-}
+interface Controller

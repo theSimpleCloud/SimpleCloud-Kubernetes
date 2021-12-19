@@ -20,12 +20,42 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.controller
+package eu.thesimplecloud.simplecloud.restserver.service
+
+import com.google.inject.Inject
+import eu.thesimplecloud.simplecloud.restserver.exception.ElementAlreadyExistException
+import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
+import eu.thesimplecloud.simplecloud.restserver.user.User
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 09:40
+ * Date: 27.06.2021
+ * Time: 12:44
  * @author Frederick Baier
  */
-interface IController
+class UserServiceImpl @Inject constructor(
+    private val repository: UserRepository
+) : UserService {
+
+    override fun getUserByName(name: String): CompletableFuture<User> {
+        return this.repository.find(name)
+    }
+
+    override fun getAllUsers(): CompletableFuture<List<User>> {
+        return this.repository.findAll()
+    }
+
+    override fun createUser(user: User) {
+        if (doesUserExist(user.username)) {
+            throw ElementAlreadyExistException("User does already exist")
+        }
+        this.repository.save(user.getIdentifier(), user)
+    }
+
+    override fun doesUserExist(username: String): Boolean {
+        return runCatching { getUserByName(username) }.getOrNull() != null
+    }
+
+
+}

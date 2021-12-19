@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.node.startup.guice
 
 import com.google.inject.AbstractModule
 import dev.morphia.Datastore
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
+import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
 
 /**
@@ -39,7 +39,7 @@ class MongoDbBinderModule(
 
     override fun configure() {
         bind(Datastore::class.java).toInstance(this.datastore)
-        bind(IUserRepository::class.java).to(MongoUserRepository::class.java)
+        bind(UserRepository::class.java).to(MongoUserRepository::class.java)
     }
 
 }

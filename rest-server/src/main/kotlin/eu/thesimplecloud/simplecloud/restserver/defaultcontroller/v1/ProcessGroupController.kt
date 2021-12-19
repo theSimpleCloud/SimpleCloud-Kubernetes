@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
@@ -39,11 +39,11 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.Pro
  * Time: 12:43
  * @author Frederick Baier
  */
-@Controller(1, "cloud/group")
+@RestController(1, "cloud/group")
 class ProcessGroupController @Inject constructor(
     private val groupService: ICloudProcessGroupService,
     private val groupUpdateHandler: ProcessGroupUpdateHandler
-) : IController {
+) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.group.get")
     fun handleGroupGetAll(): List<AbstractCloudProcessGroupConfiguration> {

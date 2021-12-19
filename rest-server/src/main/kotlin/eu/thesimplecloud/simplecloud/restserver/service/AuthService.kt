@@ -22,53 +22,26 @@
 
 package eu.thesimplecloud.simplecloud.restserver.service
 
-import com.ea.async.Async.await
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
-import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
-import io.ktor.auth.*
-import io.ktor.auth.jwt.*
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 14:52
+ * Time: 14:50
  * @author Frederick Baier
  */
-@Singleton
-class AuthService @Inject constructor(
-    private val userService: IUserService
-) : IAuthService {
+interface AuthService {
 
-    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String> {
-        val user = await(findUserByUserName(usernameAndPasswordCredentials.username))
-        if (user.password != usernameAndPasswordCredentials.password) {
-            throwUserNotFound()
-        }
+    /**
+     * Returns the jwt token for the specified credentials
+     */
+    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
 
-        return completedFuture(JwtConfig.makeToken(user.username))
-    }
-
-    override fun getUserFromCall(call: ApplicationCall): CompletableFuture<User> {
-        val principal = call.principal<JWTPrincipal>()
-            ?: throw NotAuthenticatedException()
-        val username = principal.getClaim("username", String::class)!!
-        return findUserByUserName(username)
-    }
-
-    private fun findUserByUserName(username: String): CompletableFuture<User> {
-        return this.userService.getUserByName(username)
-    }
-
-    private fun throwUserNotFound(): Nothing {
-        throw NoSuchElementException("User not found")
-    }
+    /**
+     * Returns the user from the specified [call]
+     */
+    fun getUserFromCall(call: ApplicationCall): CompletableFuture<User>
 
 }
-

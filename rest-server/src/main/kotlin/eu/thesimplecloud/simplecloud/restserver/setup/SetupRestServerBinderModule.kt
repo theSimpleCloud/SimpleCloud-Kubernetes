@@ -23,7 +23,7 @@
 package eu.thesimplecloud.simplecloud.restserver.setup
 
 import com.google.inject.AbstractModule
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,7 +34,7 @@ import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
 class SetupRestServerBinderModule : AbstractModule() {
 
     override fun configure() {
-        bind(IAuthService::class.java).to(NoAuthService::class.java)
+        bind(AuthService::class.java).to(NoAuthService::class.java)
     }
 
 }

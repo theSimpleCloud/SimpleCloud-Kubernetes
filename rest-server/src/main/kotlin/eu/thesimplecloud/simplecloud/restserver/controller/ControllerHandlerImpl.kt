@@ -20,15 +20,32 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.repository
+package eu.thesimplecloud.simplecloud.restserver.controller
 
-import eu.thesimplecloud.simplecloud.restserver.user.User
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import com.google.inject.Injector
+import eu.thesimplecloud.simplecloud.restserver.RestServer
+import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
+
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 14:53
+ * Time: 09:39
  * @author Frederick Baier
  */
-interface IUserRepository : IRepository<String, User>
+class ControllerHandlerImpl constructor(
+    private val restServer: RestServer,
+    private val injector: Injector
+) : ControllerHandler {
+
+    override fun registerController(controllerClass: Class<out Controller>) {
+        val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
+        routes.forEach { this.restServer.registerMethodRoute(it) }
+    }
+
+    override fun unregisterController(controllerClass: Class<out Controller>) {
+        TODO("Not yet implemented")
+    }
+
+
+}

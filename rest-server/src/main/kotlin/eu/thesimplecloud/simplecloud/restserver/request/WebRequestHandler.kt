@@ -28,7 +28,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.exception.HttpException
 import eu.thesimplecloud.simplecloud.restserver.exception.MissingPermissionException
 import eu.thesimplecloud.simplecloud.restserver.exception.NotAuthenticatedException
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import eu.thesimplecloud.simplecloud.restserver.user.EmptyUser
 import eu.thesimplecloud.simplecloud.restserver.user.User
 import io.ktor.application.*
@@ -48,7 +48,7 @@ class WebRequestHandler(
     private val methodRoute: MethodRoute,
     private val call: ApplicationCall,
     private val requestBody: String,
-    private val authService: IAuthService
+    private val authService: AuthService
 ) {
 
     suspend fun handleRequest() {

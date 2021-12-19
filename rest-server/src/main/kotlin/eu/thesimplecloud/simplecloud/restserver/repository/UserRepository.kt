@@ -20,18 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.annotation
+package eu.thesimplecloud.simplecloud.restserver.repository
+
+import eu.thesimplecloud.simplecloud.restserver.user.User
+import eu.thesimplecloud.simplecloud.api.repository.IRepository
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 09:10
+ * Time: 14:53
  * @author Frederick Baier
  */
-@Retention(AnnotationRetention.RUNTIME)
-@Target(AnnotationTarget.CLASS)
-annotation class Controller(
-    val version: Int,
-    val topic: String,
-    val additionalPath: String = ""
-)
+interface UserRepository : IRepository<String, User>

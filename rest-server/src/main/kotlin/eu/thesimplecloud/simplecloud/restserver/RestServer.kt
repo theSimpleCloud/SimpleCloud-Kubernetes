@@ -30,12 +30,11 @@ import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeAll
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeIncoming
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
 import eu.thesimplecloud.simplecloud.restserver.annotation.introspector.AnnotationExcludeIntrospector
-import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
+import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandlerImpl
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
-import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import eu.thesimplecloud.simplecloud.restserver.jwt.JwtConfig
 import eu.thesimplecloud.simplecloud.restserver.request.WebRequestHandler
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import io.ktor.application.*
 import io.ktor.auth.*
 import io.ktor.auth.jwt.*
@@ -53,7 +52,6 @@ import io.ktor.server.engine.*
 import io.ktor.server.netty.*
 import io.ktor.util.*
 import io.ktor.utils.io.*
-import java.util.concurrent.TimeUnit
 
 
 /**
@@ -63,12 +61,12 @@ import java.util.concurrent.TimeUnit
  * @author Frederick Baier
  */
 class RestServer @Inject constructor(
-    private val authService: IAuthService,
+    private val authService: AuthService,
     private val injector: Injector
 ) {
 
 
-    val controllerHandler = ControllerHandler(this, injector)
+    val controllerHandler = ControllerHandlerImpl(this, injector)
 
     private val server = embeddedServer(Netty, 8008) {
         val client = HttpClient(CIO)

@@ -23,12 +23,12 @@
 package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.restserver.annotation.Controller
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestBody
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestMapping
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
+import eu.thesimplecloud.simplecloud.restserver.annotation.RestController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
+import eu.thesimplecloud.simplecloud.restserver.service.AuthService
 import eu.thesimplecloud.simplecloud.restserver.service.UsernameAndPasswordCredentials
 
 /**
@@ -37,10 +37,10 @@ import eu.thesimplecloud.simplecloud.restserver.service.UsernameAndPasswordCrede
  * Time: 17:59
  * @author Frederick Baier
  */
-@Controller(1, "login")
+@RestController(1, "login")
 class LoginController @Inject constructor(
-    private val authService: IAuthService
-) : IController {
+    private val authService: AuthService
+) : eu.thesimplecloud.simplecloud.restserver.controller.Controller {
 
     @RequestMapping(RequestType.POST, "", "")
     fun handleLogin(@RequestBody credentials: UsernameAndPasswordCredentials): TokenResponse {

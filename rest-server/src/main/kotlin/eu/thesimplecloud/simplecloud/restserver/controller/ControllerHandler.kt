@@ -22,32 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.restserver.controller
 
-import com.google.inject.Inject
-import com.google.inject.Injector
-import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.load.ControllerLoader
-
-
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 09:39
+ * Time: 09:40
  * @author Frederick Baier
  */
-class ControllerHandler constructor(
-    private val restServer: RestServer,
-    private val injector: Injector
-) : IControllerHandler {
+interface ControllerHandler {
 
-    override fun registerController(controllerClass: Class<out IController>) {
-        val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
-        routes.forEach { this.restServer.registerMethodRoute(it) }
-    }
+    fun registerController(controllerClass: Class<out Controller>)
 
-    override fun unregisterController(controllerClass: Class<out IController>) {
-        TODO("Not yet implemented")
-    }
-
+    fun unregisterController(controllerClass: Class<out Controller>)
 
 }

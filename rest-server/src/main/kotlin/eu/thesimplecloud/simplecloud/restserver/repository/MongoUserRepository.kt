@@ -25,10 +25,8 @@ package eu.thesimplecloud.simplecloud.restserver.repository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.morphia.Datastore
-import dev.morphia.query.Query
 import eu.thesimplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -39,4 +37,4 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class MongoUserRepository @Inject constructor(
     datastore: Datastore
-) : DefaultMongoRepository<String, User>(datastore, User::class.java), IUserRepository
+) : DefaultMongoRepository<String, User>(datastore, User::class.java), UserRepository

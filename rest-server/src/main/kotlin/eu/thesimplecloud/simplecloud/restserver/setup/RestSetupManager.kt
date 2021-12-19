@@ -26,7 +26,7 @@ import com.google.common.collect.Maps
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestBody
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.controller.VirtualMethod
 import eu.thesimplecloud.simplecloud.restserver.setup.response.CurrentSetupRequestResponse
@@ -78,7 +78,7 @@ class RestSetupManager(
             "",
             listOf(methodRouteParameter),
             createVirtualMethod(setup.setupName),
-            object : IController {}
+            object : Controller {}
         )
 
         this.restServer.registerMethodRoute(methodRoute)
@@ -98,7 +98,7 @@ class RestSetupManager(
             "",
             emptyList(),
             virtualMethod,
-            object : IController {}
+            object : Controller {}
         )
 
         this.restServer.registerMethodRoute(methodRoute)

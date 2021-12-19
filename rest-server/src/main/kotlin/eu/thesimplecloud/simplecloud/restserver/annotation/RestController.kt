@@ -20,18 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.restserver.controller
+package eu.thesimplecloud.simplecloud.restserver.annotation
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
- * Time: 09:40
+ * Time: 09:10
  * @author Frederick Baier
  */
-interface IControllerHandler {
-
-    fun registerController(controllerClass: Class<out IController>)
-
-    fun unregisterController(controllerClass: Class<out IController>)
-
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class RestController(
+    val version: Int,
+    val topic: String,
+    val additionalPath: String = ""
+)

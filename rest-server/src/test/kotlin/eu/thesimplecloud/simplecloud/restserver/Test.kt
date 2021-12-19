@@ -24,9 +24,7 @@ package eu.thesimplecloud.simplecloud.restserver
 
 import com.ea.async.Async
 import com.google.inject.Guice
-import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
-import org.junit.Test
 import java.io.File
 
 /**

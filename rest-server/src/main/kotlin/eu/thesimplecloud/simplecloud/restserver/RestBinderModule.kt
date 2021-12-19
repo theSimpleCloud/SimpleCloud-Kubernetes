@@ -23,12 +23,12 @@
 package eu.thesimplecloud.simplecloud.restserver
 
 import com.google.inject.AbstractModule
-import eu.thesimplecloud.simplecloud.restserver.repository.IUserRepository
+import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
+import eu.thesimplecloud.simplecloud.restserver.service.AuthServiceImpl
 import eu.thesimplecloud.simplecloud.restserver.service.AuthService
-import eu.thesimplecloud.simplecloud.restserver.service.IAuthService
-import eu.thesimplecloud.simplecloud.restserver.service.IUserService
 import eu.thesimplecloud.simplecloud.restserver.service.UserService
+import eu.thesimplecloud.simplecloud.restserver.service.UserServiceImpl
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,9 +40,9 @@ class RestBinderModule : AbstractModule() {
 
 
     override fun configure() {
-        bind(IUserRepository::class.java).to(MongoUserRepository::class.java)
-        bind(IUserService::class.java).to(UserService::class.java)
-        bind(IAuthService::class.java).to(AuthService::class.java)
+        bind(UserRepository::class.java).to(MongoUserRepository::class.java)
+        bind(UserService::class.java).to(UserServiceImpl::class.java)
+        bind(AuthService::class.java).to(AuthServiceImpl::class.java)
     }
 
 

@@ -27,7 +27,7 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.service.ITemplateService
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,10 +35,10 @@ import eu.thesimplecloud.simplecloud.restserver.controller.IController
  * Time: 22:09
  * @author Frederick Baier
  */
-@Controller(1, "cloud/template")
+@RestController(1, "cloud/template")
 class TemplateController @Inject constructor(
     private val templateService: ITemplateService,
-) : IController {
+) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.template.get")
     fun handleGetAll(): List<TemplateConfiguration> {

@@ -23,10 +23,9 @@
 package eu.thesimplecloud.simplecloud.restserver.controller.load
 
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
 import eu.thesimplecloud.simplecloud.restserver.controller.MethodRoute
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import eu.thesimplecloud.simplecloud.restserver.annotation.Controller
+import eu.thesimplecloud.simplecloud.restserver.annotation.RestController
 import eu.thesimplecloud.simplecloud.restserver.controller.VirtualMethod
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
@@ -38,11 +37,11 @@ import java.lang.reflect.Parameter
  * @author Frederick Baier
  */
 class ControllerLoader(
-    private val controller: IController
+    private val controller: eu.thesimplecloud.simplecloud.restserver.controller.Controller
 ) {
 
     private val controllerClass = this.controller::class.java
-    private val controllerAnnotation = controllerClass.getAnnotation(Controller::class.java)
+    private val controllerAnnotation = controllerClass.getAnnotation(RestController::class.java)
 
     fun generateRoutes(): List<MethodRoute> {
         checkForControllerAnnotation()

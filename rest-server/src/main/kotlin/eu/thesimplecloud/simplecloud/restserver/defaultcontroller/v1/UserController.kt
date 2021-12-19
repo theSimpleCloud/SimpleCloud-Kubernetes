@@ -25,8 +25,8 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
-import eu.thesimplecloud.simplecloud.restserver.service.IUserService
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
+import eu.thesimplecloud.simplecloud.restserver.service.UserService
 import eu.thesimplecloud.simplecloud.restserver.user.User
 
 /**
@@ -35,10 +35,10 @@ import eu.thesimplecloud.simplecloud.restserver.user.User
  * Time: 12:09
  * @author Frederick Baier
  */
-@Controller(1, "user")
+@RestController(1, "user")
 class UserController @Inject constructor(
-    private val userService: IUserService
-) : IController {
+    private val userService: UserService
+) : Controller {
 
     @RequestMapping(RequestType.GET, "self", "web.user.get.self")
     fun handleUserGetSelf(@RequestingUser user: User): User {

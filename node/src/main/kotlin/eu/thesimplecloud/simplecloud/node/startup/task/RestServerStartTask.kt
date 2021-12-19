@@ -22,12 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.task
 
-import com.google.inject.Guice
 import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.restserver.RestBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
+import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandlerImpl
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import java.util.concurrent.CompletableFuture
 
@@ -48,7 +47,7 @@ class RestServerStartTask(
         return CloudCompletableFuture.completedFuture(restServer)
     }
 
-    private fun registerController(controllerHandler: ControllerHandler) {
+    private fun registerController(controllerHandler: ControllerHandlerImpl) {
         controllerHandler.registerController(UserController::class.java)
         controllerHandler.registerController(LoginController::class.java)
         controllerHandler.registerController(ProcessGroupController::class.java)

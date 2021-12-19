@@ -27,7 +27,7 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
-import eu.thesimplecloud.simplecloud.restserver.controller.IController
+import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,10 +35,10 @@ import eu.thesimplecloud.simplecloud.restserver.controller.IController
  * Time: 22:10
  * @author Frederick Baier
  */
-@Controller(1, "cloud/jvmargs")
+@RestController(1, "cloud/jvmargs")
 class JvmArgumentsController @Inject constructor(
     private val jvmService: IJvmArgumentsService,
-) : IController {
+) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.jvmargs.get")
     fun handleGetAll(): List<JvmArgumentConfiguration> {
