@@ -26,23 +26,23 @@ import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
-import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudProxyGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudServerGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudProxyGroupUpdateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudServerGroupUpdateRequestImpl
 import eu.thesimplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudLobbyGroup
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudServerGroup
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupDeleteRequest
-import eu.thesimplecloud.simplecloud.api.request.group.IProcessGroupCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
+import eu.thesimplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
+import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
 import kotlin.IllegalArgumentException
@@ -55,57 +55,57 @@ import kotlin.IllegalArgumentException
  */
 @Singleton
 class TestCloudProcessGroupService @Inject constructor(
-    private val validatorService: IValidatorService,
+    private val validatorService: ValidatorService,
     private val groupFactory: CloudProcessGroupFactory
-) : IInternalCloudProcessGroupService {
+) : InternalCloudProcessGroupService {
 
-    private val groups = ConcurrentHashMap<String, ICloudProcessGroup>()
+    private val groups = ConcurrentHashMap<String, CloudProcessGroup>()
     private val validator = validatorService.getValidator(AbstractCloudProcessGroupConfiguration::class.java)
 
-    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<ICloudProcessGroup> {
+    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
         await(this.validator.validate(configuration))
         val group = this.groupFactory.create(configuration)
         return updateGroupInternal0(group)
     }
 
-    override fun deleteGroupInternal(group: ICloudProcessGroup) {
+    override fun deleteGroupInternal(group: CloudProcessGroup) {
         this.groups.remove(group.getIdentifier())
     }
 
-    override fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<ICloudProcessGroup> {
+    override fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
         await(this.validator.validate(configuration))
         val group = this.groupFactory.create(configuration)
         return updateGroupInternal0(group)
     }
 
-    private fun updateGroupInternal0(group: ICloudProcessGroup): CompletableFuture<ICloudProcessGroup> {
+    private fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<CloudProcessGroup> {
         this.groups[group.getIdentifier()] = group
         return CloudCompletableFuture.completedFuture(group)
     }
 
-    override fun findByName(name: String): CompletableFuture<ICloudProcessGroup> {
+    override fun findByName(name: String): CompletableFuture<CloudProcessGroup> {
         return CloudCompletableFuture.supplyAsync {
             this.groups[name] ?: throw NoSuchElementException("Group does not exist")
         }.nonNull()
     }
 
-    override fun findAll(): CompletableFuture<List<ICloudProcessGroup>> {
+    override fun findAll(): CompletableFuture<List<CloudProcessGroup>> {
         return CloudCompletableFuture.supplyAsync { this.groups.values.toList() }.nonNull()
     }
 
-    override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): IProcessGroupCreateRequest {
-        return ProcessGroupCreateRequest( this, configuration)
+    override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): ProcessGroupCreateRequest {
+        return ProcessGroupCreateRequestImpl(this, configuration)
     }
 
-    override fun createGroupDeleteRequest(group: ICloudProcessGroup): IProcessGroupDeleteRequest {
-        return ProcessGroupDeleteRequest(this, group)
+    override fun createGroupDeleteRequest(group: CloudProcessGroup): ProcessGroupDeleteRequest {
+        return ProcessGroupDeleteRequestImpl(this, group)
     }
 
-    override fun createGroupUpdateRequest(group: ICloudProcessGroup): ICloudProcessGroupUpdateRequest {
+    override fun createGroupUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest {
         return when (group) {
-            is ICloudLobbyGroup -> CloudLobbyGroupUpdateRequest(this, group)
-            is ICloudProxyGroup -> CloudProxyGroupUpdateRequest(this, group)
-            is ICloudServerGroup -> CloudServerGroupUpdateRequest(this, group)
+            is CloudLobbyGroup -> CloudLobbyGroupUpdateRequestImpl(this, group)
+            is CloudProxyGroup -> CloudProxyGroupUpdateRequestImpl(this, group)
+            is CloudServerGroup -> CloudServerGroupUpdateRequestImpl(this, group)
             else -> throw IllegalArgumentException("Unknown group type: ${group::class.java.name}")
         }
     }

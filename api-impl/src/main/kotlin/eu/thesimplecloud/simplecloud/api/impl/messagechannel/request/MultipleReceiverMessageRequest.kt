@@ -24,8 +24,8 @@ package eu.thesimplecloud.simplecloud.api.impl.messagechannel.request
 
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
-import eu.thesimplecloud.simplecloud.api.messagechannel.IMessageRequest
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import eu.thesimplecloud.simplecloud.api.messagechannel.MessageRequest
+import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -37,9 +37,9 @@ import java.util.concurrent.CompletableFuture
 class MultipleReceiverMessageRequest(
     private val topic: String,
     private val message: Any,
-    private val receivers: List<INetworkComponent>,
+    private val receivers: List<NetworkComponent>,
     private val queryHandler: IgniteQueryHandler
-) : IMessageRequest<Unit> {
+) : MessageRequest<Unit> {
 
     override fun submit(): CompletableFuture<Unit> {
         this.receivers.forEach { receiver ->
@@ -48,7 +48,7 @@ class MultipleReceiverMessageRequest(
         return unitFuture()
     }
 
-    private fun sendMessage(receiver: INetworkComponent) {
+    private fun sendMessage(receiver: NetworkComponent) {
         queryHandler.sendQuery<Unit>(topic, message, receiver)
     }
 }

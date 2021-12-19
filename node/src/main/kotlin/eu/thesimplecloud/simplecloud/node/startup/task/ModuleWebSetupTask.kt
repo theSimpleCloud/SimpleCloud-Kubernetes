@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.module.ModuleType
-import eu.thesimplecloud.simplecloud.node.repository.IModuleRepository
+import eu.thesimplecloud.simplecloud.node.repository.ModuleRepository
 import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
@@ -39,7 +39,7 @@ import java.util.concurrent.CompletableFuture
  */
 class ModuleWebSetupTask(
     private val setupManager: RestSetupManager,
-    private val moduleRepository: IModuleRepository,
+    private val moduleRepository: ModuleRepository,
     private val moduleType: ModuleType
 ) {
 

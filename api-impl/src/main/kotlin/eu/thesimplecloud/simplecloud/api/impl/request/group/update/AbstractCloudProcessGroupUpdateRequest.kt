@@ -23,16 +23,14 @@
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nullable
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProcessGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
+import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import org.checkerframework.checker.units.qual.C
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -42,8 +40,8 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 abstract class AbstractCloudProcessGroupUpdateRequest(
-    private val processGroup: ICloudProcessGroup
-) : ICloudProcessGroupUpdateRequest {
+    private val processGroup: CloudProcessGroup
+) : CloudProcessGroupUpdateRequest {
 
     @Volatile
     protected var maxMemory: Int = this.processGroup.getMaxMemory()
@@ -70,111 +68,111 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var startPriority: Int = this.processGroup.getStartPriority()
 
     @Volatile
-    protected var versionFuture: CompletableFuture<IProcessVersion> = this.processGroup.getVersion()
+    protected var versionFuture: CompletableFuture<ProcessVersion> = this.processGroup.getVersion()
 
     @Volatile
-    protected var templateFuture: CompletableFuture<ITemplate> = this.processGroup.getTemplate()
+    protected var templateFuture: CompletableFuture<Template> = this.processGroup.getTemplate()
 
     @Volatile
-    protected var jvmArgumentsFuture: CompletableFuture<IJVMArguments?> = this.processGroup.getJvmArguments() as CompletableFuture<IJVMArguments?>
+    protected var jvmArgumentsFuture: CompletableFuture<JVMArguments?> = this.processGroup.getJvmArguments() as CompletableFuture<JVMArguments?>
 
     @Volatile
-    protected var onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration> =
+    protected var onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration> =
         this.processGroup.getProcessOnlineCountConfiguration()
 
     @Volatile
     protected var nodesAllowedToStartOn: List<String> = this.processGroup.getNodeNamesAllowedToStartServicesOn()
 
-    override fun getProcessGroup(): ICloudProcessGroup {
+    override fun getProcessGroup(): CloudProcessGroup {
         return this.processGroup
     }
 
-    override fun setMaxMemory(memory: Int): ICloudProcessGroupUpdateRequest {
+    override fun setMaxMemory(memory: Int): CloudProcessGroupUpdateRequest {
         this.maxMemory = memory
         return this
     }
 
-    override fun setMaxPlayers(players: Int): ICloudProcessGroupUpdateRequest {
+    override fun setMaxPlayers(players: Int): CloudProcessGroupUpdateRequest {
         this.maxPlayers = players
         return this
     }
 
-    override fun setVersion(version: IProcessVersion): ICloudProcessGroupUpdateRequest {
+    override fun setVersion(version: ProcessVersion): CloudProcessGroupUpdateRequest {
         this.versionFuture = CloudCompletableFuture.completedFuture(version)
         return this
     }
 
-    override fun setVersion(versionFuture: CompletableFuture<IProcessVersion>): ICloudProcessGroupUpdateRequest {
+    override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProcessGroupUpdateRequest {
         this.versionFuture = versionFuture
         return this
     }
 
-    override fun setTemplate(template: ITemplate): ICloudProcessGroupUpdateRequest {
+    override fun setTemplate(template: Template): CloudProcessGroupUpdateRequest {
         this.templateFuture = CloudCompletableFuture.completedFuture(template)
         return this
     }
 
-    override fun setTemplate(templateFuture: CompletableFuture<ITemplate>): ICloudProcessGroupUpdateRequest {
+    override fun setTemplate(templateFuture: CompletableFuture<Template>): CloudProcessGroupUpdateRequest {
         this.templateFuture = templateFuture
         return this
     }
 
-    override fun setJvmArguments(jvmArguments: IJVMArguments?): ICloudProcessGroupUpdateRequest {
+    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudProcessGroupUpdateRequest {
         this.jvmArgumentsFuture = CloudCompletableFuture.completedFuture(jvmArguments)
         return this
     }
 
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<IJVMArguments>): ICloudProcessGroupUpdateRequest {
-        this.jvmArgumentsFuture = jvmArgumentsFuture as CompletableFuture<IJVMArguments?>
+    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudProcessGroupUpdateRequest {
+        this.jvmArgumentsFuture = jvmArgumentsFuture as CompletableFuture<JVMArguments?>
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: IProcessesOnlineCountConfiguration): ICloudProcessGroupUpdateRequest {
+    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProcessGroupUpdateRequest {
         this.onlineCountConfigurationFuture = CloudCompletableFuture.completedFuture(onlineCountConfiguration)
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<IProcessesOnlineCountConfiguration>): ICloudProcessGroupUpdateRequest {
+    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProcessGroupUpdateRequest {
         this.onlineCountConfigurationFuture = onlineCountConfigurationFuture
         return this
     }
 
-    override fun setNodesAllowedToStartOn(nodes: List<String>): ICloudProcessGroupUpdateRequest {
+    override fun setNodesAllowedToStartOn(nodes: List<String>): CloudProcessGroupUpdateRequest {
         this.nodesAllowedToStartOn = nodes
         return this
     }
 
-    override fun setMaintenance(maintenance: Boolean): ICloudProcessGroupUpdateRequest {
+    override fun setMaintenance(maintenance: Boolean): CloudProcessGroupUpdateRequest {
         this.maintenance = maintenance
         return this
     }
 
-    override fun setMinimumOnlineProcessCount(minCount: Int): ICloudProcessGroupUpdateRequest {
+    override fun setMinimumOnlineProcessCount(minCount: Int): CloudProcessGroupUpdateRequest {
         this.minProcessCount = minCount
         return this
     }
 
-    override fun setMaximumOnlineProcessCount(maxCount: Int): ICloudProcessGroupUpdateRequest {
+    override fun setMaximumOnlineProcessCount(maxCount: Int): CloudProcessGroupUpdateRequest {
         this.maxProcessCount = maxCount
         return this
     }
 
-    override fun setJoinPermission(permission: String?): ICloudProcessGroupUpdateRequest {
+    override fun setJoinPermission(permission: String?): CloudProcessGroupUpdateRequest {
         this.joinPermission = permission
         return this
     }
 
-    override fun setStateUpdating(stateUpdating: Boolean): ICloudProcessGroupUpdateRequest {
+    override fun setStateUpdating(stateUpdating: Boolean): CloudProcessGroupUpdateRequest {
         this.stateUpdating = stateUpdating
         return this
     }
 
-    override fun setStartPriority(priority: Int): ICloudProcessGroupUpdateRequest {
+    override fun setStartPriority(priority: Int): CloudProcessGroupUpdateRequest {
         this.startPriority = priority
         return this
     }
 
-    override fun submit(): CompletableFuture<ICloudProcessGroup> {
+    override fun submit(): CompletableFuture<CloudProcessGroup> {
         val version = await(this.versionFuture)
         val template = await(this.templateFuture)
         val jvmArguments = await(this.jvmArgumentsFuture.nullable())
@@ -190,12 +188,12 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     abstract fun submit0(
-        version: IProcessVersion,
-        template: ITemplate,
-        jvmArguments: IJVMArguments?,
-        onlineCountConfiguration: IProcessesOnlineCountConfiguration,
+        version: ProcessVersion,
+        template: Template,
+        jvmArguments: JVMArguments?,
+        onlineCountConfiguration: ProcessesOnlineCountConfiguration,
         nodesAllowedToStartOn: List<String>
-    ): CompletableFuture<ICloudProcessGroup>
+    ): CompletableFuture<CloudProcessGroup>
 
 
 }

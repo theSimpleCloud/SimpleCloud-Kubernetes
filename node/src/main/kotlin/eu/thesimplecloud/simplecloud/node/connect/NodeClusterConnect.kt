@@ -30,9 +30,9 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
@@ -45,7 +45,6 @@ import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
-import eu.thesimplecloud.simplecloud.node.util.SingleClassBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import org.apache.ignite.Ignite
@@ -76,8 +75,8 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun initializeMessageChannels(injector: Injector): CompletableFuture<Unit> {
-        val messageChannelManager = injector.getInstance(IMessageChannelManager::class.java)
-        messageChannelManager.registerMessageChannel<ProcessStartConfiguration, ICloudProcess>("start_process")
+        val messageChannelManager = injector.getInstance(MessageChannelManager::class.java)
+        messageChannelManager.registerMessageChannel<ProcessStartConfiguration, CloudProcess>("start_process")
             .setMessageHandler(injector.getInstance(StartProcessMessageHandler::class.java))
         return unitFuture()
     }

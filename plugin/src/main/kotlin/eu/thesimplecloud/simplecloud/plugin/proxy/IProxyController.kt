@@ -22,18 +22,18 @@
 
 package eu.thesimplecloud.simplecloud.plugin.proxy
 
-import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+import eu.thesimplecloud.simplecloud.api.player.PlayerConnection
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 
 interface IProxyController {
 
-    fun handleLogin(request: IPlayerConnection)
+    fun handleLogin(request: PlayerConnection)
 
-    fun handlePostLogin(request: IPlayerConnection)
+    fun handlePostLogin(request: PlayerConnection)
 
-    fun handleDisconnect(request: IPlayerConnection)
+    fun handleDisconnect(request: PlayerConnection)
 
     fun handleServerPreConnect(request: ServerPreConnectRequest)
 

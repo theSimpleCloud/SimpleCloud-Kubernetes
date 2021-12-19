@@ -23,8 +23,8 @@
 package eu.thesimplecloud.simplecloud.api.internal
 
 import eu.thesimplecloud.simplecloud.api.CloudAPI
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,9 +38,9 @@ abstract class InternalCloudAPI : CloudAPI() {
         instance = this
     }
 
-    abstract override fun getProcessService(): IInternalCloudProcessService
+    abstract override fun getProcessService(): InternalCloudProcessService
 
-    abstract override fun getProcessGroupService(): IInternalCloudProcessGroupService
+    abstract override fun getProcessGroupService(): InternalCloudProcessGroupService
 
     companion object {
         @JvmStatic

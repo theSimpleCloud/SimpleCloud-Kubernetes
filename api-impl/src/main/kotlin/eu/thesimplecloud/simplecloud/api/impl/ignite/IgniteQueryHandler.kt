@@ -26,10 +26,10 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.timeout.timout
 import eu.thesimplecloud.simplecloud.api.future.toFutureList
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.service.INodeService
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import eu.thesimplecloud.simplecloud.api.service.NodeService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import org.apache.ignite.Ignite
 import org.apache.ignite.lang.IgniteBiPredicate
@@ -45,9 +45,9 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 @Singleton
 class IgniteQueryHandler @Inject constructor(
-    private val messageChannelManager: IMessageChannelManager,
-    private val nodeService: INodeService,
-    private val processService: ICloudProcessService,
+    private val messageChannelManager: MessageChannelManager,
+    private val nodeService: NodeService,
+    private val processService: CloudProcessService,
     private val ignite: Ignite
 ) {
 
@@ -57,7 +57,7 @@ class IgniteQueryHandler @Inject constructor(
         startListening()
     }
 
-    fun <T : Any> sendQuery(topic: String, message: Any, networkComponent: INetworkComponent): CompletableFuture<T> {
+    fun <T : Any> sendQuery(topic: String, message: Any, networkComponent: NetworkComponent): CompletableFuture<T> {
         val requestId = UUID.randomUUID()
         val future = createFutureWithTimeout<T>(600)
         createIgniteQuery(requestId, future)
@@ -126,9 +126,9 @@ class IgniteQueryHandler @Inject constructor(
         return this.queries.firstOrNull { it.queryId == messageId }
     }
 
-    private fun getNetworkComponentByUniqueId(senderNodeId: UUID): CompletableFuture<out INetworkComponent> {
-        val nodeFuture: CompletableFuture<out INetworkComponent> = this.nodeService.findNodeByUniqueId(senderNodeId)
-        val processFuture: CompletableFuture<out INetworkComponent> =
+    private fun getNetworkComponentByUniqueId(senderNodeId: UUID): CompletableFuture<out NetworkComponent> {
+        val nodeFuture: CompletableFuture<out NetworkComponent> = this.nodeService.findNodeByUniqueId(senderNodeId)
+        val processFuture: CompletableFuture<out NetworkComponent> =
             this.processService.findProcessByUniqueId(senderNodeId)
         return listOf(nodeFuture, processFuture).toFutureList().thenApply { it.first() }
     }

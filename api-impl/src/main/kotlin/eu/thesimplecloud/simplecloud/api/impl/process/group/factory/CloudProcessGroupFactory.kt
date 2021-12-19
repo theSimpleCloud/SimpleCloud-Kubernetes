@@ -25,9 +25,9 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group.factory
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.process.group.AbstractCloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyProcessGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyProcessGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerProcessGroup
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyProcessGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyProcessGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerProcessGroupImpl
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.validator.GroupConfigurationValidator
@@ -41,12 +41,12 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 @Singleton
 class CloudProcessGroupFactory @Inject constructor(
-    private val templateService: ITemplateService,
-    private val processVersionService: IProcessVersionService,
-    private val jvmArgumentsService: IJvmArgumentsService,
-    private val processOnlineCountService: IProcessOnlineCountService,
-    private val nodeService: INodeService,
-    private val processService: ICloudProcessService,
+    private val templateService: TemplateService,
+    private val processVersionService: ProcessVersionService,
+    private val jvmArgumentsService: JvmArgumentsService,
+    private val processOnlineCountService: ProcessOnlineCountService,
+    private val nodeService: NodeService,
+    private val processService: CloudProcessService,
     private val groupConfigurationValidator: GroupConfigurationValidator
 ) {
 
@@ -57,12 +57,12 @@ class CloudProcessGroupFactory @Inject constructor(
 
         val constructor = groupClass.getDeclaredConstructor(
             configuration::class.java,
-            ITemplateService::class.java,
-            IProcessVersionService::class.java,
-            IJvmArgumentsService::class.java,
-            IProcessOnlineCountService::class.java,
-            INodeService::class.java,
-            ICloudProcessService::class.java,
+            TemplateService::class.java,
+            ProcessVersionService::class.java,
+            JvmArgumentsService::class.java,
+            ProcessOnlineCountService::class.java,
+            NodeService::class.java,
+            CloudProcessService::class.java,
         )
         return constructor.newInstance(
             configuration,
@@ -78,13 +78,13 @@ class CloudProcessGroupFactory @Inject constructor(
     private fun getGroupClassByType(type: ProcessGroupType): Class<out AbstractCloudProcessGroup> {
         return when (type) {
             ProcessGroupType.PROXY -> {
-                CloudProxyProcessGroup::class.java
+                CloudProxyProcessGroupImpl::class.java
             }
             ProcessGroupType.LOBBY -> {
-                CloudLobbyProcessGroup::class.java
+                CloudLobbyProcessGroupImpl::class.java
             }
             ProcessGroupType.SERVER -> {
-                CloudServerProcessGroup::class.java
+                CloudServerProcessGroupImpl::class.java
             }
         }
     }

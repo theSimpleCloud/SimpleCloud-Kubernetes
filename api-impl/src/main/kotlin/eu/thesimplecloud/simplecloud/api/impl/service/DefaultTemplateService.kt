@@ -24,14 +24,14 @@ package eu.thesimplecloud.simplecloud.api.impl.service
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
-import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequest
-import eu.thesimplecloud.simplecloud.api.impl.template.Template
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService
-import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.template.TemplateImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalTemplateService
+import eu.thesimplecloud.simplecloud.api.request.template.TemplateCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.template.TemplateDeleteRequest
+import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.api.validator.TemplateConfigurationValidator
 import java.util.concurrent.CompletableFuture
@@ -45,34 +45,34 @@ import java.util.concurrent.CompletableFuture
 open class DefaultTemplateService(
     private val templateConfigurationValidator: TemplateConfigurationValidator,
     private val igniteRepository: IgniteTemplateRepository
-) : IInternalTemplateService {
+) : InternalTemplateService {
 
-    override fun findByName(name: String): CompletableFuture<ITemplate> {
+    override fun findByName(name: String): CompletableFuture<Template> {
         val completableFuture = this.igniteRepository.find(name)
-        return completableFuture.thenApply { Template(it, this) }
+        return completableFuture.thenApply { TemplateImpl(it, this) }
     }
 
-    override fun findAll(): CompletableFuture<List<ITemplate>> {
+    override fun findAll(): CompletableFuture<List<Template>> {
         val completableFuture = this.igniteRepository.findAll()
-        return completableFuture.thenApply { list -> list.map { Template(it, this) } }
+        return completableFuture.thenApply { list -> list.map { TemplateImpl(it, this) } }
     }
 
-    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<Template> {
         await(this.templateConfigurationValidator.validate(configuration))
         this.igniteRepository.save(configuration.name, configuration)
-        return completedFuture(Template(configuration, this))
+        return completedFuture(TemplateImpl(configuration, this))
     }
 
-    override fun deleteTemplateInternal(template: ITemplate) {
+    override fun deleteTemplateInternal(template: Template) {
         this.igniteRepository.remove(template.getIdentifier())
     }
 
-    override fun createTemplateCreateRequest(configuration: TemplateConfiguration): ITemplateCreateRequest {
-        return TemplateCreateRequest(this, configuration)
+    override fun createTemplateCreateRequest(configuration: TemplateConfiguration): TemplateCreateRequest {
+        return TemplateCreateRequestImpl(this, configuration)
     }
 
-    override fun createTemplateDeleteRequest(template: ITemplate): ITemplateDeleteRequest {
-        return TemplateDeleteRequest(this, template)
+    override fun createTemplateDeleteRequest(template: Template): TemplateDeleteRequest {
+        return TemplateDeleteRequestImpl(this, template)
     }
 
 }

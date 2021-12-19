@@ -22,39 +22,38 @@
 
 package eu.thesimplecloud.simplecloud.node.process
 
-import com.ea.async.Async.await
 import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.node.task.NodeToStartProcessSelectionTask
 import java.util.concurrent.CompletableFuture
 
 class MultiNodeProcessStarter(
-    private val nodeService: INodeService,
+    private val nodeService: NodeService,
     private val configuration: ProcessStartConfiguration,
     private val injector: Injector
 ) {
 
-    private val messageChannelManager = this.injector.getInstance(IMessageChannelManager::class.java)
+    private val messageChannelManager = this.injector.getInstance(MessageChannelManager::class.java)
 
-    fun startProcess(): CompletableFuture<ICloudProcess> {
+    fun startProcess(): CompletableFuture<CloudProcess> {
         val node = selectNodeForProcess()
         return startProcessOnNode(node)
     }
 
-    private fun selectNodeForProcess(): INode {
+    private fun selectNodeForProcess(): Node {
         return NodeToStartProcessSelectionTask(
             this.configuration.maxMemory,
             this.nodeService
         ).run().join()
     }
 
-    private fun startProcessOnNode(node: INode): CompletableFuture<ICloudProcess> {
+    private fun startProcessOnNode(node: Node): CompletableFuture<CloudProcess> {
         val messageChannel =
-            this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, ICloudProcess>("start_process")!!
+            this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, CloudProcess>("start_process")!!
         return messageChannel.createMessageRequest(this.configuration, node).submit()
     }
 

@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.plugin.proxy
 
-import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+import eu.thesimplecloud.simplecloud.api.player.PlayerConnection
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import eu.thesimplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
@@ -30,15 +30,15 @@ import eu.thesimplecloud.simplecloud.plugin.proxy.request.login.PlayerLoginReque
 
 class ProxyControllerImpl : IProxyController {
 
-    override fun handleLogin(request: IPlayerConnection) {
+    override fun handleLogin(request: PlayerConnection) {
         PlayerLoginRequestHandler(request).handle()
     }
 
-    override fun handlePostLogin(request: IPlayerConnection) {
+    override fun handlePostLogin(request: PlayerConnection) {
         TODO("Not yet implemented")
     }
 
-    override fun handleDisconnect(request: IPlayerConnection) {
+    override fun handleDisconnect(request: PlayerConnection) {
         TODO("Not yet implemented")
     }
 

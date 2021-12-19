@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nonNull
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.repository.Repository
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.ScanQuery
@@ -39,7 +39,7 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractIgniteRepository<T : Any>(
     private val igniteCache: IgniteCache<String, T>
-) : IRepository<String, T> {
+) : Repository<String, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync { this.igniteCache.toList().map { it.value } }.nonNull()

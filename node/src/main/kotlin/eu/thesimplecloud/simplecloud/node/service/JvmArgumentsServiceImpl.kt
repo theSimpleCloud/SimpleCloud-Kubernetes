@@ -26,7 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.JvmArgumentsEntity
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
@@ -40,7 +40,7 @@ class JvmArgumentsServiceImpl @Inject constructor(
     igniteRepository
 ) {
 
-    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments> {
+    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<JVMArguments> {
         val result = super.createJvmArgsInternal(configuration)
         saveToDatabase(configuration)
         return result
@@ -51,7 +51,7 @@ class JvmArgumentsServiceImpl @Inject constructor(
         this.mongoRepository.save(configuration.name, entity)
     }
 
-    override fun deleteJvmArgsInternal(jvmArgs: IJVMArguments) {
+    override fun deleteJvmArgsInternal(jvmArgs: JVMArguments) {
         super.deleteJvmArgsInternal(jvmArgs)
         this.mongoRepository.remove(jvmArgs.getName())
     }

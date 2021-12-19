@@ -22,13 +22,13 @@
 
 package eu.thesimplecloud.simplecloud.plugin.proxy.request.login
 
-import eu.thesimplecloud.simplecloud.api.player.ICloudPlayer
-import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+import eu.thesimplecloud.simplecloud.api.player.CloudPlayer
+import eu.thesimplecloud.simplecloud.api.player.PlayerConnection
 
 class PlayerLoginRequestHandler(
-    private val request: IPlayerConnection,
+    private val request: PlayerConnection,
 ) {
-    fun handle(): ICloudPlayer {
+    fun handle(): CloudPlayer {
         TODO()
     }
 

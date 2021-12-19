@@ -23,8 +23,6 @@
 package eu.thesimplecloud.simplecloud.api.impl.ignite.predicate
 
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.*
 

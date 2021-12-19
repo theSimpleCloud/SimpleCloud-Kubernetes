@@ -25,14 +25,14 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudLobbyGroupUpdateRequest
-import eu.thesimplecloud.simplecloud.api.request.group.update.ICloudProxyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.service.*
-import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
+import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,12 +42,12 @@ import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
  */
 @Singleton
 class ProcessGroupUpdateHandler @Inject constructor(
-    private val validatorService: IValidatorService,
-    private val groupService: ICloudProcessGroupService,
-    private val templateService: ITemplateService,
-    private val jvmArgumentsService: IJvmArgumentsService,
-    private val onlineCountService: IProcessOnlineCountService,
-    private val versionService: IProcessVersionService
+    private val validatorService: ValidatorService,
+    private val groupService: CloudProcessGroupService,
+    private val templateService: TemplateService,
+    private val jvmArgumentsService: JvmArgumentsService,
+    private val onlineCountService: ProcessOnlineCountService,
+    private val versionService: ProcessVersionService
 ) {
 
     fun update(configuration: AbstractCloudProcessGroupConfiguration) {
@@ -55,7 +55,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
         updateGroup(group, configuration)
     }
 
-    private fun updateGroup(group: ICloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
+    private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
         this.validatorService.getValidator(configuration::class.java).validate(configuration)
         val request = this.groupService.createGroupUpdateRequest(group)
         request.setMaxMemory(configuration.maxMemory)
@@ -78,12 +78,12 @@ class ProcessGroupUpdateHandler @Inject constructor(
             request.setJvmArguments(this.jvmArgumentsService.findByName(jvmArgumentName))
         }
 
-        if (request is ICloudProxyGroupUpdateRequest) {
+        if (request is CloudProxyGroupUpdateRequest) {
             configuration as CloudProxyProcessGroupConfiguration
             request.setStartPort(configuration.startPort)
         }
 
-        if (request is ICloudLobbyGroupUpdateRequest) {
+        if (request is CloudLobbyGroupUpdateRequest) {
             configuration as CloudLobbyProcessGroupConfiguration
             request.setLobbyPriority(configuration.lobbyPriority)
         }

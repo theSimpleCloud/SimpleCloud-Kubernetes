@@ -23,18 +23,18 @@
 package eu.thesimplecloud.simplecloud.api.impl.service
 
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
 
-open class DefaultTestProcessOnlineCountService : IProcessOnlineCountService {
-    override fun findByName(name: String): CompletableFuture<IProcessesOnlineCountConfiguration> {
+open class DefaultTestProcessOnlineCountService : ProcessOnlineCountService {
+    override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration> {
         return completedFuture(ProcessOnlineCountConfiguration())
     }
 
-    class ProcessOnlineCountConfiguration: IProcessesOnlineCountConfiguration {
-        override fun calculateOnlineCount(group: ICloudProcessGroup): Int {
+    class ProcessOnlineCountConfiguration: ProcessesOnlineCountConfiguration {
+        override fun calculateOnlineCount(group: CloudProcessGroup): Int {
             return 1
         }
 

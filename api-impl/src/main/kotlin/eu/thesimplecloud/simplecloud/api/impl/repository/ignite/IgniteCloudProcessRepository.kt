@@ -27,9 +27,8 @@ import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareGroupNamePredicate
 import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareUUIDPredicate
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessRepository
+import eu.thesimplecloud.simplecloud.api.repository.CloudProcessRepository
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,7 +43,7 @@ class IgniteCloudProcessRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<CloudProcessConfiguration>(
     ignite.getOrCreateCache("cloud-processes")
-), ICloudProcessRepository {
+), CloudProcessRepository {
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
         return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))

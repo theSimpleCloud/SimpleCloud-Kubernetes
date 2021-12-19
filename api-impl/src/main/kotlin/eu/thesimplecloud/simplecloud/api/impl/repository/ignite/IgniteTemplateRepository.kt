@@ -24,10 +24,9 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.repository.ITemplateRepository
+import eu.thesimplecloud.simplecloud.api.repository.TemplateRepository
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,4 +39,4 @@ class IgniteTemplateRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<TemplateConfiguration>(
     ignite.getOrCreateCache("cloud-templates")
-), ITemplateRepository
+), TemplateRepository

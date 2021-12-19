@@ -25,12 +25,11 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestMapping
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestPathParam
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
 import eu.thesimplecloud.simplecloud.restserver.annotation.RestController
-import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +39,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.Controller
  */
 @RestController(1, "cloud/node")
 class NodeController @Inject constructor(
-    private val nodeService: INodeService
+    private val nodeService: NodeService
 ) : eu.thesimplecloud.simplecloud.restserver.controller.Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.node.get")

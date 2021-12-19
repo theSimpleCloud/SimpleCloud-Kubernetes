@@ -24,13 +24,13 @@ package eu.thesimplecloud.simplecloud.node.task
 
 import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.container.container.IContainer
 import eu.thesimplecloud.simplecloud.container.image.IImage
 import java.util.concurrent.CompletableFuture
 
 class ProcessStartTask(
-    private val process: ICloudProcess,
+    private val process: CloudProcess,
     private val containerFactory: IContainer.Factory,
     private val imageFactory: IImage.Factory,
     private val injector: Injector

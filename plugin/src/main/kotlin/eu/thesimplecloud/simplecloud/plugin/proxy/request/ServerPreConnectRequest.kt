@@ -22,10 +22,10 @@
 
 package eu.thesimplecloud.simplecloud.plugin.proxy.request
 
-import eu.thesimplecloud.simplecloud.api.player.IPlayerConnection
+import eu.thesimplecloud.simplecloud.api.player.PlayerConnection
 
 class ServerPreConnectRequest(
-    val playerConnection: IPlayerConnection,
+    val playerConnection: PlayerConnection,
     val serverNameFrom: String,
     val serverNameTo: String
 )

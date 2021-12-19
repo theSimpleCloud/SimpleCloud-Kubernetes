@@ -23,8 +23,8 @@
 package eu.thesimplecloud.simplecloud.restserver.service
 
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -35,21 +35,21 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 @Singleton
-class TestNodeService : INodeService {
+class TestNodeService : NodeService {
 
-    override fun findNodeByName(name: String): CompletableFuture<INode> {
+    override fun findNodeByName(name: String): CompletableFuture<Node> {
         TODO("Not yet implemented")
     }
 
-    override fun findNodesByName(vararg names: String): CompletableFuture<List<INode>> {
+    override fun findNodesByName(vararg names: String): CompletableFuture<List<Node>> {
         TODO("Not yet implemented")
     }
 
-    override fun findAll(): CompletableFuture<List<INode>> {
+    override fun findAll(): CompletableFuture<List<Node>> {
         TODO("Not yet implemented")
     }
 
-    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
         TODO("Not yet implemented")
     }
 }

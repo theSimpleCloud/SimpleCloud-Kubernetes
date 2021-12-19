@@ -25,9 +25,8 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.ICloudProcessGroupRepository
+import eu.thesimplecloud.simplecloud.api.repository.CloudProcessGroupRepository
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,4 +39,4 @@ class IgniteCloudProcessGroupRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(
     ignite.getOrCreateCache("cloud-process-groups")
-), ICloudProcessGroupRepository
+), CloudProcessGroupRepository

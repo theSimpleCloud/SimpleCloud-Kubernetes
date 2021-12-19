@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 
 import com.ea.async.Async.await
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.service.TemplateService
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.Controller
@@ -37,7 +37,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.Controller
  */
 @RestController(1, "cloud/template")
 class TemplateController @Inject constructor(
-    private val templateService: ITemplateService,
+    private val templateService: TemplateService,
 ) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.template.get")

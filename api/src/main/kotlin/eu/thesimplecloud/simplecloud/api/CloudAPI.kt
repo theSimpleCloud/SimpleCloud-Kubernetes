@@ -22,13 +22,13 @@
 
 package eu.thesimplecloud.simplecloud.api
 
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.service.INodeService
-import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
-import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.service.NodeService
+import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
+import eu.thesimplecloud.simplecloud.api.service.TemplateService
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,19 +43,19 @@ abstract class CloudAPI {
     }
 
 
-    abstract fun getProcessGroupService(): ICloudProcessGroupService
+    abstract fun getProcessGroupService(): CloudProcessGroupService
 
-    abstract fun getProcessService(): ICloudProcessService
+    abstract fun getProcessService(): CloudProcessService
 
-    abstract fun getTemplateService(): ITemplateService
+    abstract fun getTemplateService(): TemplateService
 
-    abstract fun getProcessVersionService(): IProcessVersionService
+    abstract fun getProcessVersionService(): ProcessVersionService
 
-    abstract fun getJvmArgumentsService(): IJvmArgumentsService
+    abstract fun getJvmArgumentsService(): JvmArgumentsService
 
-    abstract fun getNodeService(): INodeService
+    abstract fun getNodeService(): NodeService
 
-    abstract fun getProcessOnlineCountService(): IProcessOnlineCountService
+    abstract fun getProcessOnlineCountService(): ProcessOnlineCountService
 
 
     companion object {

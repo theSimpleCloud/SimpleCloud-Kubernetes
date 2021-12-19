@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
 import eu.thesimplecloud.simplecloud.restserver.annotation.exclude.WebExcludeOutgoing
-import eu.thesimplecloud.simplecloud.api.utils.IIdentifiable
+import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,7 +40,7 @@ open class User(
     val username: String,
     @WebExcludeOutgoing
     val password: String
-) : IIdentifiable<String> {
+) : Identifiable<String> {
 
     //Default constructor for jackson
     private constructor() : this("", "")

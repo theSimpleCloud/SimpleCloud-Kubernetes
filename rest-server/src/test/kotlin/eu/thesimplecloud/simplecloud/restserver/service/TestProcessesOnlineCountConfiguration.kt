@@ -23,8 +23,8 @@
 package eu.thesimplecloud.simplecloud.restserver.service
 
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,9 +35,9 @@ import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOn
 @Singleton
 class TestProcessesOnlineCountConfiguration(
     private val name: String
-) : IProcessesOnlineCountConfiguration {
+) : ProcessesOnlineCountConfiguration {
 
-    override fun calculateOnlineCount(group: ICloudProcessGroup): Int {
+    override fun calculateOnlineCount(group: CloudProcessGroup): Int {
         TODO("Not yet implemented")
     }
 

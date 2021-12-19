@@ -23,17 +23,17 @@
 package eu.thesimplecloud.simplecloud.node.util
 
 import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import java.util.concurrent.CompletableFuture
 
 class SelfNodeGetter @Inject constructor(
-    private val nodeService: INodeService,
+    private val nodeService: NodeService,
     @NodeName private val nodeName: String
 ) {
 
-    fun getSelfNode(): CompletableFuture<INode> {
+    fun getSelfNode(): CompletableFuture<Node> {
         return this.nodeService.findNodeByName(this.nodeName)
     }
 

@@ -28,16 +28,16 @@ import com.google.inject.Injector
 import com.google.inject.Key
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IMessageHandler
-import eu.thesimplecloud.simplecloud.api.node.INode
+import eu.thesimplecloud.simplecloud.api.messagechannel.handler.MessageHandler
+import eu.thesimplecloud.simplecloud.api.node.Node
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.INodeService
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.NodeService
+import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import eu.thesimplecloud.simplecloud.container.container.IContainer
 import eu.thesimplecloud.simplecloud.container.image.IImage
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
@@ -50,17 +50,17 @@ import java.util.concurrent.CompletableFuture
 
 class StartProcessMessageHandler @Inject constructor(
     private val injector: Injector,
-    private val nodeService: INodeService,
+    private val nodeService: NodeService,
     private val nodeRepository: IgniteNodeRepository,
     private val processService: CloudProcessServiceImpl,
-    private val groupService: ICloudProcessGroupService,
-    private val processFactory: ICloudProcessFactory,
-) : IMessageHandler<ProcessStartConfiguration, ICloudProcess> {
+    private val groupService: CloudProcessGroupService,
+    private val processFactory: CloudProcessFactory,
+) : MessageHandler<ProcessStartConfiguration, CloudProcess> {
 
     override fun handleMessage(
         message: ProcessStartConfiguration,
-        sender: INetworkComponent
-    ): CompletableFuture<ICloudProcess> {
+        sender: NetworkComponent
+    ): CompletableFuture<CloudProcess> {
         val process = await(createProcess(message))
         await(updateProcessToCluster(process))
         await(increaseUsedMemoryOnSelfNode(process.getMaxMemory()))
@@ -68,11 +68,11 @@ class StartProcessMessageHandler @Inject constructor(
         return completedFuture(process)
     }
 
-    private fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
+    private fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
         return this.processService.updateProcessToCluster(process)
     }
 
-    private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
+    private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
         return CloudProcessCreationTask(
             configuration,
             this.processService,
@@ -83,7 +83,7 @@ class StartProcessMessageHandler @Inject constructor(
         ).run()
     }
 
-    private fun startProcess(process: ICloudProcess) {
+    private fun startProcess(process: CloudProcess) {
         ProcessStartTask(
             process,
             this.injector.getInstance(IContainer.Factory::class.java),
@@ -112,7 +112,7 @@ class StartProcessMessageHandler @Inject constructor(
         )
     }
 
-    private fun getSelfNode(): CompletableFuture<INode> {
+    private fun getSelfNode(): CompletableFuture<Node> {
         val selfNodeGetter = this.injector.getInstance(SelfNodeGetter::class.java)
         return selfNodeGetter.getSelfNode()
     }

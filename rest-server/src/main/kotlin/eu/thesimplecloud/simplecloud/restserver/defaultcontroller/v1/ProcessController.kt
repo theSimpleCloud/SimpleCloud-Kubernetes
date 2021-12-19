@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
@@ -39,7 +39,7 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.Pro
  */
 @RestController(1, "cloud/process")
 class ProcessController @Inject constructor(
-    private val processService: ICloudProcessService,
+    private val processService: CloudProcessService,
     private val processCreateHandler: ProcessCreateHandler
 ) : Controller {
 

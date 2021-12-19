@@ -25,21 +25,20 @@ package eu.thesimplecloud.simplecloud.restserver.service
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
-import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.future.toFutureList
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
-import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalCloudProcessService
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.request.process.IProcessShutdownRequest
-import eu.thesimplecloud.simplecloud.api.request.process.IProcessStartRequest
+import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
+import eu.thesimplecloud.simplecloud.api.request.process.ProcessStartRequest
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.*
@@ -55,10 +54,10 @@ import kotlin.random.Random
  */
 @Singleton
 class TestCloudProcessService @Inject constructor(
-    private val processFactory: ICloudProcessFactory
-) : IInternalCloudProcessService {
+    private val processFactory: CloudProcessFactory
+) : InternalCloudProcessService {
 
-    private val nameToProcess = ConcurrentHashMap<String, ICloudProcess>()
+    private val nameToProcess = ConcurrentHashMap<String, CloudProcess>()
 
     init {
         this.nameToProcess["Lobby-1"] = processFactory.create(
@@ -82,7 +81,7 @@ class TestCloudProcessService @Inject constructor(
         )
     }
 
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
+    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             val process = this.processFactory.create(
                 CloudProcessConfiguration(
@@ -108,46 +107,46 @@ class TestCloudProcessService @Inject constructor(
         }.nonNull()
     }
 
-    override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {
+    override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
         this.nameToProcess.remove(process.getName())
         return unitFuture()
     }
 
-    override fun findProcessByName(name: String): CompletableFuture<ICloudProcess> {
+    override fun findProcessByName(name: String): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             this.nameToProcess[name] ?: throw NoSuchElementException("Process does not exist")
         }.nonNull()
     }
 
-    override fun findProcessesByName(vararg names: String): CompletableFuture<List<ICloudProcess>> {
+    override fun findProcessesByName(vararg names: String): CompletableFuture<List<CloudProcess>> {
         return names.map { findProcessByName(it) }.toFutureList()
     }
 
-    override fun findProcessesByGroup(group: ICloudProcessGroup): CompletableFuture<List<ICloudProcess>> {
+    override fun findProcessesByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
         return findProcessesByGroup(group.getName())
     }
 
-    override fun findProcessesByGroup(groupName: String): CompletableFuture<List<ICloudProcess>> {
+    override fun findProcessesByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.filter { it.getGroupName() == groupName }
         }.nonNull()
     }
 
-    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<ICloudProcess> {
+    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.firstOrNull { it.getUniqueId() == uniqueId }
         }.nonNull()
     }
 
-    override fun createProcessStartRequest(group: ICloudProcessGroup): IProcessStartRequest {
-        return ProcessStartRequest(this, group)
+    override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {
+        return ProcessStartRequestImpl(this, group)
     }
 
-    override fun createProcessShutdownRequest(group: ICloudProcess): IProcessShutdownRequest {
-        return ProcessShutdownRequest(this, group)
+    override fun createProcessShutdownRequest(group: CloudProcess): ProcessShutdownRequest {
+        return ProcessShutdownRequestImpl(this, group)
     }
 
-    override fun findAll(): CompletableFuture<List<ICloudProcess>> {
+    override fun findAll(): CompletableFuture<List<CloudProcess>> {
         return CloudCompletableFuture.completedFuture(this.nameToProcess.values.toList())
     }
 

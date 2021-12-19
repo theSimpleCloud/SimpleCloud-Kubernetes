@@ -23,7 +23,7 @@
 package eu.thesimplecloud.simplecloud.restserver.repository
 
 import eu.thesimplecloud.simplecloud.restserver.user.User
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.repository.Repository
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,4 +31,4 @@ import eu.thesimplecloud.simplecloud.api.repository.IRepository
  * Time: 14:53
  * @author Frederick Baier
  */
-interface UserRepository : IRepository<String, User>
+interface UserRepository : Repository<String, User>

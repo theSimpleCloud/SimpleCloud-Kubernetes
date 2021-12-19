@@ -22,13 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.toFutureList
-import eu.thesimplecloud.simplecloud.api.impl.node.Node
+import eu.thesimplecloud.simplecloud.api.impl.node.NodeImpl
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -40,25 +38,25 @@ import java.util.concurrent.CompletableFuture
  */
 open class DefaultNodeService(
     private val igniteRepository: IgniteNodeRepository
-) : INodeService {
+) : NodeService {
 
-    override fun findNodeByName(name: String): CompletableFuture<INode> {
+    override fun findNodeByName(name: String): CompletableFuture<Node> {
         val completableFuture = igniteRepository.find(name)
-        return completableFuture.thenApply { Node(it) }
+        return completableFuture.thenApply { NodeImpl(it) }
     }
 
-    override fun findNodesByName(vararg names: String): CompletableFuture<List<INode>> {
+    override fun findNodesByName(vararg names: String): CompletableFuture<List<Node>> {
         val futures = names.map { findNodeByName(it) }
         return futures.toFutureList()
     }
 
-    override fun findAll(): CompletableFuture<List<INode>> {
+    override fun findAll(): CompletableFuture<List<Node>> {
         val completableFuture = this.igniteRepository.findAll()
-        return completableFuture.thenApply { list -> list.map { Node(it) } }
+        return completableFuture.thenApply { list -> list.map { NodeImpl(it) } }
     }
 
-    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<INode> {
+    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
         val completableFuture = this.igniteRepository.findNodeByUniqueId(uniqueId)
-        return completableFuture.thenApply { Node(it) }
+        return completableFuture.thenApply { NodeImpl(it) }
     }
 }

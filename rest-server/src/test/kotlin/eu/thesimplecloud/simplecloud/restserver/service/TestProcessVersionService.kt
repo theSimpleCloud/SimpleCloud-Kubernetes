@@ -25,15 +25,14 @@ package eu.thesimplecloud.simplecloud.restserver.service
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.nonNull
-import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequest
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessAPIType
+import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersionImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalProcessVersionService
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.ProcessVersionCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.ProcessVersionDeleteRequest
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
@@ -46,14 +45,14 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Frederick Baier
  */
 @Singleton
-class TestProcessVersionService : IInternalProcessVersionService {
+class TestProcessVersionService : InternalProcessVersionService {
 
-    private val nameToProcessVersion = ConcurrentHashMap<String, IProcessVersion>()
+    private val nameToProcessVersion = ConcurrentHashMap<String, eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion>()
 
     init {
     }
 
-    override fun findByName(name: String): CompletableFuture<IProcessVersion> {
+    override fun findByName(name: String): CompletableFuture<eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion> {
         return CloudCompletableFuture.supplyAsync {
             this.nameToProcessVersion[name] ?: throw NoSuchElementException("ProcessVersion '${name}' does not exist")
         }.nonNull()
@@ -63,26 +62,26 @@ class TestProcessVersionService : IInternalProcessVersionService {
         return completedFuture(this.nameToProcessVersion.containsKey(name))
     }
 
-    override fun findAll(): CompletableFuture<List<IProcessVersion>> {
+    override fun findAll(): CompletableFuture<List<ProcessVersion>> {
         return CloudCompletableFuture.completedFuture(this.nameToProcessVersion.values.toList())
     }
 
-    override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion> {
-        val processVersion = ProcessVersion(configuration)
+    override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<ProcessVersion> {
+        val processVersion = ProcessVersionImpl(configuration)
         this.nameToProcessVersion[processVersion.getName()] = processVersion
         return CloudCompletableFuture.completedFuture(processVersion)
     }
 
-    override fun deleteProcessVersionInternal(processVersion: IProcessVersion) {
+    override fun deleteProcessVersionInternal(processVersion: ProcessVersion) {
         this.nameToProcessVersion.remove(processVersion.getName())
     }
 
-    override fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): IProcessVersionCreateRequest {
-        return ProcessVersionCreateRequest(this, configuration)
+    override fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): ProcessVersionCreateRequest {
+        return ProcessVersionCreateRequestImpl(this, configuration)
     }
 
-    override fun createProcessVersionDeleteRequest(processVersion: IProcessVersion): IProcessVersionDeleteRequest {
-        return ProcessVersionDeleteRequest(this, processVersion)
+    override fun createProcessVersionDeleteRequest(processVersion: ProcessVersion): ProcessVersionDeleteRequest {
+        return ProcessVersionDeleteRequestImpl(this, processVersion)
     }
 
 }

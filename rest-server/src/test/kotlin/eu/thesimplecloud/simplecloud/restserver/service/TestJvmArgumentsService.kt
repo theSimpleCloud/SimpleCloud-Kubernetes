@@ -25,14 +25,14 @@ package eu.thesimplecloud.simplecloud.restserver.service
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.nonNull
-import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArguments
-import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequest
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArgumentsImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.JvmArgumentCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.JvmArgumentDeleteRequest
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
@@ -45,33 +45,33 @@ import java.util.concurrent.ConcurrentHashMap
  * @author Frederick Baier
  */
 @Singleton
-class TestJvmArgumentsService : IInternalJvmArgumentsService {
+class TestJvmArgumentsService : InternalJvmArgumentsService {
 
-    private val nameToJvmArgs = ConcurrentHashMap<String, IJVMArguments>()
+    private val nameToJvmArgs = ConcurrentHashMap<String, JVMArguments>()
 
     init {
-        this.nameToJvmArgs["Test"] = JvmArguments(
+        this.nameToJvmArgs["Test"] = JvmArgumentsImpl(
             JvmArgumentConfiguration("Test", emptyList())
         )
     }
 
-    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments> {
-        val jvmArguments = JvmArguments(configuration)
+    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<JVMArguments> {
+        val jvmArguments = JvmArgumentsImpl(configuration)
         this.nameToJvmArgs[jvmArguments.getIdentifier()] = jvmArguments
         return completedFuture(jvmArguments)
     }
 
-    override fun deleteJvmArgsInternal(jvmArgs: IJVMArguments) {
+    override fun deleteJvmArgsInternal(jvmArgs: JVMArguments) {
         this.nameToJvmArgs.remove(jvmArgs.getIdentifier())
     }
 
-    override fun findByName(name: String): CompletableFuture<IJVMArguments> {
+    override fun findByName(name: String): CompletableFuture<JVMArguments> {
         return CloudCompletableFuture.supplyAsync {
             this.nameToJvmArgs[name] ?: throw NoSuchElementException("JvmArgs '${name}' does not exist")
         }.nonNull()
     }
 
-    override fun findAll(): CompletableFuture<List<IJVMArguments>> {
+    override fun findAll(): CompletableFuture<List<JVMArguments>> {
         return completedFuture(this.nameToJvmArgs.values.toList())
     }
 
@@ -79,11 +79,11 @@ class TestJvmArgumentsService : IInternalJvmArgumentsService {
         return completedFuture(this.nameToJvmArgs.containsKey(name))
     }
 
-    override fun createJvmArgumentsCreateRequest(configuration: JvmArgumentConfiguration): IJvmArgumentCreateRequest {
-        return JvmArgumentCreateRequest(this, configuration)
+    override fun createJvmArgumentsCreateRequest(configuration: JvmArgumentConfiguration): JvmArgumentCreateRequest {
+        return JvmArgumentCreateRequestImpl(this, configuration)
     }
 
-    override fun createJvmArgumentsDeleteRequest(jvmArgs: IJVMArguments): IJvmArgumentDeleteRequest {
-        return JvmArgumentDeleteRequest(this, jvmArgs)
+    override fun createJvmArgumentsDeleteRequest(jvmArgs: JVMArguments): JvmArgumentDeleteRequest {
+        return JvmArgumentDeleteRequestImpl(this, jvmArgs)
     }
 }

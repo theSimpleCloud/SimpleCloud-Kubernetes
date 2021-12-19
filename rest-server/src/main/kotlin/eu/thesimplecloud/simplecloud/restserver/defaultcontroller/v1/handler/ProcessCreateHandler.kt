@@ -25,8 +25,8 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
 
@@ -38,20 +38,20 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudPr
  */
 @Singleton
 class ProcessCreateHandler @Inject constructor(
-    private val groupService: ICloudProcessGroupService,
-    private val processService: ICloudProcessService,
-    private val templateService: ITemplateService,
-    private val jvmArgumentsService: IJvmArgumentsService,
-    private val onlineCountService: IProcessOnlineCountService,
-    private val versionService: IProcessVersionService
+    private val groupService: CloudProcessGroupService,
+    private val processService: CloudProcessService,
+    private val templateService: TemplateService,
+    private val jvmArgumentsService: JvmArgumentsService,
+    private val onlineCountService: ProcessOnlineCountService,
+    private val versionService: ProcessVersionService
 ) {
 
-    fun create(configuration: CloudProcessCreateRequestDto): ICloudProcess {
+    fun create(configuration: CloudProcessCreateRequestDto): CloudProcess {
         val group = await(this.groupService.findByName(configuration.groupName))
         return createProcess(group, configuration)
     }
 
-    private fun createProcess(group: ICloudProcessGroup, configuration: CloudProcessCreateRequestDto): ICloudProcess {
+    private fun createProcess(group: CloudProcessGroup, configuration: CloudProcessCreateRequestDto): CloudProcess {
         val request = this.processService.createProcessStartRequest(group)
         if (configuration.maxMemory != null) {
             request.setMaxMemory(configuration.maxMemory)

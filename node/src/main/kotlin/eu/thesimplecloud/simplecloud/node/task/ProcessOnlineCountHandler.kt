@@ -25,15 +25,14 @@ package eu.thesimplecloud.simplecloud.node.task
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
 import java.util.concurrent.CompletableFuture
 
 class ProcessOnlineCountHandler(
-    private val group: ICloudProcessGroup,
-    private val processService: ICloudProcessService
+    private val group: CloudProcessGroup,
+    private val processService: CloudProcessService
 ) {
 
     fun handle(): CompletableFuture<Unit> {

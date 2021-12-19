@@ -27,7 +27,7 @@ import dev.morphia.query.Query
 import dev.morphia.query.experimental.filters.Filters
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
 import eu.thesimplecloud.simplecloud.api.future.nonNull
-import eu.thesimplecloud.simplecloud.api.repository.IRepository
+import eu.thesimplecloud.simplecloud.api.repository.Repository
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
@@ -40,7 +40,7 @@ import java.util.concurrent.CompletableFuture
 open class DefaultMongoRepository<I : Any, T : Any>(
     private val datastore: Datastore,
     private val entityClass: Class<T>
-) : IRepository<I, T> {
+) : Repository<I, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync {

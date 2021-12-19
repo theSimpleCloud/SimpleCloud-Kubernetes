@@ -24,7 +24,7 @@ package eu.thesimplecloud.simplecloud.api.config
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import eu.thesimplecloud.simplecloud.api.utils.INameable
+import eu.thesimplecloud.simplecloud.api.utils.Nameable
 import java.io.File
 
 /**
@@ -33,7 +33,7 @@ import java.io.File
  * Time: 11:32
  * @author Frederick Baier
  */
-abstract class AbstractMultipleConfigLoader<T : INameable>(
+abstract class AbstractMultipleConfigLoader<T : Nameable>(
     private val clazz: Class<T>,
     private val directory: File,
     private val defaultValues: List<T>,

@@ -22,15 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.IProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.service.*
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.Template
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -43,13 +43,13 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val templateService: ITemplateService,
-    private val processVersionService: IProcessVersionService,
-    private val jvmArgumentsService: IJvmArgumentsService,
-    private val processOnlineCountService: IProcessOnlineCountService,
-    private val nodeService: INodeService,
-    private val processService: ICloudProcessService,
-) : ICloudProcessGroup {
+    private val templateService: TemplateService,
+    private val processVersionService: ProcessVersionService,
+    private val jvmArgumentsService: JvmArgumentsService,
+    private val processOnlineCountService: ProcessOnlineCountService,
+    private val nodeService: NodeService,
+    private val processService: CloudProcessService,
+) : CloudProcessGroup {
 
 
     override fun getMaxMemory(): Int {
@@ -72,7 +72,7 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.templateName
     }
 
-    override fun getTemplate(): CompletableFuture<ITemplate> {
+    override fun getTemplate(): CompletableFuture<Template> {
         return this.templateService.findByName(this.configuration.templateName)
     }
 
@@ -80,7 +80,7 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.versionName
     }
 
-    override fun getVersion(): CompletableFuture<IProcessVersion> {
+    override fun getVersion(): CompletableFuture<ProcessVersion> {
         return this.processVersionService.findByName(this.configuration.versionName)
     }
 
@@ -88,7 +88,7 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.jvmArgumentName
     }
 
-    override fun getJvmArguments(): CompletableFuture<IJVMArguments> {
+    override fun getJvmArguments(): CompletableFuture<JVMArguments> {
         val jvmArgumentName = this.configuration.jvmArgumentName
             ?: return CompletableFuture.failedFuture(NoSuchElementException())
         return this.jvmArgumentsService.findByName(jvmArgumentName)
@@ -98,7 +98,7 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.onlineCountConfigurationName
     }
 
-    override fun getProcessOnlineCountConfiguration(): CompletableFuture<IProcessesOnlineCountConfiguration> {
+    override fun getProcessOnlineCountConfiguration(): CompletableFuture<ProcessesOnlineCountConfiguration> {
         return this.processOnlineCountService.findByName(this.configuration.onlineCountConfigurationName)
     }
 
@@ -130,11 +130,11 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.nodeNamesAllowedToStartOn
     }
 
-    override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<INode>> {
+    override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<Node>> {
         return this.nodeService.findNodesByName(*this.configuration.nodeNamesAllowedToStartOn.toTypedArray())
     }
 
-    override fun getProcesses(): CompletableFuture<List<ICloudProcess>> {
+    override fun getProcesses(): CompletableFuture<List<CloudProcess>> {
         return this.processService.findProcessesByGroup(this)
     }
 

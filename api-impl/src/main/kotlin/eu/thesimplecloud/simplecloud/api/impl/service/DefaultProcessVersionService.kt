@@ -22,18 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersion
+import eu.thesimplecloud.simplecloud.api.impl.process.version.ProcessVersionImpl
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
-import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequest
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalProcessVersionService
-import eu.thesimplecloud.simplecloud.api.process.version.IProcessVersion
+import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.processversion.ProcessVersionDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalProcessVersionService
+import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.processgroup.IProcessVersionDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.ProcessVersionCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.processgroup.ProcessVersionDeleteRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -44,36 +42,36 @@ import java.util.concurrent.CompletableFuture
  */
 open class DefaultProcessVersionService(
     private val igniteRepository: IgniteProcessVersionRepository
-) : IInternalProcessVersionService {
+) : InternalProcessVersionService {
 
-    override fun findAll(): CompletableFuture<List<IProcessVersion>> {
+    override fun findAll(): CompletableFuture<List<ProcessVersion>> {
         val completableFuture = this.igniteRepository.findAll()
-        return completableFuture.thenApply { list -> list.map { ProcessVersion(it) } }
+        return completableFuture.thenApply { list -> list.map { ProcessVersionImpl(it) } }
     }
 
-    override fun findByName(name: String): CompletableFuture<IProcessVersion> {
+    override fun findByName(name: String): CompletableFuture<ProcessVersion> {
         val completableFuture = this.igniteRepository.find(name)
-        return completableFuture.thenApply { ProcessVersion(it) }
+        return completableFuture.thenApply { ProcessVersionImpl(it) }
     }
 
     override fun doesExist(name: String): CompletableFuture<Boolean> {
         return this.igniteRepository.doesExist(name)
     }
 
-    override fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): IProcessVersionCreateRequest {
-        return ProcessVersionCreateRequest(this, configuration)
+    override fun createProcessVersionCreateRequest(configuration: ProcessVersionConfiguration): ProcessVersionCreateRequest {
+        return ProcessVersionCreateRequestImpl(this, configuration)
     }
 
-    override fun createProcessVersionDeleteRequest(processVersion: IProcessVersion): IProcessVersionDeleteRequest {
-        return ProcessVersionDeleteRequest(this, processVersion)
+    override fun createProcessVersionDeleteRequest(processVersion: ProcessVersion): ProcessVersionDeleteRequest {
+        return ProcessVersionDeleteRequestImpl(this, processVersion)
     }
 
-    override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<IProcessVersion> {
+    override fun createProcessVersionInternal(configuration: ProcessVersionConfiguration): CompletableFuture<ProcessVersion> {
         this.igniteRepository.save(configuration.name, configuration)
-        return completedFuture(ProcessVersion(configuration))
+        return completedFuture(ProcessVersionImpl(configuration))
     }
 
-    override fun deleteProcessVersionInternal(processVersion: IProcessVersion) {
+    override fun deleteProcessVersionInternal(processVersion: ProcessVersion) {
         this.igniteRepository.remove(processVersion.getIdentifier())
     }
 

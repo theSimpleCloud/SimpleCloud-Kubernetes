@@ -24,23 +24,23 @@ package eu.thesimplecloud.simplecloud.node.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.node.Node
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import java.util.concurrent.CompletableFuture
 
 class NodeToStartProcessSelectionTask(
     private val requiredMemoryInMb: Int,
-    private val nodeService: INodeService
+    private val nodeService: NodeService
 ) {
 
-    fun run(): CompletableFuture<INode> {
+    fun run(): CompletableFuture<Node> {
         val allNodes = await(this.nodeService.findAll())
         val sortedNodes = allNodes.sortedByDescending { calculateUsedMemoryPercentage(it) }
         val selectedNode = sortedNodes.first { it.hasMemoryAvailable(this.requiredMemoryInMb) }
         return completedFuture(selectedNode)
     }
 
-    private fun calculateUsedMemoryPercentage(node: INode): Double {
+    private fun calculateUsedMemoryPercentage(node: Node): Double {
         return node.getUsedMemoryInMB().toDouble() / node.getMaxMemoryInMB()
     }
 }

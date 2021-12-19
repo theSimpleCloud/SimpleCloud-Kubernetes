@@ -24,16 +24,16 @@ package eu.thesimplecloud.simplecloud.node.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.ICloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.node.util.PortManager
 import java.util.*
@@ -41,14 +41,14 @@ import java.util.concurrent.CompletableFuture
 
 class CloudProcessCreationTask(
     private val startConfiguration: ProcessStartConfiguration,
-    private val processService: ICloudProcessService,
-    private val groupService: ICloudProcessGroupService,
-    private val nodeService: INodeService,
-    private val factory: ICloudProcessFactory,
+    private val processService: CloudProcessService,
+    private val groupService: CloudProcessGroupService,
+    private val nodeService: NodeService,
+    private val factory: CloudProcessFactory,
     private val nodeName: String
 ) {
 
-    fun run(): CompletableFuture<ICloudProcess> {
+    fun run(): CompletableFuture<CloudProcess> {
         val processNumber = await(getProcessNumber())
         val node = await(this.nodeService.findNodeByName(nodeName))
         val group = await(this.groupService.findByName(this.startConfiguration.groupName))
@@ -75,8 +75,8 @@ class CloudProcessCreationTask(
         return completedFuture(process)
     }
 
-    private fun getStartPort(group: ICloudProcessGroup): Int {
-        if (group is ICloudProxyGroup) {
+    private fun getStartPort(group: CloudProcessGroup): Int {
+        if (group is CloudProxyGroup) {
             return PortManager.getVacantPort(group.getStartPort())
         }
         return PortManager.getVacantPort()

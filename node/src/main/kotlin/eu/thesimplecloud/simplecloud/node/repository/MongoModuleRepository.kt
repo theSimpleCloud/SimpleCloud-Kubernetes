@@ -34,4 +34,4 @@ import eu.thesimplecloud.simplecloud.api.module.ModuleType
  */
 class MongoModuleRepository(
     datastore: Datastore
-) : DefaultMongoRepository<ModuleType, ModuleEntity>(datastore, ModuleEntity::class.java), IModuleRepository
+) : DefaultMongoRepository<ModuleType, ModuleEntity>(datastore, ModuleEntity::class.java), ModuleRepository

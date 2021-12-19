@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.api.validator
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.service.TemplateService
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import java.util.concurrent.CompletableFuture
 
@@ -36,8 +36,8 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class TemplateConfigurationValidator @Inject constructor(
-    private val templateService: ITemplateService
-) : IValidator<TemplateConfiguration> {
+    private val templateService: TemplateService
+) : Validator<TemplateConfiguration> {
 
     override fun validate(value: TemplateConfiguration): CompletableFuture<Unit> {
         val parentTemplateName = value.parentTemplateName ?: return unitFuture()

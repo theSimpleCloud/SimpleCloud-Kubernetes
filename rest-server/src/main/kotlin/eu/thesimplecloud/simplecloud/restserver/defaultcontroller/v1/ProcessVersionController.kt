@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
+import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
@@ -37,7 +37,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.Controller
  */
 @RestController(1, "cloud/processversion")
 class ProcessVersionController @Inject constructor(
-    private val processVersionService: IProcessVersionService,
+    private val processVersionService: ProcessVersionService,
 ) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.processversion.get")

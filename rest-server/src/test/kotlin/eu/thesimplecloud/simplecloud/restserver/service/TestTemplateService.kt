@@ -26,16 +26,16 @@ import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.cloud.nonNull
-import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequest
-import eu.thesimplecloud.simplecloud.api.impl.template.Template
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalTemplateService
-import eu.thesimplecloud.simplecloud.api.request.template.ITemplateCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.template.ITemplateDeleteRequest
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.template.TemplateDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.template.TemplateImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalTemplateService
+import eu.thesimplecloud.simplecloud.api.request.template.TemplateCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.template.TemplateDeleteRequest
+import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
+import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 import java.util.NoSuchElementException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentHashMap
@@ -48,43 +48,43 @@ import java.util.concurrent.ConcurrentHashMap
  */
 @Singleton
 class TestTemplateService @Inject constructor(
-    private val validatorService: IValidatorService
-) : IInternalTemplateService {
+    private val validatorService: ValidatorService
+) : InternalTemplateService {
 
-    private val nameToTemplate = ConcurrentHashMap<String, ITemplate>()
+    private val nameToTemplate = ConcurrentHashMap<String, eu.thesimplecloud.simplecloud.api.template.Template>()
 
     private val validator = this.validatorService.getValidator(TemplateConfiguration::class.java)
 
     init {
-        this.nameToTemplate["Lobby"] = Template(TemplateConfiguration("Lobby", null), this)
+        this.nameToTemplate["Lobby"] = TemplateImpl(TemplateConfiguration("Lobby", null), this)
     }
 
-    override fun findByName(name: String): CompletableFuture<ITemplate> {
+    override fun findByName(name: String): CompletableFuture<eu.thesimplecloud.simplecloud.api.template.Template> {
         return CloudCompletableFuture.supplyAsync {
             this.nameToTemplate[name] ?: throw NoSuchElementException("Template '${name}' does not exist")
         }.nonNull()
     }
 
-    override fun findAll(): CompletableFuture<List<ITemplate>> {
+    override fun findAll(): CompletableFuture<List<Template>> {
         return CloudCompletableFuture.completedFuture(this.nameToTemplate.values.toList())
     }
 
-    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<Template> {
         await(this.validator.validate(configuration))
-        val template = Template(configuration, this)
+        val template = TemplateImpl(configuration, this)
         this.nameToTemplate[template.getName()] = template
         return CloudCompletableFuture.completedFuture(template)
     }
 
-    override fun deleteTemplateInternal(template: ITemplate) {
+    override fun deleteTemplateInternal(template: Template) {
         this.nameToTemplate.remove(template.getName())
     }
 
-    override fun createTemplateCreateRequest(configuration: TemplateConfiguration): ITemplateCreateRequest {
-        return TemplateCreateRequest(this, configuration)
+    override fun createTemplateCreateRequest(configuration: TemplateConfiguration): TemplateCreateRequest {
+        return TemplateCreateRequestImpl(this, configuration)
     }
 
-    override fun createTemplateDeleteRequest(template: ITemplate): ITemplateDeleteRequest {
-        return TemplateDeleteRequest(this, template)
+    override fun createTemplateDeleteRequest(template: Template): TemplateDeleteRequest {
+        return TemplateDeleteRequestImpl(this, template)
     }
 }

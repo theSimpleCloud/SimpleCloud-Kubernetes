@@ -22,15 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.ignite
 
-import eu.thesimplecloud.simplecloud.api.messagechannel.IMessageChannel
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import eu.thesimplecloud.simplecloud.api.messagechannel.MessageChannel
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture
 
 class IgniteIncomingQueryHandler(
     private val igniteQueryHandler: IgniteQueryHandler,
-    private val messageChannelManager: IMessageChannelManager,
-    private val networkComponent: INetworkComponent,
+    private val messageChannelManager: MessageChannelManager,
+    private val networkComponent: NetworkComponent,
     private val queryObject: IgniteDataTransferObject,
 ) {
     fun handle() {
@@ -39,7 +39,7 @@ class IgniteIncomingQueryHandler(
         handleResult(resultFuture)
     }
 
-    private fun getMessageChannelByName(name: String): IMessageChannel<Any, Any> {
+    private fun getMessageChannelByName(name: String): MessageChannel<Any, Any> {
         return this.messageChannelManager.getMessageChannelByName<Any, Any>(name)
             ?: throw NoSuchElementException("Cannot find message channel by name: $name")
     }

@@ -22,18 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.service
 
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArguments
+import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArgumentsImpl
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
-import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequest
-import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequest
-import eu.thesimplecloud.simplecloud.api.internal.service.IInternalJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.jvmargs.IJVMArguments
+import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequestImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentCreateRequest
-import eu.thesimplecloud.simplecloud.api.request.jvmargs.IJvmArgumentDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.JvmArgumentCreateRequest
+import eu.thesimplecloud.simplecloud.api.request.jvmargs.JvmArgumentDeleteRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -44,36 +42,36 @@ import java.util.concurrent.CompletableFuture
  */
 open class DefaultJvmArgumentsService(
     private val igniteRepository: IgniteJvmArgumentsRepository
-) : IInternalJvmArgumentsService {
+) : InternalJvmArgumentsService {
 
-    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<IJVMArguments> {
+    override fun createJvmArgsInternal(configuration: JvmArgumentConfiguration): CompletableFuture<JVMArguments> {
         this.igniteRepository.save(configuration.name, configuration)
-        return completedFuture(JvmArguments(configuration))
+        return completedFuture(JvmArgumentsImpl(configuration))
     }
 
-    override fun deleteJvmArgsInternal(jvmArgs: IJVMArguments) {
+    override fun deleteJvmArgsInternal(jvmArgs: JVMArguments) {
         this.igniteRepository.remove(jvmArgs.getIdentifier())
     }
 
-    override fun findByName(name: String): CompletableFuture<IJVMArguments> {
+    override fun findByName(name: String): CompletableFuture<JVMArguments> {
         val completableFuture = this.igniteRepository.find(name)
-        return completableFuture.thenApply { JvmArguments(it) }
+        return completableFuture.thenApply { JvmArgumentsImpl(it) }
     }
 
-    override fun findAll(): CompletableFuture<List<IJVMArguments>> {
-        return this.igniteRepository.findAll().thenApply { list -> list.map { JvmArguments(it) } }
+    override fun findAll(): CompletableFuture<List<JVMArguments>> {
+        return this.igniteRepository.findAll().thenApply { list -> list.map { JvmArgumentsImpl(it) } }
     }
 
     override fun doesExist(name: String): CompletableFuture<Boolean> {
         return this.igniteRepository.doesExist(name)
     }
 
-    override fun createJvmArgumentsCreateRequest(configuration: JvmArgumentConfiguration): IJvmArgumentCreateRequest {
-        return JvmArgumentCreateRequest(this, configuration)
+    override fun createJvmArgumentsCreateRequest(configuration: JvmArgumentConfiguration): JvmArgumentCreateRequest {
+        return JvmArgumentCreateRequestImpl(this, configuration)
     }
 
-    override fun createJvmArgumentsDeleteRequest(jvmArgs: IJVMArguments): IJvmArgumentDeleteRequest {
-        return JvmArgumentDeleteRequest(this, jvmArgs)
+    override fun createJvmArgumentsDeleteRequest(jvmArgs: JVMArguments): JvmArgumentDeleteRequest {
+        return JvmArgumentDeleteRequestImpl(this, jvmArgs)
     }
 
 }

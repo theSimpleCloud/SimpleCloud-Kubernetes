@@ -25,25 +25,25 @@ package eu.thesimplecloud.simplecloud.node.service
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
-import eu.thesimplecloud.simplecloud.api.service.INodeService
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.node.process.MultiNodeProcessStarter
 import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
-    processFactory: ICloudProcessFactory,
+    processFactory: CloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
-    private val nodeService: INodeService,
+    private val nodeService: NodeService,
     private val injector: Injector
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
+    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
         val processStarter = MultiNodeProcessStarter(
             this.nodeService,
             configuration,
@@ -52,11 +52,11 @@ class CloudProcessServiceImpl @Inject constructor(
         return processStarter.startProcess()
     }
 
-    fun updateProcessToCluster(process: ICloudProcess): CompletableFuture<Unit> {
+    fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
         return this.igniteRepository.save(process.getName(), process.toConfiguration())
     }
 
-    override fun shutdownProcessInternal(process: ICloudProcess): CompletableFuture<Unit> {
+    override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
         TODO("Not yet implemented")
     }
 }

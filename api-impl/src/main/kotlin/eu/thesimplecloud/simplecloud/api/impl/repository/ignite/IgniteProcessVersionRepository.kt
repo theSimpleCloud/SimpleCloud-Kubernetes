@@ -25,9 +25,8 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.IProcessVersionRepository
+import eu.thesimplecloud.simplecloud.api.repository.ProcessVersionRepository
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,4 +39,4 @@ class IgniteProcessVersionRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<ProcessVersionConfiguration>(
     ignite.getOrCreateCache("cloud-process-versions")
-), IProcessVersionRepository
+), ProcessVersionRepository

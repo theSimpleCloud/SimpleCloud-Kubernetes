@@ -26,7 +26,7 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
 import eu.thesimplecloud.simplecloud.api.impl.service.DefaultTemplateService
-import eu.thesimplecloud.simplecloud.api.template.ITemplate
+import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.api.validator.TemplateConfigurationValidator
 import eu.thesimplecloud.simplecloud.node.mongo.template.MongoTemplateRepository
@@ -40,7 +40,7 @@ class TemplateServiceImpl @Inject constructor(
     private val mongoRepository: MongoTemplateRepository
 ) : DefaultTemplateService(templateConfigurationValidator, igniteRepository) {
 
-    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<ITemplate> {
+    override fun createTemplateInternal(configuration: TemplateConfiguration): CompletableFuture<Template> {
         val result = super.createTemplateInternal(configuration)
         saveToDatabase(configuration)
         return result
@@ -51,7 +51,7 @@ class TemplateServiceImpl @Inject constructor(
         this.mongoRepository.save(configuration.name, entity)
     }
 
-    override fun deleteTemplateInternal(template: ITemplate) {
+    override fun deleteTemplateInternal(template: Template) {
         super.deleteTemplateInternal(template)
         this.mongoRepository.remove(template.getName())
     }

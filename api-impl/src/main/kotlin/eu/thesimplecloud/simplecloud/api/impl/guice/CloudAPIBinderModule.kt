@@ -24,15 +24,13 @@ package eu.thesimplecloud.simplecloud.api.impl.guice
 
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
-import eu.thesimplecloud.simplecloud.api.impl.messagechannel.MessageChannelManager
-import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcess
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.service.*
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.IMessageChannelManager
-import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
+import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.service.*
-import eu.thesimplecloud.simplecloud.api.validator.IValidatorService
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
+import eu.thesimplecloud.simplecloud.api.validator.ValidatorServiceImpl
 import org.apache.ignite.Ignite
 
 /**
@@ -43,12 +41,12 @@ import org.apache.ignite.Ignite
  */
 class CloudAPIBinderModule(
     private val igniteInstance: Ignite,
-    private val jvmArgumentsServiceClass: Class<out IJvmArgumentsService>,
-    private val nodeServiceClass: Class<out INodeService>,
-    private val processVersionServiceClass: Class<out IProcessVersionService>,
-    private val templateServiceClass: Class<out ITemplateService>,
-    private val cloudProcessServiceClass: Class<out ICloudProcessService>,
-    private val cloudProcessGroupServiceClass: Class<out ICloudProcessGroupService>,
+    private val jvmArgumentsServiceClass: Class<out JvmArgumentsService>,
+    private val nodeServiceClass: Class<out NodeService>,
+    private val processVersionServiceClass: Class<out ProcessVersionService>,
+    private val templateServiceClass: Class<out TemplateService>,
+    private val cloudProcessServiceClass: Class<out CloudProcessService>,
+    private val cloudProcessGroupServiceClass: Class<out CloudProcessGroupService>,
 ) : AbstractModule() {
 
     override fun configure() {
@@ -56,21 +54,21 @@ class CloudAPIBinderModule(
 
         install(
             FactoryModuleBuilder()
-                .implement(ICloudProcess::class.java, CloudProcess::class.java)
-                .build(ICloudProcessFactory::class.java)
+                .implement(CloudProcess::class.java, CloudProcess::class.java)
+                .build(CloudProcessFactory::class.java)
         )
 
-        bind(IValidatorService::class.java).to(ValidatorService::class.java)
+        bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
 
-        bind(IJvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)
-        bind(INodeService::class.java).to(this.nodeServiceClass)
-        bind(IProcessVersionService::class.java).to(this.processVersionServiceClass)
-        bind(ITemplateService::class.java).to(this.templateServiceClass)
-        bind(ICloudProcessService::class.java).to(this.cloudProcessServiceClass)
-        bind(IProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
-        bind(ICloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
+        bind(JvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)
+        bind(NodeService::class.java).to(this.nodeServiceClass)
+        bind(ProcessVersionService::class.java).to(this.processVersionServiceClass)
+        bind(TemplateService::class.java).to(this.templateServiceClass)
+        bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)
+        bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
+        bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
 
-        bind(IMessageChannelManager::class.java).to(MessageChannelManager::class.java)
+        bind(MessageChannelManager::class.java).to(MessageChannelManager::class.java)
 
 
     }

@@ -28,12 +28,11 @@ import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
-import eu.thesimplecloud.simplecloud.api.service.IProcessOnlineCountService
-import eu.thesimplecloud.simplecloud.api.service.IProcessVersionService
-import eu.thesimplecloud.simplecloud.api.service.ITemplateService
+import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
+import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
+import eu.thesimplecloud.simplecloud.api.service.TemplateService
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.api.utils.future.FutureOriginException
 import java.lang.Exception
 import java.util.concurrent.CompletableFuture
 
@@ -45,11 +44,11 @@ import java.util.concurrent.CompletableFuture
  */
 @Singleton
 class GroupConfigurationValidator @Inject constructor(
-    private val jvmArgumentsService: IJvmArgumentsService,
-    private val onlineCountService: IProcessOnlineCountService,
-    private val templateService: ITemplateService,
-    private val versionService: IProcessVersionService,
-) : IValidator<AbstractCloudProcessGroupConfiguration> {
+    private val jvmArgumentsService: JvmArgumentsService,
+    private val onlineCountService: ProcessOnlineCountService,
+    private val templateService: TemplateService,
+    private val versionService: ProcessVersionService,
+) : Validator<AbstractCloudProcessGroupConfiguration> {
 
     override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         return CloudCompletableFuture.runAsync {

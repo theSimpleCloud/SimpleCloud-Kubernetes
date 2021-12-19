@@ -26,9 +26,8 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.ignite.predicate.NodeCompareIgniteIdPredicate
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
+import eu.thesimplecloud.simplecloud.api.repository.NodeRepository
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -43,7 +42,7 @@ class IgniteNodeRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<NodeConfiguration>(
     ignite.getOrCreateCache("cloud-nodes")
-), INodeRepository {
+), NodeRepository {
 
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration> {
         return executeQueryAndFindFirst(NodeCompareIgniteIdPredicate(uniqueId))

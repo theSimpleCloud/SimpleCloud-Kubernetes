@@ -25,9 +25,8 @@ package eu.thesimplecloud.simplecloud.api.impl.repository.ignite
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.repository.IJvmArgumentsRepository
+import eu.thesimplecloud.simplecloud.api.repository.JvmArgumentsRepository
 import org.apache.ignite.Ignite
-import org.apache.ignite.IgniteCache
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,4 +39,4 @@ class IgniteJvmArgumentsRepository @Inject constructor(
     private val ignite: Ignite
 ) : AbstractIgniteRepository<JvmArgumentConfiguration>(
     ignite.getOrCreateCache("cloud-jvm-args")
-), IJvmArgumentsRepository
+), JvmArgumentsRepository

@@ -22,11 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.messagechannel
 
-import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.failedFuture
-import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IMessageHandler
-import eu.thesimplecloud.simplecloud.api.messagechannel.handler.IUnitMessageHandler
-import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
+import eu.thesimplecloud.simplecloud.api.messagechannel.handler.MessageHandler
+import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,9 +33,9 @@ import java.util.concurrent.CompletableFuture
  * Time: 10:51
  * @author Frederick Baier
  */
-class EmptyMessageHandler<T : Any, R : Any> : IMessageHandler<T, R> {
+class EmptyMessageHandler<T : Any, R : Any> : MessageHandler<T, R> {
 
-    override fun handleMessage(message: T, sender: INetworkComponent): CompletableFuture<R> {
+    override fun handleMessage(message: T, sender: NetworkComponent): CompletableFuture<R> {
         return failedFuture(EmptyMessageHandlerException())
     }
 

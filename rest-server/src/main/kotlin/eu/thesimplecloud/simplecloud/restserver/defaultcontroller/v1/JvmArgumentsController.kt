@@ -25,7 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.service.IJvmArgumentsService
+import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
 import eu.thesimplecloud.simplecloud.restserver.annotation.*
 import eu.thesimplecloud.simplecloud.restserver.controller.Controller
 
@@ -37,7 +37,7 @@ import eu.thesimplecloud.simplecloud.restserver.controller.Controller
  */
 @RestController(1, "cloud/jvmargs")
 class JvmArgumentsController @Inject constructor(
-    private val jvmService: IJvmArgumentsService,
+    private val jvmService: JvmArgumentsService,
 ) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.jvmargs.get")

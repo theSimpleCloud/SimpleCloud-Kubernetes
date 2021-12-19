@@ -41,7 +41,7 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler.Pro
  */
 @RestController(1, "cloud/group")
 class ProcessGroupController @Inject constructor(
-    private val groupService: ICloudProcessGroupService,
+    private val groupService: CloudProcessGroupService,
     private val groupUpdateHandler: ProcessGroupUpdateHandler
 ) : Controller {
 
