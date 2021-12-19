@@ -25,7 +25,6 @@ package eu.thesimplecloud.simplecloud.node.startup.setup.task
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -36,13 +35,9 @@ import java.util.concurrent.CompletableFuture
  */
 class NodeAddressSetupTask(
     private val restSetupManager: RestSetupManager
-) : Task<Address>() {
+) {
 
-    override fun getName(): String {
-        return "node_address_setup"
-    }
-
-    override fun run(): CompletableFuture<Address> {
+    fun run(): CompletableFuture<Address> {
         return restSetupManager.setNextSetup(Setup.NODE_ADDRESS)
     }
 

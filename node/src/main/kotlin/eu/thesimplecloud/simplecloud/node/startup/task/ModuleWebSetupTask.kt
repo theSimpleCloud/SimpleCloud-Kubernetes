@@ -29,7 +29,6 @@ import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.ModuleSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -42,13 +41,9 @@ class ModuleWebSetupTask(
     private val setupManager: RestSetupManager,
     private val moduleRepository: IModuleRepository,
     private val moduleType: ModuleType
-): Task<Unit>() {
+) {
 
-    override fun getName(): String {
-        return "module_setup"
-    }
-
-    override fun run(): CompletableFuture<Unit> {
+    fun run(): CompletableFuture<Unit> {
         return waitForModuleSetup(moduleType)
     }
 

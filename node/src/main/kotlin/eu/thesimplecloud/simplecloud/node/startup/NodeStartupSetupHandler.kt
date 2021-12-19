@@ -27,8 +27,6 @@ import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.startup.task.SetupRestServerStartTask
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -45,23 +43,22 @@ class NodeStartupSetupHandler() {
     @Volatile
     private var restSetupManager: RestSetupManager? = null
 
-    fun <T> executeSetupTask(taskSubmitter: TaskSubmitter, function: (RestSetupManager) -> Task<T>): CompletableFuture<T> {
-        val restSetupManager = await(getRestSetupManager(taskSubmitter))
-        val task = function(restSetupManager)
-        return taskSubmitter.submit(task)
+    fun <T> executeSetupTask(function: (RestSetupManager) -> CompletableFuture<T>): CompletableFuture<T> {
+        val restSetupManager = await(getRestSetupManager())
+        return function(restSetupManager)
     }
 
-    private fun getRestSetupManager(taskSubmitter: TaskSubmitter): CompletableFuture<RestSetupManager> {
+    private fun getRestSetupManager(): CompletableFuture<RestSetupManager> {
         if (this.restSetupManager != null) return CloudCompletableFuture.completedFuture(this.restSetupManager!!)
-        val restServer = await(startRestSetupServerIfNeeded(taskSubmitter))
+        val restServer = await(startRestSetupServerIfNeeded())
         this.restSetupManager = RestSetupManager(restServer)
         return CloudCompletableFuture.completedFuture(this.restSetupManager!!)
     }
 
-    private fun startRestSetupServerIfNeeded(taskSubmitter: TaskSubmitter): CompletableFuture<RestServer> {
+    private fun startRestSetupServerIfNeeded(): CompletableFuture<RestServer> {
         if (this.setupRestServer != null) return CloudCompletableFuture.completedFuture(this.setupRestServer!!)
-        val restServerFuture = taskSubmitter.submit(SetupRestServerStartTask())
-        this.setupRestServer = await(restServerFuture)
+        val restServer = SetupRestServerStartTask().run()
+        this.setupRestServer = restServer
         return CloudCompletableFuture.completedFuture(this.setupRestServer!!)
     }
 

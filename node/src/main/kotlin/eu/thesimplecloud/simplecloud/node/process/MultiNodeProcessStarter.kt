@@ -30,11 +30,9 @@ import eu.thesimplecloud.simplecloud.api.node.INode
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.node.task.NodeToStartProcessSelectionTask
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 class MultiNodeProcessStarter(
-    private val taskSubmitter: TaskSubmitter,
     private val nodeService: INodeService,
     private val configuration: ProcessStartConfiguration,
     private val injector: Injector
@@ -48,16 +46,15 @@ class MultiNodeProcessStarter(
     }
 
     private fun selectNodeForProcess(): INode {
-        return await(this.taskSubmitter.submit(
-            NodeToStartProcessSelectionTask(
-                this.configuration.maxMemory,
-                this.nodeService
-            )
-        ))
+        return NodeToStartProcessSelectionTask(
+            this.configuration.maxMemory,
+            this.nodeService
+        ).run().join()
     }
 
     private fun startProcessOnNode(node: INode): CompletableFuture<ICloudProcess> {
-        val messageChannel = this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, ICloudProcess>("start_process")!!
+        val messageChannel =
+            this.messageChannelManager.getMessageChannelByName<ProcessStartConfiguration, ICloudProcess>("start_process")!!
         return messageChannel.createMessageRequest(this.configuration, node).submit()
     }
 

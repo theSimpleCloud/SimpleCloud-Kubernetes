@@ -41,6 +41,8 @@ fun <T> failedFuture(exception: Exception): CompletableFuture<T> {
     return CloudCompletableFuture.failedFuture(exception)
 }
 
+private val UNIT_FUTURE = CloudCompletableFuture.completedFuture(Unit)
+
 fun unitFuture(): CompletableFuture<Unit> {
-    return CloudCompletableFuture.completedFuture(Unit)
+    return UNIT_FUTURE
 }

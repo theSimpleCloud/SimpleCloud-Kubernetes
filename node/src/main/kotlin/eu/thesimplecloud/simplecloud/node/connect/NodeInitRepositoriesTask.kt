@@ -36,7 +36,6 @@ import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepo
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersionRepository
 import eu.thesimplecloud.simplecloud.node.mongo.template.MongoTemplateRepository
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 class NodeInitRepositoriesTask @Inject constructor(
@@ -48,12 +47,9 @@ class NodeInitRepositoriesTask @Inject constructor(
     private val mongoProcessVersionRepository: MongoProcessVersionRepository,
     private val igniteJvmArgumentsRepository: IgniteJvmArgumentsRepository,
     private val mongoJvmArgumentsRepository: MongoJvmArgumentsRepository,
-) : Task<Unit>() {
-    override fun getName(): String {
-        return "node_init_repositories"
-    }
+) {
 
-    override fun run(): CompletableFuture<Unit> {
+    fun run(): CompletableFuture<Unit> {
         await(initJvmArguments())
         await(initProcessVersions())
         await(initTemplates())

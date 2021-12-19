@@ -42,46 +42,35 @@ import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
-import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
-import eu.thesimplecloud.simplecloud.node.process.container.MountingContainerProcessStarter
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
-import eu.thesimplecloud.simplecloud.node.task.SyncAllTemplatesTask
 import eu.thesimplecloud.simplecloud.node.util.SingleClassBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
 import java.util.concurrent.CompletableFuture
 import javax.inject.Inject
 
-class NodeClusterConnectTask @Inject constructor(
+class NodeClusterConnect @Inject constructor(
     private val injector: Injector,
     private val datastore: Datastore,
     @NodeName private val nodeName: String,
     @NodeBindAddress private val nodeBindAddress: Address,
     @NodeMaxMemory private val nodeMaxMemory: Int,
-) : Task<Unit>() {
+) {
 
-
-    override fun getName(): String {
-        return "node_cluster_connect"
-    }
-
-    override fun run(): CompletableFuture<Unit> {
+    fun run(): CompletableFuture<Unit> {
         val nodeRepository = MongoPersistentNodeRepository(this.datastore)
         await(editOrInsertSelfNode(nodeRepository))
         val clusterKey = await(loadClusterKey())
         val ignite = await(startIgnite(nodeRepository, clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
-        await(startRestServer(finalInjector))
+        startRestServer(finalInjector)
         await(initializeMessageChannels(finalInjector))
         await(checkForFirstNodeInCluster(finalInjector, ignite))
         await(writeSelfNodeInRepository(finalInjector, ignite))
-        await(synchronizeTemplates(finalInjector))
         await(checkOnlineProcesses(finalInjector))
         return unitFuture()
     }
@@ -93,41 +82,34 @@ class NodeClusterConnectTask @Inject constructor(
         return unitFuture()
     }
 
-    private fun synchronizeTemplates(injector: Injector): CompletableFuture<Unit> {
-        val task = injector.getInstance(SyncAllTemplatesTask::class.java)
-        return this.taskSubmitter.submit(task)
-    }
-
     private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
-        return this.taskSubmitter.submit(
-            SelfNodeWriteTask(
-                injector.getInstance(IgniteNodeRepository::class.java),
-                NodeConfiguration(
-                    this.nodeBindAddress,
-                    this.nodeName,
-                    ignite.cluster().localNode().id(),
-                    this.nodeMaxMemory,
-                    0
-                )
+        return SelfNodeWriteTask(
+            injector.getInstance(IgniteNodeRepository::class.java),
+            NodeConfiguration(
+                this.nodeBindAddress,
+                this.nodeName,
+                ignite.cluster().localNode().id(),
+                this.nodeMaxMemory,
+                0
             )
-        )
+        ).run()
     }
 
     private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
         val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
-        return this.taskSubmitter.submit(nodeCheckOnlineProcessesTask)
+        return nodeCheckOnlineProcessesTask.run()
     }
 
     private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
         if (ignite.cluster().nodes().size == 1) {
             val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
-            await(this.taskSubmitter.submit(nodeInitRepositoriesTask))
+            nodeInitRepositoriesTask.run()
         }
         return unitFuture()
     }
 
     private fun startRestServer(injector: Injector): CompletableFuture<RestServer> {
-        return this.taskSubmitter.submit(RestServerStartTask(injector))
+        return RestServerStartTask(injector).run()
     }
 
     private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
@@ -140,17 +122,17 @@ class NodeClusterConnectTask @Inject constructor(
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java
         )
-        val executorService = this.taskSubmitter.getExecutorService()
-        val systemSubmitter = executorService.createSubmitter("SYSTEM")
         return injector.createChildInjector(
             cloudAPIBinderModule,
-            SingleInstanceBinderModule(TaskSubmitter::class.java, systemSubmitter),
-            SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
+            //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
             SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
         )
     }
 
-    private fun startIgnite(nodeRepository: MongoPersistentNodeRepository, clusterKey: ClusterKey): CompletableFuture<Ignite> {
+    private fun startIgnite(
+        nodeRepository: MongoPersistentNodeRepository,
+        clusterKey: ClusterKey
+    ): CompletableFuture<Ignite> {
         val addresses = await(getOtherNodesAddressesToConnectTo(nodeRepository))
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)

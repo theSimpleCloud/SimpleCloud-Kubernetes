@@ -27,18 +27,14 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 class NodeCheckOnlineProcessesTask @Inject constructor(
     private val groupService: ICloudProcessGroupService,
     private val processService: ICloudProcessService
-) : Task<Unit>() {
-    override fun getName(): String {
-        return "node_check_online_processes"
-    }
+) {
 
-    override fun run(): CompletableFuture<Unit> {
+    fun run(): CompletableFuture<Unit> {
         val groups = await(this.groupService.findAll())
         groups.forEach {
             await(ProcessOnlineCountHandler(it, processService).handle())

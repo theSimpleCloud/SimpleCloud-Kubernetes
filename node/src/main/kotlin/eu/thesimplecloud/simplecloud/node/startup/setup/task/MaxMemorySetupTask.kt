@@ -22,11 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
-import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeMaxMemoryResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -37,13 +35,9 @@ import java.util.concurrent.CompletableFuture
  */
 class MaxMemorySetupTask(
     private val restSetupManager: RestSetupManager
-) : Task<NodeMaxMemoryResponseBody>() {
+) {
 
-    override fun getName(): String {
-        return "node_max_memory_setup"
-    }
-
-    override fun run(): CompletableFuture<NodeMaxMemoryResponseBody> {
+    fun run(): CompletableFuture<NodeMaxMemoryResponseBody> {
         return restSetupManager.setNextSetup(Setup.NODE_MAX_MEMORY)
     }
 

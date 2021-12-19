@@ -26,19 +26,11 @@ import com.google.inject.Injector
 import com.google.inject.Key
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.container.container.ContainerSpec
-import eu.thesimplecloud.simplecloud.container.container.IContainer
-import eu.thesimplecloud.simplecloud.container.image.IImage
-import eu.thesimplecloud.simplecloud.container.image.ImageBuildInstructions
 import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
-import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnectTask
+import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnect
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
-import eu.thesimplecloud.simplecloud.task.TaskExecutorService
-import eu.thesimplecloud.simplecloud.task.TaskExecutorServiceImpl
-import org.apache.commons.io.FileUtils
-import java.io.File
 
 
 /**
@@ -51,11 +43,8 @@ class NodeStartup(
     private val startArguments: NodeStartArgumentParserMain
 ) {
 
-    private val taskExecutorService: TaskExecutorService = TaskExecutorServiceImpl("DEFAULT")
-    private val taskSubmitter = taskExecutorService.createSubmitter("STARTUP")
-
     fun start() {
-        this.taskSubmitter.submit(NodeStartupTask(this.startArguments)).thenAccept {
+        NodeStartupTask(this.startArguments).run().thenAccept {
             executeClusterConnect(it)
         }
     }
@@ -69,16 +58,17 @@ class NodeStartup(
     }
 
     private fun executeClusterConnect0(injector: Injector) {
-        val task = NodeClusterConnectTask(
+        val task = NodeClusterConnect(
             injector,
             injector.getInstance(Datastore::class.java),
             injector.getInstance(Key.get(String::class.java, NodeName::class.java)),
             injector.getInstance(Key.get(Address::class.java, NodeBindAddress::class.java)),
             injector.getInstance(Key.get(Int::class.java, NodeMaxMemory::class.java)),
         )
-        this.taskSubmitter.submit(task)
+        task.run()
     }
 
+    /*
     fun executeImageBuild(injector: Injector) {
         println("after inject")
         val imageFactory = injector.getInstance(IImage.Factory::class.java)
@@ -108,5 +98,7 @@ class NodeStartup(
         container.start()
         println("container start")
     }
+
+     */
 
 }

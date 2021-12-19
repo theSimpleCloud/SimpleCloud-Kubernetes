@@ -32,14 +32,12 @@ import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConf
 import eu.thesimplecloud.simplecloud.api.process.ICloudProcess
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.node.process.MultiNodeProcessStarter
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: ICloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
-    private val taskSubmitter: TaskSubmitter,
     private val nodeService: INodeService,
     private val injector: Injector
 ) : AbstractCloudProcessService(
@@ -47,7 +45,6 @@ class CloudProcessServiceImpl @Inject constructor(
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
         val processStarter = MultiNodeProcessStarter(
-            this.taskSubmitter,
             this.nodeService,
             configuration,
             this.injector

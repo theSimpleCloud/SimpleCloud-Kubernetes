@@ -29,7 +29,6 @@ import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.mongo.file.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,15 +40,11 @@ import java.util.concurrent.CompletableFuture
 class MongoDbSafeStartTask(
     private val connectionStringArgument: String?,
     private val nodeSetupHandler: NodeStartupSetupHandler
-) : Task<Datastore>() {
-
-    override fun getName(): String {
-        return "mongo_safe_start"
-    }
+) {
 
     private val mongoFileHandler = MongoConfigurationFileHandler(this.connectionStringArgument)
 
-    override fun run(): CompletableFuture<Datastore> {
+    fun run(): CompletableFuture<Datastore> {
         if (!this.mongoFileHandler.isConnectionStringAvailable()) {
             await(executeMongoSetup())
         }
@@ -72,8 +67,7 @@ class MongoDbSafeStartTask(
     }
 
     private fun executeMongoSetup(): CompletableFuture<String> {
-        val connectionString =
-            await(this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) { MongoDbSetupTask(it) })
+        val connectionString = await(this.nodeSetupHandler.executeSetupTask() { MongoDbSetupTask(it).run() })
         saveResponseToFile(connectionString)
         return completedFuture(connectionString)
     }
@@ -83,7 +77,7 @@ class MongoDbSafeStartTask(
     }
 
     private fun startMongoDbClient(connectionString: String): CompletableFuture<Datastore> {
-        val future = this.taskSubmitter.submit(MongoDbStartTask(connectionString))
+        val future = MongoDbStartTask(connectionString).run()
         val mongoDatastore = await(future)
         return CloudCompletableFuture.completedFuture(mongoDatastore)
     }

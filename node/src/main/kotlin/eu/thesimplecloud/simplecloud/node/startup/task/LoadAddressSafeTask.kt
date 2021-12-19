@@ -28,23 +28,17 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.NodeAddressSetupTask
-import eu.thesimplecloud.simplecloud.node.startup.setup.task.NodeNameSetupTask
-import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
 class LoadAddressSafeTask(
     private val nodeSetupHandler: NodeStartupSetupHandler,
     private val bindAddressArgument: Address?
-) : Task<Address>() {
+) {
 
     private val objectMapper = ObjectMapper()
 
-    override fun getName(): String {
-        return "load_address_safe"
-    }
-
-    override fun run(): CompletableFuture<Address> {
+    fun run(): CompletableFuture<Address> {
         if (this.bindAddressArgument != null)
             return completedFuture(bindAddressArgument)
         return loadAddress()
@@ -68,8 +62,8 @@ class LoadAddressSafeTask(
     }
 
     private fun executeSetup(): CompletableFuture<Address> {
-        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-            NodeAddressSetupTask(it)
+        return this.nodeSetupHandler.executeSetupTask() {
+            NodeAddressSetupTask(it).run()
         }
     }
 

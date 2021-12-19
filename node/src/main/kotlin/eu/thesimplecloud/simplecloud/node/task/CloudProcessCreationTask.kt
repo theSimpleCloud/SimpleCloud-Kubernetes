@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.node.task
 
 import com.ea.async.Async.await
-import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.impl.process.factory.ICloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
@@ -36,9 +35,7 @@ import eu.thesimplecloud.simplecloud.api.service.ICloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.ICloudProcessService
 import eu.thesimplecloud.simplecloud.api.service.INodeService
 import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.util.PortManager
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -49,13 +46,9 @@ class CloudProcessCreationTask(
     private val nodeService: INodeService,
     private val factory: ICloudProcessFactory,
     private val nodeName: String
-) : Task<ICloudProcess>() {
+) {
 
-    override fun getName(): String {
-        return "create_process"
-    }
-
-    override fun run(): CompletableFuture<ICloudProcess> {
+    fun run(): CompletableFuture<ICloudProcess> {
         val processNumber = await(getProcessNumber())
         val node = await(this.nodeService.findNodeByName(nodeName))
         val group = await(this.groupService.findByName(this.startConfiguration.groupName))

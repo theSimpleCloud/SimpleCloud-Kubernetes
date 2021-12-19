@@ -41,26 +41,26 @@ import eu.thesimplecloud.simplecloud.api.utils.INetworkComponent
 import eu.thesimplecloud.simplecloud.container.container.IContainer
 import eu.thesimplecloud.simplecloud.container.image.IImage
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
-import eu.thesimplecloud.simplecloud.node.process.container.IContainerProcessStarter
 import eu.thesimplecloud.simplecloud.node.service.CloudProcessServiceImpl
 import eu.thesimplecloud.simplecloud.node.task.CloudProcessCreationTask
 import eu.thesimplecloud.simplecloud.node.task.ProcessStartTask
 import eu.thesimplecloud.simplecloud.node.util.SelfNodeGetter
 import eu.thesimplecloud.simplecloud.node.util.UncaughtExceptions
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 class StartProcessMessageHandler @Inject constructor(
     private val injector: Injector,
     private val nodeService: INodeService,
-    private val taskSubmitter: TaskSubmitter,
     private val nodeRepository: IgniteNodeRepository,
     private val processService: CloudProcessServiceImpl,
     private val groupService: ICloudProcessGroupService,
     private val processFactory: ICloudProcessFactory,
 ) : IMessageHandler<ProcessStartConfiguration, ICloudProcess> {
 
-    override fun handleMessage(message: ProcessStartConfiguration, sender: INetworkComponent): CompletableFuture<ICloudProcess> {
+    override fun handleMessage(
+        message: ProcessStartConfiguration,
+        sender: INetworkComponent
+    ): CompletableFuture<ICloudProcess> {
         val process = await(createProcess(message))
         await(updateProcessToCluster(process))
         await(increaseUsedMemoryOnSelfNode(process.getMaxMemory()))
@@ -73,28 +73,23 @@ class StartProcessMessageHandler @Inject constructor(
     }
 
     private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<ICloudProcess> {
-        return this.taskSubmitter.submit(
-            CloudProcessCreationTask(
-                configuration,
-                this.processService,
-                this.groupService,
-                this.nodeService,
-                this.processFactory,
-                this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
-            )
-        )
+        return CloudProcessCreationTask(
+            configuration,
+            this.processService,
+            this.groupService,
+            this.nodeService,
+            this.processFactory,
+            this.injector.getInstance(Key.get(String::class.java, NodeName::class.java))
+        ).run()
     }
 
     private fun startProcess(process: ICloudProcess) {
-        this.taskSubmitter.submit(
-            ProcessStartTask(
-                process,
-                this.injector.getInstance(IContainer.Factory::class.java),
-                this.injector.getInstance(IImage.Factory::class.java),
-                this.injector.getInstance(IContainerProcessStarter::class.java),
-                this.injector
-            )
-        ).exceptionally { UncaughtExceptions.handle(it) }
+        ProcessStartTask(
+            process,
+            this.injector.getInstance(IContainer.Factory::class.java),
+            this.injector.getInstance(IImage.Factory::class.java),
+            this.injector
+        ).run().exceptionally { UncaughtExceptions.handle(it) }
     }
 
     private fun increaseUsedMemoryOnSelfNode(increaseAmount: Int): CompletableFuture<Unit> {

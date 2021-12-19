@@ -29,9 +29,6 @@ import eu.thesimplecloud.simplecloud.restserver.RestBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
 import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.*
-import eu.thesimplecloud.simplecloud.restserver.setup.SetupRestServerBinderModule
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -42,13 +39,9 @@ import java.util.concurrent.CompletableFuture
  */
 class RestServerStartTask(
     private val injector: Injector
-) : Task<RestServer>() {
+) {
 
-    override fun getName(): String {
-        return "start_rest_server"
-    }
-
-    override fun run(): CompletableFuture<RestServer> {
+    fun run(): CompletableFuture<RestServer> {
         val injector = initGuice()
         val restServer = injector.getInstance(RestServer::class.java)
         registerController(restServer.controllerHandler)

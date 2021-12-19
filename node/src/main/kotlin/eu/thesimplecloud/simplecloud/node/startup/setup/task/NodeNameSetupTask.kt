@@ -26,7 +26,6 @@ import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -37,13 +36,9 @@ import java.util.concurrent.CompletableFuture
  */
 class NodeNameSetupTask(
     private val restSetupManager: RestSetupManager
-) : Task<String>() {
+) {
 
-    override fun getName(): String {
-        return "node_name_setup"
-    }
-
-    override fun run(): CompletableFuture<String> {
+    fun run(): CompletableFuture<String> {
         val setupFuture = this.restSetupManager.setNextSetup(Setup.NODE_NAME)
         val responseBody = await(setupFuture)
         return completedFuture(responseBody.nodeName)

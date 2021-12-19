@@ -25,27 +25,21 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 import com.ea.async.Async.await
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MaxMemorySetupTask
 import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeMaxMemoryResponseBody
-import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class LoadMaxMemorySafeTask(
     private val nodeSetupHandler: NodeStartupSetupHandler,
     private val maxMemoryArgument: Int?
-) : Task<Int>() {
+) {
 
     private val objectMapper = ObjectMapper()
 
-    override fun getName(): String {
-        return "load_address_safe"
-    }
 
-    override fun run(): CompletableFuture<Int> {
+    fun run(): CompletableFuture<Int> {
         if (this.maxMemoryArgument != null)
             return completedFuture(maxMemoryArgument)
         return loadMaxMemory()
@@ -76,8 +70,8 @@ class LoadMaxMemorySafeTask(
     }
 
     private fun executeSetup(): CompletableFuture<NodeMaxMemoryResponseBody> {
-        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-            MaxMemorySetupTask(it)
+        return this.nodeSetupHandler.executeSetupTask() {
+            MaxMemorySetupTask(it).run()
         }
     }
 

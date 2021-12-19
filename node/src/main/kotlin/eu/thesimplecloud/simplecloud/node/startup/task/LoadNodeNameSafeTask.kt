@@ -27,7 +27,6 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.NodeNameSetupTask
-import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -35,13 +34,9 @@ import java.util.concurrent.CompletableFuture
 class LoadNodeNameSafeTask(
     private val nodeSetupHandler: NodeStartupSetupHandler,
     private val useRandomNodeName: Boolean
-) : Task<String>() {
+) {
 
-    override fun getName(): String {
-        return "load_node_name_safe"
-    }
-
-    override fun run(): CompletableFuture<String> {
+    fun run(): CompletableFuture<String> {
         if (!NODE_NAME_FILE.exists()) {
             await(determineNodeNameAndSafeToFile())
         }
@@ -63,8 +58,8 @@ class LoadNodeNameSafeTask(
     }
 
     private fun executeSetup(): CompletableFuture<String> {
-        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-            NodeNameSetupTask(it)
+        return this.nodeSetupHandler.executeSetupTask() {
+            NodeNameSetupTask(it).run()
         }
     }
 

@@ -12,10 +12,8 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":api-impl"))
     implementation(project(":api-internal"))
-    implementation(project(":task"))
     implementation(project(":container"))
     implementation(project(":ignite"))
-    implementation(project(":storage-backend"))
 
 }
 

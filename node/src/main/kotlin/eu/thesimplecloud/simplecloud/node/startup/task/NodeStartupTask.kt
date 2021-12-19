@@ -36,13 +36,10 @@ import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
-import eu.thesimplecloud.simplecloud.node.startup.task.docker.EnsureInsideDockerAndDockerIsAccessibleTask
 import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceAnnotatedBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.TaskExecutorService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -53,16 +50,11 @@ import java.util.concurrent.CompletableFuture
  */
 class NodeStartupTask(
     private val startArguments: NodeStartArgumentParserMain
-) : Task<Injector>() {
+) {
 
     private val nodeSetupHandler: NodeStartupSetupHandler = NodeStartupSetupHandler()
 
-    override fun getName(): String {
-        return "node_startup"
-    }
-
-    override fun run(): CompletableFuture<Injector> {
-        await(this.taskSubmitter.submit(EnsureInsideDockerAndDockerIsAccessibleTask()))
+    fun run(): CompletableFuture<Injector> {
         val nodeName = await(loadNodeName())
         val address = await(loadAddress())
         val maxMemory = await(loadMaxMemory())
@@ -82,7 +74,6 @@ class NodeStartupTask(
     ): Injector {
         return Guice.createInjector(
             SingleInstanceBinderModule(Datastore::class.java, datastore),
-            SingleInstanceBinderModule(TaskExecutorService::class.java, this.taskSubmitter.getExecutorService()),
             SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
             SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
             SingleInstanceAnnotatedBinderModule(Int::class.java, nodeMaxMemory, NodeMaxMemory::class.java),
@@ -91,25 +82,21 @@ class NodeStartupTask(
     }
 
     private fun loadNodeName(): CompletableFuture<String> {
-        return this.taskSubmitter.submit(
-            LoadNodeNameSafeTask(
-                this.nodeSetupHandler,
-                this.startArguments.randomNodeName
-            )
-        )
+        return LoadNodeNameSafeTask(
+            this.nodeSetupHandler,
+            this.startArguments.randomNodeName
+        ).run()
     }
 
     private fun loadMaxMemory(): CompletableFuture<Int> {
-        return this.taskSubmitter.submit(
-            LoadMaxMemorySafeTask(
-                this.nodeSetupHandler,
-                this.startArguments.maxMemory
-            )
-        )
+        return LoadMaxMemorySafeTask(
+            this.nodeSetupHandler,
+            this.startArguments.maxMemory
+        ).run()
     }
 
     private fun loadAddress(): CompletableFuture<Address> {
-        return this.taskSubmitter.submit(LoadAddressSafeTask(this.nodeSetupHandler, this.startArguments.bindAddress))
+        return LoadAddressSafeTask(this.nodeSetupHandler, this.startArguments.bindAddress).run()
     }
 
     private fun loadModulesAndCreateGuiceInjector(
@@ -123,7 +110,7 @@ class NodeStartupTask(
 
     private fun loadModules(intermediateInjector: Injector): CompletableFuture<List<LoadedModuleApplication>> {
         val loadModulesTask = intermediateInjector.getInstance(LoadModulesTask::class.java)
-        return this.taskSubmitter.submit(loadModulesTask)
+        return loadModulesTask.run()
     }
 
     private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Unit> {
@@ -136,18 +123,16 @@ class NodeStartupTask(
     }
 
     private fun executeFirstUserSetup(mongoRepository: MongoUserRepository): CompletableFuture<Unit> {
-        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-            FirstWebUserSetupTask(it, mongoRepository)
+        return this.nodeSetupHandler.executeSetupTask() {
+            FirstWebUserSetupTask(it, mongoRepository).run()
         }
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
-        return this.taskSubmitter.submit(
-            MongoDbSafeStartTask(
-                this.startArguments.mongoDbConnectionString,
-                this.nodeSetupHandler
-            )
-        )
+        return MongoDbSafeStartTask(
+            this.startArguments.mongoDbConnectionString,
+            this.nodeSetupHandler
+        ).run()
     }
 
 

@@ -24,13 +24,8 @@ package eu.thesimplecloud.simplecloud.node.startup.task
 
 import com.google.inject.Guice
 import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.restserver.RestServer
-import eu.thesimplecloud.simplecloud.restserver.controller.ControllerHandler
 import eu.thesimplecloud.simplecloud.restserver.setup.SetupRestServerBinderModule
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,16 +33,11 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:22
  * @author Frederick Baier
  */
-class SetupRestServerStartTask : Task<RestServer>() {
+class SetupRestServerStartTask {
 
-    override fun getName(): String {
-        return "start_setup_rest_server"
-    }
-
-    override fun run(): CompletableFuture<RestServer> {
+    fun run(): RestServer {
         val injector = initGuice()
-        val restServer = injector.getInstance(RestServer::class.java)
-        return CloudCompletableFuture.completedFuture(restServer)
+        return injector.getInstance(RestServer::class.java)
     }
 
     private fun initGuice(): Injector {

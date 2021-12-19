@@ -1,6 +1,0 @@
-{
-  "name": "SFTP-Storage-Backend",
-  "author": "Wetterbericht",
-  "version": "1.0",
-  "classToLoad": "eu.thesimplecloud.simplecloud.storagebackend.sftp.SftpModule"
-}

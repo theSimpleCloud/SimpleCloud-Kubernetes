@@ -34,7 +34,6 @@ import eu.thesimplecloud.simplecloud.api.module.ModuleType
 import eu.thesimplecloud.simplecloud.node.repository.MongoModuleRepository
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.util.Downloader
-import eu.thesimplecloud.simplecloud.task.Task
 import java.io.File
 import java.util.concurrent.CompletableFuture
 
@@ -48,7 +47,7 @@ class LoadModulesTask @Inject constructor(
     private val datastore: Datastore,
     private val nodeSetupHandler: NodeStartupSetupHandler,
     private val injector: Injector
-) : Task<List<LoadedModuleApplication>>() {
+) {
 
     private val moduleRepository = MongoModuleRepository(datastore)
     private val modulesDir = File("modules/")
@@ -58,11 +57,7 @@ class LoadModulesTask @Inject constructor(
         this.modulesDir.mkdirs()
     }
 
-    override fun getName(): String {
-        return "load_modules"
-    }
-
-    override fun run(): CompletableFuture<List<LoadedModuleApplication>> {
+    fun run(): CompletableFuture<List<LoadedModuleApplication>> {
         //TODO remove filter
         val loadedModuleApplications = ModuleType.values().filter { it != ModuleType.PROCESS_ONLINE_COUNT_CALCULATOR }.map {
             await(loadModuleByType(it))
@@ -97,8 +92,8 @@ class LoadModulesTask @Inject constructor(
     }
 
     private fun executeModuleSetupInWeb(moduleType: ModuleType): CompletableFuture<Unit> {
-        return this.nodeSetupHandler.executeSetupTask(this.taskSubmitter) {
-            ModuleWebSetupTask(it, moduleRepository, moduleType)
+        return this.nodeSetupHandler.executeSetupTask() {
+            ModuleWebSetupTask(it, moduleRepository, moduleType).run()
         }
     }
 

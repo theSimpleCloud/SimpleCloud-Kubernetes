@@ -35,6 +35,6 @@ class KubernetesImageRepository @Inject constructor(
 ) : IImageRepository {
 
     override fun getImageByName(name: String): CompletableFuture<IImage> {
-
+        TODO()
     }
 }

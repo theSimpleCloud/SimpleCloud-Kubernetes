@@ -22,23 +22,16 @@
 
 package eu.thesimplecloud.simplecloud.node.connect
 
-import com.google.inject.Inject
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.task.Task
 import java.util.concurrent.CompletableFuture
 
 class SelfNodeWriteTask(
     private val repository: IgniteNodeRepository,
     private val nodeConfiguration: NodeConfiguration
-) : Task<Unit>() {
-    override fun getName(): String {
-        return "self_node_write_task"
-    }
+) {
 
-    override fun run(): CompletableFuture<Unit> {
-        this.repository.save(nodeConfiguration.name, nodeConfiguration)
-        return unitFuture()
+    fun run(): CompletableFuture<Unit> {
+        return this.repository.save(nodeConfiguration.name, nodeConfiguration)
     }
 }

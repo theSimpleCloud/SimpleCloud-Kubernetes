@@ -24,24 +24,16 @@ package eu.thesimplecloud.simplecloud.node.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import eu.thesimplecloud.simplecloud.api.node.INode
-import eu.thesimplecloud.simplecloud.api.repository.INodeRepository
 import eu.thesimplecloud.simplecloud.api.service.INodeService
-import eu.thesimplecloud.simplecloud.task.Task
-import org.apache.ignite.Ignite
-import org.apache.ignite.cluster.ClusterNode
 import java.util.concurrent.CompletableFuture
 
 class NodeToStartProcessSelectionTask(
     private val requiredMemoryInMb: Int,
     private val nodeService: INodeService
-) : Task<INode>() {
-    override fun getName(): String {
-        return "node_to_start_process_selection"
-    }
+) {
 
-    override fun run(): CompletableFuture<INode> {
+    fun run(): CompletableFuture<INode> {
         val allNodes = await(this.nodeService.findAll())
         val sortedNodes = allNodes.sortedByDescending { calculateUsedMemoryPercentage(it) }
         val selectedNode = sortedNodes.first { it.hasMemoryAvailable(this.requiredMemoryInMb) }

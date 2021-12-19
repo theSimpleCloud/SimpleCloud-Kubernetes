@@ -25,17 +25,11 @@ package eu.thesimplecloud.simplecloud.node.startup.task.mongo
 import com.mongodb.*
 import com.mongodb.client.MongoClients
 import dev.morphia.Datastore
-import eu.thesimplecloud.simplecloud.task.Task
-import eu.thesimplecloud.simplecloud.task.submitter.TaskSubmitter
 import java.util.concurrent.CompletableFuture
 import dev.morphia.Morphia
-import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.node.repository.ModuleEntity
 import org.bson.codecs.configuration.CodecRegistries
-import org.bson.codecs.pojo.ClassModel
 import org.bson.codecs.pojo.PojoCodecProvider
-import org.bson.internal.CodecRegistryHelper
 import java.util.concurrent.TimeUnit
 
 
@@ -47,15 +41,11 @@ import java.util.concurrent.TimeUnit
  */
 class MongoDbStartTask(
     connectionString: String
-) : Task<Datastore>() {
+) {
 
     private val connectionString = ConnectionString(connectionString)
 
-    override fun getName(): String {
-        return "start_mongo_client"
-    }
-
-    override fun run(): CompletableFuture<Datastore> {
+    fun run(): CompletableFuture<Datastore> {
         println(connectionString.toString())
         val mongoClient = MongoClients.create(createClientSettings())
         val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
