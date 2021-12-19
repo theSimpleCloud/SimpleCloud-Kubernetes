@@ -1,6 +1,6 @@
 package eu.thesimplecloud.application
 
-import eu.thesimplecloud.application.filecontent.IApplicationFileContent
+import eu.thesimplecloud.application.filecontent.ApplicationFileContent
 import java.io.File
 
 /**
@@ -9,11 +9,11 @@ import java.io.File
  * Date: 28.03.2021
  * Time: 18:22
  */
-interface ILoadedApplication {
+interface LoadedApplication {
 
     fun getFile(): File
 
-    fun getApplicationFileContent(): IApplicationFileContent
+    fun getApplicationFileContent(): ApplicationFileContent
 
     fun getLoadedClassInstance(): Any
 

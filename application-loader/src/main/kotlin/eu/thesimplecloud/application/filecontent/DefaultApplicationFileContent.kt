@@ -14,7 +14,7 @@ open class DefaultApplicationFileContent(
     private val author: String,
     private val version: String = "",
     private val classToLoad: String
-) : IApplicationFileContent {
+) : ApplicationFileContent {
 
     override fun getName(): String {
         return this.name

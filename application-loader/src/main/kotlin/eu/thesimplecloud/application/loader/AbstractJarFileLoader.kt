@@ -3,7 +3,7 @@ package eu.thesimplecloud.application.loader
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.ObjectMapper
 import eu.thesimplecloud.application.filecontent.DefaultApplicationFileContent
-import eu.thesimplecloud.application.filecontent.IApplicationFileContent
+import eu.thesimplecloud.application.filecontent.ApplicationFileContent
 import eu.thesimplecloud.application.exception.ApplicationLoadException
 import java.io.File
 import java.util.jar.JarEntry
@@ -15,7 +15,7 @@ import java.util.jar.JarFile
  * Date: 07.04.2021
  * Time: 21:13
  */
-abstract class AbstractJarFileLoader<T : IApplicationFileContent>(
+abstract class AbstractJarFileLoader<T : ApplicationFileContent>(
     private val pathToEntryFile: String
 ) {
 

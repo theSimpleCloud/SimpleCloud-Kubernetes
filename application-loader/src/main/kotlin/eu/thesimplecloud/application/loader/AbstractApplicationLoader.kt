@@ -1,7 +1,7 @@
 package eu.thesimplecloud.application.loader
 
-import eu.thesimplecloud.application.ILoadedApplication
-import eu.thesimplecloud.application.filecontent.IApplicationFileContent
+import eu.thesimplecloud.application.LoadedApplication
+import eu.thesimplecloud.application.filecontent.ApplicationFileContent
 import java.io.File
 
 /**
@@ -10,7 +10,7 @@ import java.io.File
  * Date: 26.03.2021
  * Time: 21:17
  */
-abstract class AbstractApplicationLoader<T : ILoadedApplication>(
+abstract class AbstractApplicationLoader<T : LoadedApplication>(
     private val jarFileLoader: AbstractJarFileLoader<*>
 ) {
 
@@ -26,7 +26,7 @@ abstract class AbstractApplicationLoader<T : ILoadedApplication>(
         return loadApplication(file, applicationData)
     }
 
-    abstract fun loadApplication(file: File, fileContent: IApplicationFileContent): T
+    abstract fun loadApplication(file: File, fileContent: ApplicationFileContent): T
 
     abstract fun createApplicationClassLoader(file: File): ClassLoader
 

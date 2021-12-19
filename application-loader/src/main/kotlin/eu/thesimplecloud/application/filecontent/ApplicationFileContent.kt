@@ -6,7 +6,7 @@ package eu.thesimplecloud.application.filecontent
  * Date: 26.03.2021
  * Time: 21:20
  */
-interface IApplicationFileContent {
+interface ApplicationFileContent {
 
     /**
      * Returns the name of the application

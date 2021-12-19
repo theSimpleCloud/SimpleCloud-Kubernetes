@@ -4,7 +4,7 @@ import com.google.inject.AbstractModule
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
-import eu.thesimplecloud.application.filecontent.IApplicationFileContent
+import eu.thesimplecloud.application.filecontent.ApplicationFileContent
 import eu.thesimplecloud.application.loader.AbstractApplicationLoader
 import eu.thesimplecloud.application.loader.ApplicationClassLoader
 import eu.thesimplecloud.application.loader.ExtensionLoader
@@ -25,7 +25,7 @@ class ModuleApplicationLoader @Inject constructor(
 
     override fun loadApplication(
         file: File,
-        fileContent: IApplicationFileContent
+        fileContent: ApplicationFileContent
     ): LoadedModuleApplication {
         val classLoader = createApplicationClassLoader(file)
         val classNameToLoad = fileContent.getClassNameToLoad()
