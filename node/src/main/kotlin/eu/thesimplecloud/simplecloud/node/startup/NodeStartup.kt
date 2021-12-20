@@ -31,6 +31,7 @@ import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnect
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
+import eu.thesimplecloud.simplecloud.node.util.Logger
 
 
 /**
@@ -44,16 +45,15 @@ class NodeStartup(
 ) {
 
     fun start() {
-        NodeStartupTask(this.startArguments).run().thenAccept {
-            executeClusterConnect(it)
-        }
+        val injector = NodeStartupTask(this.startArguments).run().join()
+        executeClusterConnect(injector)
     }
 
     private fun executeClusterConnect(injector: Injector) {
         try {
             executeClusterConnect0(injector)
         } catch (e: Exception) {
-            e.printStackTrace()
+            Logger.error(e)
         }
     }
 
@@ -65,7 +65,7 @@ class NodeStartup(
             injector.getInstance(Key.get(Address::class.java, NodeBindAddress::class.java)),
             injector.getInstance(Key.get(Int::class.java, NodeMaxMemory::class.java)),
         )
-        task.run()
+        task.run().join()
     }
 
     /*

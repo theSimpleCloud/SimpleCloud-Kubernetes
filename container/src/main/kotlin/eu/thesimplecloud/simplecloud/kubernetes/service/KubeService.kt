@@ -20,23 +20,19 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.task
+package eu.thesimplecloud.simplecloud.kubernetes.service
 
-import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
-import eu.thesimplecloud.simplecloud.api.image.Image
-import java.util.concurrent.CompletableFuture
+interface KubeService {
 
-class ProcessStartTask(
-    private val process: CloudProcess,
-    private val containerFactory: Container.Factory,
-    private val imageFactory: Image.Factory,
-    private val injector: Injector
-) {
+    fun getName(): String
 
-    fun run(): CompletableFuture<Unit> {
-        return unitFuture()
+    interface Factory {
+
+        fun create(
+            name: String,
+            serviceSpec: ServiceSpec
+        ): KubeService
+
     }
+
 }

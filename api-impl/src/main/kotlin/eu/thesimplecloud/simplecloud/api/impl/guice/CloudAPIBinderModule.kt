@@ -24,6 +24,8 @@ package eu.thesimplecloud.simplecloud.api.impl.guice
 
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
+import eu.thesimplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcessImpl
 import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import eu.thesimplecloud.simplecloud.api.impl.service.*
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
@@ -54,7 +56,7 @@ class CloudAPIBinderModule(
 
         install(
             FactoryModuleBuilder()
-                .implement(CloudProcess::class.java, CloudProcess::class.java)
+                .implement(CloudProcess::class.java, CloudProcessImpl::class.java)
                 .build(CloudProcessFactory::class.java)
         )
 
@@ -68,7 +70,7 @@ class CloudAPIBinderModule(
         bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
 
-        bind(MessageChannelManager::class.java).to(MessageChannelManager::class.java)
+        bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
 
 
     }

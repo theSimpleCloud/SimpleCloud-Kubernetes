@@ -27,6 +27,7 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.NodeNameSetupTask
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.io.File
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -37,6 +38,7 @@ class LoadNodeNameSafeTask(
 ) {
 
     fun run(): CompletableFuture<String> {
+        Logger.info("Loading Node Name")
         if (!NODE_NAME_FILE.exists()) {
             await(determineNodeNameAndSafeToFile())
         }

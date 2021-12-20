@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import java.util.concurrent.CompletableFuture
@@ -38,6 +39,7 @@ class NodeAddressSetupTask(
 ) {
 
     fun run(): CompletableFuture<Address> {
+        Logger.info("Executing Node Address Setup")
         return restSetupManager.setNextSetup(Setup.NODE_ADDRESS)
     }
 

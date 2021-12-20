@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
@@ -40,6 +41,7 @@ class MongoDbSetupTask(
 ) {
 
     fun run(): CompletableFuture<String> {
+        Logger.info("Executing MongoDB setup")
         val setupFuture = this.restSetupManager.setNextSetup(createSetup())
         val mongoSetupResponseBody = await(setupFuture)
         if (mongoSetupResponseBody.mongoMode == MongoSetupResponseBody.MongoMode.CREATE) {

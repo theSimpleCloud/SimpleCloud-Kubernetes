@@ -21,8 +21,9 @@
  */
 
 dependencies {
-    implementation("commons-io:commons-io:2.8.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.0")
+    implementation("commons-io:commons-io:2.11.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     implementation(project(":api"))
+    implementation("io.kubernetes:client-java:14.0.0")
 
 }

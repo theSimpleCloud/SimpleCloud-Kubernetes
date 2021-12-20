@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeMaxMemoryResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
@@ -38,6 +39,7 @@ class MaxMemorySetupTask(
 ) {
 
     fun run(): CompletableFuture<NodeMaxMemoryResponseBody> {
+        Logger.info("Executing Max Memory Setup")
         return restSetupManager.setNextSetup(Setup.NODE_MAX_MEMORY)
     }
 

@@ -20,23 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.task
+package eu.thesimplecloud.simplecloud.api.image
 
-import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
-import eu.thesimplecloud.simplecloud.api.image.Image
-import java.util.concurrent.CompletableFuture
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 07.04.2021
+ * Time: 20:52
+ * @author Frederick Baier
+ */
+interface Image {
 
-class ProcessStartTask(
-    private val process: CloudProcess,
-    private val containerFactory: Container.Factory,
-    private val imageFactory: Image.Factory,
-    private val injector: Injector
-) {
+    /**
+     * Returns the name of this image
+     */
+    fun getName(): String
 
-    fun run(): CompletableFuture<Unit> {
-        return unitFuture()
+    /**
+     * The factory to build images
+     */
+    interface Factory {
+
+        /**
+         * Creates an image
+         * @param name the name of the image
+         */
+        fun create(
+            name: String
+        ): Image
+
     }
+
 }

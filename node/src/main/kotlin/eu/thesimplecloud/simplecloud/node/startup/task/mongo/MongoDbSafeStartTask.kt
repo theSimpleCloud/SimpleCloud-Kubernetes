@@ -29,6 +29,7 @@ import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import eu.thesimplecloud.simplecloud.node.mongo.file.MongoConfigurationFileHandler
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -45,6 +46,7 @@ class MongoDbSafeStartTask(
     private val mongoFileHandler = MongoConfigurationFileHandler(this.connectionStringArgument)
 
     fun run(): CompletableFuture<Datastore> {
+        Logger.info("Starting MongoDB")
         if (!this.mongoFileHandler.isConnectionStringAvailable()) {
             await(executeMongoSetup())
         }
@@ -54,6 +56,7 @@ class MongoDbSafeStartTask(
     private fun startClientAndTestConnection(): CompletableFuture<Datastore> {
         val datastore = await(startMongoDbClient(mongoFileHandler.loadConnectionString()!!))
         if (isConnectedToDatabase(datastore)) {
+            Logger.info("Connected to database")
             return completedFuture(datastore)
         }
         tryConnectionStringReset()

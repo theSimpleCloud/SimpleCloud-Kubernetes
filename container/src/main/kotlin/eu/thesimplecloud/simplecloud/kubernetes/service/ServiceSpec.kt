@@ -20,23 +20,45 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.task
+package eu.thesimplecloud.simplecloud.kubernetes.service
 
-import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
-import eu.thesimplecloud.simplecloud.api.image.Image
-import java.util.concurrent.CompletableFuture
+import eu.thesimplecloud.simplecloud.kubernetes.Label
+import java.util.concurrent.CopyOnWriteArrayList
 
-class ProcessStartTask(
-    private val process: CloudProcess,
-    private val containerFactory: Container.Factory,
-    private val imageFactory: Image.Factory,
-    private val injector: Injector
-) {
+class ServiceSpec {
 
-    fun run(): CompletableFuture<Unit> {
-        return unitFuture()
+    val labels = CopyOnWriteArrayList<Label>()
+
+    @Volatile
+    var containerPort: Int = -1
+        private set
+
+    @Volatile
+    var clusterPort: Int = -1
+        private set
+
+    @Volatile
+    var publicPort: Int = -1
+        private set
+
+    fun withClusterPort(port: Int): ServiceSpec {
+        this.clusterPort = port
+        return this
     }
+
+    fun withContainerPort(port: Int): ServiceSpec {
+        this.containerPort = port
+        return this
+    }
+
+    fun withPublicPort(port: Int): ServiceSpec {
+        this.publicPort = port
+        return this
+    }
+
+    fun withLabels(vararg labels: Label): ServiceSpec {
+        this.labels.addAll(labels)
+        return this
+    }
+
 }

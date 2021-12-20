@@ -30,10 +30,4 @@ package eu.thesimplecloud.simplecloud.api.module
  */
 enum class ModuleType {
 
-    CONTAINER,
-
-    STORAGE_BACKEND,
-
-    PROCESS_ONLINE_COUNT_CALCULATOR
-
 }

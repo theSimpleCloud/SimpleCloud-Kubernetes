@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.node.startup
 
+import eu.thesimplecloud.simplecloud.node.util.Logger
 
 
 /**
@@ -32,6 +33,7 @@ package eu.thesimplecloud.simplecloud.node.startup
  */
 
 fun main(args: Array<String>) {
+    Logger.info("Starting SimpleCloud")
     //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
     NodeStartArgumentParserMain().main(args)
 }

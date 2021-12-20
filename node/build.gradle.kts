@@ -15,6 +15,9 @@ dependencies {
     implementation(project(":container"))
     implementation(project(":ignite"))
 
+    implementation("org.tinylog:tinylog-api:2.4.1")
+    implementation("org.tinylog:tinylog-impl:2.4.1")
+
 }
 
 tasks.withType<Jar> {

@@ -20,23 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.node.task
+package eu.thesimplecloud.simplecloud.kubernetes.image
 
-import com.google.inject.Injector
-import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
-import eu.thesimplecloud.simplecloud.api.image.Image
-import java.util.concurrent.CompletableFuture
+import java.io.File
 
-class ProcessStartTask(
-    private val process: CloudProcess,
-    private val containerFactory: Container.Factory,
-    private val imageFactory: Image.Factory,
-    private val injector: Injector
-) {
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 18.04.2021
+ * Time: 10:28
+ * @author Frederick Baier
+ */
+class FileImageInclusion(
+    private val file: File,
+    private val pathInImage: String
+) : ImageInclusion {
 
-    fun run(): CompletableFuture<Unit> {
-        return unitFuture()
+    override fun getFile(): File {
+        return this.file
+    }
+
+    override fun getPathInImage(): String {
+        return this.pathInImage
     }
 }

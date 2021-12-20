@@ -45,8 +45,7 @@ data class CloudProcessConfiguration(
     val static: Boolean,
     val processGroupType: ProcessGroupType,
     val versionName: String,
-    val templateName: String,
-    val nodeNameRunningOn: String,
+    val imageName: String,
     val jvmArgumentsName: String?,
     val igniteId: UUID?
 )

@@ -24,6 +24,7 @@ package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
@@ -43,6 +44,7 @@ class FirstWebUserSetupTask(
 ) {
 
     fun run(): CompletableFuture<Unit> {
+        Logger.info("Executing First User Setup")
         val setupFuture = this.restSetupManager.setNextSetup(Setup.FIRST_USER)
         val responseBody = await(setupFuture)
         saveResponseToMongoDatabase(responseBody)

@@ -45,6 +45,7 @@ import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
 import eu.thesimplecloud.simplecloud.node.service.*
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import org.apache.ignite.Ignite
@@ -61,6 +62,7 @@ class NodeClusterConnect @Inject constructor(
 ) {
 
     fun run(): CompletableFuture<Unit> {
+        Logger.info("Connecting to cluster...")
         val nodeRepository = MongoPersistentNodeRepository(this.datastore)
         await(editOrInsertSelfNode(nodeRepository))
         val clusterKey = await(loadClusterKey())

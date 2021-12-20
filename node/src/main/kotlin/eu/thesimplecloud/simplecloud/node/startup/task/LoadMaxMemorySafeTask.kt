@@ -27,6 +27,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MaxMemorySetupTask
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.setup.body.NodeMaxMemoryResponseBody
 import java.io.File
 import java.util.concurrent.CompletableFuture
@@ -40,6 +41,7 @@ class LoadMaxMemorySafeTask(
 
 
     fun run(): CompletableFuture<Int> {
+        Logger.info("Loading Max Memory")
         if (this.maxMemoryArgument != null)
             return completedFuture(maxMemoryArgument)
         return loadMaxMemory()
