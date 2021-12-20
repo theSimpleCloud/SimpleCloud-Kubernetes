@@ -28,21 +28,16 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteTemplateRepository
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
-import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersionRepository
-import eu.thesimplecloud.simplecloud.node.mongo.template.MongoTemplateRepository
 import java.util.concurrent.CompletableFuture
 
 class NodeInitRepositoriesTask @Inject constructor(
     private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
-    private val igniteTemplateRepository: IgniteTemplateRepository,
-    private val mongoTemplateRepository: MongoTemplateRepository,
     private val igniteProcessVersionRepository: IgniteProcessVersionRepository,
     private val mongoProcessVersionRepository: MongoProcessVersionRepository,
     private val igniteJvmArgumentsRepository: IgniteJvmArgumentsRepository,
@@ -52,7 +47,6 @@ class NodeInitRepositoriesTask @Inject constructor(
     fun run(): CompletableFuture<Unit> {
         await(initJvmArguments())
         await(initProcessVersions())
-        await(initTemplates())
         await(initGroups())
         return unitFuture()
     }
@@ -73,15 +67,6 @@ class NodeInitRepositoriesTask @Inject constructor(
         }
         for (config in configurations) {
             await(this.igniteProcessVersionRepository.save(config.name, config))
-        }
-        return unitFuture()
-    }
-
-    private fun initTemplates(): CompletableFuture<Unit> {
-        val templates = await(this.mongoTemplateRepository.findAll())
-        val configurations = templates.map { TemplateConfiguration(it.name, it.parentTemplateName) }
-        for (config in configurations) {
-            await(this.igniteTemplateRepository.save(config.name, config))
         }
         return unitFuture()
     }

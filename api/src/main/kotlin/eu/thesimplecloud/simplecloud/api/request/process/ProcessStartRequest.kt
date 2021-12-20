@@ -22,11 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.request.process
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.utils.Request
 import java.util.concurrent.CompletableFuture
 
@@ -66,16 +66,10 @@ interface ProcessStartRequest : Request<CloudProcess> {
     fun setProcessNumber(number: Int): ProcessStartRequest
 
     /**
-     * Sets the template for the new process
+     * Sets the image for the new process
      * @return this
      */
-    fun setTemplate(template: Template): ProcessStartRequest
-
-    /**
-     * Sets the template for the new process
-     * @return this
-     */
-    fun setTemplate(templateFuture: CompletableFuture<Template>): ProcessStartRequest
+    fun setImage(image: Image): ProcessStartRequest
 
     /**
      * Sets the jvm arguments for the process to start with

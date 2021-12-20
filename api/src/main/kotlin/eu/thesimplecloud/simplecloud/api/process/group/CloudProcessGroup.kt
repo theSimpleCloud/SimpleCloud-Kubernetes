@@ -22,12 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.process.group
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.node.Node
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.Nameable
@@ -44,9 +43,7 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
 
     fun isInMaintenance(): Boolean
 
-    fun getTemplateName(): String
-
-    fun getTemplate(): CompletableFuture<Template>
+    fun getImage(): Image
 
     fun getProcessVersionName(): String
 
@@ -73,10 +70,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun isStateUpdatingEnabled(): Boolean
 
     fun getStartPriority(): Int
-
-    fun getNodeNamesAllowedToStartServicesOn(): List<String>
-
-    fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<Node>>
 
     fun getProcesses(): CompletableFuture<List<CloudProcess>>
 

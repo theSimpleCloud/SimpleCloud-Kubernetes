@@ -33,7 +33,7 @@ class CloudProcessCreateRequestDto(
     val maxMemory: Int? = null,
     val maxPlayers: Int? = null,
     val versionName: String? = null,
-    val templateName: String? = null,
+    val imageName: String? = null,
     val jvmArgumentsName: String? = null,
 ) {
 

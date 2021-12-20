@@ -46,7 +46,6 @@ class CloudAPIBinderModule(
     private val jvmArgumentsServiceClass: Class<out JvmArgumentsService>,
     private val nodeServiceClass: Class<out NodeService>,
     private val processVersionServiceClass: Class<out ProcessVersionService>,
-    private val templateServiceClass: Class<out TemplateService>,
     private val cloudProcessServiceClass: Class<out CloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out CloudProcessGroupService>,
 ) : AbstractModule() {
@@ -65,7 +64,6 @@ class CloudAPIBinderModule(
         bind(JvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(ProcessVersionService::class.java).to(this.processVersionServiceClass)
-        bind(TemplateService::class.java).to(this.templateServiceClass)
         bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)

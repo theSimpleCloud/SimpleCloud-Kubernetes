@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
@@ -44,7 +45,6 @@ import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 class ProcessGroupUpdateHandler @Inject constructor(
     private val validatorService: ValidatorService,
     private val groupService: CloudProcessGroupService,
-    private val templateService: TemplateService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService,
     private val versionService: ProcessVersionService
@@ -61,9 +61,8 @@ class ProcessGroupUpdateHandler @Inject constructor(
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
         request.setVersion(this.versionService.findByName(configuration.versionName))
-        request.setTemplate(this.templateService.findByName(configuration.templateName))
+        request.setImage(ImageImpl(configuration.imageName))
         request.setOnlineCountConfiguration(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
-        request.setNodesAllowedToStartOn(configuration.nodeNamesAllowedToStartOn)
         request.setMaintenance(configuration.maintenance)
         request.setMinimumOnlineProcessCount(configuration.minimumProcessCount)
         request.setMaximumOnlineProcessCount(configuration.maximumProcessCount)
@@ -88,7 +87,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
             request.setLobbyPriority(configuration.lobbyPriority)
         }
 
-        await(request.submit())
+        request.submit().join()
     }
 
 }

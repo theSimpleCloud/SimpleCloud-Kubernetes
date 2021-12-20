@@ -26,7 +26,6 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.template.configuration.TemplateConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,7 +40,6 @@ class ValidatorServiceImpl @Inject constructor(
 
     private val clazzToValidator = mapOf<Class<*>, Class<out Validator<*>>>(
         AbstractCloudProcessGroupConfiguration::class.java to GroupConfigurationValidator::class.java,
-        TemplateConfiguration::class.java to TemplateConfigurationValidator::class.java
     )
 
     override fun <T> getValidator(clazz: Class<T>): Validator<T> {

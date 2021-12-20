@@ -119,7 +119,6 @@ class NodeClusterConnect @Inject constructor(
             JvmArgumentsServiceImpl::class.java,
             NodeServiceImpl::class.java,
             ProcessVersionServiceImpl::class.java,
-            TemplateServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java
         )

@@ -22,15 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
+import eu.thesimplecloud.simplecloud.api.image.Image
+import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.node.Node
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.service.*
-import eu.thesimplecloud.simplecloud.api.template.Template
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -43,7 +43,6 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val templateService: TemplateService,
     private val processVersionService: ProcessVersionService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
@@ -68,12 +67,8 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.maintenance
     }
 
-    override fun getTemplateName(): String {
-        return this.configuration.templateName
-    }
-
-    override fun getTemplate(): CompletableFuture<Template> {
-        return this.templateService.findByName(this.configuration.templateName)
+    override fun getImage(): Image {
+        return ImageImpl(this.configuration.imageName)
     }
 
     override fun getProcessVersionName(): String {
@@ -124,14 +119,6 @@ abstract class AbstractCloudProcessGroup constructor(
 
     override fun getStartPriority(): Int {
         return this.configuration.startPriority
-    }
-
-    override fun getNodeNamesAllowedToStartServicesOn(): List<String> {
-        return this.configuration.nodeNamesAllowedToStartOn
-    }
-
-    override fun getNodesAllowedToStartServicesOn(): CompletableFuture<List<Node>> {
-        return this.nodeService.findNodesByName(*this.configuration.nodeNamesAllowedToStartOn.toTypedArray())
     }
 
     override fun getProcesses(): CompletableFuture<List<CloudProcess>> {

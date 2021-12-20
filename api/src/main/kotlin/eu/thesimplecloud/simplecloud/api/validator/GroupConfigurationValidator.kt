@@ -31,7 +31,6 @@ import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractClo
 import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
-import eu.thesimplecloud.simplecloud.api.service.TemplateService
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.lang.Exception
 import java.util.concurrent.CompletableFuture
@@ -46,7 +45,6 @@ import java.util.concurrent.CompletableFuture
 class GroupConfigurationValidator @Inject constructor(
     private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService,
-    private val templateService: TemplateService,
     private val versionService: ProcessVersionService,
 ) : Validator<AbstractCloudProcessGroupConfiguration> {
 
@@ -54,7 +52,7 @@ class GroupConfigurationValidator @Inject constructor(
         return CloudCompletableFuture.runAsync {
             await(checkJvmArguments(value))
             await(checkProcessOnlineCountConfiguration(value))
-            await(checkTemplate(value))
+            await(checkImage(value))
             await(checkVersion(value))
         }
     }
@@ -79,13 +77,8 @@ class GroupConfigurationValidator @Inject constructor(
         return unitFuture()
     }
 
-    private fun checkTemplate(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        val templateName = configuration.templateName
-        try {
-            await(this.templateService.findByName(templateName))
-        } catch (e: Exception) {
-            throw NoSuchElementException("Template '${templateName}' does not exist")
-        }
+    private fun checkImage(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+        //TODO Validate Image
         return unitFuture()
     }
 

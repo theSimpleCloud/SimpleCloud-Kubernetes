@@ -22,12 +22,12 @@
 
 package eu.thesimplecloud.simplecloud.api.request.group.update
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -54,9 +54,7 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
 
     override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudLobbyGroupUpdateRequest
 
-    override fun setTemplate(template: Template): CloudLobbyGroupUpdateRequest
-
-    override fun setTemplate(templateFuture: CompletableFuture<Template>): CloudLobbyGroupUpdateRequest
+    override fun setImage(image: Image): CloudLobbyGroupUpdateRequest
 
     override fun setJvmArguments(jvmArguments: JVMArguments?): CloudLobbyGroupUpdateRequest
 
@@ -77,8 +75,6 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
     override fun setStateUpdating(stateUpdating: Boolean): CloudLobbyGroupUpdateRequest
 
     override fun setStartPriority(priority: Int): CloudLobbyGroupUpdateRequest
-
-    override fun setNodesAllowedToStartOn(node: List<String>): CloudLobbyGroupUpdateRequest
 
     override fun submit(): CompletableFuture<CloudProcessGroup>
 }

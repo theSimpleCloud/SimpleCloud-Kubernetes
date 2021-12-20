@@ -37,7 +37,7 @@ class CloudLobbyProcessGroupConfiguration(
     maintenance: Boolean,
     minimumProcessCount: Int,
     maximumProcessCount: Int,
-    templateName: String,
+    imageName: String,
     jvmArgumentName: String?,
     versionName: String,
     onlineCountConfigurationName: String,
@@ -45,7 +45,6 @@ class CloudLobbyProcessGroupConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>,
     val lobbyPriority: Int
 ) : AbstractCloudProcessGroupConfiguration(
     name,
@@ -54,7 +53,7 @@ class CloudLobbyProcessGroupConfiguration(
     maintenance,
     minimumProcessCount,
     maximumProcessCount,
-    templateName,
+    imageName,
     jvmArgumentName,
     versionName,
     onlineCountConfigurationName,
@@ -62,7 +61,6 @@ class CloudLobbyProcessGroupConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
-    nodeNamesAllowedToStartOn,
     ProcessGroupType.LOBBY
 ) {
 
@@ -81,7 +79,6 @@ class CloudLobbyProcessGroupConfiguration(
         false,
         1,
         "",
-        emptyList(),
         1
     )
 

@@ -37,7 +37,7 @@ class CloudServerProcessGroupConfiguration(
     maintenance: Boolean,
     minimumProcessCount: Int,
     maximumProcessCount: Int,
-    templateName: String,
+    imageName: String,
     jvmArgumentName: String?,
     versionName: String,
     onlineCountConfigurationName: String,
@@ -45,7 +45,6 @@ class CloudServerProcessGroupConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>
 ) : AbstractCloudProcessGroupConfiguration(
     name,
     maxMemory,
@@ -53,7 +52,7 @@ class CloudServerProcessGroupConfiguration(
     maintenance,
     minimumProcessCount,
     maximumProcessCount,
-    templateName,
+    imageName,
     jvmArgumentName,
     versionName,
     onlineCountConfigurationName,
@@ -61,7 +60,6 @@ class CloudServerProcessGroupConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
-    nodeNamesAllowedToStartOn,
     ProcessGroupType.SERVER
 ) {
 
@@ -79,8 +77,7 @@ class CloudServerProcessGroupConfiguration(
         false,
         false,
         1,
-        "",
-        emptyList()
+        ""
     )
 
 }

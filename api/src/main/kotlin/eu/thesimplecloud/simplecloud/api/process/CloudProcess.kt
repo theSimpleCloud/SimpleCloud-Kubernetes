@@ -22,12 +22,11 @@
 
 package eu.thesimplecloud.simplecloud.api.process
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.node.Node
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.utils.Identifiable
@@ -100,19 +99,14 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     fun getVersion(): CompletableFuture<ProcessVersion>
 
     /**
-     * Returns the template this process was started from
+     * Returns the image this process was started from
      */
-    fun getTemplate(): CompletableFuture<Template>
+    fun getImage(): Image
 
     /**
      * Returns the [JVMArguments] the process used to start
      */
     fun getJvmArguments(): CompletableFuture<JVMArguments>
-
-    /**
-     * Returns the node this process is running on
-     */
-    fun getNodeRunningOn(): CompletableFuture<Node>
 
     /**
      * Returns the termination future

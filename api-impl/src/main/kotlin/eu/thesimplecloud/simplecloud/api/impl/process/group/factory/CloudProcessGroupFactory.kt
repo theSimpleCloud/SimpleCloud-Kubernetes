@@ -41,7 +41,6 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 @Singleton
 class CloudProcessGroupFactory @Inject constructor(
-    private val templateService: TemplateService,
     private val processVersionService: ProcessVersionService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
@@ -57,7 +56,6 @@ class CloudProcessGroupFactory @Inject constructor(
 
         val constructor = groupClass.getDeclaredConstructor(
             configuration::class.java,
-            TemplateService::class.java,
             ProcessVersionService::class.java,
             JvmArgumentsService::class.java,
             ProcessOnlineCountService::class.java,
@@ -66,7 +64,6 @@ class CloudProcessGroupFactory @Inject constructor(
         )
         return constructor.newInstance(
             configuration,
-            this.templateService,
             this.processVersionService,
             this.jvmArgumentsService,
             this.processOnlineCountService,

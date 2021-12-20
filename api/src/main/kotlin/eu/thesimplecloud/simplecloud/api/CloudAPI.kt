@@ -28,7 +28,6 @@ import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
 import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
-import eu.thesimplecloud.simplecloud.api.service.TemplateService
 
 /**
  * Created by IntelliJ IDEA.
@@ -46,8 +45,6 @@ abstract class CloudAPI {
     abstract fun getProcessGroupService(): CloudProcessGroupService
 
     abstract fun getProcessService(): CloudProcessService
-
-    abstract fun getTemplateService(): TemplateService
 
     abstract fun getProcessVersionService(): ProcessVersionService
 

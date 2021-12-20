@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
@@ -30,7 +31,6 @@ import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -47,10 +47,9 @@ class CloudServerGroupUpdateRequestImpl(
 
     override fun submit0(
         version: ProcessVersion,
-        template: Template,
+        image: Image,
         jvmArguments: JVMArguments?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration,
-        nodesAllowedToStartOn: List<String>
+        onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudServerProcessGroupConfiguration(
             this.serverGroup.getName(),
@@ -59,15 +58,14 @@ class CloudServerGroupUpdateRequestImpl(
             this.maintenance,
             this.minProcessCount,
             this.maxProcessCount,
-            template.getName(),
+            image.getName(),
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
             this.serverGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
-            this.joinPermission,
-            this.nodesAllowedToStartOn
+            this.joinPermission
         )
         return this.internalService.updateGroupInternal(updateObj)
     }

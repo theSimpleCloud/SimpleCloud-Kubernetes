@@ -36,7 +36,6 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 class CloudProxyProcessGroupImpl(
     private val configuration: CloudProxyProcessGroupConfiguration,
-    private val templateService: TemplateService,
     private val processVersionService: ProcessVersionService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
@@ -44,7 +43,6 @@ class CloudProxyProcessGroupImpl(
     private val processService: CloudProcessService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    templateService,
     processVersionService,
     jvmArgumentsService,
     processOnlineCountService,

@@ -52,7 +52,6 @@ class RestServerStartTask(
         controllerHandler.registerController(LoginController::class.java)
         controllerHandler.registerController(ProcessGroupController::class.java)
         controllerHandler.registerController(ProcessController::class.java)
-        controllerHandler.registerController(TemplateController::class.java)
         controllerHandler.registerController(JvmArgumentsController::class.java)
         controllerHandler.registerController(ProcessVersionController::class.java)
         controllerHandler.registerController(NodeController::class.java)

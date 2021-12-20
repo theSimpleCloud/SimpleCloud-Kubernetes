@@ -24,12 +24,12 @@ package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.nullable
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
@@ -71,7 +71,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var versionFuture: CompletableFuture<ProcessVersion> = this.processGroup.getVersion()
 
     @Volatile
-    protected var templateFuture: CompletableFuture<Template> = this.processGroup.getTemplate()
+    protected var image: Image = this.processGroup.getImage()
 
     @Volatile
     protected var jvmArgumentsFuture: CompletableFuture<JVMArguments?> = this.processGroup.getJvmArguments() as CompletableFuture<JVMArguments?>
@@ -79,9 +79,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     @Volatile
     protected var onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration> =
         this.processGroup.getProcessOnlineCountConfiguration()
-
-    @Volatile
-    protected var nodesAllowedToStartOn: List<String> = this.processGroup.getNodeNamesAllowedToStartServicesOn()
 
     override fun getProcessGroup(): CloudProcessGroup {
         return this.processGroup
@@ -107,13 +104,8 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         return this
     }
 
-    override fun setTemplate(template: Template): CloudProcessGroupUpdateRequest {
-        this.templateFuture = CloudCompletableFuture.completedFuture(template)
-        return this
-    }
-
-    override fun setTemplate(templateFuture: CompletableFuture<Template>): CloudProcessGroupUpdateRequest {
-        this.templateFuture = templateFuture
+    override fun setImage(image: Image): CloudProcessGroupUpdateRequest {
+        this.image = image
         return this
     }
 
@@ -134,11 +126,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProcessGroupUpdateRequest {
         this.onlineCountConfigurationFuture = onlineCountConfigurationFuture
-        return this
-    }
-
-    override fun setNodesAllowedToStartOn(nodes: List<String>): CloudProcessGroupUpdateRequest {
-        this.nodesAllowedToStartOn = nodes
         return this
     }
 
@@ -174,25 +161,21 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun submit(): CompletableFuture<CloudProcessGroup> {
         val version = await(this.versionFuture)
-        val template = await(this.templateFuture)
         val jvmArguments = await(this.jvmArgumentsFuture.nullable())
         val onlineCountConfiguration = await(this.onlineCountConfigurationFuture)
-        val nodesAllowedToStartOn = this.nodesAllowedToStartOn
         return submit0(
             version,
-            template,
+            this.image,
             jvmArguments,
-            onlineCountConfiguration,
-            nodesAllowedToStartOn
+            onlineCountConfiguration
         )
     }
 
     abstract fun submit0(
         version: ProcessVersion,
-        template: Template,
+        image: Image,
         jvmArguments: JVMArguments?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration,
-        nodesAllowedToStartOn: List<String>
+        onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup>
 
 

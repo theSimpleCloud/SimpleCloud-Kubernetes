@@ -39,7 +39,7 @@ class CombinedProcessGroupEntity(
     val maintenance: Boolean,
     val minimumProcessCount: Int,
     val maximumProcessCount: Int,
-    val templateName: String,
+    val imageName: String,
     val jvmArgumentName: String?,
     val versionName: String,
     val onlineCountConfigurationName: String,
@@ -47,7 +47,6 @@ class CombinedProcessGroupEntity(
     val stateUpdating: Boolean,
     val startPriority: Int,
     val joinPermission: String?,
-    val nodeNamesAllowedToStartOn: List<String>,
     val type: ProcessGroupType,
     val lobbyPriority: Int = -1,
     val startPort: Int = -1
@@ -68,7 +67,6 @@ class CombinedProcessGroupEntity(
         false,
         1,
         "",
-        emptyList(),
         ProcessGroupType.PROXY
     )
 
@@ -82,7 +80,7 @@ class CombinedProcessGroupEntity(
                     this.maintenance,
                     this.minimumProcessCount,
                     this.maximumProcessCount,
-                    this.templateName,
+                    this.imageName,
                     this.jvmArgumentName,
                     this.versionName,
                     this.onlineCountConfigurationName,
@@ -90,7 +88,6 @@ class CombinedProcessGroupEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
-                    this.nodeNamesAllowedToStartOn,
                     this.lobbyPriority
                 )
             }
@@ -102,7 +99,7 @@ class CombinedProcessGroupEntity(
                     this.maintenance,
                     this.minimumProcessCount,
                     this.maximumProcessCount,
-                    this.templateName,
+                    this.imageName,
                     this.jvmArgumentName,
                     this.versionName,
                     this.onlineCountConfigurationName,
@@ -110,7 +107,6 @@ class CombinedProcessGroupEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
-                    this.nodeNamesAllowedToStartOn,
                     this.startPort
                 )
             }
@@ -122,7 +118,7 @@ class CombinedProcessGroupEntity(
                     this.maintenance,
                     this.minimumProcessCount,
                     this.maximumProcessCount,
-                    this.templateName,
+                    this.imageName,
                     this.jvmArgumentName,
                     this.versionName,
                     this.onlineCountConfigurationName,
@@ -130,7 +126,6 @@ class CombinedProcessGroupEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
-                    this.nodeNamesAllowedToStartOn
                 )
             }
         }
@@ -148,7 +143,7 @@ class CombinedProcessGroupEntity(
                 configuration.maintenance,
                 configuration.minimumProcessCount,
                 configuration.maximumProcessCount,
-                configuration.templateName,
+                configuration.imageName,
                 configuration.jvmArgumentName,
                 configuration.versionName,
                 configuration.onlineCountConfigurationName,
@@ -156,7 +151,6 @@ class CombinedProcessGroupEntity(
                 configuration.stateUpdating,
                 configuration.startPriority,
                 configuration.joinPermission,
-                configuration.nodeNamesAllowedToStartOn,
                 configuration.type,
                 lobbyPriority,
                 startPort

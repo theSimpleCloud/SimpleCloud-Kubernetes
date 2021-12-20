@@ -66,8 +66,7 @@ class CloudProcessCreationTask(
                 group.isStatic(),
                 group.getProcessGroupType(),
                 this.startConfiguration.processVersionName,
-                this.startConfiguration.templateName,
-                node.getName(),
+                this.startConfiguration.imageName,
                 this.startConfiguration.jvmArgumentsName,
                 null
             )

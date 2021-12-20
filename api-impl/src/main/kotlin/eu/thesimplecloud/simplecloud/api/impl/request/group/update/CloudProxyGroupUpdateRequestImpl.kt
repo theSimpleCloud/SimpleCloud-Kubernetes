@@ -22,6 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
@@ -30,7 +31,7 @@ import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -77,13 +78,8 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setTemplate(template: Template): CloudProxyGroupUpdateRequest {
-        super.setTemplate(template)
-        return this
-    }
-
-    override fun setTemplate(templateFuture: CompletableFuture<Template>): CloudProxyGroupUpdateRequest {
-        super.setTemplate(templateFuture)
+    override fun setImage(image: Image): CloudProxyGroupUpdateRequest {
+        super.setImage(image)
         return this
     }
 
@@ -137,17 +133,11 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setNodesAllowedToStartOn(nodes: List<String>): CloudProxyGroupUpdateRequest {
-        super.setNodesAllowedToStartOn(nodes)
-        return this
-    }
-
     override fun submit0(
         version: ProcessVersion,
-        template: Template,
+        image: Image,
         jvmArguments: JVMArguments?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration,
-        nodesAllowedToStartOn: List<String>
+        onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudProxyProcessGroupConfiguration(
             this.proxyGroup.getName(),
@@ -156,7 +146,7 @@ class CloudProxyGroupUpdateRequestImpl(
             this.maintenance,
             this.minProcessCount,
             this.maxProcessCount,
-            template.getName(),
+            image.getName(),
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
@@ -164,7 +154,6 @@ class CloudProxyGroupUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            this.nodesAllowedToStartOn,
             this.startPort
         )
         return this.internalService.updateGroupInternal(updateObj)

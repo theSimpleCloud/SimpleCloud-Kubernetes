@@ -22,15 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
+import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.template.Template
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -77,13 +77,8 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setTemplate(template: Template): CloudLobbyGroupUpdateRequest {
-        super.setTemplate(template)
-        return this
-    }
-
-    override fun setTemplate(templateFuture: CompletableFuture<Template>): CloudLobbyGroupUpdateRequest {
-        super.setTemplate(templateFuture)
+    override fun setImage(image: Image): CloudLobbyGroupUpdateRequest {
+        super.setImage(image)
         return this
     }
 
@@ -137,17 +132,11 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setNodesAllowedToStartOn(nodes: List<String>): CloudLobbyGroupUpdateRequest {
-        super.setNodesAllowedToStartOn(nodes)
-        return this
-    }
-
     override fun submit0(
         version: ProcessVersion,
-        template: Template,
+        image: Image,
         jvmArguments: JVMArguments?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration,
-        nodesAllowedToStartOn: List<String>
+        onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudLobbyProcessGroupConfiguration(
             this.lobbyGroup.getName(),
@@ -156,7 +145,7 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.maintenance,
             this.minProcessCount,
             this.maxProcessCount,
-            template.getName(),
+            image.getName(),
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),
@@ -164,7 +153,6 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            this.nodesAllowedToStartOn,
             this.lobbyPriority
         )
         return this.internalService.updateGroupInternal(updateObj)

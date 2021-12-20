@@ -22,13 +22,13 @@
 
 package eu.thesimplecloud.simplecloud.api.request.group.update
 
+import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.template.Template
+import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.Request
-import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -72,16 +72,10 @@ interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
     fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProcessGroupUpdateRequest
 
     /**
-     * Sets the template for the group
+     * Sets the image for the group
      * @return this
      */
-    fun setTemplate(template: Template): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the template for the group
-     * @return this
-     */
-    fun setTemplate(templateFuture: CompletableFuture<Template>): CloudProcessGroupUpdateRequest
+    fun setImage(image: Image): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the jvm arguments for the group
@@ -106,12 +100,6 @@ interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
      * @return this
      */
     fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the nodes this group shall start on
-     * @return this
-     */
-    fun setNodesAllowedToStartOn(node: List<String>): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the maintenance state for the group

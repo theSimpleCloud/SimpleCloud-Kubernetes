@@ -9,7 +9,7 @@ package eu.thesimplecloud.simplecloud.api.internal.configutation
 data class ProcessStartConfiguration(
     val groupName: String,
     val processNumber: Int,
-    val templateName: String,
+    val imageName: String,
     val maxMemory: Int,
     val maxPlayers: Int,
     val processVersionName: String,

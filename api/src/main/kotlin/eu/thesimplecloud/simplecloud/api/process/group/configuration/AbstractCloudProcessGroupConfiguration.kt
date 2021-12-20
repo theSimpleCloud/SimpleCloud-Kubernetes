@@ -37,7 +37,7 @@ abstract class AbstractCloudProcessGroupConfiguration(
     val maintenance: Boolean,
     val minimumProcessCount: Int,
     val maximumProcessCount: Int,
-    val templateName: String,
+    val imageName: String,
     val jvmArgumentName: String?,
     val versionName: String,
     val onlineCountConfigurationName: String,
@@ -45,6 +45,5 @@ abstract class AbstractCloudProcessGroupConfiguration(
     val stateUpdating: Boolean,
     val startPriority: Int,
     val joinPermission: String?,
-    val nodeNamesAllowedToStartOn: List<String>,
     val type: ProcessGroupType
 )

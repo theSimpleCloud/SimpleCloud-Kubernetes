@@ -25,6 +25,7 @@ package eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.service.*
@@ -40,7 +41,6 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudPr
 class ProcessCreateHandler @Inject constructor(
     private val groupService: CloudProcessGroupService,
     private val processService: CloudProcessService,
-    private val templateService: TemplateService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService,
     private val versionService: ProcessVersionService
@@ -62,8 +62,8 @@ class ProcessCreateHandler @Inject constructor(
         if (configuration.versionName != null) {
             request.setProcessVersion(this.versionService.findByName(configuration.versionName))
         }
-        if (configuration.templateName != null) {
-            request.setTemplate(this.templateService.findByName(configuration.templateName))
+        if (configuration.imageName != null) {
+            request.setImage(ImageImpl(configuration.imageName))
         }
         if (configuration.jvmArgumentsName != null) {
             request.setJvmArguments(this.jvmArgumentsService.findByName(configuration.jvmArgumentsName))

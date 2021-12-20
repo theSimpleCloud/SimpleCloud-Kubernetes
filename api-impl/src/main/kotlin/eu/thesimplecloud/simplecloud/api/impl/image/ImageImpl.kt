@@ -20,19 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.template.configuration
+package eu.thesimplecloud.simplecloud.api.impl.image
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 09/07/2021
- * Time: 11:12
- * @author Frederick Baier
- */
-class TemplateConfiguration(
-    val name: String,
-    val parentTemplateName: String?
-) {
+import eu.thesimplecloud.simplecloud.api.image.Image
 
-    private constructor() : this("", null)
+class ImageImpl(
+    private val name: String
+) : Image {
 
+    override fun getName(): String {
+        return this.name
+    }
 }

@@ -76,7 +76,6 @@ class TestCloudProcessService @Inject constructor(
                 "Test",
                 "Test",
                 null,
-                null
             )
         )
     }
@@ -96,8 +95,7 @@ class TestCloudProcessService @Inject constructor(
                     false,
                     ProcessGroupType.LOBBY,
                     configuration.processVersionName,
-                    configuration.templateName,
-                    "Node-1",
+                    configuration.imageName,
                     configuration.jvmArgumentsName,
                     null
                 )

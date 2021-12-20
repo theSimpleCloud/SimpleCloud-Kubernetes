@@ -37,7 +37,7 @@ class CloudProxyProcessGroupConfiguration(
     maintenance: Boolean,
     minimumProcessCount: Int,
     maximumProcessCount: Int,
-    templateName: String,
+    imageName: String,
     jvmArgumentName: String?,
     versionName: String,
     onlineCountConfigurationName: String,
@@ -45,7 +45,6 @@ class CloudProxyProcessGroupConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
-    nodeNamesAllowedToStartOn: List<String>,
     val startPort: Int
 ) : AbstractCloudProcessGroupConfiguration(
     name,
@@ -54,7 +53,7 @@ class CloudProxyProcessGroupConfiguration(
     maintenance,
     minimumProcessCount,
     maximumProcessCount,
-    templateName,
+    imageName,
     jvmArgumentName,
     versionName,
     onlineCountConfigurationName,
@@ -62,7 +61,6 @@ class CloudProxyProcessGroupConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
-    nodeNamesAllowedToStartOn,
     ProcessGroupType.PROXY
 ) {
 
@@ -81,7 +79,6 @@ class CloudProxyProcessGroupConfiguration(
         false,
         1,
         "",
-        emptyList(),
         1
     )
 
