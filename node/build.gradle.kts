@@ -12,7 +12,7 @@ dependencies {
     implementation(project(":api"))
     implementation(project(":api-impl"))
     implementation(project(":api-internal"))
-    implementation(project(":container"))
+    implementation(project(":kubernetes"))
     implementation(project(":ignite"))
 
     implementation("org.tinylog:tinylog-api:2.4.1")

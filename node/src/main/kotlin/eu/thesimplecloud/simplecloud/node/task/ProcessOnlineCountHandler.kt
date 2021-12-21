@@ -28,6 +28,7 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 class ProcessOnlineCountHandler(
@@ -36,6 +37,7 @@ class ProcessOnlineCountHandler(
 ) {
 
     fun handle(): CompletableFuture<Unit> {
+        Logger.info("Checking online count for ${group.getName()}")
         val expectedCount = await(calculateExpectedOnlineCount())
         val actualCount = await(calculateActualOnlineCount())
         if (expectedCount > actualCount) {

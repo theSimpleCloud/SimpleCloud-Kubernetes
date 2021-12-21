@@ -31,4 +31,14 @@ class ImageImpl(
     override fun getName(): String {
         return this.name
     }
+
+    companion object {
+
+        fun fromName(name: String?): ImageImpl? {
+            if (name == null) return null
+            return ImageImpl(name)
+        }
+
+    }
+
 }

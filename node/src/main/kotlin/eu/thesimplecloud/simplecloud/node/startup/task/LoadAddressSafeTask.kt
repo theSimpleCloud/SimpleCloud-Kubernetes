@@ -76,7 +76,7 @@ class LoadAddressSafeTask(
     }
 
     companion object {
-        val ADDRESS_FILE = File("address.json")
+        val ADDRESS_FILE = File("cloud/address.json")
     }
 
 }

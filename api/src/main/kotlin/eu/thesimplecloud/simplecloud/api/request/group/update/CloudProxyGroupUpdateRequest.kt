@@ -54,7 +54,7 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
 
     override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProxyGroupUpdateRequest
 
-    override fun setImage(image: Image): CloudProxyGroupUpdateRequest
+    override fun setImage(image: Image?): CloudProxyGroupUpdateRequest
 
     override fun setJvmArguments(jvmArguments: JVMArguments?): CloudProxyGroupUpdateRequest
 

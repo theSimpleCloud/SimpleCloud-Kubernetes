@@ -25,18 +25,56 @@ package eu.thesimplecloud.simplecloud.node.task
 import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
+import eu.thesimplecloud.simplecloud.kubernetes.api.container.Container
 import eu.thesimplecloud.simplecloud.api.image.Image
+import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
+import eu.thesimplecloud.simplecloud.kubernetes.api.Label
+import eu.thesimplecloud.simplecloud.kubernetes.api.container.ContainerSpec
+import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
+import eu.thesimplecloud.simplecloud.kubernetes.api.service.ServiceSpec
+import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 class ProcessStartTask(
     private val process: CloudProcess,
     private val containerFactory: Container.Factory,
-    private val imageFactory: Image.Factory,
+    private val volumeFactory: KubeVolumeClaim.Factory,
+    private val serviceFactory: KubeService.Factory,
     private val injector: Injector
 ) {
 
     fun run(): CompletableFuture<Unit> {
+        Logger.info("Starting Process ${process.getName()}")
+
+        val volume = this.volumeFactory.create(
+            "claim-" + this.process.getName(),
+            KubeVolumeSpec()
+                .withStorageClassName("microk8s-hostpath")
+                .withRequestedStorageInGB(1)
+        )
+
+        val label = Label("process-${this.process.getName()}")
+        val container = containerFactory.create(
+            process.getName(),
+            process.getImage(),
+            ContainerSpec()
+                .withContainerPort(25565)
+                .withMaxMemory(process.getMaxMemory())
+                .withLabels(label)
+                .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
+
+        )
+        container.start()
+
+        this.serviceFactory.create(
+            this.process.getName(),
+            ServiceSpec().withContainerPort(25565)
+                .withClusterPort(25565)
+                .withLabels(label)
+                .withPublicPort(30009)
+        )
         return unitFuture()
     }
 }

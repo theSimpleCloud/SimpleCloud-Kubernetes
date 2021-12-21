@@ -38,8 +38,10 @@ import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
-import eu.thesimplecloud.simplecloud.kubernetes.container.Container
+import eu.thesimplecloud.simplecloud.kubernetes.api.container.Container
 import eu.thesimplecloud.simplecloud.api.image.Image
+import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
+import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.service.CloudProcessServiceImpl
 import eu.thesimplecloud.simplecloud.node.task.CloudProcessCreationTask
@@ -87,7 +89,8 @@ class StartProcessMessageHandler @Inject constructor(
         ProcessStartTask(
             process,
             this.injector.getInstance(Container.Factory::class.java),
-            this.injector.getInstance(Image.Factory::class.java),
+            this.injector.getInstance(KubeVolumeClaim.Factory::class.java),
+            this.injector.getInstance(KubeService.Factory::class.java),
             this.injector
         ).run().exceptionally { UncaughtExceptions.handle(it) }
     }

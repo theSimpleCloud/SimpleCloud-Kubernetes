@@ -75,7 +75,7 @@ interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
      * Sets the image for the group
      * @return this
      */
-    fun setImage(image: Image): CloudProcessGroupUpdateRequest
+    fun setImage(image: Image?): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the jvm arguments for the group

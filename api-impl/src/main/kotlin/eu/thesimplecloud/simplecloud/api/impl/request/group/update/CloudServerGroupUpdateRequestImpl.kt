@@ -47,7 +47,7 @@ class CloudServerGroupUpdateRequestImpl(
 
     override fun submit0(
         version: ProcessVersion,
-        image: Image,
+        image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
@@ -58,7 +58,7 @@ class CloudServerGroupUpdateRequestImpl(
             this.maintenance,
             this.minProcessCount,
             this.maxProcessCount,
-            image.getName(),
+            image?.getName(),
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),

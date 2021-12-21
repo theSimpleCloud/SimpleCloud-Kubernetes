@@ -23,6 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
 import eu.thesimplecloud.simplecloud.api.image.Image
+import eu.thesimplecloud.simplecloud.api.impl.exception.NoImageProvidedException
 import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
@@ -68,7 +69,9 @@ abstract class AbstractCloudProcessGroup constructor(
     }
 
     override fun getImage(): Image {
-        return ImageImpl(this.configuration.imageName)
+        val imageName = this.configuration.imageName
+            ?: throw NoImageProvidedException(getName())
+        return ImageImpl(imageName)
     }
 
     override fun getProcessVersionName(): String {

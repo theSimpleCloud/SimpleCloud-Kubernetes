@@ -37,7 +37,7 @@ class CloudLobbyProcessGroupConfiguration(
     maintenance: Boolean,
     minimumProcessCount: Int,
     maximumProcessCount: Int,
-    imageName: String,
+    imageName: String?,
     jvmArgumentName: String?,
     versionName: String,
     onlineCountConfigurationName: String,

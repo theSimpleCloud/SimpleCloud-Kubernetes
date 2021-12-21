@@ -61,7 +61,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
         request.setVersion(this.versionService.findByName(configuration.versionName))
-        request.setImage(ImageImpl(configuration.imageName))
+        request.setImage(ImageImpl.fromName(configuration.imageName))
         request.setOnlineCountConfiguration(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
         request.setMaintenance(configuration.maintenance)
         request.setMinimumOnlineProcessCount(configuration.minimumProcessCount)

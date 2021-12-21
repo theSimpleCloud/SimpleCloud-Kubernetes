@@ -84,7 +84,7 @@ class LoadMaxMemorySafeTask(
     }
 
     companion object {
-        val MAX_MEMORY_FILE = File("maxMemory.txt")
+        val MAX_MEMORY_FILE = File("cloud/maxMemory.txt")
     }
 
 }

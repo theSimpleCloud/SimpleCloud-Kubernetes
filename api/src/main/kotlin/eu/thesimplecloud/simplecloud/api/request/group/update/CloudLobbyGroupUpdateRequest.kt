@@ -54,7 +54,7 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
 
     override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudLobbyGroupUpdateRequest
 
-    override fun setImage(image: Image): CloudLobbyGroupUpdateRequest
+    override fun setImage(image: Image?): CloudLobbyGroupUpdateRequest
 
     override fun setJvmArguments(jvmArguments: JVMArguments?): CloudLobbyGroupUpdateRequest
 

@@ -27,6 +27,7 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 class NodeCheckOnlineProcessesTask @Inject constructor(
@@ -36,6 +37,7 @@ class NodeCheckOnlineProcessesTask @Inject constructor(
 
     fun run(): CompletableFuture<Unit> {
         val groups = await(this.groupService.findAll())
+        Logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
         groups.forEach {
             await(ProcessOnlineCountHandler(it, processService).handle())
         }

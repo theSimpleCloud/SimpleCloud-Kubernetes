@@ -74,7 +74,7 @@ class LoadNodeNameSafeTask(
     }
 
     companion object {
-        val NODE_NAME_FILE = File("node_name.txt")
+        val NODE_NAME_FILE = File("cloud/node_name.txt")
     }
 
 }

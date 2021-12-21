@@ -78,7 +78,7 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setImage(image: Image): CloudProxyGroupUpdateRequest {
+    override fun setImage(image: Image?): CloudProxyGroupUpdateRequest {
         super.setImage(image)
         return this
     }
@@ -135,7 +135,7 @@ class CloudProxyGroupUpdateRequestImpl(
 
     override fun submit0(
         version: ProcessVersion,
-        image: Image,
+        image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
@@ -146,7 +146,7 @@ class CloudProxyGroupUpdateRequestImpl(
             this.maintenance,
             this.minProcessCount,
             this.maxProcessCount,
-            image.getName(),
+            image?.getName(),
             jvmArguments?.getName(),
             version.getName(),
             onlineCountConfiguration.getName(),

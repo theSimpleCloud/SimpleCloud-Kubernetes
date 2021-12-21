@@ -71,10 +71,11 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var versionFuture: CompletableFuture<ProcessVersion> = this.processGroup.getVersion()
 
     @Volatile
-    protected var image: Image = this.processGroup.getImage()
+    protected var image: Image? = runCatching { this.processGroup.getImage() }.getOrNull()
 
     @Volatile
-    protected var jvmArgumentsFuture: CompletableFuture<JVMArguments?> = this.processGroup.getJvmArguments() as CompletableFuture<JVMArguments?>
+    protected var jvmArgumentsFuture: CompletableFuture<JVMArguments?> =
+        this.processGroup.getJvmArguments() as CompletableFuture<JVMArguments?>
 
     @Volatile
     protected var onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration> =
@@ -104,7 +105,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         return this
     }
 
-    override fun setImage(image: Image): CloudProcessGroupUpdateRequest {
+    override fun setImage(image: Image?): CloudProcessGroupUpdateRequest {
         this.image = image
         return this
     }
@@ -173,7 +174,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     abstract fun submit0(
         version: ProcessVersion,
-        image: Image,
+        image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup>

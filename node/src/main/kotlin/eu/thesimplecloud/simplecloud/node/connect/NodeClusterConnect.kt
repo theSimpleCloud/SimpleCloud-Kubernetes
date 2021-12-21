@@ -39,6 +39,7 @@ import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
+import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
 import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
@@ -77,6 +78,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun initializeMessageChannels(injector: Injector): CompletableFuture<Unit> {
+        Logger.info("Initializing Message Channels")
         val messageChannelManager = injector.getInstance(MessageChannelManager::class.java)
         messageChannelManager.registerMessageChannel<ProcessStartConfiguration, CloudProcess>("start_process")
             .setMessageHandler(injector.getInstance(StartProcessMessageHandler::class.java))
@@ -84,6 +86,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+        Logger.info("Writing Self-Node into Cluster-Cache")
         return SelfNodeWriteTask(
             injector.getInstance(IgniteNodeRepository::class.java),
             NodeConfiguration(
@@ -97,6 +100,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
+        Logger.info("Checking for online tasks")
         val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
         return nodeCheckOnlineProcessesTask.run()
     }
@@ -104,7 +108,7 @@ class NodeClusterConnect @Inject constructor(
     private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
         if (ignite.cluster().nodes().size == 1) {
             val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
-            nodeInitRepositoriesTask.run()
+            await(nodeInitRepositoriesTask.run())
         }
         return unitFuture()
     }
@@ -124,6 +128,7 @@ class NodeClusterConnect @Inject constructor(
         )
         return injector.createChildInjector(
             cloudAPIBinderModule,
+            KubernetesBinderModule(),
             //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
             SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
         )

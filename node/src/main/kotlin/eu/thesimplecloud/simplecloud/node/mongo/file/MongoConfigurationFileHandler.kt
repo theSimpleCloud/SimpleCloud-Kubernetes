@@ -35,7 +35,7 @@ class MongoConfigurationFileHandler(
     private val connectionStringFromArgument: String?
 ) {
 
-    private val file = File("mongoDatabase.json")
+    private val file = File("cloud/mongoDatabase.json")
     private val objectMapper = ObjectMapper()
 
     fun loadConnectionString(): String? {

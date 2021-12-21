@@ -35,19 +35,4 @@ interface Image {
      */
     fun getName(): String
 
-    /**
-     * The factory to build images
-     */
-    interface Factory {
-
-        /**
-         * Creates an image
-         * @param name the name of the image
-         */
-        fun create(
-            name: String
-        ): Image
-
-    }
-
 }

@@ -33,6 +33,7 @@ import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVe
 import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersionRepository
+import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 class NodeInitRepositoriesTask @Inject constructor(
@@ -45,6 +46,7 @@ class NodeInitRepositoriesTask @Inject constructor(
 ) {
 
     fun run(): CompletableFuture<Unit> {
+        Logger.info("Initializing Ignite Repositories")
         await(initJvmArguments())
         await(initProcessVersions())
         await(initGroups())
@@ -73,6 +75,7 @@ class NodeInitRepositoriesTask @Inject constructor(
 
     private fun initGroups(): CompletableFuture<Unit> {
         val groups = await(this.mongoCloudProcessGroupRepository.findAll())
+        Logger.info("Found Groups: ${groups.map { it.name }}")
         val groupConfigurations = groups.map { it.toConfiguration() }
         for (config in groupConfigurations) {
             await(this.igniteGroupRepository.save(config.name, config))
