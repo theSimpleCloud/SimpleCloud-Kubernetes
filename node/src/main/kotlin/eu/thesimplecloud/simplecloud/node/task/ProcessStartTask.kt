@@ -28,6 +28,7 @@ import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.kubernetes.api.container.Container
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
+import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.kubernetes.api.Label
 import eu.thesimplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
@@ -45,6 +46,8 @@ class ProcessStartTask(
     private val injector: Injector
 ) {
 
+    private val clusterKey = injector.getInstance(ClusterKey::class.java)
+
     fun run(): CompletableFuture<Unit> {
         Logger.info("Starting Process ${process.getName()}")
 
@@ -55,6 +58,10 @@ class ProcessStartTask(
                 .withRequestedStorageInGB(1)
         )
 
+        val clusterKeyEnvironment = ContainerSpec.EnvironmentVariable(
+            "CLUSTER_KEY",
+            clusterKey.login + ":" + clusterKey.password
+        )
         val label = Label("process-${this.process.getName()}")
         val container = containerFactory.create(
             process.getName(),
@@ -64,6 +71,7 @@ class ProcessStartTask(
                 .withMaxMemory(process.getMaxMemory())
                 .withLabels(label)
                 .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
+                .withEnvironmentVariables(clusterKeyEnvironment)
 
         )
         container.start()

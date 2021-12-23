@@ -19,6 +19,10 @@ class Address(
         return "${host}:${port}"
     }
 
+    override fun toString(): String {
+        return "Address(${asIpString()})"
+    }
+
     companion object {
         fun fromIpString(string: String): Address {
             val array = string.split(":")

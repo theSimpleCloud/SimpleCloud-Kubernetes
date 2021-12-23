@@ -1,0 +1,62 @@
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: cloud-claim
+spec:
+  storageClassName: microk8s-hostpath
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+---
+apiVersion: v1
+kind: Pod
+metadata:
+  name: simplecloud
+  labels:
+    app: simplecloud
+spec:
+  containers:
+    - name: simplecloud
+      image: localhost:32000/simplecloud3:latest
+      volumeMounts:
+        - name: cloud-volume
+          mountPath: "/node/cloud"
+      ports:
+        - containerPort: 8008
+      env:
+        - name: SELF_HOST
+          valueFrom:
+            fieldRef:
+              fieldPath: status.podIP
+  volumes:
+    - name: cloud-volume
+      persistentVolumeClaim:
+        claimName: cloud-claim
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest
+spec:
+  type: NodePort
+  selector:
+    app: simplecloud
+  ports:
+    - protocol: TCP
+      port: 8008
+      targetPort: 8008
+      nodePort: 30008
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: ignite
+spec:
+  selector:
+    app: simplecloud
+  ports:
+    - protocol: TCP
+      port: 1670
+      targetPort: 1670

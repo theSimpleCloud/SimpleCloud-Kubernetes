@@ -22,7 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.plugin.startup
 
-import eu.thesimplecloud.simplecloud.api.impl.util.SimpleCloudFileContent
+import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
+import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
@@ -30,17 +31,20 @@ import org.apache.ignite.plugin.security.SecurityCredentials
 class CloudPlugin {
 
     fun onEnable() {
-        val simpleCloudFileContent = SimpleCloudFileLoader().loadContent()
-        val ignite = startIgnite(simpleCloudFileContent)
+        val ignite = startIgnite()
     }
 
-    private fun startIgnite(fileContent: SimpleCloudFileContent): Ignite {
+    private fun startIgnite(): Ignite {
+        val clusterKeyArray = System.getenv("CLUSTER_KEY").split(":")
+        val nodeAddress = Address.fromIpString("ignite:1670")
+        val selfAddress = Address.fromIpString("127.0.0.1:1670")
+        val clusterKey = ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
         val igniteBuilder = IgniteBuilder(
-            fileContent.selfAddress,
+            selfAddress,
             true,
-            SecurityCredentials(fileContent.clusterKey.login, fileContent.clusterKey.password)
+            SecurityCredentials(clusterKey.login, clusterKey.password)
         )
-        igniteBuilder.withAddressesToConnectTo(fileContent.nodeAddress)
+        igniteBuilder.withAddressesToConnectTo(nodeAddress)
         return igniteBuilder.start()
     }
 
