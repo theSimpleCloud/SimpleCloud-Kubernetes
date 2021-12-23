@@ -26,7 +26,6 @@ import com.google.inject.Injector
 import com.google.inject.Key
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnect
@@ -62,7 +61,6 @@ class NodeStartup(
             injector,
             injector.getInstance(Datastore::class.java),
             injector.getInstance(Key.get(String::class.java, NodeName::class.java)),
-            injector.getInstance(Key.get(Address::class.java, NodeBindAddress::class.java)),
             injector.getInstance(Key.get(Int::class.java, NodeMaxMemory::class.java)),
         )
         task.run().join()

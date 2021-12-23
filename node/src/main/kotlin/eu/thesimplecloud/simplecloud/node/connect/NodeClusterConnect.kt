@@ -35,10 +35,10 @@ import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
+import eu.thesimplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
 import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
 import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
@@ -58,16 +58,17 @@ class NodeClusterConnect @Inject constructor(
     private val injector: Injector,
     private val datastore: Datastore,
     @NodeName private val nodeName: String,
-    @NodeBindAddress private val nodeBindAddress: Address,
     @NodeMaxMemory private val nodeMaxMemory: Int,
 ) {
+
+    private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
 
     fun run(): CompletableFuture<Unit> {
         Logger.info("Connecting to cluster...")
         val nodeRepository = MongoPersistentNodeRepository(this.datastore)
         await(editOrInsertSelfNode(nodeRepository))
         val clusterKey = await(loadClusterKey())
-        val ignite = await(startIgnite(nodeRepository, clusterKey))
+        val ignite = await(startIgnite(clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
         await(initializeMessageChannels(finalInjector))
@@ -128,17 +129,16 @@ class NodeClusterConnect @Inject constructor(
         )
         return injector.createChildInjector(
             cloudAPIBinderModule,
-            KubernetesBinderModule(),
             //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
             SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
         )
     }
 
     private fun startIgnite(
-        nodeRepository: MongoPersistentNodeRepository,
         clusterKey: ClusterKey
     ): CompletableFuture<Ignite> {
-        val addresses = await(getOtherNodesAddressesToConnectTo(nodeRepository))
+        val addresses = getOtherNodesAddressesToConnectTo()
+        Logger.info("Connecting to ${addresses}")
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
             .withAddressesToConnectTo(*addresses.toTypedArray())
@@ -150,10 +150,9 @@ class NodeClusterConnect @Inject constructor(
         return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
     }
 
-    private fun getOtherNodesAddressesToConnectTo(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<List<Address>> {
-        val allNodes = await(nodeRepository.findAll())
-        val allNodesWithoutSelfNode = allNodes.filter { it.name != this.nodeName }
-        return completedFuture(allNodesWithoutSelfNode.map { it.address })
+    private fun getOtherNodesAddressesToConnectTo(): List<Address> {
+        val otherNodeAddressGetter = this.injector.getInstance(OtherNodeAddressGetter::class.java)
+        return otherNodeAddressGetter.getOtherNodeAddresses()
     }
 
     private fun editOrInsertSelfNode(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<Unit> {

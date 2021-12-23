@@ -28,8 +28,7 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.node.annotation.NodeBindAddress
+import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
 import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
@@ -57,11 +56,10 @@ class NodeStartupTask(
     fun run(): CompletableFuture<Injector> {
         Logger.info("Starting Node...")
         val nodeName = await(loadNodeName())
-        val address = await(loadAddress())
         val maxMemory = await(loadMaxMemory())
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val injector = createInjector(datastore, nodeName, address, maxMemory)
+        val injector = createInjector(datastore, nodeName, maxMemory)
         this.nodeSetupHandler.shutdownRestSetupServer()
         Logger.info("Node Startup completed")
         return completedFuture(injector)
@@ -70,13 +68,12 @@ class NodeStartupTask(
     private fun createInjector(
         datastore: Datastore,
         nodeName: String,
-        address: Address,
         nodeMaxMemory: Int
     ): Injector {
         return Guice.createInjector(
+            KubernetesBinderModule(),
             SingleInstanceBinderModule(Datastore::class.java, datastore),
             SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
-            SingleInstanceAnnotatedBinderModule(Address::class.java, address, NodeBindAddress::class.java),
             SingleInstanceAnnotatedBinderModule(Int::class.java, nodeMaxMemory, NodeMaxMemory::class.java),
             SingleInstanceBinderModule(NodeStartupSetupHandler::class.java, this.nodeSetupHandler)
         )
@@ -95,11 +92,6 @@ class NodeStartupTask(
             this.startArguments.maxMemory
         ).run()
     }
-
-    private fun loadAddress(): CompletableFuture<Address> {
-        return LoadAddressSafeTask(this.nodeSetupHandler, this.startArguments.bindAddress).run()
-    }
-
     private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Unit> {
         val mongoRepository = MongoUserRepository(datastore)
         val count = await(mongoRepository.count())
