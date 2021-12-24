@@ -41,7 +41,7 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class IgniteCloudProcessRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<CloudProcessConfiguration>(
+) : AbstractIgniteRepository<String, CloudProcessConfiguration>(
     ignite.getOrCreateCache("cloud-processes")
 ), CloudProcessRepository {
 

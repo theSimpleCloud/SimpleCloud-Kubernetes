@@ -30,6 +30,7 @@ import eu.thesimplecloud.simplecloud.restserver.annotation.RequestMapping
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestPathParam
 import eu.thesimplecloud.simplecloud.restserver.annotation.RequestType
 import eu.thesimplecloud.simplecloud.restserver.annotation.RestController
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -48,9 +49,9 @@ class NodeController @Inject constructor(
         return processes.map { it.toConfiguration() }
     }
 
-    @RequestMapping(RequestType.GET, "{name}", "web.cloud.node.get")
-    fun handleGetOne(@RequestPathParam("name") name: String): NodeConfiguration {
-        val process = await(this.nodeService.findNodeByName(name))
+    @RequestMapping(RequestType.GET, "{uuid}", "web.cloud.node.get")
+    fun handleGetOne(@RequestPathParam("uuid") uuid: String): NodeConfiguration {
+        val process = await(this.nodeService.findNodeByUniqueId(UUID.fromString(uuid)))
         return process.toConfiguration()
     }
 

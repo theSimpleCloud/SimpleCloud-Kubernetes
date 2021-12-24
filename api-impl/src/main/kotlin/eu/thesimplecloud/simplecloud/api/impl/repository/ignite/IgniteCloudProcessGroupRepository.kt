@@ -37,6 +37,6 @@ import org.apache.ignite.Ignite
 @Singleton
 class IgniteCloudProcessGroupRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<AbstractCloudProcessGroupConfiguration>(
+) : AbstractIgniteRepository<String, AbstractCloudProcessGroupConfiguration>(
     ignite.getOrCreateCache("cloud-process-groups")
 ), CloudProcessGroupRepository

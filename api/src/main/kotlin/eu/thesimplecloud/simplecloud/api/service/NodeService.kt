@@ -35,16 +35,6 @@ import java.util.concurrent.CompletableFuture
 interface NodeService : Service {
 
     /**
-     * Returns the node found by the specified name
-     */
-    fun findNodeByName(name: String): CompletableFuture<Node>
-
-    /**
-     * Returns the nodes found by the specified names
-     */
-    fun findNodesByName(vararg names: String): CompletableFuture<List<Node>>
-
-    /**
      * Returns all nodes found
      */
     fun findAll(): CompletableFuture<List<Node>>

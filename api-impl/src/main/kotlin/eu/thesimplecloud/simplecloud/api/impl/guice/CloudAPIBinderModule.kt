@@ -53,12 +53,6 @@ class CloudAPIBinderModule(
     override fun configure() {
         bind(Ignite::class.java).toInstance(igniteInstance)
 
-        install(
-            FactoryModuleBuilder()
-                .implement(CloudProcess::class.java, CloudProcessImpl::class.java)
-                .build(CloudProcessFactory::class.java)
-        )
-
         bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
 
         bind(JvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)

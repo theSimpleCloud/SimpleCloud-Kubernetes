@@ -37,6 +37,6 @@ import org.apache.ignite.Ignite
 @Singleton
 class IgniteJvmArgumentsRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<JvmArgumentConfiguration>(
+) : AbstractIgniteRepository<String, JvmArgumentConfiguration>(
     ignite.getOrCreateCache("cloud-jvm-args")
 ), JvmArgumentsRepository

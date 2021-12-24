@@ -37,40 +37,40 @@ import java.util.concurrent.CompletableFuture
  * Time: 19:09
  * @author Frederick Baier
  */
-abstract class AbstractIgniteRepository<T : Any>(
-    private val igniteCache: IgniteCache<String, T>
-) : Repository<String, T> {
+abstract class AbstractIgniteRepository<I: Any, T : Any>(
+    private val igniteCache: IgniteCache<I, T>
+) : Repository<I, T> {
 
     override fun findAll(): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync { this.igniteCache.toList().map { it.value } }.nonNull()
     }
 
-    override fun find(identifier: String): CompletableFuture<T> {
+    override fun find(identifier: I): CompletableFuture<T> {
         return findOrNull(identifier).nonNull()
     }
 
-    override fun findOrNull(identifier: String): CompletableFuture<T?> {
+    override fun findOrNull(identifier: I): CompletableFuture<T?> {
         return CloudCompletableFuture.supplyAsync { this.igniteCache.get(identifier) }
     }
 
-    override fun save(identifier: String, value: T): CompletableFuture<Unit> {
+    override fun save(identifier: I, value: T): CompletableFuture<Unit> {
         return CloudCompletableFuture.runAsync {
             this.igniteCache.put(identifier, value)
         }
     }
 
-    protected fun executeQuery(predicate: IgniteBiPredicate<String, T>): CompletableFuture<List<T>> {
+    protected fun executeQuery(predicate: IgniteBiPredicate<I, T>): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync {
             val cursor = this.igniteCache.query(ScanQuery(predicate))
             return@supplyAsync cursor.all.map { it.value }
         }.nonNull()
     }
 
-    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<String, T>): CompletableFuture<T> {
+    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<I, T>): CompletableFuture<T> {
         return executeQuery(predicate).thenApply { it.first() }
     }
 
-    override fun remove(identifier: String) {
+    override fun remove(identifier: I) {
         this.igniteCache.removeAsync(identifier)
     }
 
@@ -80,11 +80,11 @@ abstract class AbstractIgniteRepository<T : Any>(
         }.nonNull()
     }
 
-    fun registerListener(listener: AbstractCacheEntryListener<String, T>) {
+    fun registerListener(listener: AbstractCacheEntryListener<I, T>) {
         listener.register(this.igniteCache)
     }
 
-    fun unregisterListener(listener: AbstractCacheEntryListener<String, T>) {
+    fun unregisterListener(listener: AbstractCacheEntryListener<I, T>) {
         listener.unregister(this.igniteCache)
     }
 

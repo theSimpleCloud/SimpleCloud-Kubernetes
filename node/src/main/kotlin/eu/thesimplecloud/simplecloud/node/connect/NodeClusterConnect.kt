@@ -29,21 +29,13 @@ import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
-import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import eu.thesimplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
-import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
-import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
-import eu.thesimplecloud.simplecloud.node.connect.messagechannel.StartProcessMessageHandler
-import eu.thesimplecloud.simplecloud.node.mongo.node.MongoPersistentNodeRepository
-import eu.thesimplecloud.simplecloud.node.mongo.node.PersistentNodeEntity
 import eu.thesimplecloud.simplecloud.node.service.*
+import eu.thesimplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
 import eu.thesimplecloud.simplecloud.node.util.Logger
@@ -57,32 +49,19 @@ import javax.inject.Inject
 class NodeClusterConnect @Inject constructor(
     private val injector: Injector,
     private val datastore: Datastore,
-    @NodeName private val nodeName: String,
-    @NodeMaxMemory private val nodeMaxMemory: Int,
 ) {
 
     private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
 
     fun run(): CompletableFuture<Unit> {
         Logger.info("Connecting to cluster...")
-        val nodeRepository = MongoPersistentNodeRepository(this.datastore)
-        await(editOrInsertSelfNode(nodeRepository))
         val clusterKey = await(loadClusterKey())
         val ignite = await(startIgnite(clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
-        await(initializeMessageChannels(finalInjector))
         await(checkForFirstNodeInCluster(finalInjector, ignite))
         await(writeSelfNodeInRepository(finalInjector, ignite))
         await(checkOnlineProcesses(finalInjector))
-        return unitFuture()
-    }
-
-    private fun initializeMessageChannels(injector: Injector): CompletableFuture<Unit> {
-        Logger.info("Initializing Message Channels")
-        val messageChannelManager = injector.getInstance(MessageChannelManager::class.java)
-        messageChannelManager.registerMessageChannel<ProcessStartConfiguration, CloudProcess>("start_process")
-            .setMessageHandler(injector.getInstance(StartProcessMessageHandler::class.java))
         return unitFuture()
     }
 
@@ -92,10 +71,7 @@ class NodeClusterConnect @Inject constructor(
             injector.getInstance(IgniteNodeRepository::class.java),
             NodeConfiguration(
                 this.nodeBindAddress,
-                this.nodeName,
                 ignite.cluster().localNode().id(),
-                this.nodeMaxMemory,
-                0
             )
         ).run()
     }
@@ -128,6 +104,7 @@ class NodeClusterConnect @Inject constructor(
             CloudProcessGroupServiceImpl::class.java
         )
         return injector.createChildInjector(
+            NodeBinderModule(),
             cloudAPIBinderModule,
             //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
             SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
@@ -153,15 +130,6 @@ class NodeClusterConnect @Inject constructor(
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {
         val otherNodeAddressGetter = this.injector.getInstance(OtherNodeAddressGetter::class.java)
         return otherNodeAddressGetter.getOtherNodeAddresses()
-    }
-
-    private fun editOrInsertSelfNode(nodeRepository: MongoPersistentNodeRepository): CompletableFuture<Unit> {
-        val nodeEntity = createNewConnectedSelfNodeEntity()
-        return nodeRepository.save(this.nodeName, nodeEntity)
-    }
-
-    private fun createNewConnectedSelfNodeEntity(): PersistentNodeEntity {
-        return PersistentNodeEntity(this.nodeName, this.nodeBindAddress, true)
     }
 
 }

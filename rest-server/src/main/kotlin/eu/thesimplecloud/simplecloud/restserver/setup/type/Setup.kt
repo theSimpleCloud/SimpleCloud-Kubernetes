@@ -43,9 +43,6 @@ open class Setup<T : Any>(
 
     companion object {
         val FIRST_USER = Setup("firstuser", emptyArray<String>(), FirstUserSetupResponseBody::class)
-        val NODE_NAME = Setup("name", emptyArray<String>(), NodeNameSetupResponseBody::class)
-        val NODE_ADDRESS = Setup("address", emptyArray<String>(), Address::class)
-        val NODE_MAX_MEMORY = Setup("maxmemory", emptyArray<String>(), NodeMaxMemoryResponseBody::class)
         val END = Setup("end", "", String::class)
     }
 }

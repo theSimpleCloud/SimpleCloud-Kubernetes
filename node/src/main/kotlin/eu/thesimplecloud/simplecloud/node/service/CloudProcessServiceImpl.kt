@@ -30,29 +30,26 @@ import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProce
 import eu.thesimplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.api.service.NodeService
-import eu.thesimplecloud.simplecloud.node.process.MultiNodeProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.ProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.ProcessStarterImpl
 import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: CloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
-    private val nodeService: NodeService,
-    private val injector: Injector
+    private val processStarterFactory: ProcessStarter.Factory
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        val processStarter = MultiNodeProcessStarter(
-            this.nodeService,
-            configuration,
-            this.injector
-        )
-        return processStarter.startProcess()
+        val processStarter = processStarterFactory.create(configuration)
+        val future = processStarter.startProcess()
+        future.thenAccept { updateProcessToCluster(it) }
+        return future
     }
 
-    fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
+    private fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
         return this.igniteRepository.save(process.getName(), process.toConfiguration())
     }
 

@@ -23,7 +23,15 @@
 package eu.thesimplecloud.simplecloud.node.startup.guice
 
 import com.google.inject.AbstractModule
+import com.google.inject.assistedinject.FactoryModuleBuilder
 import dev.morphia.Datastore
+import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcessImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
+import eu.thesimplecloud.simplecloud.kubernetes.impl.service.KubeServiceImpl
+import eu.thesimplecloud.simplecloud.node.process.ProcessStarter
+import eu.thesimplecloud.simplecloud.node.process.ProcessStarterImpl
 import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
 
@@ -33,13 +41,19 @@ import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
  * Time: 11:27
  * @author Frederick Baier
  */
-class MongoDbBinderModule(
-    private val datastore: Datastore
-) : AbstractModule() {
+class NodeBinderModule() : AbstractModule() {
 
     override fun configure() {
-        bind(Datastore::class.java).toInstance(this.datastore)
-        bind(UserRepository::class.java).to(MongoUserRepository::class.java)
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudProcess::class.java, CloudProcessImpl::class.java)
+                .build(CloudProcessFactory::class.java)
+        )
+        install(
+            FactoryModuleBuilder()
+                .implement(ProcessStarter::class.java, ProcessStarterImpl::class.java)
+                .build(ProcessStarter.Factory::class.java)
+        )
     }
 
 }

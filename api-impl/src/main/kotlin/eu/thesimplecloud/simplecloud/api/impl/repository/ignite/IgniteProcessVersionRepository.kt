@@ -37,6 +37,6 @@ import org.apache.ignite.Ignite
 @Singleton
 class IgniteProcessVersionRepository @Inject constructor(
     private val ignite: Ignite
-) : AbstractIgniteRepository<ProcessVersionConfiguration>(
+) : AbstractIgniteRepository<String, ProcessVersionConfiguration>(
     ignite.getOrCreateCache("cloud-process-versions")
 ), ProcessVersionRepository

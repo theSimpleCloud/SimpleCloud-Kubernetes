@@ -43,10 +43,8 @@ class ProcessStartTask(
     private val containerFactory: Container.Factory,
     private val volumeFactory: KubeVolumeClaim.Factory,
     private val serviceFactory: KubeService.Factory,
-    private val injector: Injector
+    private val clusterKey: ClusterKey,
 ) {
-
-    private val clusterKey = injector.getInstance(ClusterKey::class.java)
 
     fun run(): CompletableFuture<Unit> {
         Logger.info("Starting Process ${process.getName()}")

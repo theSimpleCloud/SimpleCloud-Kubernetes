@@ -45,27 +45,6 @@ interface Node : NetworkComponent, Identifiable<String> {
     fun getAddress(): Address
 
     /**
-     * Returns the maximum amount of memory this node can use
-     */
-    fun getMaxMemoryInMB(): Int
-
-    /**
-     * Returns the used amount of memory
-     */
-    fun getUsedMemoryInMB(): Int
-
-    /**
-     * Returns the unused memory
-     */
-    fun getUnusedMemoryInMB(): Int {
-        return getMaxMemoryInMB() - getUsedMemoryInMB()
-    }
-
-    fun hasMemoryAvailable(memoryInMB: Int): Boolean {
-        return getUnusedMemoryInMB() >= memoryInMB
-    }
-
-    /**
      * Returns the configuration of this node
      */
     fun toConfiguration(): NodeConfiguration

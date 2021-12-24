@@ -33,9 +33,6 @@ import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
-import eu.thesimplecloud.simplecloud.api.service.NodeService
-import eu.thesimplecloud.simplecloud.api.utils.Address
-import eu.thesimplecloud.simplecloud.node.util.PortManager
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -43,16 +40,12 @@ class CloudProcessCreationTask(
     private val startConfiguration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
     private val groupService: CloudProcessGroupService,
-    private val nodeService: NodeService,
-    private val factory: CloudProcessFactory,
-    private val nodeName: String
+    private val factory: CloudProcessFactory
 ) {
 
     fun run(): CompletableFuture<CloudProcess> {
         val processNumber = await(getProcessNumber())
-        val node = await(this.nodeService.findNodeByName(nodeName))
         val group = await(this.groupService.findByName(this.startConfiguration.groupName))
-        val address = Address(node.getAddress().host, getStartPort(group))
         val process = this.factory.create(
             CloudProcessConfiguration(
                 this.startConfiguration.groupName,
@@ -62,7 +55,6 @@ class CloudProcessCreationTask(
                 this.startConfiguration.maxMemory,
                 0,
                 this.startConfiguration.maxPlayers,
-                address,
                 group.isStatic(),
                 group.getProcessGroupType(),
                 this.startConfiguration.processVersionName,
@@ -72,13 +64,6 @@ class CloudProcessCreationTask(
             )
         )
         return completedFuture(process)
-    }
-
-    private fun getStartPort(group: CloudProcessGroup): Int {
-        if (group is CloudProxyGroup) {
-            return PortManager.getVacantPort(group.getStartPort())
-        }
-        return PortManager.getVacantPort()
     }
 
     private fun getProcessNumber(): CompletableFuture<Int> {

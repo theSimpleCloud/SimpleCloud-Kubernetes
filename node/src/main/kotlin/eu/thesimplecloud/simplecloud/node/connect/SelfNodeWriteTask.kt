@@ -32,6 +32,6 @@ class SelfNodeWriteTask(
 ) {
 
     fun run(): CompletableFuture<Unit> {
-        return this.repository.save(nodeConfiguration.name, nodeConfiguration)
+        return this.repository.save(nodeConfiguration.igniteId, nodeConfiguration)
     }
 }

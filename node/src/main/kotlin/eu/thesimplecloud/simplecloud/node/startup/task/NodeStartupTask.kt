@@ -29,14 +29,12 @@ import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
-import eu.thesimplecloud.simplecloud.node.annotation.NodeMaxMemory
-import eu.thesimplecloud.simplecloud.node.annotation.NodeName
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
+import eu.thesimplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
 import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
 import eu.thesimplecloud.simplecloud.node.util.Logger
-import eu.thesimplecloud.simplecloud.node.util.SingleInstanceAnnotatedBinderModule
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
 import java.util.concurrent.CompletableFuture
@@ -55,43 +53,24 @@ class NodeStartupTask(
 
     fun run(): CompletableFuture<Injector> {
         Logger.info("Starting Node...")
-        val nodeName = await(loadNodeName())
-        val maxMemory = await(loadMaxMemory())
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val injector = createInjector(datastore, nodeName, maxMemory)
+        val injector = createInjector(datastore)
         this.nodeSetupHandler.shutdownRestSetupServer()
         Logger.info("Node Startup completed")
         return completedFuture(injector)
     }
 
     private fun createInjector(
-        datastore: Datastore,
-        nodeName: String,
-        nodeMaxMemory: Int
+        datastore: Datastore
     ): Injector {
         return Guice.createInjector(
             KubernetesBinderModule(),
             SingleInstanceBinderModule(Datastore::class.java, datastore),
-            SingleInstanceAnnotatedBinderModule(String::class.java, nodeName, NodeName::class.java),
-            SingleInstanceAnnotatedBinderModule(Int::class.java, nodeMaxMemory, NodeMaxMemory::class.java),
             SingleInstanceBinderModule(NodeStartupSetupHandler::class.java, this.nodeSetupHandler)
         )
     }
 
-    private fun loadNodeName(): CompletableFuture<String> {
-        return LoadNodeNameSafeTask(
-            this.nodeSetupHandler,
-            this.startArguments.randomNodeName
-        ).run()
-    }
-
-    private fun loadMaxMemory(): CompletableFuture<Int> {
-        return LoadMaxMemorySafeTask(
-            this.nodeSetupHandler,
-            this.startArguments.maxMemory
-        ).run()
-    }
     private fun checkForAnyWebAccount(datastore: Datastore): CompletableFuture<Unit> {
         val mongoRepository = MongoUserRepository(datastore)
         val count = await(mongoRepository.count())

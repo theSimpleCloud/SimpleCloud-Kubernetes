@@ -32,11 +32,6 @@ import java.util.concurrent.CompletableFuture
  * Time: 17:54
  * @author Frederick Baier
  */
-interface NodeRepository : Repository<String, NodeConfiguration> {
-
-    /**
-     * Returns the node found by the specified [uniqueId]
-     */
-    fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<NodeConfiguration>
+interface NodeRepository : Repository<UUID, NodeConfiguration> {
 
 }

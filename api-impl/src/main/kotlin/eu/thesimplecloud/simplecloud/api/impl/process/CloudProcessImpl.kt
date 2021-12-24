@@ -84,7 +84,7 @@ class CloudProcessImpl @Inject constructor(
     }
 
     override fun getAddress(): Address {
-        return this.configuration.address
+        return Address(getName(), 25565)
     }
 
     override fun isStatic(): Boolean {

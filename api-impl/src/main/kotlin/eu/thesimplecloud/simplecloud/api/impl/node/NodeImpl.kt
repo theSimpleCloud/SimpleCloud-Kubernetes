@@ -45,16 +45,8 @@ class NodeImpl(
         return this.configuration.address
     }
 
-    override fun getMaxMemoryInMB(): Int {
-        return this.configuration.maxMemoryInMB
-    }
-
-    override fun getUsedMemoryInMB(): Int {
-        return this.configuration.usedMemoryInMB
-    }
-
     override fun getName(): String {
-        return this.configuration.name
+        return "Node-" + this.configuration.igniteId.toString()
     }
 
     override fun getIdentifier(): String {

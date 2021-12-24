@@ -40,23 +40,13 @@ open class DefaultNodeService(
     private val igniteRepository: IgniteNodeRepository
 ) : NodeService {
 
-    override fun findNodeByName(name: String): CompletableFuture<Node> {
-        val completableFuture = igniteRepository.find(name)
-        return completableFuture.thenApply { NodeImpl(it) }
-    }
-
-    override fun findNodesByName(vararg names: String): CompletableFuture<List<Node>> {
-        val futures = names.map { findNodeByName(it) }
-        return futures.toFutureList()
-    }
-
     override fun findAll(): CompletableFuture<List<Node>> {
         val completableFuture = this.igniteRepository.findAll()
         return completableFuture.thenApply { list -> list.map { NodeImpl(it) } }
     }
 
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
-        val completableFuture = this.igniteRepository.findNodeByUniqueId(uniqueId)
+        val completableFuture = this.igniteRepository.find(uniqueId)
         return completableFuture.thenApply { NodeImpl(it) }
     }
 }
