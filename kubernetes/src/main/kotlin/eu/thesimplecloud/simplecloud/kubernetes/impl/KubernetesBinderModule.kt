@@ -25,10 +25,15 @@ package eu.thesimplecloud.simplecloud.kubernetes.impl
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 import eu.thesimplecloud.simplecloud.kubernetes.api.container.Container
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecret
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import eu.thesimplecloud.simplecloud.kubernetes.impl.container.KubernetesContainer
 import eu.thesimplecloud.simplecloud.kubernetes.impl.service.KubeServiceImpl
 import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
 import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import eu.thesimplecloud.simplecloud.kubernetes.impl.secret.KubeSecretImpl
+import eu.thesimplecloud.simplecloud.kubernetes.impl.secret.KubeSecretServiceImpl
 import eu.thesimplecloud.simplecloud.kubernetes.impl.volume.KubeVolumeClaimImpl
 import io.kubernetes.client.custom.Quantity
 import io.kubernetes.client.openapi.Configuration
@@ -39,6 +44,7 @@ import io.kubernetes.client.openapi.models.V1PersistentVolumeClaimSpec
 import io.kubernetes.client.openapi.models.V1ResourceRequirements
 import io.kubernetes.client.util.Config
 import io.kubernetes.client.util.Yaml
+import java.nio.charset.StandardCharsets
 
 
 class KubernetesBinderModule : AbstractModule() {
@@ -47,6 +53,8 @@ class KubernetesBinderModule : AbstractModule() {
         Configuration.setDefaultApiClient(Config.defaultClient())
         val api = CoreV1Api()
         bind(CoreV1Api::class.java).toInstance(api)
+
+        bind(KubeSecretService::class.java).to(KubeSecretServiceImpl::class.java)
 
         install(
             FactoryModuleBuilder()
