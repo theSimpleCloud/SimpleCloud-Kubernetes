@@ -23,10 +23,13 @@
 package eu.thesimplecloud.simplecloud.node.startup.task.mongo
 
 import com.ea.async.Async.await
+import com.google.inject.Inject
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import eu.thesimplecloud.simplecloud.node.mongo.file.MongoConfigurationFileHandler
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecret
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
 import eu.thesimplecloud.simplecloud.node.util.Logger
@@ -38,40 +41,41 @@ import java.util.concurrent.CompletableFuture
  * Time: 09:59
  * @author Frederick Baier
  */
-class MongoDbSafeStartTask(
-    private val connectionStringArgument: String?,
-    private val nodeSetupHandler: NodeStartupSetupHandler
+class MongoDbSafeStartTask @Inject constructor(
+    private val nodeSetupHandler: NodeStartupSetupHandler,
+    private val kubeSecretService: KubeSecretService
 ) {
-
-    private val mongoFileHandler = MongoConfigurationFileHandler(this.connectionStringArgument)
 
     fun run(): CompletableFuture<Datastore> {
         Logger.info("Starting MongoDB")
-        if (!this.mongoFileHandler.isConnectionStringAvailable()) {
+        if (!isSecretAvailable()) {
             await(executeMongoSetup())
         }
         return startClientAndTestConnection()
     }
 
+    private fun isSecretAvailable(): Boolean {
+        return runCatching { this.kubeSecretService.getSecret(MONGO_SECRET_NAME) }.isSuccess
+    }
+
     private fun startClientAndTestConnection(): CompletableFuture<Datastore> {
-        val datastore = await(startMongoDbClient(mongoFileHandler.loadConnectionString()!!))
+        val secret = loadSecret()
+        val connectionString = secret.getStringValueOf("mongo")
+        val datastore = await(startMongoDbClient(connectionString))
         if (isConnectedToDatabase(datastore)) {
             Logger.info("Connected to database")
             return completedFuture(datastore)
         }
-        tryConnectionStringReset()
-        return run()
+        throw IllegalArgumentException("Connection String is invalid ${connectionString}")
     }
 
-    private fun tryConnectionStringReset() {
-        if (this.connectionStringArgument != null)
-            throw IllegalArgumentException("Connection String parsed as start argument is invalid: '${connectionStringArgument}'")
-        this.mongoFileHandler.deleteFile()
+    private fun loadSecret(): KubeSecret {
+        return this.kubeSecretService.getSecret(MONGO_SECRET_NAME)
     }
 
     private fun executeMongoSetup(): CompletableFuture<String> {
         val connectionString = await(this.nodeSetupHandler.executeSetupTask() { MongoDbSetupTask(it).run() })
-        saveResponseToFile(connectionString)
+        saveResponseToSecret(connectionString)
         return completedFuture(connectionString)
     }
 
@@ -85,7 +89,12 @@ class MongoDbSafeStartTask(
         return CloudCompletableFuture.completedFuture(mongoDatastore)
     }
 
-    private fun saveResponseToFile(connectionString: String) {
-        this.mongoFileHandler.saveConnectionString(connectionString)
+    private fun saveResponseToSecret(connectionString: String) {
+        this.kubeSecretService.createSecret(MONGO_SECRET_NAME, SecretSpec().withData("mongo", connectionString))
     }
+
+    companion object {
+        const val MONGO_SECRET_NAME = "mongo"
+    }
+
 }

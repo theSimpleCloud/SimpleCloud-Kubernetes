@@ -28,6 +28,7 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
+import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
@@ -51,23 +52,28 @@ class NodeStartupTask(
 
     private val nodeSetupHandler: NodeStartupSetupHandler = NodeStartupSetupHandler()
 
+    private val injector = createInjector()
+
     fun run(): CompletableFuture<Injector> {
         Logger.info("Starting Node...")
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
-        val injector = createInjector(datastore)
         this.nodeSetupHandler.shutdownRestSetupServer()
         Logger.info("Node Startup completed")
+        val injector = createSubInjectorWithDatastore(datastore)
         return completedFuture(injector)
     }
 
-    private fun createInjector(
-        datastore: Datastore
-    ): Injector {
+    private fun createInjector(): Injector {
         return Guice.createInjector(
             KubernetesBinderModule(),
-            SingleInstanceBinderModule(Datastore::class.java, datastore),
             SingleInstanceBinderModule(NodeStartupSetupHandler::class.java, this.nodeSetupHandler)
+        )
+    }
+
+    private fun createSubInjectorWithDatastore(datastore: Datastore): Injector {
+        return this.injector.createChildInjector(
+            SingleInstanceBinderModule(Datastore::class.java, datastore)
         )
     }
 
@@ -87,10 +93,7 @@ class NodeStartupTask(
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
-        return MongoDbSafeStartTask(
-            this.startArguments.mongoDbConnectionString,
-            this.nodeSetupHandler
-        ).run()
+        return this.injector.getInstance(MongoDbSafeStartTask::class.java).run()
     }
 
 
