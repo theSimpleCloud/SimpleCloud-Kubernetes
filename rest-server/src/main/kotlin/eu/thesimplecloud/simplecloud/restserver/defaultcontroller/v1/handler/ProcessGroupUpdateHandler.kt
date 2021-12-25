@@ -46,8 +46,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
     private val validatorService: ValidatorService,
     private val groupService: CloudProcessGroupService,
     private val jvmArgumentsService: JvmArgumentsService,
-    private val onlineCountService: ProcessOnlineCountService,
-    private val versionService: ProcessVersionService
+    private val onlineCountService: ProcessOnlineCountService
 ) {
 
     fun update(configuration: AbstractCloudProcessGroupConfiguration) {
@@ -60,7 +59,6 @@ class ProcessGroupUpdateHandler @Inject constructor(
         val request = this.groupService.createGroupUpdateRequest(group)
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
-        request.setVersion(this.versionService.findByName(configuration.versionName))
         request.setImage(ImageImpl.fromName(configuration.imageName))
         request.setOnlineCountConfiguration(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
         request.setMaintenance(configuration.maintenance)

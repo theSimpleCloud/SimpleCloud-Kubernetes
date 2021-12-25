@@ -43,7 +43,6 @@ data class CloudProcessConfiguration(
     val maxPlayers: Int,
     val static: Boolean,
     val processGroupType: ProcessGroupType,
-    val versionName: String,
     val imageName: String,
     val jvmArgumentsName: String?,
     val igniteId: UUID?

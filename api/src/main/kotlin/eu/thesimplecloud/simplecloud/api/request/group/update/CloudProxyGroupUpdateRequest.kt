@@ -27,7 +27,6 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -49,10 +48,6 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
     override fun setMaxMemory(memory: Int): CloudProxyGroupUpdateRequest
 
     override fun setMaxPlayers(players: Int): CloudProxyGroupUpdateRequest
-
-    override fun setVersion(version: ProcessVersion): CloudProxyGroupUpdateRequest
-
-    override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProxyGroupUpdateRequest
 
     override fun setImage(image: Image?): CloudProxyGroupUpdateRequest
 

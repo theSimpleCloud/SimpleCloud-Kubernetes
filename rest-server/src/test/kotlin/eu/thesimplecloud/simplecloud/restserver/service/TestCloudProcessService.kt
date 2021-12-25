@@ -69,11 +69,9 @@ class TestCloudProcessService @Inject constructor(
                 512,
                 512,
                 20,
-                Address.fromIpString("127.0.0.1:11111"),
                 false,
                 ProcessGroupType.PROXY,
                 "TEST",
-                "Test",
                 "Test",
                 null,
             )
@@ -91,10 +89,8 @@ class TestCloudProcessService @Inject constructor(
                     configuration.maxMemory,
                     0,
                     configuration.maxPlayers,
-                    Address.fromIpString("127.0.0.1:25565"),
                     false,
                     ProcessGroupType.LOBBY,
-                    configuration.processVersionName,
                     configuration.imageName,
                     configuration.jvmArgumentsName,
                     null

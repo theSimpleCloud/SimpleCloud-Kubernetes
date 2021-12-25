@@ -27,7 +27,6 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.Nameable
 import java.util.concurrent.CompletableFuture
@@ -44,10 +43,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun isInMaintenance(): Boolean
 
     fun getImage(): Image
-
-    fun getProcessVersionName(): String
-
-    fun getVersion(): CompletableFuture<ProcessVersion>
 
     fun getJvmArgumentsName(): String?
 

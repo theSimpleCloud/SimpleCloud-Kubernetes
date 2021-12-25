@@ -56,6 +56,10 @@ class ProcessStartTask(
                 .withRequestedStorageInGB(1)
         )
 
+        val processUniqueIdEnvironment = ContainerSpec.EnvironmentVariable(
+            "SIMPLECLOUD_PROCESS_ID",
+            process.getUniqueId().toString()
+        )
         val clusterKeyEnvironment = ContainerSpec.EnvironmentVariable(
             "CLUSTER_KEY",
             clusterKey.login + ":" + clusterKey.password

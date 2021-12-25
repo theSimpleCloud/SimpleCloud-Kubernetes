@@ -99,7 +99,6 @@ class NodeClusterConnect @Inject constructor(
             ignite,
             JvmArgumentsServiceImpl::class.java,
             NodeServiceImpl::class.java,
-            ProcessVersionServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java
         )

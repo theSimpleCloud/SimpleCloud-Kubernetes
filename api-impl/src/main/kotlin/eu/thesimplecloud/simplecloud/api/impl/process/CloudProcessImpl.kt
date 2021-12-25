@@ -33,7 +33,6 @@ import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.utils.Address
@@ -50,9 +49,7 @@ class CloudProcessImpl @Inject constructor(
     @Assisted private val configuration: CloudProcessConfiguration,
     private val processService: CloudProcessService,
     private val processGroupService: CloudProcessGroupService,
-    private val processVersionService: ProcessVersionService,
-    private val jvmArgumentService: JvmArgumentsService,
-    private val nodeService: NodeService,
+    private val jvmArgumentService: JvmArgumentsService
 ) : CloudProcess {
 
     override fun getGroupName(): String {
@@ -93,10 +90,6 @@ class CloudProcessImpl @Inject constructor(
 
     override fun getProcessType(): ProcessGroupType {
         return this.configuration.processGroupType
-    }
-
-    override fun getVersion(): CompletableFuture<ProcessVersion> {
-        return this.processVersionService.findByName(this.configuration.versionName)
     }
 
     override fun getImage(): Image {

@@ -29,7 +29,6 @@ import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
@@ -64,16 +63,6 @@ class CloudLobbyGroupUpdateRequestImpl(
 
     override fun setMaxPlayers(players: Int): CloudLobbyGroupUpdateRequest {
         super.setMaxPlayers(players)
-        return this
-    }
-
-    override fun setVersion(version: ProcessVersion): CloudLobbyGroupUpdateRequest {
-        super.setVersion(version)
-        return this
-    }
-
-    override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudLobbyGroupUpdateRequest {
-        super.setVersion(versionFuture)
         return this
     }
 
@@ -133,7 +122,6 @@ class CloudLobbyGroupUpdateRequestImpl(
     }
 
     override fun submit0(
-        version: ProcessVersion,
         image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
@@ -147,7 +135,6 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.maxProcessCount,
             image?.getName(),
             jvmArguments?.getName(),
-            version.getName(),
             onlineCountConfiguration.getName(),
             this.lobbyGroup.isStatic(),
             this.stateUpdating,

@@ -26,12 +26,10 @@ import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
-import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -65,16 +63,6 @@ class CloudProxyGroupUpdateRequestImpl(
 
     override fun setMaxPlayers(players: Int): CloudProxyGroupUpdateRequest {
         super.setMaxPlayers(players)
-        return this
-    }
-
-    override fun setVersion(version: ProcessVersion): CloudProxyGroupUpdateRequest {
-        super.setVersion(version)
-        return this
-    }
-
-    override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProxyGroupUpdateRequest {
-        super.setVersion(versionFuture)
         return this
     }
 
@@ -134,7 +122,6 @@ class CloudProxyGroupUpdateRequestImpl(
     }
 
     override fun submit0(
-        version: ProcessVersion,
         image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
@@ -148,7 +135,6 @@ class CloudProxyGroupUpdateRequestImpl(
             this.maxProcessCount,
             image?.getName(),
             jvmArguments?.getName(),
-            version.getName(),
             onlineCountConfiguration.getName(),
             this.proxyGroup.isStatic(),
             this.stateUpdating,

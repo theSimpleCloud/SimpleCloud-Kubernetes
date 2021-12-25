@@ -42,8 +42,7 @@ class ProcessCreateHandler @Inject constructor(
     private val groupService: CloudProcessGroupService,
     private val processService: CloudProcessService,
     private val jvmArgumentsService: JvmArgumentsService,
-    private val onlineCountService: ProcessOnlineCountService,
-    private val versionService: ProcessVersionService
+    private val onlineCountService: ProcessOnlineCountService
 ) {
 
     fun create(configuration: CloudProcessCreateRequestDto): CloudProcess {
@@ -58,9 +57,6 @@ class ProcessCreateHandler @Inject constructor(
         }
         if (configuration.maxPlayers != null) {
             request.setMaxPlayers(configuration.maxPlayers)
-        }
-        if (configuration.versionName != null) {
-            request.setProcessVersion(this.versionService.findByName(configuration.versionName))
         }
         if (configuration.imageName != null) {
             request.setImage(ImageImpl(configuration.imageName))

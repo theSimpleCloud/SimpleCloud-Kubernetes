@@ -30,7 +30,6 @@ import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
-import eu.thesimplecloud.simplecloud.api.service.ProcessVersionService
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.lang.Exception
 import java.util.concurrent.CompletableFuture
@@ -44,8 +43,7 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class GroupConfigurationValidator @Inject constructor(
     private val jvmArgumentsService: JvmArgumentsService,
-    private val onlineCountService: ProcessOnlineCountService,
-    private val versionService: ProcessVersionService,
+    private val onlineCountService: ProcessOnlineCountService
 ) : Validator<AbstractCloudProcessGroupConfiguration> {
 
     override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
@@ -53,7 +51,6 @@ class GroupConfigurationValidator @Inject constructor(
             await(checkJvmArguments(value))
             await(checkProcessOnlineCountConfiguration(value))
             await(checkImage(value))
-            await(checkVersion(value))
         }
     }
 
@@ -79,16 +76,6 @@ class GroupConfigurationValidator @Inject constructor(
 
     private fun checkImage(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         //TODO Validate Image
-        return unitFuture()
-    }
-
-    private fun checkVersion(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        val versionName = configuration.versionName
-        try {
-            await(this.versionService.findByName(versionName))
-        } catch (e: Exception) {
-            throw NoSuchElementException("Version '${versionName}' does not exist")
-        }
         return unitFuture()
     }
 

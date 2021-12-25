@@ -12,7 +12,6 @@ data class ProcessStartConfiguration(
     val imageName: String,
     val maxMemory: Int,
     val maxPlayers: Int,
-    val processVersionName: String,
     val jvmArgumentsName: String?
 ) {
 

@@ -26,7 +26,6 @@ import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.Request
 import java.util.concurrent.CompletableFuture
 
@@ -82,17 +81,5 @@ interface ProcessStartRequest : Request<CloudProcess> {
      * @return this
      */
     fun setJvmArguments(argumentsFuture: CompletableFuture<JVMArguments>): ProcessStartRequest
-
-    /**
-     * Sets the jvm arguments for the process to start with
-     * @return this
-     */
-    fun setProcessVersion(version: ProcessVersion): ProcessStartRequest
-
-    /**
-     * Sets the jvm arguments for the process to start with
-     * @return this
-     */
-    fun setProcessVersion(versionFuture: CompletableFuture<ProcessVersion>): ProcessStartRequest
 
 }

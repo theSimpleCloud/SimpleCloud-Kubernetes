@@ -27,9 +27,8 @@ import eu.thesimplecloud.simplecloud.api.future.nullable
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
@@ -68,9 +67,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var startPriority: Int = this.processGroup.getStartPriority()
 
     @Volatile
-    protected var versionFuture: CompletableFuture<ProcessVersion> = this.processGroup.getVersion()
-
-    @Volatile
     protected var image: Image? = runCatching { this.processGroup.getImage() }.getOrNull()
 
     @Volatile
@@ -92,16 +88,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun setMaxPlayers(players: Int): CloudProcessGroupUpdateRequest {
         this.maxPlayers = players
-        return this
-    }
-
-    override fun setVersion(version: ProcessVersion): CloudProcessGroupUpdateRequest {
-        this.versionFuture = CloudCompletableFuture.completedFuture(version)
-        return this
-    }
-
-    override fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProcessGroupUpdateRequest {
-        this.versionFuture = versionFuture
         return this
     }
 
@@ -161,11 +147,9 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun submit(): CompletableFuture<CloudProcessGroup> {
-        val version = await(this.versionFuture)
         val jvmArguments = await(this.jvmArgumentsFuture.nullable())
         val onlineCountConfiguration = await(this.onlineCountConfigurationFuture)
         return submit0(
-            version,
             this.image,
             jvmArguments,
             onlineCountConfiguration
@@ -173,7 +157,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     abstract fun submit0(
-        version: ProcessVersion,
         image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration

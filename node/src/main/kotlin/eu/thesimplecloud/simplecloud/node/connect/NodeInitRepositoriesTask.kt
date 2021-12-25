@@ -27,20 +27,15 @@ import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteProcessVersionRepository
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.configuration.ProcessVersionConfiguration
 import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
-import eu.thesimplecloud.simplecloud.node.mongo.processversion.MongoProcessVersionRepository
 import eu.thesimplecloud.simplecloud.node.util.Logger
 import java.util.concurrent.CompletableFuture
 
 class NodeInitRepositoriesTask @Inject constructor(
     private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
-    private val igniteProcessVersionRepository: IgniteProcessVersionRepository,
-    private val mongoProcessVersionRepository: MongoProcessVersionRepository,
     private val igniteJvmArgumentsRepository: IgniteJvmArgumentsRepository,
     private val mongoJvmArgumentsRepository: MongoJvmArgumentsRepository,
 ) {
@@ -48,7 +43,6 @@ class NodeInitRepositoriesTask @Inject constructor(
     fun run(): CompletableFuture<Unit> {
         Logger.info("Initializing Ignite Repositories")
         await(initJvmArguments())
-        await(initProcessVersions())
         await(initGroups())
         return unitFuture()
     }
@@ -58,17 +52,6 @@ class NodeInitRepositoriesTask @Inject constructor(
         val configurations = jvmArgs.map { JvmArgumentConfiguration(it.name, it.arguments) }
         for (config in configurations) {
             await(this.igniteJvmArgumentsRepository.save(config.name, config))
-        }
-        return unitFuture()
-    }
-
-    private fun initProcessVersions(): CompletableFuture<Unit> {
-        val versions = await(this.mongoProcessVersionRepository.findAll())
-        val configurations = versions.map {
-            ProcessVersionConfiguration(it.name, it.apiType, it.loadType, it.downloadLink, it.javaBaseImageName)
-        }
-        for (config in configurations) {
-            await(this.igniteProcessVersionRepository.save(config.name, config))
         }
         return unitFuture()
     }

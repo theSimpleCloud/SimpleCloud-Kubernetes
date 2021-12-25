@@ -57,7 +57,6 @@ class CloudProcessCreationTask(
                 this.startConfiguration.maxPlayers,
                 group.isStatic(),
                 group.getProcessGroupType(),
-                this.startConfiguration.processVersionName,
                 this.startConfiguration.imageName,
                 this.startConfiguration.jvmArgumentsName,
                 null

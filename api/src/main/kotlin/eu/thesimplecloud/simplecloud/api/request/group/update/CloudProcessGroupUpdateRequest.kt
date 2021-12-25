@@ -27,7 +27,6 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.utils.Request
 import java.util.concurrent.CompletableFuture
 
@@ -58,18 +57,6 @@ interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
      * @return this
      */
     fun setMaxPlayers(players: Int): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the version for the group
-     * @return this
-     */
-    fun setVersion(version: ProcessVersion): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the version for the group
-     * @return this
-     */
-    fun setVersion(versionFuture: CompletableFuture<ProcessVersion>): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the image for the group

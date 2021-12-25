@@ -37,14 +37,6 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class TestNodeService : NodeService {
 
-    override fun findNodeByName(name: String): CompletableFuture<Node> {
-        TODO("Not yet implemented")
-    }
-
-    override fun findNodesByName(vararg names: String): CompletableFuture<List<Node>> {
-        TODO("Not yet implemented")
-    }
-
     override fun findAll(): CompletableFuture<List<Node>> {
         TODO("Not yet implemented")
     }

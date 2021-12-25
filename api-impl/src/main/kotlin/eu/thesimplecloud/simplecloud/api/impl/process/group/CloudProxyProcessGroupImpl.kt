@@ -36,17 +36,13 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 class CloudProxyProcessGroupImpl(
     private val configuration: CloudProxyProcessGroupConfiguration,
-    private val processVersionService: ProcessVersionService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
-    private val nodeService: NodeService,
     private val processService: CloudProcessService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    processVersionService,
     jvmArgumentsService,
     processOnlineCountService,
-    nodeService,
     processService
 ), CloudProxyGroup {
 

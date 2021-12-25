@@ -27,7 +27,6 @@ import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
@@ -92,11 +91,6 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
      * Returns the process type
      */
     fun getProcessType(): ProcessGroupType
-
-    /**
-     * Returns the version the process is running with
-     */
-    fun getVersion(): CompletableFuture<ProcessVersion>
 
     /**
      * Returns the image this process was started from

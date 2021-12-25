@@ -30,7 +30,6 @@ import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServer
 import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -46,7 +45,6 @@ class CloudServerGroupUpdateRequestImpl(
     CloudServerGroupUpdateRequest {
 
     override fun submit0(
-        version: ProcessVersion,
         image: Image?,
         jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
@@ -60,7 +58,6 @@ class CloudServerGroupUpdateRequestImpl(
             this.maxProcessCount,
             image?.getName(),
             jvmArguments?.getName(),
-            version.getName(),
             onlineCountConfiguration.getName(),
             this.serverGroup.isStatic(),
             this.stateUpdating,

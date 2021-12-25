@@ -30,7 +30,6 @@ import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.process.version.ProcessVersion
 import eu.thesimplecloud.simplecloud.api.service.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,10 +43,8 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val processVersionService: ProcessVersionService,
     private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
-    private val nodeService: NodeService,
     private val processService: CloudProcessService,
 ) : CloudProcessGroup {
 
@@ -72,14 +69,6 @@ abstract class AbstractCloudProcessGroup constructor(
         val imageName = this.configuration.imageName
             ?: throw NoImageProvidedException(getName())
         return ImageImpl(imageName)
-    }
-
-    override fun getProcessVersionName(): String {
-        return this.configuration.versionName
-    }
-
-    override fun getVersion(): CompletableFuture<ProcessVersion> {
-        return this.processVersionService.findByName(this.configuration.versionName)
     }
 
     override fun getJvmArgumentsName(): String? {

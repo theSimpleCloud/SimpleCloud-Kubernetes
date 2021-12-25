@@ -39,7 +39,6 @@ abstract class AbstractCloudProcessGroupConfiguration(
     val maximumProcessCount: Int,
     val imageName: String?,
     val jvmArgumentName: String?,
-    val versionName: String,
     val onlineCountConfigurationName: String,
     val static: Boolean,
     val stateUpdating: Boolean,

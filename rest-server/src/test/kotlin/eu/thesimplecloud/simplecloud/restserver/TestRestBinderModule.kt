@@ -52,7 +52,6 @@ class TestRestBinderModule : AbstractModule() {
         bind(CloudProcessGroupService::class.java).to(TestCloudProcessGroupService::class.java)
         bind(JvmArgumentsService::class.java).to(TestJvmArgumentsService::class.java)
         bind(ProcessOnlineCountService::class.java).to(TestProcessOnlineCountService::class.java)
-        bind(ProcessVersionService::class.java).to(TestProcessVersionService::class.java)
         bind(CloudProcessService::class.java).to(TestCloudProcessService::class.java)
         bind(NodeService::class.java).to(TestNodeService::class.java)
 
