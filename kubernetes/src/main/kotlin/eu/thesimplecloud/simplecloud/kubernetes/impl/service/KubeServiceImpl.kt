@@ -72,18 +72,15 @@ class KubeServiceImpl @Inject constructor(
     }
 
     private fun createService() {
+        val service = createServiceObj()
+        this.api.createNamespacedService("default", service, null, null, null)
+    }
+
+    private fun createServiceObj(): V1Service {
         val labels = this.serviceSpec.labels.associate { it.getNamePair() }
+        val port = createServicePort()
         val type = generateType()
-
-        val port = V1ServicePort()
-            .protocol("TCP")
-            .port(this.serviceSpec.clusterPort)
-            .targetPort(IntOrString(this.serviceSpec.containerPort))
-
-        if (this.serviceSpec.publicPort != -1)
-            port.nodePort(this.serviceSpec.publicPort)
-
-        val service = V1Service()
+        return V1Service()
             .metadata(V1ObjectMeta().name(this.name))
             .spec(
                 V1ServiceSpec()
@@ -95,7 +92,17 @@ class KubeServiceImpl @Inject constructor(
                         )
                     )
             )
-        this.api.createNamespacedService("default", service, null, null, null)
+    }
+
+    private fun createServicePort(): V1ServicePort {
+         val port = V1ServicePort()
+            .protocol("TCP")
+            .port(this.serviceSpec.clusterPort)
+            .targetPort(IntOrString(this.serviceSpec.containerPort))
+
+        if (this.serviceSpec.publicPort != -1)
+            port.nodePort(this.serviceSpec.publicPort)
+        return port
     }
 
     private fun generateType(): String {
