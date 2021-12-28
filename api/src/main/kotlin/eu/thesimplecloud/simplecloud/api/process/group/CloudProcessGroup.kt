@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.api.process.group
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
@@ -43,10 +42,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun isInMaintenance(): Boolean
 
     fun getImage(): Image
-
-    fun getJvmArgumentsName(): String?
-
-    fun getJvmArguments(): CompletableFuture<JVMArguments>
 
     fun getProcessOnlineCountConfigurationName(): String
 

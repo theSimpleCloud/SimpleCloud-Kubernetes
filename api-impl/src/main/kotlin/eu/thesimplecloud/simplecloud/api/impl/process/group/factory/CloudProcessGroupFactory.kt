@@ -41,7 +41,6 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 @Singleton
 class CloudProcessGroupFactory @Inject constructor(
-    private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
     private val groupConfigurationValidator: GroupConfigurationValidator
@@ -54,13 +53,11 @@ class CloudProcessGroupFactory @Inject constructor(
 
         val constructor = groupClass.getDeclaredConstructor(
             configuration::class.java,
-            JvmArgumentsService::class.java,
             ProcessOnlineCountService::class.java,
             CloudProcessService::class.java,
         )
         return constructor.newInstance(
             configuration,
-            this.jvmArgumentsService,
             this.processOnlineCountService,
             this.processService
         )

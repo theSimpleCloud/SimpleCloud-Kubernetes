@@ -23,9 +23,7 @@
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import com.ea.async.Async.await
-import eu.thesimplecloud.simplecloud.api.future.nullable
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
@@ -70,10 +68,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var image: Image? = runCatching { this.processGroup.getImage() }.getOrNull()
 
     @Volatile
-    protected var jvmArgumentsFuture: CompletableFuture<JVMArguments?> =
-        this.processGroup.getJvmArguments() as CompletableFuture<JVMArguments?>
-
-    @Volatile
     protected var onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration> =
         this.processGroup.getProcessOnlineCountConfiguration()
 
@@ -93,16 +87,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun setImage(image: Image?): CloudProcessGroupUpdateRequest {
         this.image = image
-        return this
-    }
-
-    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudProcessGroupUpdateRequest {
-        this.jvmArgumentsFuture = CloudCompletableFuture.completedFuture(jvmArguments)
-        return this
-    }
-
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudProcessGroupUpdateRequest {
-        this.jvmArgumentsFuture = jvmArgumentsFuture as CompletableFuture<JVMArguments?>
         return this
     }
 
@@ -147,18 +131,15 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun submit(): CompletableFuture<CloudProcessGroup> {
-        val jvmArguments = await(this.jvmArgumentsFuture.nullable())
         val onlineCountConfiguration = await(this.onlineCountConfigurationFuture)
         return submit0(
             this.image,
-            jvmArguments,
             onlineCountConfiguration
         )
     }
 
     abstract fun submit0(
         image: Image?,
-        jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup>
 

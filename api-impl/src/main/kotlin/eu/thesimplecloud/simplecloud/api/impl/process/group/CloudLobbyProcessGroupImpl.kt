@@ -36,12 +36,10 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 class CloudLobbyProcessGroupImpl constructor(
     private val configuration: CloudLobbyProcessGroupConfiguration,
-    private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    jvmArgumentsService,
     processOnlineCountService,
     processService
 ), CloudLobbyGroup {

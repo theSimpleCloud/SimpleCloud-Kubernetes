@@ -20,15 +20,16 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package eu.thesimplecloud.simplecloud.api.request.jvmargs
+package eu.thesimplecloud.simplecloud.plugin.startup.service
 
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.utils.Request
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import eu.thesimplecloud.simplecloud.api.impl.service.DefaultNodeService
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 15/07/2021
- * Time: 13:34
- * @author Frederick Baier
- */
-interface JvmArgumentCreateRequest : Request<JVMArguments>
+@Singleton
+class NodeServiceImpl @Inject constructor(
+    igniteRepository: IgniteNodeRepository
+) : DefaultNodeService(
+    igniteRepository
+)

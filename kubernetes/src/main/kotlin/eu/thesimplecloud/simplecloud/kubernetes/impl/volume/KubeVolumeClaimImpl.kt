@@ -33,17 +33,7 @@ class KubeVolumeClaimImpl @Inject constructor(
     }
 
     private fun claimVolume() {
-        val persistentVolumeClaim = V1PersistentVolumeClaim()
-            .metadata(V1ObjectMeta().name(this.name))
-            .spec(
-                V1PersistentVolumeClaimSpec()
-                    .storageClassName(this.volumeSpec.storageClassName.lowercase())
-                    .accessModes(listOf("ReadWriteOnce"))
-                    .resources(
-                        V1ResourceRequirements()
-                            .requests(mapOf("storage" to Quantity.fromString("${this.volumeSpec.requestedStorageInGB}Gi")))
-                    )
-            )
+        val persistentVolumeClaim = createPersistentVolumeClaimObj()
 
         try {
             this.api.createNamespacedPersistentVolumeClaim(
@@ -57,6 +47,18 @@ class KubeVolumeClaimImpl @Inject constructor(
             //If the request fails, the volume already exists
         }
     }
+
+    private fun createPersistentVolumeClaimObj() = V1PersistentVolumeClaim()
+        .metadata(V1ObjectMeta().name(this.name))
+        .spec(
+            V1PersistentVolumeClaimSpec()
+                .storageClassName(this.volumeSpec.storageClassName.lowercase())
+                .accessModes(listOf("ReadWriteOnce"))
+                .resources(
+                    V1ResourceRequirements()
+                        .requests(mapOf("storage" to Quantity.fromString("${this.volumeSpec.requestedStorageInGB}Gi")))
+                )
+        )
 
     override fun delete() {
         this.api.deleteNamespacedPersistentVolumeClaim(

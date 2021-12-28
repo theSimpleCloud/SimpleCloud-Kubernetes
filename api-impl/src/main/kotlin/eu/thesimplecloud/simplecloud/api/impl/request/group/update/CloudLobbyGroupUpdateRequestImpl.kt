@@ -24,7 +24,6 @@ package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
@@ -71,16 +70,6 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudLobbyGroupUpdateRequest {
-        super.setJvmArguments(jvmArguments)
-        return this
-    }
-
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudLobbyGroupUpdateRequest {
-        super.setJvmArguments(jvmArgumentsFuture)
-        return this
-    }
-
     override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudLobbyGroupUpdateRequest {
         super.setOnlineCountConfiguration(onlineCountConfiguration)
         return this
@@ -123,7 +112,6 @@ class CloudLobbyGroupUpdateRequestImpl(
 
     override fun submit0(
         image: Image?,
-        jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudLobbyProcessGroupConfiguration(
@@ -134,7 +122,6 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.minProcessCount,
             this.maxProcessCount,
             image?.getName(),
-            jvmArguments?.getName(),
             onlineCountConfiguration.getName(),
             this.lobbyGroup.isStatic(),
             this.stateUpdating,

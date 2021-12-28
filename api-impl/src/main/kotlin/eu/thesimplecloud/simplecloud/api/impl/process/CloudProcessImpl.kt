@@ -24,17 +24,16 @@ package eu.thesimplecloud.simplecloud.api.impl.process
 
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
-import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
-import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.process.CloudProcessConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
+import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
-import eu.thesimplecloud.simplecloud.api.service.*
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -48,8 +47,7 @@ import java.util.concurrent.CompletableFuture
 class CloudProcessImpl @Inject constructor(
     @Assisted private val configuration: CloudProcessConfiguration,
     private val processService: CloudProcessService,
-    private val processGroupService: CloudProcessGroupService,
-    private val jvmArgumentService: JvmArgumentsService
+    private val processGroupService: CloudProcessGroupService
 ) : CloudProcess {
 
     override fun getGroupName(): String {
@@ -94,12 +92,6 @@ class CloudProcessImpl @Inject constructor(
 
     override fun getImage(): Image {
         return ImageImpl(this.configuration.imageName)
-    }
-
-    override fun getJvmArguments(): CompletableFuture<JVMArguments> {
-        val jvmArgumentsName = this.configuration.jvmArgumentsName
-            ?: return CompletableFuture.failedFuture(CompletedWithNullException())
-        return this.jvmArgumentService.findByName(jvmArgumentsName)
     }
 
     override fun terminationFuture(): CompletableFuture<Void> {

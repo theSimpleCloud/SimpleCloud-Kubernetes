@@ -25,12 +25,12 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.impl.exception.NoImageProvidedException
 import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import eu.thesimplecloud.simplecloud.api.service.*
+import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
+import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -43,7 +43,6 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
 ) : CloudProcessGroup {
@@ -69,16 +68,6 @@ abstract class AbstractCloudProcessGroup constructor(
         val imageName = this.configuration.imageName
             ?: throw NoImageProvidedException(getName())
         return ImageImpl(imageName)
-    }
-
-    override fun getJvmArgumentsName(): String? {
-        return this.configuration.jvmArgumentName
-    }
-
-    override fun getJvmArguments(): CompletableFuture<JVMArguments> {
-        val jvmArgumentName = this.configuration.jvmArgumentName
-            ?: return CompletableFuture.failedFuture(NoSuchElementException())
-        return this.jvmArgumentsService.findByName(jvmArgumentName)
     }
 
     override fun getProcessOnlineCountConfigurationName(): String {

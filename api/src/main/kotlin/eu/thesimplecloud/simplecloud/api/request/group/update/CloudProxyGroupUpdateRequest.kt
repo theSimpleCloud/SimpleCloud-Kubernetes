@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.api.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
@@ -50,10 +49,6 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
     override fun setMaxPlayers(players: Int): CloudProxyGroupUpdateRequest
 
     override fun setImage(image: Image?): CloudProxyGroupUpdateRequest
-
-    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudProxyGroupUpdateRequest
-
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudProxyGroupUpdateRequest
 
     override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProxyGroupUpdateRequest
 

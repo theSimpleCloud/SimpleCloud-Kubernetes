@@ -8,18 +8,24 @@ import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.openapi.models.V1ObjectMeta
 import io.kubernetes.client.openapi.models.V1Secret
-import java.util.NoSuchElementException
 
 class KubeSecretServiceImpl @Inject constructor(
     private val api: CoreV1Api
 ) : KubeSecretService {
 
     override fun createSecret(name: String, secretSpec: SecretSpec) {
-        val secret = V1Secret()
+        val secret = createSecretObj(name, secretSpec)
+        this.api.createNamespacedSecret("default", secret, null, null, null)
+    }
+
+    private fun createSecretObj(
+        name: String,
+        secretSpec: SecretSpec
+    ): V1Secret {
+        return V1Secret()
             .metadata(V1ObjectMeta().name(name))
             .type("Opaque")
             .data(secretSpec.data)
-        this.api.createNamespacedSecret("default", secret, null, null, null)
     }
 
     override fun getSecret(name: String): KubeSecret {

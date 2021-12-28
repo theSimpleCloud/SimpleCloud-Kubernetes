@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.plugin.startup
 
+import com.google.inject.Guice
+import eu.thesimplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.api.utils.Address
 import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
@@ -32,13 +34,18 @@ class CloudPlugin {
 
     fun onEnable() {
         val ignite = startIgnite()
+        Guice.createInjector(
+            //CloudAPIBinderModule(
+            //    ignite,
+            //)
+        )
     }
 
     private fun startIgnite(): Ignite {
         val clusterKeyArray = System.getenv("CLUSTER_KEY").split(":")
+        val clusterKey = ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
         val nodeAddress = Address.fromIpString("ignite:1670")
         val selfAddress = Address.fromIpString("127.0.0.1:1670")
-        val clusterKey = ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
         val igniteBuilder = IgniteBuilder(
             selfAddress,
             true,

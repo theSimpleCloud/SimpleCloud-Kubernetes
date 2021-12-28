@@ -45,7 +45,6 @@ import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 class ProcessGroupUpdateHandler @Inject constructor(
     private val validatorService: ValidatorService,
     private val groupService: CloudProcessGroupService,
-    private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService
 ) {
 
@@ -67,13 +66,6 @@ class ProcessGroupUpdateHandler @Inject constructor(
         request.setJoinPermission(configuration.joinPermission)
         request.setStateUpdating(configuration.stateUpdating)
         request.setStartPriority(configuration.startPriority)
-
-        val jvmArgumentName = configuration.jvmArgumentName
-        if (jvmArgumentName == null) {
-            request.setJvmArguments(null)
-        } else {
-            request.setJvmArguments(this.jvmArgumentsService.findByName(jvmArgumentName))
-        }
 
         if (request is CloudProxyGroupUpdateRequest) {
             configuration as CloudProxyProcessGroupConfiguration

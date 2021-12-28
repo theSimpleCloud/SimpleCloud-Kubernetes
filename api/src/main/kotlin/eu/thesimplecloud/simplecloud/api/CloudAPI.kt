@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.api
 
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.service.NodeService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
@@ -44,8 +43,6 @@ abstract class CloudAPI {
     abstract fun getProcessGroupService(): CloudProcessGroupService
 
     abstract fun getProcessService(): CloudProcessService
-
-    abstract fun getJvmArgumentsService(): JvmArgumentsService
 
     abstract fun getNodeService(): NodeService
 

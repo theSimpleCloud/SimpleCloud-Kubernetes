@@ -97,7 +97,6 @@ class NodeClusterConnect @Inject constructor(
     private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
         val cloudAPIBinderModule = CloudAPIBinderModule(
             ignite,
-            JvmArgumentsServiceImpl::class.java,
             NodeServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java

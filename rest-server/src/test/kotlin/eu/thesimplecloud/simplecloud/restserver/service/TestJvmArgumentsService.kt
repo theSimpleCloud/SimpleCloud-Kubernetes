@@ -28,7 +28,6 @@ import eu.thesimplecloud.simplecloud.api.future.nonNull
 import eu.thesimplecloud.simplecloud.api.impl.jvmargs.JvmArgumentsImpl
 import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentCreateRequestImpl
 import eu.thesimplecloud.simplecloud.api.impl.request.jvmargs.JvmArgumentDeleteRequestImpl
-import eu.thesimplecloud.simplecloud.api.internal.service.InternalJvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.api.request.jvmargs.JvmArgumentCreateRequest

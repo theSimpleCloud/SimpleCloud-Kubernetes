@@ -23,7 +23,6 @@
 package eu.thesimplecloud.simplecloud.api.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
@@ -63,18 +62,6 @@ interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
      * @return this
      */
     fun setImage(image: Image?): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the jvm arguments for the group
-     * @return this
-     */
-    fun setJvmArguments(jvmArguments: JVMArguments?): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the jvm arguments for the group
-     * @return this
-     */
-    fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the online count configuration for the group

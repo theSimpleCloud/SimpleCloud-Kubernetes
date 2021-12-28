@@ -36,12 +36,10 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 class CloudServerProcessGroupImpl constructor(
     private val configuration: CloudServerProcessGroupConfiguration,
-    private val jvmArgumentsService: JvmArgumentsService,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    jvmArgumentsService,
     processOnlineCountService,
     processService
 ), CloudServerGroup {

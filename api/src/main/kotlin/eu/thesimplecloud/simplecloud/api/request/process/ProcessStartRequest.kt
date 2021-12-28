@@ -23,11 +23,9 @@
 package eu.thesimplecloud.simplecloud.api.request.process
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.utils.Request
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -69,17 +67,5 @@ interface ProcessStartRequest : Request<CloudProcess> {
      * @return this
      */
     fun setImage(image: Image): ProcessStartRequest
-
-    /**
-     * Sets the jvm arguments for the process to start with
-     * @return this
-     */
-    fun setJvmArguments(arguments: JVMArguments): ProcessStartRequest
-
-    /**
-     * Sets the jvm arguments for the process to start with
-     * @return this
-     */
-    fun setJvmArguments(argumentsFuture: CompletableFuture<JVMArguments>): ProcessStartRequest
 
 }

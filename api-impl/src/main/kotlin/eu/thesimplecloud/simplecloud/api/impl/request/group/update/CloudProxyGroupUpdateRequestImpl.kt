@@ -24,7 +24,6 @@ package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
@@ -71,16 +70,6 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudProxyGroupUpdateRequest {
-        super.setJvmArguments(jvmArguments)
-        return this
-    }
-
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudProxyGroupUpdateRequest {
-        super.setJvmArguments(jvmArgumentsFuture)
-        return this
-    }
-
     override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProxyGroupUpdateRequest {
         super.setOnlineCountConfiguration(onlineCountConfiguration)
         return this
@@ -123,7 +112,6 @@ class CloudProxyGroupUpdateRequestImpl(
 
     override fun submit0(
         image: Image?,
-        jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudProxyProcessGroupConfiguration(
@@ -134,7 +122,6 @@ class CloudProxyGroupUpdateRequestImpl(
             this.minProcessCount,
             this.maxProcessCount,
             image?.getName(),
-            jvmArguments?.getName(),
             onlineCountConfiguration.getName(),
             this.proxyGroup.isStatic(),
             this.stateUpdating,

@@ -23,13 +23,12 @@
 package eu.thesimplecloud.simplecloud.api.process
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.state.ProcessState
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessShutdownRequest
-import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.Address
+import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -96,11 +95,6 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
      * Returns the image this process was started from
      */
     fun getImage(): Image
-
-    /**
-     * Returns the [JVMArguments] the process used to start
-     */
-    fun getJvmArguments(): CompletableFuture<JVMArguments>
 
     /**
      * Returns the termination future

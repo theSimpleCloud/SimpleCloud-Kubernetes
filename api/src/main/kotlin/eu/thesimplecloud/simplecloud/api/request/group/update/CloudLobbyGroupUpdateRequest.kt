@@ -23,9 +23,8 @@
 package eu.thesimplecloud.simplecloud.api.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
-import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import java.util.concurrent.CompletableFuture
 
@@ -50,10 +49,6 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
     override fun setMaxPlayers(players: Int): CloudLobbyGroupUpdateRequest
 
     override fun setImage(image: Image?): CloudLobbyGroupUpdateRequest
-
-    override fun setJvmArguments(jvmArguments: JVMArguments?): CloudLobbyGroupUpdateRequest
-
-    override fun setJvmArguments(jvmArgumentsFuture: CompletableFuture<JVMArguments>): CloudLobbyGroupUpdateRequest
 
     override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudLobbyGroupUpdateRequest
 

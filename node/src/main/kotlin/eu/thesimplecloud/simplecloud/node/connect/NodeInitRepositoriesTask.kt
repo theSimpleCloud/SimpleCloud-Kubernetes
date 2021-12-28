@@ -26,8 +26,6 @@ import com.ea.async.Async.await
 import com.google.inject.Inject
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
-import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteJvmArgumentsRepository
-import eu.thesimplecloud.simplecloud.api.jvmargs.configuration.JvmArgumentConfiguration
 import eu.thesimplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import eu.thesimplecloud.simplecloud.node.mongo.jvmargs.MongoJvmArgumentsRepository
 import eu.thesimplecloud.simplecloud.node.util.Logger
@@ -36,23 +34,12 @@ import java.util.concurrent.CompletableFuture
 class NodeInitRepositoriesTask @Inject constructor(
     private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
-    private val igniteJvmArgumentsRepository: IgniteJvmArgumentsRepository,
     private val mongoJvmArgumentsRepository: MongoJvmArgumentsRepository,
 ) {
 
     fun run(): CompletableFuture<Unit> {
         Logger.info("Initializing Ignite Repositories")
-        await(initJvmArguments())
         await(initGroups())
-        return unitFuture()
-    }
-
-    private fun initJvmArguments(): CompletableFuture<Unit> {
-        val jvmArgs = await(this.mongoJvmArgumentsRepository.findAll())
-        val configurations = jvmArgs.map { JvmArgumentConfiguration(it.name, it.arguments) }
-        for (config in configurations) {
-            await(this.igniteJvmArgumentsRepository.save(config.name, config))
-        }
         return unitFuture()
     }
 

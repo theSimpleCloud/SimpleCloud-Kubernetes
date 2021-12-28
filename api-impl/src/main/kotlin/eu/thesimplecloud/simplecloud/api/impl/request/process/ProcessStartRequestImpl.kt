@@ -22,15 +22,12 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.request.process
 
-import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessService
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.request.process.ProcessStartRequest
-import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -55,9 +52,6 @@ class ProcessStartRequestImpl(
 
     @Volatile
     private var image: Image = this.processGroup.getImage()
-
-    @Volatile
-    private var jvmArgumentsFuture: CompletableFuture<JVMArguments> = this.processGroup.getJvmArguments()
 
     override fun getProcessGroup(): CloudProcessGroup {
         return this.processGroup
@@ -84,33 +78,17 @@ class ProcessStartRequestImpl(
         return this
     }
 
-    override fun setJvmArguments(arguments: JVMArguments): ProcessStartRequest {
-        this.jvmArgumentsFuture = CloudCompletableFuture.completedFuture(arguments)
-        return this
-    }
-
-    override fun setJvmArguments(argumentsFuture: CompletableFuture<JVMArguments>): ProcessStartRequest {
-        this.jvmArgumentsFuture = argumentsFuture
-        return this
-    }
-
     override fun submit(): CompletableFuture<CloudProcess> {
-        val jvmArguments = try {
-            await(this.jvmArgumentsFuture)
-        } catch (ex: Exception) {
-            null
-        }
-        return startProcess(jvmArguments)
+        return startProcess()
     }
 
-    private fun startProcess(arguments: JVMArguments?): CompletableFuture<CloudProcess> {
+    private fun startProcess(): CompletableFuture<CloudProcess> {
         val startConfiguration = ProcessStartConfiguration(
             this.processGroup.getName(),
             this.processNumber,
             this.image.getName(),
             this.maxMemory,
-            this.maxPlayers,
-            arguments?.getName()
+            this.maxPlayers
         )
         return this.internalService.startNewProcessInternal(startConfiguration)
     }

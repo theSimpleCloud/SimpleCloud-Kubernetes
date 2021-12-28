@@ -41,7 +41,6 @@ import eu.thesimplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudPr
 class ProcessCreateHandler @Inject constructor(
     private val groupService: CloudProcessGroupService,
     private val processService: CloudProcessService,
-    private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService
 ) {
 
@@ -60,9 +59,6 @@ class ProcessCreateHandler @Inject constructor(
         }
         if (configuration.imageName != null) {
             request.setImage(ImageImpl(configuration.imageName))
-        }
-        if (configuration.jvmArgumentsName != null) {
-            request.setJvmArguments(this.jvmArgumentsService.findByName(configuration.jvmArgumentsName))
         }
         return await(request.submit())
     }

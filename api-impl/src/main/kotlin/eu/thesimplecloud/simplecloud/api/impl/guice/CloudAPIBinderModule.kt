@@ -43,7 +43,6 @@ import org.apache.ignite.Ignite
  */
 class CloudAPIBinderModule(
     private val igniteInstance: Ignite,
-    private val jvmArgumentsServiceClass: Class<out JvmArgumentsService>,
     private val nodeServiceClass: Class<out NodeService>,
     private val cloudProcessServiceClass: Class<out CloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out CloudProcessGroupService>,
@@ -54,7 +53,6 @@ class CloudAPIBinderModule(
 
         bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
 
-        bind(JvmArgumentsService::class.java).to(this.jvmArgumentsServiceClass)
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)

@@ -11,8 +11,7 @@ data class ProcessStartConfiguration(
     val processNumber: Int,
     val imageName: String,
     val maxMemory: Int,
-    val maxPlayers: Int,
-    val jvmArgumentsName: String?
+    val maxPlayers: Int
 ) {
 
     fun isProcessNumberSet(): Boolean {

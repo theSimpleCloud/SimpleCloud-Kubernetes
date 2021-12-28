@@ -23,13 +23,12 @@
 package eu.thesimplecloud.simplecloud.api.impl.request.group.update
 
 import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.jvmargs.JVMArguments
 import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
-import eu.thesimplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -46,7 +45,6 @@ class CloudServerGroupUpdateRequestImpl(
 
     override fun submit0(
         image: Image?,
-        jvmArguments: JVMArguments?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
     ): CompletableFuture<CloudProcessGroup> {
         val updateObj = CloudServerProcessGroupConfiguration(
@@ -57,7 +55,6 @@ class CloudServerGroupUpdateRequestImpl(
             this.minProcessCount,
             this.maxProcessCount,
             image?.getName(),
-            jvmArguments?.getName(),
             onlineCountConfiguration.getName(),
             this.serverGroup.isStatic(),
             this.stateUpdating,

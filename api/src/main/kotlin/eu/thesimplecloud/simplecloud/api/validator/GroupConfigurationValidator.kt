@@ -28,7 +28,6 @@ import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import eu.thesimplecloud.simplecloud.api.service.JvmArgumentsService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import eu.thesimplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.lang.Exception
@@ -42,26 +41,14 @@ import java.util.concurrent.CompletableFuture
  */
 @Singleton
 class GroupConfigurationValidator @Inject constructor(
-    private val jvmArgumentsService: JvmArgumentsService,
     private val onlineCountService: ProcessOnlineCountService
 ) : Validator<AbstractCloudProcessGroupConfiguration> {
 
     override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         return CloudCompletableFuture.runAsync {
-            await(checkJvmArguments(value))
             await(checkProcessOnlineCountConfiguration(value))
             await(checkImage(value))
         }
-    }
-
-    private fun checkJvmArguments(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        val jvmArgumentName = configuration.jvmArgumentName ?: return unitFuture()
-        try {
-            await(this.jvmArgumentsService.findByName(jvmArgumentName))
-        } catch (e: CompletedWithNullException) {
-            throw NoSuchElementException("JvmArgumentName '${jvmArgumentName}' does not exist")
-        }
-        return unitFuture()
     }
 
     private fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
