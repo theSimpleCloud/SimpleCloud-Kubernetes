@@ -30,6 +30,7 @@ import eu.thesimplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProce
 import eu.thesimplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import eu.thesimplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.node.process.InternalProcessStartHandler
 import eu.thesimplecloud.simplecloud.node.process.ProcessStarter
 import eu.thesimplecloud.simplecloud.node.process.ProcessStarterImpl
 import java.util.concurrent.CompletableFuture
@@ -43,14 +44,8 @@ class CloudProcessServiceImpl @Inject constructor(
     processFactory, igniteRepository
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        val processStarter = processStarterFactory.create(configuration)
-        val future = processStarter.startProcess()
-        future.thenAccept { updateProcessToCluster(it) }
-        return future
-    }
-
-    private fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
-        return this.igniteRepository.save(process.getName(), process.toConfiguration())
+        return InternalProcessStartHandler(this.processStarterFactory, this.igniteRepository, configuration)
+            .startProcess()
     }
 
     override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
