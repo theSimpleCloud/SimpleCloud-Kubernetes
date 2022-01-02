@@ -22,6 +22,6 @@ dependencies {
 
 tasks.withType<Jar> {
     manifest {
-        attributes["Main-Class"] = "eu.thesimplecloud.simplecloud.node.startup.NodeMainKt"
+        attributes["Main-Class"] = "app.simplecloud.simplecloud.node.startup.NodeMainKt"
     }
 }

@@ -1,0 +1,138 @@
+/*
+ * MIT License
+ *
+ * Copyright (C) 2021 The SimpleCloud authors
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
+ * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software,
+ * and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in all
+ * copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+ * INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+ * IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM,
+ * DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ * ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER
+ * DEALINGS IN THE SOFTWARE.
+ */
+
+package app.simplecloud.simplecloud.node.connect
+
+import app.simplecloud.simplecloud.api.future.completedFuture
+import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import app.simplecloud.simplecloud.api.impl.util.ClusterKey
+import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
+import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
+import app.simplecloud.simplecloud.node.service.CloudProcessGroupServiceImpl
+import app.simplecloud.simplecloud.node.service.CloudProcessServiceImpl
+import app.simplecloud.simplecloud.node.service.NodeServiceImpl
+import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
+import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
+import app.simplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
+import app.simplecloud.simplecloud.node.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.restserver.RestServer
+import com.ea.async.Async.await
+import com.google.inject.Injector
+import dev.morphia.Datastore
+import org.apache.ignite.Ignite
+import org.apache.ignite.plugin.security.SecurityCredentials
+import org.apache.logging.log4j.LogManager
+import java.util.concurrent.CompletableFuture
+import javax.inject.Inject
+
+class NodeClusterConnect @Inject constructor(
+    private val injector: Injector,
+    private val datastore: Datastore,
+) {
+
+    private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
+
+    fun run(): CompletableFuture<Unit> {
+        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to cluster...")
+        val clusterKey = await(loadClusterKey())
+        val ignite = await(startIgnite(clusterKey))
+        val finalInjector = createFinalInjector(ignite, clusterKey)
+        startRestServer(finalInjector)
+        await(checkForFirstNodeInCluster(finalInjector, ignite))
+        await(writeSelfNodeInRepository(finalInjector, ignite))
+        await(checkOnlineProcesses(finalInjector))
+        return unitFuture()
+    }
+
+    private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Writing Self-Node into Cluster-Cache")
+        return app.simplecloud.simplecloud.node.connect.SelfNodeWriteTask(
+            injector.getInstance(IgniteNodeRepository::class.java),
+            NodeConfiguration(
+                this.nodeBindAddress,
+                ignite.cluster().localNode().id(),
+            )
+        ).run()
+    }
+
+    private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
+        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Checking for online tasks")
+        val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
+        return nodeCheckOnlineProcessesTask.run()
+    }
+
+    private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+        if (ignite.cluster().nodes().size == 1) {
+            val nodeInitRepositoriesTask = injector.getInstance(app.simplecloud.simplecloud.node.connect.NodeInitRepositoriesTask::class.java)
+            await(nodeInitRepositoriesTask.run())
+        }
+        return unitFuture()
+    }
+
+    private fun startRestServer(injector: Injector): CompletableFuture<RestServer> {
+        return RestServerStartTask(injector).run()
+    }
+
+    private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
+        val cloudAPIBinderModule = app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule(
+            ignite,
+            NodeServiceImpl::class.java,
+            CloudProcessServiceImpl::class.java,
+            CloudProcessGroupServiceImpl::class.java
+        )
+        return injector.createChildInjector(
+            NodeBinderModule(),
+            cloudAPIBinderModule,
+            //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
+            SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
+        )
+    }
+
+    private fun startIgnite(
+        clusterKey: ClusterKey
+    ): CompletableFuture<Ignite> {
+        val addresses = getOtherNodesAddressesToConnectTo()
+        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to {}", addresses)
+        val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
+        val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
+            .withAddressesToConnectTo(*addresses.toTypedArray())
+        return completedFuture(igniteBuilder.start())
+    }
+
+    private fun loadClusterKey(): CompletableFuture<ClusterKey> {
+        val clusterKeyEntity = await(app.simplecloud.simplecloud.node.connect.NodeClusterKeyLoader(this.datastore).loadClusterKey())
+        return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
+    }
+
+    private fun getOtherNodesAddressesToConnectTo(): List<Address> {
+        val otherNodeAddressGetter = this.injector.getInstance(OtherNodeAddressGetter::class.java)
+        return otherNodeAddressGetter.getOtherNodeAddresses()
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(app.simplecloud.simplecloud.node.connect.NodeClusterConnect::class.java)
+    }
+
+}
