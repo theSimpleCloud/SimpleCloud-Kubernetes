@@ -35,14 +35,15 @@ import eu.thesimplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
 import eu.thesimplecloud.simplecloud.node.service.*
+import eu.thesimplecloud.simplecloud.node.startup.NodeStartup
 import eu.thesimplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.task.RestServerStartTask
 import eu.thesimplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
-import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.RestServer
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 import javax.inject.Inject
 
@@ -54,7 +55,7 @@ class NodeClusterConnect @Inject constructor(
     private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
 
     fun run(): CompletableFuture<Unit> {
-        Logger.info("Connecting to cluster...")
+        logger.info("Connecting to cluster...")
         val clusterKey = await(loadClusterKey())
         val ignite = await(startIgnite(clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
@@ -66,7 +67,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
-        Logger.info("Writing Self-Node into Cluster-Cache")
+        logger.info("Writing Self-Node into Cluster-Cache")
         return SelfNodeWriteTask(
             injector.getInstance(IgniteNodeRepository::class.java),
             NodeConfiguration(
@@ -77,7 +78,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
-        Logger.info("Checking for online tasks")
+        logger.info("Checking for online tasks")
         val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
         return nodeCheckOnlineProcessesTask.run()
     }
@@ -113,7 +114,7 @@ class NodeClusterConnect @Inject constructor(
         clusterKey: ClusterKey
     ): CompletableFuture<Ignite> {
         val addresses = getOtherNodesAddressesToConnectTo()
-        Logger.info("Connecting to ${addresses}")
+        logger.info("Connecting to {}", addresses)
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
             .withAddressesToConnectTo(*addresses.toTypedArray())
@@ -128,6 +129,10 @@ class NodeClusterConnect @Inject constructor(
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {
         val otherNodeAddressGetter = this.injector.getInstance(OtherNodeAddressGetter::class.java)
         return otherNodeAddressGetter.getOtherNodeAddresses()
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(NodeClusterConnect::class.java)
     }
 
 }

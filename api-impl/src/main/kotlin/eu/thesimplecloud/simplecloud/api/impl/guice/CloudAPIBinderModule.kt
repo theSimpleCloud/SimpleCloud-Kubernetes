@@ -29,6 +29,8 @@ import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
 import eu.thesimplecloud.simplecloud.api.impl.service.*
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
@@ -47,8 +49,8 @@ import org.apache.ignite.Ignite
 class CloudAPIBinderModule(
     private val igniteInstance: Ignite,
     private val nodeServiceClass: Class<out NodeService>,
-    private val cloudProcessServiceClass: Class<out CloudProcessService>,
-    private val cloudProcessGroupServiceClass: Class<out CloudProcessGroupService>,
+    private val cloudProcessServiceClass: Class<out InternalCloudProcessService>,
+    private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
 ) : AbstractModule() {
 
     override fun configure() {
@@ -58,8 +60,10 @@ class CloudAPIBinderModule(
 
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)
-        bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
+        bind(InternalCloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
+        bind(InternalCloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
+        bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
 
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
 

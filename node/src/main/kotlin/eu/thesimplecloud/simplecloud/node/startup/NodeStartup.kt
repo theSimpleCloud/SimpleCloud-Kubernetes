@@ -26,7 +26,7 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnect
 import eu.thesimplecloud.simplecloud.node.startup.task.NodeStartupTask
-import eu.thesimplecloud.simplecloud.node.util.Logger
+import org.apache.logging.log4j.LogManager
 
 
 /**
@@ -48,7 +48,7 @@ class NodeStartup(
         try {
             executeClusterConnect0(injector)
         } catch (e: Exception) {
-            Logger.error(e)
+            logger.error("An error occurred while connecting to cluster", e)
         }
     }
 
@@ -58,6 +58,10 @@ class NodeStartup(
             injector.getInstance(Datastore::class.java),
         )
         task.run().join()
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(NodeStartup::class.java)
     }
 
 }

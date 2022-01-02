@@ -32,7 +32,7 @@ import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import eu.thesimplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
-import eu.thesimplecloud.simplecloud.node.util.Logger
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -47,7 +47,7 @@ class MongoDbSafeStartTask @Inject constructor(
 ) {
 
     fun run(): CompletableFuture<Datastore> {
-        Logger.info("Starting MongoDB")
+        logger.info("Starting MongoDB")
         if (!isSecretAvailable()) {
             await(executeMongoSetup())
         }
@@ -63,7 +63,7 @@ class MongoDbSafeStartTask @Inject constructor(
         val connectionString = secret.getStringValueOf("mongo")
         val datastore = await(startMongoDbClient(connectionString))
         if (isConnectedToDatabase(datastore)) {
-            Logger.info("Connected to database")
+            logger.info("Connected to database")
             return completedFuture(datastore)
         }
         throw IllegalArgumentException("Connection String is invalid ${connectionString}")
@@ -95,6 +95,7 @@ class MongoDbSafeStartTask @Inject constructor(
 
     companion object {
         const val MONGO_SECRET_NAME = "mongo"
+        private val logger = LogManager.getLogger(MongoDbSafeStartTask::class.java)
     }
 
 }

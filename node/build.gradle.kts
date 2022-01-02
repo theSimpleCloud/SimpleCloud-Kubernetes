@@ -15,8 +15,8 @@ dependencies {
     implementation(project(":kubernetes"))
     implementation(project(":ignite"))
 
-    implementation("org.tinylog:tinylog-api:2.4.1")
-    implementation("org.tinylog:tinylog-impl:2.4.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.17.1")
+    implementation("org.apache.logging.log4j:log4j-api:2.17.1")
 
 }
 

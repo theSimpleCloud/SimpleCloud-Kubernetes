@@ -24,10 +24,10 @@ package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
-import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,7 +41,7 @@ class MongoDbSetupTask(
 ) {
 
     fun run(): CompletableFuture<String> {
-        Logger.info("Executing MongoDB setup")
+        logger.info("Executing MongoDB setup")
         val setupFuture = this.restSetupManager.setNextSetup(createSetup())
         val mongoSetupResponseBody = await(setupFuture)
         if (mongoSetupResponseBody.mongoMode == MongoSetupResponseBody.MongoMode.CREATE) {
@@ -66,5 +66,8 @@ class MongoDbSetupTask(
         throw IllegalStateException("Cannot create mongodb container because docker is not available")
     }
 
+    companion object {
+        private val logger = LogManager.getLogger(MongoDbSetupTask::class.java)
+    }
 
 }

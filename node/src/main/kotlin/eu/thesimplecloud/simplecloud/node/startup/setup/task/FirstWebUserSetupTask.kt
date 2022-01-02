@@ -24,12 +24,13 @@ package eu.thesimplecloud.simplecloud.node.startup.setup.task
 
 import com.ea.async.Async.await
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.node.util.Logger
+import eu.thesimplecloud.simplecloud.node.connect.NodeClusterConnect
 import eu.thesimplecloud.simplecloud.restserver.repository.UserRepository
 import eu.thesimplecloud.simplecloud.restserver.setup.RestSetupManager
 import eu.thesimplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
 import eu.thesimplecloud.simplecloud.restserver.setup.type.Setup
 import eu.thesimplecloud.simplecloud.restserver.user.User
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -44,7 +45,7 @@ class FirstWebUserSetupTask(
 ) {
 
     fun run(): CompletableFuture<Unit> {
-        Logger.info("Executing First User Setup")
+        logger.info("Executing First User Setup")
         val setupFuture = this.restSetupManager.setNextSetup(Setup.FIRST_USER)
         val responseBody = await(setupFuture)
         saveResponseToMongoDatabase(responseBody)
@@ -54,6 +55,10 @@ class FirstWebUserSetupTask(
     private fun saveResponseToMongoDatabase(response: FirstUserSetupResponseBody) {
         val user = User(response.username, response.password)
         this.userRepository.save(user.getIdentifier(), user)
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(FirstWebUserSetupTask::class.java)
     }
 
 }

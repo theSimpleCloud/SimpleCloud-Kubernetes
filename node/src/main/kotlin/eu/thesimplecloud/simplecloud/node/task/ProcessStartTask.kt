@@ -22,12 +22,9 @@
 
 package eu.thesimplecloud.simplecloud.node.task
 
-import com.google.inject.Injector
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.kubernetes.api.container.Container
-import eu.thesimplecloud.simplecloud.api.image.Image
-import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
 import eu.thesimplecloud.simplecloud.api.impl.util.ClusterKey
 import eu.thesimplecloud.simplecloud.kubernetes.api.Label
 import eu.thesimplecloud.simplecloud.kubernetes.api.container.ContainerSpec
@@ -35,7 +32,7 @@ import eu.thesimplecloud.simplecloud.kubernetes.api.service.KubeService
 import eu.thesimplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import eu.thesimplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
-import eu.thesimplecloud.simplecloud.node.util.Logger
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 class ProcessStartTask(
@@ -47,7 +44,7 @@ class ProcessStartTask(
 ) {
 
     fun run(): CompletableFuture<Unit> {
-        Logger.info("Starting Process ${process.getName()}")
+        logger.info("Starting Process {}", process.getName())
 
         val volume = this.volumeFactory.create(
             "claim-" + this.process.getName(),
@@ -73,7 +70,7 @@ class ProcessStartTask(
                 .withMaxMemory(process.getMaxMemory())
                 .withLabels(label)
                 .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
-                .withEnvironmentVariables(clusterKeyEnvironment)
+                .withEnvironmentVariables(clusterKeyEnvironment, processUniqueIdEnvironment)
 
         )
         container.start()
@@ -87,4 +84,10 @@ class ProcessStartTask(
         )
         return unitFuture()
     }
+
+
+    companion object {
+        private val logger = LogManager.getLogger(ProcessStartTask::class.java)
+    }
+
 }

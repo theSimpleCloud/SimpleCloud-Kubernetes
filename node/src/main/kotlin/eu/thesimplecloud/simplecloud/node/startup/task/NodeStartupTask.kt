@@ -28,16 +28,15 @@ import com.google.inject.Injector
 import dev.morphia.Datastore
 import eu.thesimplecloud.simplecloud.api.future.completedFuture
 import eu.thesimplecloud.simplecloud.api.future.unitFuture
-import eu.thesimplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import eu.thesimplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import eu.thesimplecloud.simplecloud.node.startup.NodeStartupSetupHandler
-import eu.thesimplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import eu.thesimplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
+import eu.thesimplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
 import eu.thesimplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
-import eu.thesimplecloud.simplecloud.node.util.Logger
 import eu.thesimplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import eu.thesimplecloud.simplecloud.restserver.repository.MongoUserRepository
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -55,11 +54,11 @@ class NodeStartupTask(
     private val injector = createInjector()
 
     fun run(): CompletableFuture<Injector> {
-        Logger.info("Starting Node...")
+        logger.info("Starting Node...")
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         await(checkForAnyWebAccount(datastore))
         this.nodeSetupHandler.shutdownRestSetupServer()
-        Logger.info("Node Startup completed")
+        logger.info("Node Startup completed")
         val injector = createSubInjectorWithDatastore(datastore)
         return completedFuture(injector)
     }
@@ -96,5 +95,8 @@ class NodeStartupTask(
         return this.injector.getInstance(MongoDbSafeStartTask::class.java).run()
     }
 
+    companion object {
+        private val logger = LogManager.getLogger(NodeStartupTask::class.java)
+    }
 
 }

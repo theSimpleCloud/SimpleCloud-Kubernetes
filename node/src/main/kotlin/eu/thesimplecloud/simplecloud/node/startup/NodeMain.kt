@@ -22,7 +22,7 @@
 
 package eu.thesimplecloud.simplecloud.node.startup
 
-import eu.thesimplecloud.simplecloud.node.util.Logger
+import org.apache.logging.log4j.LogManager
 
 
 /**
@@ -32,8 +32,10 @@ import eu.thesimplecloud.simplecloud.node.util.Logger
  * @author Frederick Baier
  */
 
+private val logger = LogManager.getLogger(NodeStartup::class.java)
+
 fun main(args: Array<String>) {
-    Logger.info("Starting SimpleCloud")
+    logger.info("Starting SimpleCloud")
     //ApplicationBuilder.isolated("SimpleCloud", IsolationConfiguration()).build()
     NodeStartArgumentParserMain().main(args)
 }
