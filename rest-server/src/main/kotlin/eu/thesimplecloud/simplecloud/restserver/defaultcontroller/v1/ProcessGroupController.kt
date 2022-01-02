@@ -99,7 +99,7 @@ class ProcessGroupController @Inject constructor(
     @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.group.delete")
     fun handleDelete(@RequestPathParam("name") groupName: String): Boolean {
         val group = await(this.groupService.findByName(groupName))
-        val groupDeleteRequest = this.groupService.createGroupDeleteRequest(group)
+        val groupDeleteRequest = group.createDeleteRequest()
         await(groupDeleteRequest.submit())
         return true
     }

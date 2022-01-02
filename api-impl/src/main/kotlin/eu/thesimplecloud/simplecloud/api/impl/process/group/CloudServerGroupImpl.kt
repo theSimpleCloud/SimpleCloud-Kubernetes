@@ -22,10 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudServerGroupUpdateRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
@@ -34,14 +39,16 @@ import eu.thesimplecloud.simplecloud.api.service.*
  * Time: 22:17
  * @author Frederick Baier
  */
-class CloudServerProcessGroupImpl constructor(
-    private val configuration: CloudServerProcessGroupConfiguration,
+class CloudServerGroupImpl @Inject constructor(
+    @Assisted private val configuration: CloudServerProcessGroupConfiguration,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
+    private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
     processOnlineCountService,
-    processService
+    processService,
+    processGroupService
 ), CloudServerGroup {
 
     override fun getProcessGroupType(): ProcessGroupType {
@@ -51,5 +58,8 @@ class CloudServerProcessGroupImpl constructor(
         return this.configuration
     }
 
+    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest {
+        return CloudServerGroupUpdateRequestImpl(this.processGroupService, this)
+    }
 
 }

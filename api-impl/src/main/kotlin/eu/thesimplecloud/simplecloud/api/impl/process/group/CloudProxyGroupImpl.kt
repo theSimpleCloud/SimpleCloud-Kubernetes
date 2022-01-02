@@ -22,10 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudProxyGroupUpdateRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
@@ -34,14 +39,16 @@ import eu.thesimplecloud.simplecloud.api.service.*
  * Time: 11:23
  * @author Frederick Baier
  */
-class CloudProxyProcessGroupImpl(
-    private val configuration: CloudProxyProcessGroupConfiguration,
+class CloudProxyGroupImpl @Inject constructor(
+    @Assisted private val configuration: CloudProxyProcessGroupConfiguration,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
+    private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
     processOnlineCountService,
-    processService
+    processService,
+    processGroupService
 ), CloudProxyGroup {
 
     override fun getStartPort(): Int {
@@ -54,6 +61,10 @@ class CloudProxyProcessGroupImpl(
 
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
         return this.configuration
+    }
+
+    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest {
+        return CloudProxyGroupUpdateRequestImpl(this.processGroupService, this)
     }
 
 }

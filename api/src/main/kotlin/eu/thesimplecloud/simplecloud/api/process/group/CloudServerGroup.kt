@@ -22,10 +22,20 @@
 
 package eu.thesimplecloud.simplecloud.api.process.group
 
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 05.04.2021
  * Time: 21:20
  * @author Frederick Baier
  */
-interface CloudServerGroup : CloudProcessGroup
+interface CloudServerGroup : CloudProcessGroup {
+
+    interface Factory {
+
+        fun create(configuration: CloudServerProcessGroupConfiguration): CloudServerGroup
+
+    }
+
+}

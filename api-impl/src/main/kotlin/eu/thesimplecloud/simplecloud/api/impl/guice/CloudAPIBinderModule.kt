@@ -25,11 +25,14 @@ package eu.thesimplecloud.simplecloud.api.impl.guice
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 import eu.thesimplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
-import eu.thesimplecloud.simplecloud.api.impl.process.CloudProcessImpl
-import eu.thesimplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
 import eu.thesimplecloud.simplecloud.api.impl.service.*
 import eu.thesimplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
-import eu.thesimplecloud.simplecloud.api.process.CloudProcess
+import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudProxyGroup
+import eu.thesimplecloud.simplecloud.api.process.group.CloudServerGroup
 import eu.thesimplecloud.simplecloud.api.service.*
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorService
 import eu.thesimplecloud.simplecloud.api.validator.ValidatorServiceImpl
@@ -60,6 +63,23 @@ class CloudAPIBinderModule(
 
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
 
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudLobbyGroup::class.java, CloudLobbyGroupImpl::class.java)
+                .build(CloudLobbyGroup.Factory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudProxyGroup::class.java, CloudProxyGroupImpl::class.java)
+                .build(CloudProxyGroup.Factory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudServerGroup::class.java, CloudServerGroupImpl::class.java)
+                .build(CloudServerGroup.Factory::class.java)
+        )
 
     }
 

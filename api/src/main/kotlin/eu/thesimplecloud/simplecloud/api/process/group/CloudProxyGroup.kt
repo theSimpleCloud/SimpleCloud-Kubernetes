@@ -22,6 +22,8 @@
 
 package eu.thesimplecloud.simplecloud.api.process.group
 
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 05.04.2021
@@ -31,5 +33,11 @@ package eu.thesimplecloud.simplecloud.api.process.group
 interface CloudProxyGroup : CloudProcessGroup {
 
     fun getStartPort(): Int
+
+    interface Factory {
+
+        fun create(configuration: CloudProxyProcessGroupConfiguration): CloudProxyGroup
+
+    }
 
 }

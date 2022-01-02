@@ -55,7 +55,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
 
     private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
         this.validatorService.getValidator(configuration::class.java).validate(configuration)
-        val request = this.groupService.createGroupUpdateRequest(group)
+        val request = group.createUpdateRequest()
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
         request.setImage(ImageImpl.fromName(configuration.imageName))

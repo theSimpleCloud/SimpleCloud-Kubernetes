@@ -25,10 +25,14 @@ package eu.thesimplecloud.simplecloud.api.impl.process.group
 import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.impl.exception.NoImageProvidedException
 import eu.thesimplecloud.simplecloud.api.impl.image.ImageImpl
+import eu.thesimplecloud.simplecloud.api.impl.request.group.ProcessGroupDeleteRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.CloudProcessGroup
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
 import eu.thesimplecloud.simplecloud.api.service.CloudProcessService
 import eu.thesimplecloud.simplecloud.api.service.ProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
@@ -45,6 +49,7 @@ abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
+    private val processGroupService: InternalCloudProcessGroupService,
 ) : CloudProcessGroup {
 
 
@@ -112,6 +117,10 @@ abstract class AbstractCloudProcessGroup constructor(
 
     override fun getIdentifier(): String {
         return getName()
+    }
+
+    override fun createDeleteRequest(): ProcessGroupDeleteRequest {
+        return ProcessGroupDeleteRequestImpl(this.processGroupService, this)
     }
 
 }

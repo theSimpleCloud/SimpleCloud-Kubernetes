@@ -70,19 +70,6 @@ open class DefaultCloudProcessGroupService(
         return ProcessGroupCreateRequestImpl(this, configuration)
     }
 
-    override fun createGroupDeleteRequest(group: CloudProcessGroup): ProcessGroupDeleteRequest {
-        return ProcessGroupDeleteRequestImpl(this, group)
-    }
-
-    override fun createGroupUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest {
-        return when (group) {
-            is CloudLobbyGroup -> CloudLobbyGroupUpdateRequestImpl(this, group)
-            is CloudProxyGroup -> CloudProxyGroupUpdateRequestImpl(this, group)
-            is CloudServerGroup -> CloudServerGroupUpdateRequestImpl(this, group)
-            else -> throw IllegalArgumentException("Unknown group type: ${group::class.java.name}")
-        }
-    }
-
     override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
         await(this.groupConfigurationValidator.validate(configuration))
         val group = this.processGroupFactory.create(configuration)

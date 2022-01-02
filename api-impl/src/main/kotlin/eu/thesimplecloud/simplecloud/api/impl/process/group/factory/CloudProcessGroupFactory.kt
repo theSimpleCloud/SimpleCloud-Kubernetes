@@ -23,13 +23,17 @@
 package eu.thesimplecloud.simplecloud.api.impl.process.group.factory
 
 import com.google.inject.Inject
+import com.google.inject.Injector
 import com.google.inject.Singleton
 import eu.thesimplecloud.simplecloud.api.impl.process.group.AbstractCloudProcessGroup
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyProcessGroupImpl
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyProcessGroupImpl
-import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerProcessGroupImpl
-import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
+import eu.thesimplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
+import eu.thesimplecloud.simplecloud.api.process.group.*
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import eu.thesimplecloud.simplecloud.api.service.*
 
@@ -41,41 +45,26 @@ import eu.thesimplecloud.simplecloud.api.service.*
  */
 @Singleton
 class CloudProcessGroupFactory @Inject constructor(
-    private val processOnlineCountService: ProcessOnlineCountService,
-    private val processService: CloudProcessService,
+    private val lobbyGroupFactory: CloudLobbyGroup.Factory,
+    private val proxyGroupFactory: CloudProxyGroup.Factory,
+    private val serverGroupFactory: CloudServerGroup.Factory,
     private val groupConfigurationValidator: GroupConfigurationValidator
 ) {
 
-    fun create(configuration: AbstractCloudProcessGroupConfiguration): AbstractCloudProcessGroup {
+    fun create(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
         this.groupConfigurationValidator.validate(configuration)
 
-        val groupClass = getGroupClassByType(configuration.type)
-
-        val constructor = groupClass.getDeclaredConstructor(
-            configuration::class.java,
-            ProcessOnlineCountService::class.java,
-            CloudProcessService::class.java,
-        )
-        return constructor.newInstance(
-            configuration,
-            this.processOnlineCountService,
-            this.processService
-        )
-    }
-
-    private fun getGroupClassByType(type: ProcessGroupType): Class<out AbstractCloudProcessGroup> {
-        return when (type) {
+        return when (configuration.type) {
             ProcessGroupType.PROXY -> {
-                CloudProxyProcessGroupImpl::class.java
+                this.proxyGroupFactory.create(configuration as CloudProxyProcessGroupConfiguration)
             }
             ProcessGroupType.LOBBY -> {
-                CloudLobbyProcessGroupImpl::class.java
+                this.lobbyGroupFactory.create(configuration as CloudLobbyProcessGroupConfiguration)
             }
             ProcessGroupType.SERVER -> {
-                CloudServerProcessGroupImpl::class.java
+                this.serverGroupFactory.create(configuration as CloudServerProcessGroupConfiguration)
             }
         }
     }
-
 
 }

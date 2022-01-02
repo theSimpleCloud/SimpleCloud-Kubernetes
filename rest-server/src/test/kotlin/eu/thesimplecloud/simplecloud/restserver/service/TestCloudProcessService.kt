@@ -72,7 +72,6 @@ class TestCloudProcessService @Inject constructor(
                 false,
                 ProcessGroupType.PROXY,
                 "TEST",
-                "Test",
                 null,
             )
         )
@@ -92,7 +91,6 @@ class TestCloudProcessService @Inject constructor(
                     false,
                     ProcessGroupType.LOBBY,
                     configuration.imageName,
-                    configuration.jvmArgumentsName,
                     null
                 )
             )

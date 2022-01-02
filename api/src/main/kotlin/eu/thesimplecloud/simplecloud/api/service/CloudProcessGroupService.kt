@@ -43,8 +43,4 @@ interface CloudProcessGroupService : Service {
 
     fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): ProcessGroupCreateRequest
 
-    fun createGroupDeleteRequest(group: CloudProcessGroup): ProcessGroupDeleteRequest
-
-    fun createGroupUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest
-
 }

@@ -22,10 +22,15 @@
 
 package eu.thesimplecloud.simplecloud.api.impl.process.group
 
+import com.google.inject.Inject
+import com.google.inject.assistedinject.Assisted
+import eu.thesimplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequestImpl
+import eu.thesimplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.group.ProcessGroupType
 import eu.thesimplecloud.simplecloud.api.process.group.CloudLobbyGroup
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.service.*
 
 /**
@@ -34,14 +39,16 @@ import eu.thesimplecloud.simplecloud.api.service.*
  * Time: 09:59
  * @author Frederick Baier
  */
-class CloudLobbyProcessGroupImpl constructor(
-    private val configuration: CloudLobbyProcessGroupConfiguration,
+class CloudLobbyGroupImpl @Inject constructor(
+    @Assisted private val configuration: CloudLobbyProcessGroupConfiguration,
     private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
+    private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
     processOnlineCountService,
-    processService
+    processService,
+    processGroupService,
 ), CloudLobbyGroup {
 
     override fun getLobbyPriority(): Int {
@@ -54,6 +61,10 @@ class CloudLobbyProcessGroupImpl constructor(
 
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
         return this.configuration
+    }
+
+    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest {
+        return CloudLobbyGroupUpdateRequestImpl(this.processGroupService, this)
     }
 
 }

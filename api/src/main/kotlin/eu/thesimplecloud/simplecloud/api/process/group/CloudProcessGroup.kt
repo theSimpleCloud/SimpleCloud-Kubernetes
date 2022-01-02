@@ -26,6 +26,8 @@ import eu.thesimplecloud.simplecloud.api.image.Image
 import eu.thesimplecloud.simplecloud.api.process.CloudProcess
 import eu.thesimplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import eu.thesimplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import eu.thesimplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
+import eu.thesimplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import eu.thesimplecloud.simplecloud.api.utils.Identifiable
 import eu.thesimplecloud.simplecloud.api.utils.Nameable
 import java.util.concurrent.CompletableFuture
@@ -64,5 +66,9 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun getProcesses(): CompletableFuture<List<CloudProcess>>
 
     fun toConfiguration(): AbstractCloudProcessGroupConfiguration
+
+    fun createUpdateRequest(): CloudProcessGroupUpdateRequest
+
+    fun createDeleteRequest(): ProcessGroupDeleteRequest
 
 }
