@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.node.startup
 
+import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.task.NodeStartupTask
 import com.google.inject.Injector
 import dev.morphia.Datastore
@@ -52,7 +53,7 @@ class NodeStartup(
     }
 
     private fun executeClusterConnect0(injector: Injector) {
-        val task = app.simplecloud.simplecloud.node.connect.NodeClusterConnect(
+        val task = NodeClusterConnect(
             injector,
             injector.getInstance(Datastore::class.java),
         )

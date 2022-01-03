@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 
+import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
@@ -35,6 +36,7 @@ import app.simplecloud.simplecloud.api.validator.ValidatorService
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,12 +51,12 @@ class ProcessGroupUpdateHandler @Inject constructor(
     private val onlineCountService: ProcessOnlineCountService
 ) {
 
-    fun update(configuration: AbstractCloudProcessGroupConfiguration) {
+    fun update(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         val group = await(this.groupService.findByName(configuration.name))
-        updateGroup(group, configuration)
+        return updateGroup(group, configuration)
     }
 
-    private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
+    private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         this.validatorService.getValidator(configuration::class.java).validate(configuration)
         val request = group.createUpdateRequest()
         request.setMaxMemory(configuration.maxMemory)
@@ -78,7 +80,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
             request.setLobbyPriority(configuration.lobbyPriority)
         }
 
-        request.submit().join()
+        return request.submit()
     }
 
 }

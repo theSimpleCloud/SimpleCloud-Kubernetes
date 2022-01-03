@@ -35,7 +35,7 @@ import java.util.concurrent.CompletableFuture
  */
 interface InternalCloudProcessGroupService : CloudProcessGroupService {
 
-    fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup>
+    fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit>
 
     fun deleteGroupInternal(group: CloudProcessGroup)
 

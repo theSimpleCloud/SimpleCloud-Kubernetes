@@ -92,7 +92,7 @@ class ProcessGroupController @Inject constructor(
             ]
         ) configuration: AbstractCloudProcessGroupConfiguration
     ): Boolean {
-        this.groupUpdateHandler.update(configuration)
+        this.groupUpdateHandler.update(configuration).join()
         return true
     }
 

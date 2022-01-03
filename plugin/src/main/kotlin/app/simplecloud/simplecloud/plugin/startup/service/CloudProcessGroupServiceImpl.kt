@@ -20,16 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.service
+package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
+import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
-import app.simplecloud.simplecloud.node.mongo.group.CombinedProcessGroupEntity
-import app.simplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
@@ -37,31 +39,38 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
     groupConfigurationValidator: GroupConfigurationValidator,
-    private val igniteRepository: IgniteCloudProcessGroupRepository,
+    igniteRepository: IgniteCloudProcessGroupRepository,
     processGroupFactory: CloudProcessGroupFactory,
-    private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository
+    private val messageChannelManager: MessageChannelManager,
+    private val nodeService: NodeService
 ) : AbstractCloudProcessGroupService(
     groupConfigurationValidator, igniteRepository, processGroupFactory
 ) {
 
+    private val deleteMessageChannel =
+        this.messageChannelManager.getOrCreateMessageChannel<String, Unit>("internal_delete_group")
+
+    private val updateMessageChannel =
+        this.messageChannelManager.getOrCreateMessageChannel<AbstractCloudProcessGroupConfiguration, Unit>("internal_update_group")
+
     override fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<Unit> {
-        this.igniteRepository.save(group.getName(), group.toConfiguration())
-        saveToDatabase(group)
-        return unitFuture()
+        return this.nodeService.findFirst().thenApply {
+            sendUpdateRequestToNode(group, it)
+        }
     }
 
     override fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.igniteRepository.remove(group.getName())
-        deleteGroupFromDatabase(group)
+        this.nodeService.findFirst().thenApply {
+            sendDeleteRequestToNode(group, it)
+        }
     }
 
-    private fun deleteGroupFromDatabase(group: CloudProcessGroup) {
-        this.mongoCloudProcessGroupRepository.remove(group.getName())
+    private fun sendUpdateRequestToNode(group: CloudProcessGroup, node: Node) {
+        this.updateMessageChannel.createMessageRequest(group.toConfiguration(), node).submit()
     }
 
-    private fun saveToDatabase(group: CloudProcessGroup) {
-        val combinedProcessGroupEntity = CombinedProcessGroupEntity.fromGroupConfiguration(group.toConfiguration())
-        this.mongoCloudProcessGroupRepository.save(group.getName(), combinedProcessGroupEntity)
+    private fun sendDeleteRequestToNode(group: CloudProcessGroup, node: Node) {
+        this.deleteMessageChannel.createMessageRequest(group.getName(), node).submit()
     }
 
 

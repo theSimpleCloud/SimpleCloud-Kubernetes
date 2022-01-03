@@ -20,6 +20,11 @@ interface Repository<I : Any, T : Any> {
     fun findAll(): CompletableFuture<List<T>>
 
     /**
+     * Returns then first element found
+     */
+    fun findFirst(): CompletableFuture<T>
+
+    /**
      * Returns the object found by the specified [identifier]
      */
     fun find(identifier: I): CompletableFuture<T>

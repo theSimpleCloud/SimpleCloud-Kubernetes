@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture
  * Request for updating a registered group
  *
  */
-interface CloudProcessGroupUpdateRequest : Request<CloudProcessGroup> {
+interface CloudProcessGroupUpdateRequest : Request<Unit> {
 
     /**
      * Returns the group this request updates

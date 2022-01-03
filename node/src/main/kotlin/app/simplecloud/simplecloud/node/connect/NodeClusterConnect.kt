@@ -24,6 +24,7 @@ package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
@@ -55,20 +56,26 @@ class NodeClusterConnect @Inject constructor(
     private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
 
     fun run(): CompletableFuture<Unit> {
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to cluster...")
+        logger.info("Connecting to cluster...")
         val clusterKey = await(loadClusterKey())
         val ignite = await(startIgnite(clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
+        await(registerMessageChannels())
         await(checkForFirstNodeInCluster(finalInjector, ignite))
         await(writeSelfNodeInRepository(finalInjector, ignite))
         await(checkOnlineProcesses(finalInjector))
         return unitFuture()
     }
 
+    private fun registerMessageChannels(): CompletableFuture<Unit> {
+        val initMessageChannelsTask = this.injector.getInstance(InitMessageChannelsTask::class.java)
+        return initMessageChannelsTask.run()
+    }
+
     private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Writing Self-Node into Cluster-Cache")
-        return app.simplecloud.simplecloud.node.connect.SelfNodeWriteTask(
+        logger.info("Writing Self-Node into Cluster-Cache")
+        return SelfNodeWriteTask(
             injector.getInstance(IgniteNodeRepository::class.java),
             NodeConfiguration(
                 this.nodeBindAddress,
@@ -78,14 +85,14 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Checking for online tasks")
+        logger.info("Checking for online tasks")
         val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
         return nodeCheckOnlineProcessesTask.run()
     }
 
     private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
         if (ignite.cluster().nodes().size == 1) {
-            val nodeInitRepositoriesTask = injector.getInstance(app.simplecloud.simplecloud.node.connect.NodeInitRepositoriesTask::class.java)
+            val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
             await(nodeInitRepositoriesTask.run())
         }
         return unitFuture()
@@ -96,7 +103,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
-        val cloudAPIBinderModule = app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule(
+        val cloudAPIBinderModule = CloudAPIBinderModule(
             ignite,
             NodeServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
@@ -114,7 +121,7 @@ class NodeClusterConnect @Inject constructor(
         clusterKey: ClusterKey
     ): CompletableFuture<Ignite> {
         val addresses = getOtherNodesAddressesToConnectTo()
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to {}", addresses)
+        logger.info("Connecting to {}", addresses)
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
             .withAddressesToConnectTo(*addresses.toTypedArray())
@@ -122,7 +129,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun loadClusterKey(): CompletableFuture<ClusterKey> {
-        val clusterKeyEntity = await(app.simplecloud.simplecloud.node.connect.NodeClusterKeyLoader(this.datastore).loadClusterKey())
+        val clusterKeyEntity = await(NodeClusterKeyLoader(this.datastore).loadClusterKey())
         return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
     }
 
@@ -132,7 +139,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     companion object {
-        private val logger = LogManager.getLogger(app.simplecloud.simplecloud.node.connect.NodeClusterConnect::class.java)
+        private val logger = LogManager.getLogger(NodeClusterConnect::class.java)
     }
 
 }

@@ -45,6 +45,10 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
         return CloudCompletableFuture.supplyAsync { this.igniteCache.toList().map { it.value } }.nonNull()
     }
 
+    override fun findFirst(): CompletableFuture<T> {
+        return CloudCompletableFuture.supplyAsync { this.igniteCache.first().value }.nonNull()
+    }
+
     override fun find(identifier: I): CompletableFuture<T> {
         return findOrNull(identifier).nonNull()
     }

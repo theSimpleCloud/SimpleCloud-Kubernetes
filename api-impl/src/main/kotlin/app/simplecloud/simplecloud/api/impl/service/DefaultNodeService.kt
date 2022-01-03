@@ -48,4 +48,10 @@ open class DefaultNodeService(
         val completableFuture = this.igniteRepository.find(uniqueId)
         return completableFuture.thenApply { NodeImpl(it) }
     }
+
+    override fun findFirst(): CompletableFuture<Node> {
+        val future = this.igniteRepository.findFirst()
+        return future.thenApply { NodeImpl(it) }
+    }
+
 }

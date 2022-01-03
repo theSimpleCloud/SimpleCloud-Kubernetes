@@ -29,7 +29,6 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGrou
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
@@ -40,7 +39,7 @@ import java.util.concurrent.CompletableFuture
  * Time: 13:23
  * @author Frederick Baier
  */
-open class DefaultCloudProcessGroupService(
+abstract class AbstractCloudProcessGroupService(
     private val groupConfigurationValidator: GroupConfigurationValidator,
     private val igniteRepository: IgniteCloudProcessGroupRepository,
     private val processGroupFactory: CloudProcessGroupFactory
@@ -60,24 +59,17 @@ open class DefaultCloudProcessGroupService(
         return ProcessGroupCreateRequestImpl(this, configuration)
     }
 
-    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
+    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         await(this.groupConfigurationValidator.validate(configuration))
         val group = this.processGroupFactory.create(configuration)
         return updateGroupInternal0(group)
     }
 
-    protected open fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<CloudProcessGroup> {
-        this.igniteRepository.save(group.getName(), group.toConfiguration())
-        return CloudCompletableFuture.completedFuture(group)
-    }
-
-    override fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.igniteRepository.remove(group.getName())
-    }
+    abstract fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<Unit>
 
     override fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
         await(this.groupConfigurationValidator.validate(configuration))
         val group = this.processGroupFactory.create(configuration)
-        return updateGroupInternal0(group)
+        return updateGroupInternal0(group).thenApply { group }
     }
 }

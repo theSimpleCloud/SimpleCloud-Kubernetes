@@ -41,7 +41,15 @@ interface MessageChannelManager {
     fun <T : Any, R : Any> registerMessageChannel(name: String): MessageChannel<T, R>
 
     /**
-     * Registers and returns a new message channel
+     * Returns the already registered message channel found by the specified name or creates a new one
+     * @param T the message type to be sent
+     * @param R the type to be received
+     * @param name the name of the message channel
+     */
+    fun <T : Any, R : Any> getOrCreateMessageChannel(name: String): MessageChannel<T, R>
+
+    /**
+     * Returns the already registered message channel found by the specified name
      * @param T the message type to be sent
      * @param R the type to be received
      * @param name the name of the message channel

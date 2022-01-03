@@ -130,7 +130,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         return this
     }
 
-    override fun submit(): CompletableFuture<CloudProcessGroup> {
+    override fun submit(): CompletableFuture<Unit> {
         val onlineCountConfiguration = await(this.onlineCountConfigurationFuture)
         return submit0(
             this.image,
@@ -141,7 +141,7 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     abstract fun submit0(
         image: Image?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<CloudProcessGroup>
+    ): CompletableFuture<Unit>
 
 
 }

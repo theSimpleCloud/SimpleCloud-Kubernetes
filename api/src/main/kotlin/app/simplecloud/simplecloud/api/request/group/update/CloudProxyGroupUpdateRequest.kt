@@ -66,6 +66,6 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
 
     override fun setStartPriority(priority: Int): CloudProxyGroupUpdateRequest
 
-    override fun submit(): CompletableFuture<CloudProcessGroup>
+    override fun submit(): CompletableFuture<Unit>
 
 }

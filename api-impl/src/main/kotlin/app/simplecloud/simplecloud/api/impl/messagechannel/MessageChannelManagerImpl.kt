@@ -43,7 +43,7 @@ class MessageChannelManagerImpl @Inject constructor(
     private val registeredMessageChannels = CopyOnWriteArrayList<MessageChannel<*, *>>()
 
     override fun <T : Any, R : Any> registerMessageChannel(name: String): MessageChannel<T, R> {
-        val messageChannel = MessageChannelImpl<T, R>(name, queryHandler)
+        val messageChannel = MessageChannelImpl<T, R>(name, this.queryHandler)
         this.registeredMessageChannels.add(messageChannel)
         return messageChannel
     }
@@ -52,12 +52,17 @@ class MessageChannelManagerImpl @Inject constructor(
         return getMessageChannelByNameInternal(name) as MessageChannel<T, R>?
     }
 
-    private fun getMessageChannelByNameInternal(name: String): MessageChannel<*, *>? {
-        return this.registeredMessageChannels.firstOrNull { it.getName() == name }
+    override fun <T : Any, R : Any> getOrCreateMessageChannel(name: String): MessageChannel<T, R> {
+        val messageChannelByName = getMessageChannelByName<T, R>(name)
+        return messageChannelByName ?: registerMessageChannel(name)
     }
 
     override fun unregisterMessageChannel(name: String) {
         val messageChannel = getMessageChannelByNameInternal(name)
         this.registeredMessageChannels.remove(messageChannel)
+    }
+
+    private fun getMessageChannelByNameInternal(name: String): MessageChannel<*, *>? {
+        return this.registeredMessageChannels.firstOrNull { it.getName() == name }
     }
 }

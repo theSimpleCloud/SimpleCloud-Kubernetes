@@ -113,7 +113,7 @@ class CloudLobbyGroupUpdateRequestImpl(
     override fun submit0(
         image: Image?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<CloudProcessGroup> {
+    ): CompletableFuture<Unit> {
         val updateObj = CloudLobbyProcessGroupConfiguration(
             this.lobbyGroup.getName(),
             this.maxMemory,

@@ -46,7 +46,7 @@ class CloudServerGroupUpdateRequestImpl(
     override fun submit0(
         image: Image?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<CloudProcessGroup> {
+    ): CompletableFuture<Unit> {
         val updateObj = CloudServerProcessGroupConfiguration(
             this.serverGroup.getName(),
             this.maxMemory,
