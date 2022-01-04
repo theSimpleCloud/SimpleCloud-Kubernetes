@@ -41,11 +41,6 @@ class NodeBinderModule() : AbstractModule() {
     override fun configure() {
         install(
             FactoryModuleBuilder()
-                .implement(CloudProcess::class.java, CloudProcessImpl::class.java)
-                .build(CloudProcessFactory::class.java)
-        )
-        install(
-            FactoryModuleBuilder()
                 .implement(ProcessStarter::class.java, ProcessStarterImpl::class.java)
                 .build(ProcessStarter.Factory::class.java)
         )

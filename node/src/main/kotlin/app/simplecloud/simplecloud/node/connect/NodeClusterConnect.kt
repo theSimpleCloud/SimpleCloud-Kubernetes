@@ -61,15 +61,15 @@ class NodeClusterConnect @Inject constructor(
         val ignite = await(startIgnite(clusterKey))
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
-        await(registerMessageChannels())
+        await(registerMessageChannels(finalInjector))
         await(checkForFirstNodeInCluster(finalInjector, ignite))
         await(writeSelfNodeInRepository(finalInjector, ignite))
         await(checkOnlineProcesses(finalInjector))
         return unitFuture()
     }
 
-    private fun registerMessageChannels(): CompletableFuture<Unit> {
-        val initMessageChannelsTask = this.injector.getInstance(InitMessageChannelsTask::class.java)
+    private fun registerMessageChannels(injector: Injector): CompletableFuture<Unit> {
+        val initMessageChannelsTask = injector.getInstance(InitMessageChannelsTask::class.java)
         return initMessageChannelsTask.run()
     }
 

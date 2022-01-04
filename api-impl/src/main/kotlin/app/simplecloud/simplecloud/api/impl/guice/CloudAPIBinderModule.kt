@@ -23,6 +23,8 @@
 package app.simplecloud.simplecloud.api.impl.guice
 
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import app.simplecloud.simplecloud.api.impl.process.CloudProcessImpl
+import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
@@ -30,6 +32,7 @@ import app.simplecloud.simplecloud.api.impl.service.DefaultTestProcessOnlineCoun
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
@@ -60,6 +63,12 @@ class CloudAPIBinderModule(
         bind(Ignite::class.java).toInstance(igniteInstance)
 
         bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
+
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudProcess::class.java, CloudProcessImpl::class.java)
+                .build(CloudProcessFactory::class.java)
+        )
 
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)

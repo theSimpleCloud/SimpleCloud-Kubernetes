@@ -25,6 +25,7 @@ package app.simplecloud.simplecloud.node.task
 import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.container.Container
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
@@ -60,7 +61,7 @@ class ProcessStartTask(
             "CLUSTER_KEY",
             clusterKey.login + ":" + clusterKey.password
         )
-        val label = app.simplecloud.simplecloud.kubernetes.api.Label("process-${this.process.getName()}")
+        val label = Label("process-${this.process.getName()}")
         val container = containerFactory.create(
             process.getName(),
             process.getImage(),

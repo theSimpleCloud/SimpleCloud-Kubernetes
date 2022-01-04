@@ -22,9 +22,13 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
+import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessGroupServiceImpl
+import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessServiceImpl
+import app.simplecloud.simplecloud.plugin.startup.service.NodeServiceImpl
 import com.google.inject.Guice
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
@@ -34,9 +38,12 @@ class CloudPlugin {
     fun onEnable() {
         val ignite = startIgnite()
         Guice.createInjector(
-            //CloudAPIBinderModule(
-            //    ignite,
-            //)
+            CloudAPIBinderModule(
+                ignite,
+                NodeServiceImpl::class.java,
+                CloudProcessServiceImpl::class.java,
+                CloudProcessGroupServiceImpl::class.java
+            )
         )
     }
 
