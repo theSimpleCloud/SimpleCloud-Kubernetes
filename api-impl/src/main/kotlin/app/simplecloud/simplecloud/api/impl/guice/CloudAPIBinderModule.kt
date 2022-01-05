@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.api.impl.guice
 
+import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.process.CloudProcessImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
@@ -77,6 +79,7 @@ class CloudAPIBinderModule(
         bind(InternalCloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
         bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
 
+        bind(IgniteQueryHandler::class.java).to(IgniteQueryHandlerImpl::class.java)
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
 
         install(

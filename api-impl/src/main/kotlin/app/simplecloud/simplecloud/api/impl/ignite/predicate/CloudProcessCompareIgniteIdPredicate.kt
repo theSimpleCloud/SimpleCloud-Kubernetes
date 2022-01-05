@@ -20,36 +20,23 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.impl.messagechannel.request
+package app.simplecloud.simplecloud.api.impl.ignite.predicate
 
-import app.simplecloud.simplecloud.api.future.unitFuture
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
-import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
-import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
+import org.apache.ignite.lang.IgniteBiPredicate
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 29.05.2021
- * Time: 10:48
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-class MultipleReceiverMessageRequest(
-    private val topic: String,
-    private val message: Any,
-    private val receivers: List<NetworkComponent>,
-    private val queryHandler: IgniteQueryHandler
-) : MessageRequest<Unit> {
+class CloudProcessCompareIgniteIdPredicate(
+    private val compareId: UUID
+) : IgniteBiPredicate<String, CloudProcessConfiguration> {
 
-    override fun submit(): CompletableFuture<Unit> {
-        this.receivers.forEach { receiver ->
-            sendMessage(receiver)
-        }
-        return unitFuture()
-    }
-
-    private fun sendMessage(receiver: NetworkComponent) {
-        queryHandler.sendQuery<Unit>(topic, message, receiver)
+    override fun apply(uuid: String, configuration: CloudProcessConfiguration): Boolean {
+        return configuration.igniteId == compareId
     }
 }

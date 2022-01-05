@@ -28,7 +28,7 @@ import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture
 
 class IgniteIncomingQueryHandler(
-    private val igniteQueryHandler: IgniteQueryHandler,
+    private val igniteQueryHandler: IgniteQueryHandlerImpl,
     private val messageChannelManager: MessageChannelManager,
     private val networkComponent: NetworkComponent,
     private val queryObject: IgniteDataTransferObject,

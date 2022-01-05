@@ -23,6 +23,7 @@
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.MultipleReceiverMessageRequest
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.SingleReceiverMessageRequest
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel

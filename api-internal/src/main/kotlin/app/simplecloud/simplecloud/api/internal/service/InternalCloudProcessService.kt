@@ -24,6 +24,7 @@ package app.simplecloud.simplecloud.api.internal.service
 
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import java.util.concurrent.CompletableFuture
 
@@ -46,5 +47,7 @@ interface InternalCloudProcessService : CloudProcessService {
      * @return the [CloudProcess.terminationFuture] of the process
      */
     fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit>
+
+    fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit>
 
 }

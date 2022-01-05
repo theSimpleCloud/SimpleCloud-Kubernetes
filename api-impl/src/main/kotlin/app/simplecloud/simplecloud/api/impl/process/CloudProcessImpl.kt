@@ -30,6 +30,7 @@ import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
+import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.Address
@@ -120,6 +121,10 @@ class CloudProcessImpl @Inject constructor(
 
     override fun getIgniteId(): UUID {
         return this.configuration.igniteId ?: throw NullPointerException("Ignite id not set")
+    }
+
+    override fun createUpdateRequest(): ProcessUpdateRequest {
+        return this.processService.createUpdateRequest(this)
     }
 
     override fun createShutdownRequest(): ProcessShutdownRequest {

@@ -42,7 +42,7 @@ class CloudProcessServiceImpl @Inject constructor(
     processFactory, igniteRepository
 ) {
     override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        return InternalProcessStartHandler(this.processStarterFactory, this.igniteRepository, configuration)
+        return InternalProcessStartHandler(this.processStarterFactory, this, configuration)
             .startProcess()
     }
 

@@ -44,4 +44,10 @@ data class CloudProcessConfiguration(
     val processGroupType: ProcessGroupType,
     val imageName: String,
     val igniteId: UUID?
-)
+) {
+
+    fun getProcessName(): String {
+        return this.groupName + "-" + this.processNumber
+    }
+
+}

@@ -20,36 +20,33 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.impl.messagechannel.request
+package app.simplecloud.simplecloud.api.request.process
 
-import app.simplecloud.simplecloud.api.future.unitFuture
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
-import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
-import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.image.Image
+import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 29.05.2021
- * Time: 10:48
+ * Date: 16.03.2021
+ * Time: 20:09
  * @author Frederick Baier
+ *
+ * Used to update a process
+ *
  */
-class MultipleReceiverMessageRequest(
-    private val topic: String,
-    private val message: Any,
-    private val receivers: List<NetworkComponent>,
-    private val queryHandler: IgniteQueryHandler
-) : MessageRequest<Unit> {
+interface ProcessUpdateRequest : Request<Unit> {
 
-    override fun submit(): CompletableFuture<Unit> {
-        this.receivers.forEach { receiver ->
-            sendMessage(receiver)
-        }
-        return unitFuture()
-    }
+    /**
+     * Returns the process this request will update
+     */
+    fun getProcess(): CloudProcess
 
-    private fun sendMessage(receiver: NetworkComponent) {
-        queryHandler.sendQuery<Unit>(topic, message, receiver)
-    }
+    /**
+     * Sets the max players for the new process
+     * @return this
+     */
+    fun setMaxPlayers(maxPlayers: Int): ProcessUpdateRequest
+
 }

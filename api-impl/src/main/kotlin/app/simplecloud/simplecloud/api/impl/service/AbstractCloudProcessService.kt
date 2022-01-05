@@ -27,11 +27,14 @@ import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.process.ProcessUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
+import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -77,12 +80,25 @@ abstract class AbstractCloudProcessService(
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
+    override fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
+        val completableFuture = this.igniteRepository.findProcessByIgniteId(igniteId)
+        return completableFuture.thenApply { this.processFactory.create(it) }
+    }
+
+    override fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit> {
+        return this.igniteRepository.save(configuration.getProcessName(), configuration)
+    }
+
     override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {
         return ProcessStartRequestImpl(this, group)
     }
 
-    override fun createProcessShutdownRequest(group: CloudProcess): ProcessShutdownRequest {
-        return ProcessShutdownRequestImpl(this, group)
+    override fun createUpdateRequest(process: CloudProcess): ProcessUpdateRequest {
+        return ProcessUpdateRequestImpl(this, process)
+    }
+
+    override fun createProcessShutdownRequest(process: CloudProcess): ProcessShutdownRequest {
+        return ProcessShutdownRequestImpl(this, process)
     }
 
 }

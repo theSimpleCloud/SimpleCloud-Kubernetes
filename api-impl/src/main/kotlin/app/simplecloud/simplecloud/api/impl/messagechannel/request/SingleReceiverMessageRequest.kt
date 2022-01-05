@@ -23,6 +23,7 @@
 package app.simplecloud.simplecloud.api.impl.messagechannel.request
 
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
 import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture

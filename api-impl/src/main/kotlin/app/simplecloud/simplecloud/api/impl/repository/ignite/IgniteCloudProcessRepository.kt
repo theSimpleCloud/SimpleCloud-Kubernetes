@@ -23,6 +23,7 @@
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
 import app.simplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareGroupNamePredicate
+import app.simplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareIgniteIdPredicate
 import app.simplecloud.simplecloud.api.impl.ignite.predicate.CloudProcessCompareUUIDPredicate
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessRepository
@@ -47,6 +48,10 @@ class IgniteCloudProcessRepository @Inject constructor(
 
     override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration> {
         return executeQueryAndFindFirst(CloudProcessCompareUUIDPredicate(uniqueId))
+    }
+
+    override fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcessConfiguration> {
+        return executeQueryAndFindFirst(CloudProcessCompareIgniteIdPredicate(igniteId))
     }
 
     override fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>> {
