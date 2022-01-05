@@ -80,7 +80,6 @@ class ProcessStartTask(
             ServiceSpec().withContainerPort(25565)
                 .withClusterPort(25565)
                 .withLabels(label)
-                .withPublicPort(30009)
         )
         return unitFuture()
     }
