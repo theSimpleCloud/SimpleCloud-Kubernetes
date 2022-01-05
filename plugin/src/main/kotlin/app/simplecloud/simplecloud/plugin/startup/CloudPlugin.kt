@@ -37,7 +37,7 @@ class CloudPlugin {
 
     fun onEnable() {
         val ignite = startIgnite()
-        Guice.createInjector(
+        val injector = Guice.createInjector(
             CloudAPIBinderModule(
                 ignite,
                 NodeServiceImpl::class.java,
@@ -45,6 +45,7 @@ class CloudPlugin {
                 CloudProcessGroupServiceImpl::class.java
             )
         )
+        injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()
     }
 
     private fun startIgnite(): Ignite {
