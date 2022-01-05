@@ -22,11 +22,12 @@
 
 package app.simplecloud.simplecloud.kubernetes.api.service
 
+import app.simplecloud.simplecloud.kubernetes.api.Label
 import java.util.concurrent.CopyOnWriteArrayList
 
 class ServiceSpec {
 
-    val labels = CopyOnWriteArrayList<app.simplecloud.simplecloud.kubernetes.api.Label>()
+    val labels = CopyOnWriteArrayList<Label>()
 
     @Volatile
     var containerPort: Int = -1
@@ -55,7 +56,7 @@ class ServiceSpec {
         return this
     }
 
-    fun withLabels(vararg labels: app.simplecloud.simplecloud.kubernetes.api.Label): ServiceSpec {
+    fun withLabels(vararg labels: Label): ServiceSpec {
         this.labels.addAll(labels)
         return this
     }

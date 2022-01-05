@@ -95,7 +95,7 @@ class KubeServiceImpl @Inject constructor(
     }
 
     private fun createServicePort(): V1ServicePort {
-         val port = V1ServicePort()
+        val port = V1ServicePort()
             .protocol("TCP")
             .port(this.serviceSpec.clusterPort)
             .targetPort(IntOrString(this.serviceSpec.containerPort))
