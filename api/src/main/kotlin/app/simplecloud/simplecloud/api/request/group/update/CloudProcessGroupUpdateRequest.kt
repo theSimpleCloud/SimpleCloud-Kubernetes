@@ -100,7 +100,7 @@ interface CloudProcessGroupUpdateRequest : Request<Unit> {
     fun setJoinPermission(permission: String?): CloudProcessGroupUpdateRequest
 
     /**
-     * Sets whether the state of processes shall be automatically set to [ProcessState.VISIBLE]
+     * Sets whether the state of processes shall be automatically set to [ProcessState.ONLINE]
      *  after the process has been started
      * @return this
      */

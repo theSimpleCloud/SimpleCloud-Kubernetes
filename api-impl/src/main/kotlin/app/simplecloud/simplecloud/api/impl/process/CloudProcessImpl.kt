@@ -67,6 +67,10 @@ class CloudProcessImpl @Inject constructor(
         return this.configuration.state
     }
 
+    override fun isVisible(): Boolean {
+        return this.configuration.visible
+    }
+
     override fun getMaxMemory(): Int {
         return this.configuration.maxMemory
     }

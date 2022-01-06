@@ -63,6 +63,11 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     fun getState(): ProcessState
 
     /**
+     * Returns whether this process is visible. This decides for example whether the process is shown on signs.
+     */
+    fun isVisible(): Boolean
+
+    /**
      * Returns the maximum amount of memory this process can use in MB
      */
     fun getMaxMemory(): Int

@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.kubernetes.api.container
 
+import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -35,7 +36,7 @@ class ContainerSpec {
 
     val environmentVariables = CopyOnWriteArrayList<EnvironmentVariable>()
     val volumes = CopyOnWriteArrayList<MountableVolume>()
-    val labels = CopyOnWriteArrayList<app.simplecloud.simplecloud.kubernetes.api.Label>()
+    val labels = CopyOnWriteArrayList<Label>()
 
     @Volatile
     var maxMemory: Int = -1
@@ -50,7 +51,7 @@ class ContainerSpec {
         return this
     }
 
-    fun withLabels(vararg labels: app.simplecloud.simplecloud.kubernetes.api.Label): ContainerSpec {
+    fun withLabels(vararg labels: Label): ContainerSpec {
         this.labels.addAll(labels)
         return this
     }

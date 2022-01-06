@@ -72,7 +72,7 @@ class ProcessOnlineCountHandler(
     private fun isStateJoinableOrBefore(processState: ProcessState): Boolean {
         return processState == ProcessState.PREPARED ||
                 processState == ProcessState.STARTING ||
-                processState == ProcessState.VISIBLE
+                processState == ProcessState.ONLINE
     }
 
 

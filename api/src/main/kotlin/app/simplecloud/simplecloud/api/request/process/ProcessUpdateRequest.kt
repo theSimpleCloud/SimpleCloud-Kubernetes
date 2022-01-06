@@ -22,9 +22,7 @@
 
 package app.simplecloud.simplecloud.api.request.process
 
-import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**
@@ -48,5 +46,10 @@ interface ProcessUpdateRequest : Request<Unit> {
      * @return this
      */
     fun setMaxPlayers(maxPlayers: Int): ProcessUpdateRequest
+
+    /**
+     * Sets whether this process is visible. For example on signs.
+     */
+    fun setVisible(visible: Boolean): ProcessUpdateRequest
 
 }

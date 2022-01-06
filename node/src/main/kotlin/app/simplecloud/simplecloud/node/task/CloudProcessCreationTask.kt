@@ -50,6 +50,7 @@ class CloudProcessCreationTask(
                 UUID.randomUUID(),
                 processNumber,
                 ProcessState.PREPARED,
+                true,
                 this.startConfiguration.maxMemory,
                 0,
                 this.startConfiguration.maxPlayers,

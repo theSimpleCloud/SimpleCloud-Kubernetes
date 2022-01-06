@@ -27,4 +27,6 @@ interface InternalProcessUpdateRequest : ProcessUpdateRequest {
 
     override fun setMaxPlayers(maxPlayers: Int): InternalProcessUpdateRequest
 
+    override fun setVisible(visible: Boolean): InternalProcessUpdateRequest
+
 }

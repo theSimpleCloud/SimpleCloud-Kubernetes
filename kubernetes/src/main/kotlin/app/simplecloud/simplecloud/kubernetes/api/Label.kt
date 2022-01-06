@@ -23,13 +23,15 @@
 package app.simplecloud.simplecloud.kubernetes.api
 
 class Label(
-    name: String
+    key: String,
+    value: String
 ) {
 
-    val name = name.lowercase()
+    val key = key.lowercase()
+    val value = value.lowercase()
 
     fun getNamePair(): Pair<String, String> {
-        return "app" to name
+        return key to value
     }
 
 }

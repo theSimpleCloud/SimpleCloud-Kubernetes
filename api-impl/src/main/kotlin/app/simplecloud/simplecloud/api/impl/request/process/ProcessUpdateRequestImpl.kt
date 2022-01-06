@@ -25,6 +25,8 @@ class ProcessUpdateRequestImpl(
     private var maxPlayers: Int = this.process.getMaxPlayers()
     @Volatile
     private var processState: ProcessState = this.process.getState()
+    @Volatile
+    private var visible: Boolean = this.process.isVisible()
 
     override fun getProcess(): CloudProcess {
         return this.process
@@ -45,12 +47,18 @@ class ProcessUpdateRequestImpl(
         return this
     }
 
+    override fun setVisible(visible: Boolean): InternalProcessUpdateRequest {
+        this.visible = visible
+        return this
+    }
+
     override fun submit(): CompletableFuture<Unit> {
         val configuration = CloudProcessConfiguration(
             this.process.getGroupName(),
             this.process.getUniqueId(),
             this.process.getProcessNumber(),
             this.processState,
+            this.visible,
             this.process.getMaxMemory(),
             this.process.getUsedMemory(),
             this.maxPlayers,

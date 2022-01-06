@@ -28,6 +28,7 @@ import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.process.ProcessUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
@@ -37,6 +38,7 @@ import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
+import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -64,7 +66,8 @@ class TestCloudProcessService @Inject constructor(
                 "Lobby",
                 UUID.randomUUID(),
                 1,
-                ProcessState.VISIBLE,
+                ProcessState.ONLINE,
+                true,
                 512,
                 512,
                 20,
@@ -84,6 +87,7 @@ class TestCloudProcessService @Inject constructor(
                     UUID.randomUUID(),
                     Random.nextInt(20),
                     ProcessState.STARTING,
+                    true,
                     configuration.maxMemory,
                     0,
                     configuration.maxPlayers,
@@ -101,6 +105,10 @@ class TestCloudProcessService @Inject constructor(
     override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
         this.nameToProcess.remove(process.getName())
         return unitFuture()
+    }
+
+    override fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit> {
+        TODO("Not yet implemented")
     }
 
     override fun findProcessByName(name: String): CompletableFuture<CloudProcess> {
@@ -129,12 +137,22 @@ class TestCloudProcessService @Inject constructor(
         }.nonNull()
     }
 
+    override fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
+        return CloudCompletableFuture.supplyAsync {
+            return@supplyAsync this.nameToProcess.values.firstOrNull { it.getIgniteId() == igniteId }
+        }.nonNull()
+    }
+
     override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {
         return ProcessStartRequestImpl(this, group)
     }
 
     override fun createProcessShutdownRequest(group: CloudProcess): ProcessShutdownRequest {
         return ProcessShutdownRequestImpl(this, group)
+    }
+
+    override fun createUpdateRequest(process: CloudProcess): ProcessUpdateRequest {
+        return ProcessUpdateRequestImpl(this, process)
     }
 
     override fun findAll(): CompletableFuture<List<CloudProcess>> {

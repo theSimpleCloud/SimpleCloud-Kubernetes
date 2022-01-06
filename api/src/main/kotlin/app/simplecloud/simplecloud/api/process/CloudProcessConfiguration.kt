@@ -37,6 +37,7 @@ data class CloudProcessConfiguration(
     val uniqueId: UUID,
     val processNumber: Int,
     val state: ProcessState,
+    val visible: Boolean,
     val maxMemory: Int,
     val usedMemory: Int,
     val maxPlayers: Int,

@@ -43,47 +43,72 @@ class ProcessStartTask(
     private val clusterKey: ClusterKey,
 ) {
 
+    private val processLabel = Label("cloud-process", this.process.getName())
+    private val groupLabel = Label("cloud-group", this.process.getGroupName())
+
     fun run(): CompletableFuture<Unit> {
         logger.info("Starting Process {}", process.getName())
 
-        val volume = this.volumeFactory.create(
+        startContainer()
+        createServiceForProcess()
+        return unitFuture()
+    }
+
+    private fun createServiceForProcess() {
+        this.serviceFactory.create(
+            this.process.getName(),
+            ServiceSpec().withContainerPort(25565)
+                .withClusterPort(25565)
+                .withLabels(this.processLabel)
+        )
+    }
+
+    private fun startContainer() {
+        val container = createContainer()
+        container.start()
+    }
+
+    private fun createContainer(): Container {
+        val volume = createVolumeClaim()
+
+        val processUniqueIdEnvironment = createProcessIdEnvironmentVariable()
+        val clusterKeyEnvironment = createClusterKeyEnvironmentVariable()
+
+        return this.containerFactory.create(
+            this.process.getName(),
+            this.process.getImage(),
+            ContainerSpec()
+                .withContainerPort(25565)
+                .withMaxMemory(this.process.getMaxMemory())
+                .withLabels(this.processLabel, this.groupLabel)
+                .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
+                .withEnvironmentVariables(clusterKeyEnvironment, processUniqueIdEnvironment)
+
+        )
+    }
+
+    private fun createClusterKeyEnvironmentVariable(): ContainerSpec.EnvironmentVariable {
+        return ContainerSpec.EnvironmentVariable(
+            "CLUSTER_KEY",
+            this.clusterKey.login + ":" + this.clusterKey.password
+        )
+    }
+
+    private fun createProcessIdEnvironmentVariable(): ContainerSpec.EnvironmentVariable {
+        return ContainerSpec.EnvironmentVariable(
+            "SIMPLECLOUD_PROCESS_ID",
+            this.process.getUniqueId().toString()
+        )
+    }
+
+    private fun createVolumeClaim(): KubeVolumeClaim {
+        return this.volumeFactory.create(
             "claim-" + this.process.getName(),
             KubeVolumeSpec()
                 .withStorageClassName("microk8s-hostpath")
                 .withRequestedStorageInGB(1)
         )
-
-        val processUniqueIdEnvironment = ContainerSpec.EnvironmentVariable(
-            "SIMPLECLOUD_PROCESS_ID",
-            process.getUniqueId().toString()
-        )
-        val clusterKeyEnvironment = ContainerSpec.EnvironmentVariable(
-            "CLUSTER_KEY",
-            clusterKey.login + ":" + clusterKey.password
-        )
-        val label = Label("process-${this.process.getName()}")
-        val container = containerFactory.create(
-            process.getName(),
-            process.getImage(),
-            ContainerSpec()
-                .withContainerPort(25565)
-                .withMaxMemory(process.getMaxMemory())
-                .withLabels(label)
-                .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
-                .withEnvironmentVariables(clusterKeyEnvironment, processUniqueIdEnvironment)
-
-        )
-        container.start()
-
-        this.serviceFactory.create(
-            this.process.getName(),
-            ServiceSpec().withContainerPort(25565)
-                .withClusterPort(25565)
-                .withLabels(label)
-        )
-        return unitFuture()
     }
-
 
     companion object {
         private val logger = LogManager.getLogger(ProcessStartTask::class.java)

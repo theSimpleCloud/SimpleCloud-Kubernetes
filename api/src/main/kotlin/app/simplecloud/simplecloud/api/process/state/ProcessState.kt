@@ -16,26 +16,10 @@ enum class ProcessState {
      */
     PREPARED,
 
-    /**
-     * The process is currently starting
-     */
     STARTING,
 
-    /**
-     * The process is online and joinable for players
-     */
-    VISIBLE,
+    ONLINE,
 
-    /**
-     * The process is online but ingame
-     */
-    INVISIBLE,
-
-    /**
-     * The process is closed
-     */
     CLOSED;
-
-
 
 }
