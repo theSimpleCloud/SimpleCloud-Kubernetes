@@ -25,23 +25,27 @@ package app.simplecloud.simplecloud.api.impl.guice
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.CloudPlayerImpl
+import app.simplecloud.simplecloud.api.impl.player.OfflineCloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.OfflineCloudPlayerImpl
 import app.simplecloud.simplecloud.api.impl.process.CloudProcessImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
 import app.simplecloud.simplecloud.api.impl.service.DefaultTestProcessOnlineCountService
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
+import app.simplecloud.simplecloud.api.service.*
 import app.simplecloud.simplecloud.api.validator.ValidatorService
 import app.simplecloud.simplecloud.api.validator.ValidatorServiceImpl
 import com.google.inject.AbstractModule
@@ -59,6 +63,7 @@ class CloudAPIBinderModule(
     private val nodeServiceClass: Class<out NodeService>,
     private val cloudProcessServiceClass: Class<out InternalCloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
+    private val cloudPlayerServiceClass: Class<out InternalCloudPlayerService>,
 ) : AbstractModule() {
 
     override fun configure() {
@@ -72,7 +77,21 @@ class CloudAPIBinderModule(
                 .build(CloudProcessFactory::class.java)
         )
 
+        install(
+            FactoryModuleBuilder()
+                .implement(CloudPlayer::class.java, CloudPlayerImpl::class.java)
+                .build(CloudPlayerFactory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(OfflineCloudPlayer::class.java, OfflineCloudPlayerImpl::class.java)
+                .build(OfflineCloudPlayerFactory::class.java)
+        )
+
         bind(NodeService::class.java).to(this.nodeServiceClass)
+        bind(CloudPlayerService::class.java).to(this.cloudPlayerServiceClass)
+        bind(InternalCloudPlayerService::class.java).to(this.cloudPlayerServiceClass)
         bind(CloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(InternalCloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)

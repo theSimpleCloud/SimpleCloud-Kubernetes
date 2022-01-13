@@ -20,35 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.player
+package app.simplecloud.simplecloud.api.request.player
 
-import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.request.player.CloudPlayerUpdateRequest
-import app.simplecloud.simplecloud.api.request.player.PlayerConnectRequest
-import net.kyori.adventure.audience.Audience
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 21.03.2021
- * Time: 15:29
+ * Time: 18:38
  * @author Frederick Baier
  */
-interface CloudPlayer : OfflineCloudPlayer, Audience {
+interface CloudPlayerUpdateRequest : OfflineCloudPlayerUpdateRequest {
 
-    fun getCurrentProxyName(): String
-
-    fun getCurrentServerName(): String?
-
-    fun getCurrentServer(): CompletableFuture<CloudProcess>
-
-    fun getCurrentProxy(): CompletableFuture<CloudProcess>
-
-    fun getPlayerConnection(): PlayerConnection
-
-    fun createConnectRequest(process: CloudProcess): PlayerConnectRequest
-
-    override fun createUpdateRequest(): CloudPlayerUpdateRequest
 
 
 }

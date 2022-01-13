@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.api.player
 
-import app.simplecloud.simplecloud.api.player.update.OfflinePlayerUpdateRequest
+import app.simplecloud.simplecloud.api.request.player.OfflineCloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Nameable
 import java.util.*
 
@@ -77,6 +77,6 @@ interface OfflineCloudPlayer : Nameable {
     /**
      * Creates a request to update this player
      */
-    fun createUpdateRequest(): OfflinePlayerUpdateRequest
+    fun createUpdateRequest(): OfflineCloudPlayerUpdateRequest
 
 }

@@ -31,6 +31,7 @@ import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
+import app.simplecloud.simplecloud.node.service.CloudPlayerServiceImpl
 import app.simplecloud.simplecloud.node.service.CloudProcessGroupServiceImpl
 import app.simplecloud.simplecloud.node.service.CloudProcessServiceImpl
 import app.simplecloud.simplecloud.node.service.NodeServiceImpl
@@ -107,12 +108,12 @@ class NodeClusterConnect @Inject constructor(
             ignite,
             NodeServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
-            CloudProcessGroupServiceImpl::class.java
+            CloudProcessGroupServiceImpl::class.java,
+            CloudPlayerServiceImpl::class.java
         )
         return injector.createChildInjector(
             NodeBinderModule(),
             cloudAPIBinderModule,
-            //SingleClassBinderModule(IContainerProcessStarter::class.java, MountingContainerProcessStarter::class.java),
             SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
         )
     }

@@ -20,21 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.player.update
+package app.simplecloud.simplecloud.api.request.player
 
+import app.simplecloud.simplecloud.api.player.connect.PlayerConnectResult
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
  * Date: 21.03.2021
- * Time: 18:38
+ * Time: 19:15
  * @author Frederick Baier
  */
-interface OfflinePlayerUpdateRequest : Request<Void> {
-
-    /**
-     * Sets the display name of the player
-     */
-    fun setDisplayName(name: String)
-
-}
+interface PlayerConnectRequest : Request<PlayerConnectResult>

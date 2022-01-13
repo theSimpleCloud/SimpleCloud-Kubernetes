@@ -5,4 +5,5 @@ dependencies {
     implementation( "org.apache.ignite:ignite-core:2.11.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.5.2")
     api("com.google.inject:guice:5.0.1")
+    implementation("net.kyori:adventure-api:4.9.3")
 }

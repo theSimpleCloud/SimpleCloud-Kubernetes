@@ -20,32 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.player
+package app.simplecloud.simplecloud.api.impl.ignite.predicate
 
-import app.simplecloud.simplecloud.api.text.CloudText
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import org.apache.ignite.lang.IgniteBiPredicate
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 26.03.2021
- * Time: 18:42
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-interface CloudPlayerMessageAdapter {
+class CloudPlayerCompareNamePredicate(
+    private val compareName: String
+) : IgniteBiPredicate<String, CloudPlayerConfiguration> {
 
-    /**
-     * Sends the [cloudText] to this player
-     * @return a future that completes when the the message was sent
-     */
-    fun sendMessage(cloudText: CloudText): CompletableFuture<Void>
-
-    /**
-     * Sends the [message] to this player
-     * @return a future that completes when the the message was sent
-     */
-    fun sendMessage(message: String): CompletableFuture<Void> {
-        return sendMessage(CloudText(message))
+    override fun apply(uuid: String, configuration: CloudPlayerConfiguration): Boolean {
+        return configuration.name == compareName
     }
-
-
 }

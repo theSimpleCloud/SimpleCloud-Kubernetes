@@ -63,14 +63,14 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
         }
     }
 
-    protected fun executeQuery(predicate: IgniteBiPredicate<I, T>): CompletableFuture<List<T>> {
+    protected fun executeQuery(predicate: IgniteBiPredicate<*, T>): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync {
             val cursor = this.igniteCache.query(ScanQuery(predicate))
             return@supplyAsync cursor.all.map { it.value }
         }.nonNull()
     }
 
-    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<I, T>): CompletableFuture<T> {
+    protected fun executeQueryAndFindFirst(predicate: IgniteBiPredicate<*, T>): CompletableFuture<T> {
         return executeQuery(predicate).thenApply { it.first() }
     }
 

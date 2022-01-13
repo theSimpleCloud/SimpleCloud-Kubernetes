@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import app.simplecloud.simplecloud.plugin.startup.service.CloudPlayerServiceImpl
 import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessGroupServiceImpl
 import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessServiceImpl
 import app.simplecloud.simplecloud.plugin.startup.service.NodeServiceImpl
@@ -42,15 +43,15 @@ class CloudPlugin {
                 ignite,
                 NodeServiceImpl::class.java,
                 CloudProcessServiceImpl::class.java,
-                CloudProcessGroupServiceImpl::class.java
+                CloudProcessGroupServiceImpl::class.java,
+                CloudPlayerServiceImpl::class.java
             )
         )
         injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()
     }
 
     private fun startIgnite(): Ignite {
-        val clusterKeyArray = System.getenv("CLUSTER_KEY").split(":")
-        val clusterKey = ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
+       val clusterKey = getClusterKey()
         val nodeAddress = Address.fromIpString("ignite:1670")
         val selfAddress = Address.fromIpString("127.0.0.1:1670")
         val igniteBuilder = IgniteBuilder(
@@ -60,6 +61,11 @@ class CloudPlugin {
         )
         igniteBuilder.withAddressesToConnectTo(nodeAddress)
         return igniteBuilder.start()
+    }
+
+    private fun getClusterKey(): ClusterKey {
+        val clusterKeyArray = System.getenv("CLUSTER_KEY").split(":")
+        return ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
     }
 
 }
