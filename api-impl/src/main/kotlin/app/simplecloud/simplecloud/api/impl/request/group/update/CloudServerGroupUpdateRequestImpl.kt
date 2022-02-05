@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.api.impl.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
@@ -52,8 +51,6 @@ class CloudServerGroupUpdateRequestImpl(
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
-            this.minProcessCount,
-            this.maxProcessCount,
             image?.getName(),
             onlineCountConfiguration.getName(),
             this.serverGroup.isStatic(),

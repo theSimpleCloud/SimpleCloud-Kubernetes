@@ -35,8 +35,6 @@ abstract class AbstractCloudProcessGroupConfiguration(
     val maxMemory: Int,
     val maxPlayers: Int,
     val maintenance: Boolean,
-    val minimumProcessCount: Int,
-    val maximumProcessCount: Int,
     val imageName: String?,
     val onlineCountConfigurationName: String,
     val static: Boolean,

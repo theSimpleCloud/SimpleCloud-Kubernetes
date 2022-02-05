@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.api.impl.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
@@ -85,16 +84,6 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setMinimumOnlineProcessCount(minCount: Int): CloudProxyGroupUpdateRequest {
-        super.setMinimumOnlineProcessCount(minCount)
-        return this
-    }
-
-    override fun setMaximumOnlineProcessCount(maxCount: Int): CloudProxyGroupUpdateRequest {
-        super.setMaximumOnlineProcessCount(maxCount)
-        return this
-    }
-
     override fun setJoinPermission(permission: String?): CloudProxyGroupUpdateRequest {
         super.setJoinPermission(permission)
         return this
@@ -119,8 +108,6 @@ class CloudProxyGroupUpdateRequestImpl(
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
-            this.minProcessCount,
-            this.maxProcessCount,
             image?.getName(),
             onlineCountConfiguration.getName(),
             this.proxyGroup.isStatic(),

@@ -85,14 +85,6 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.joinPermission
     }
 
-    override fun getMinimumOnlineProcessCount(): Int {
-        return this.configuration.minimumProcessCount
-    }
-
-    override fun getMaximumOnlineProcessCount(): Int {
-        return this.configuration.maximumProcessCount
-    }
-
     override fun isStatic(): Boolean {
         return this.configuration.static
     }

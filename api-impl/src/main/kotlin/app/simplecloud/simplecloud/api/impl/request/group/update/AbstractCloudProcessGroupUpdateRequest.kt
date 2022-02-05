@@ -50,12 +50,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var maintenance: Boolean = this.processGroup.isInMaintenance()
 
     @Volatile
-    protected var minProcessCount: Int = this.processGroup.getMinimumOnlineProcessCount()
-
-    @Volatile
-    protected var maxProcessCount: Int = this.processGroup.getMaximumOnlineProcessCount()
-
-    @Volatile
     protected var joinPermission: String? = this.processGroup.getJoinPermission()
 
     @Volatile
@@ -102,16 +96,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun setMaintenance(maintenance: Boolean): CloudProcessGroupUpdateRequest {
         this.maintenance = maintenance
-        return this
-    }
-
-    override fun setMinimumOnlineProcessCount(minCount: Int): CloudProcessGroupUpdateRequest {
-        this.minProcessCount = minCount
-        return this
-    }
-
-    override fun setMaximumOnlineProcessCount(maxCount: Int): CloudProcessGroupUpdateRequest {
-        this.maxProcessCount = maxCount
         return this
     }
 

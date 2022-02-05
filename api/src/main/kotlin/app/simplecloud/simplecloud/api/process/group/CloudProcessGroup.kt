@@ -53,10 +53,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
 
     fun getJoinPermission(): String?
 
-    fun getMinimumOnlineProcessCount(): Int
-
-    fun getMaximumOnlineProcessCount(): Int
-
     fun isStatic(): Boolean
 
     fun isStateUpdatingEnabled(): Boolean

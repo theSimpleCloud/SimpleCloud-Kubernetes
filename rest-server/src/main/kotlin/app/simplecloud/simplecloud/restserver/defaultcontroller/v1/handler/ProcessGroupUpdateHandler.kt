@@ -69,8 +69,6 @@ class ProcessGroupUpdateHandler @Inject constructor(
         request.setImage(ImageImpl.fromName(configuration.imageName))
         request.setOnlineCountConfiguration(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
         request.setMaintenance(configuration.maintenance)
-        request.setMinimumOnlineProcessCount(configuration.minimumProcessCount)
-        request.setMaximumOnlineProcessCount(configuration.maximumProcessCount)
         request.setJoinPermission(configuration.joinPermission)
         request.setStateUpdating(configuration.stateUpdating)
         request.setStartPriority(configuration.startPriority)

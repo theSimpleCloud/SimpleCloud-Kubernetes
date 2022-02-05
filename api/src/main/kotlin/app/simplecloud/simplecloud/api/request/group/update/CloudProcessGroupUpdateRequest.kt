@@ -82,18 +82,6 @@ interface CloudProcessGroupUpdateRequest : Request<Unit> {
     fun setMaintenance(maintenance: Boolean): CloudProcessGroupUpdateRequest
 
     /**
-     * Sets the minimum count of processes to be VISIBLE
-     * @return this
-     */
-    fun setMinimumOnlineProcessCount(minCount: Int): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the maximum count of processes to be VISIBLE
-     * @return this
-     */
-    fun setMaximumOnlineProcessCount(maxCount: Int): CloudProcessGroupUpdateRequest
-
-    /**
      * Sets the permission a player need to join processes of the group
      * @return this
      */
