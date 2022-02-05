@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.api.player
 
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.api.utils.Nameable
 import java.util.*
@@ -54,5 +55,10 @@ interface PlayerConnection : Nameable {
      * @return the protocol version of the client
      */
     fun getVersion(): Int
+
+    /**
+     * Returns the configuration of this connection
+     */
+    fun toConfiguration(): PlayerConnectionConfiguration
 
 }

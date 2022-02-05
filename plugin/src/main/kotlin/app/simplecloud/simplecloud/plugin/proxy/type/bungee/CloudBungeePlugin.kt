@@ -22,13 +22,48 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
+import app.simplecloud.simplecloud.plugin.proxy.ProxyBinderModule
+import app.simplecloud.simplecloud.plugin.proxy.ProxyProcessRegisterer
+import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
+import app.simplecloud.simplecloud.plugin.proxy.type.bungee.guice.BungeeBinderModule
 import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
+import java.net.InetSocketAddress
+import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
+    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule()))
+    private val injector = cloudPlugin.injector
+
+    override fun onLoad() {
+        ProxyServer.getInstance().reconnectHandler = ReconnectHandlerImpl()
+    }
+
     override fun onEnable() {
-        CloudPlugin().onEnable()
+        val proxyServer = ProxyServer.getInstance()
+        proxyServer.configurationAdapter.servers.clear()
+        proxyServer.servers.clear()
+        for (info in proxyServer.configurationAdapter.listeners) {
+            info.serverPriority.clear()
+        }
+        registerFallbackService()
+
+        val proxyProcessRegisterer = this.injector.getInstance(ProxyProcessRegisterer::class.java)
+        proxyProcessRegisterer.registerExistingProcesses()
+        proxyProcessRegisterer.registerIgniteListener()
+
+        proxyServer.pluginManager.registerListener(this, this.injector.getInstance(BungeeListener::class.java))
+    }
+
+    private fun registerFallbackService() {
+        val proxyServerRegistry = this.injector.getInstance(ProxyServerRegistry::class.java)
+        proxyServerRegistry.registerServer(
+            "fallback",
+            UUID.fromString("00000000-0000-0000-0000-000000000000"),
+            InetSocketAddress("127.0.0.1", 0)
+        )
     }
 
     override fun onDisable() {

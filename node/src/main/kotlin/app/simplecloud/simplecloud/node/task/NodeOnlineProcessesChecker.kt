@@ -20,18 +20,34 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.util
+package app.simplecloud.simplecloud.node.task
 
-import com.google.inject.AbstractModule
+import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
+import com.ea.async.Async.await
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import org.apache.logging.log4j.LogManager
+import java.util.concurrent.CompletableFuture
 
-class SingleInstanceAnnotatedBinderModule<T>(
-    private val clazz: Class<T>,
-    private val instance: T,
-    private val annotationClass: Class<out Annotation>,
-) : AbstractModule() {
+@Singleton
+class NodeOnlineProcessesChecker @Inject constructor(
+    private val groupService: CloudProcessGroupService,
+    private val processService: CloudProcessService
+) {
 
-    override fun configure() {
-        bind(this.clazz).annotatedWith(annotationClass).toInstance(this.instance)
+    fun run(): CompletableFuture<Unit> {
+        val groups = await(this.groupService.findAll())
+        logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
+        groups.forEach {
+            await(ProcessOnlineCountHandler(it, processService).handle())
+        }
+        return unitFuture()
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(NodeOnlineProcessesChecker::class.java)
     }
 
 }

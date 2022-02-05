@@ -59,6 +59,10 @@ class CloudPlayerImpl @Inject constructor(
         return this.playerConnection
     }
 
+    override fun toConfiguration(): CloudPlayerConfiguration {
+        return this.configuration
+    }
+
     override fun createConnectRequest(process: CloudProcess): PlayerConnectRequest {
         TODO("Not yet implemented")
     }

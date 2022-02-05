@@ -34,4 +34,8 @@ class PlayerConnectionImpl(
     override fun getName(): String {
         return this.configuration.name
     }
+
+    override fun toConfiguration(): PlayerConnectionConfiguration {
+        return this.configuration
+    }
 }

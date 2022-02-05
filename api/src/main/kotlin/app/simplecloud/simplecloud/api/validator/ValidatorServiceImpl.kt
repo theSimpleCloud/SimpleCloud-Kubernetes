@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.api.validator
 
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import com.google.inject.Inject
-import com.google.inject.Injector
 import com.google.inject.Singleton
 
 /**
@@ -35,18 +34,17 @@ import com.google.inject.Singleton
  */
 @Singleton
 class ValidatorServiceImpl @Inject constructor(
-    private val injector: Injector
+    private val groupConfigurationValidator: GroupConfigurationValidator
 ) : ValidatorService {
 
-    private val clazzToValidator = mapOf<Class<*>, Class<out Validator<*>>>(
-        AbstractCloudProcessGroupConfiguration::class.java to GroupConfigurationValidator::class.java,
+    private val clazzToValidator = mapOf<Class<*>, Validator<*>>(
+        AbstractCloudProcessGroupConfiguration::class.java to groupConfigurationValidator,
     )
 
     override fun <T> getValidator(clazz: Class<T>): Validator<T> {
         val validationClass = clazzToValidator.keys.firstOrNull { it.isAssignableFrom(clazz) }
             ?: throw NoSuchElementException("Validator does not exist for clazz ${clazz.name}")
-        val validatorClazz = this.clazzToValidator[validationClass]
-        return injector.getInstance(validatorClazz) as Validator<T>
+        return clazzToValidator[validationClass] as Validator<T>
     }
 
 }

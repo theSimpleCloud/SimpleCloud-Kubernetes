@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (C) 2021 The SimpleCloud authors
+ * Copyright (C) 2020 The SimpleCloud authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,25 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy
+package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
-import app.simplecloud.simplecloud.api.player.PlayerConnection
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
+import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.ReconnectHandler
+import net.md_5.bungee.api.config.ServerInfo
+import net.md_5.bungee.api.connection.ProxiedPlayer
 
-interface IProxyController {
+class ReconnectHandlerImpl : ReconnectHandler {
+    override fun save() {
+    }
 
-    fun handleLogin(request: PlayerConnection)
+    override fun getServer(player: ProxiedPlayer): ServerInfo {
+        return ProxyServer.getInstance().getServerInfo("fallback")
+    }
 
-    fun handlePostLogin(request: PlayerConnection)
+    override fun setServer(player: ProxiedPlayer?) {
+    }
 
-    fun handleDisconnect(request: PlayerConnection)
-
-    fun handleServerPreConnect(request: ServerPreConnectRequest)
-
-    fun handleServerConnected(request: ServerConnectedRequest)
-
-    fun handleServerKick(request: ServerKickRequest)
-
+    override fun close() {
+    }
 }

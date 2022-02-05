@@ -24,6 +24,8 @@ class ProcessUpdateRequestImpl(
     @Volatile
     private var maxPlayers: Int = this.process.getMaxPlayers()
     @Volatile
+    private var onlinePlayers: Int = this.process.getOnlinePlayers()
+    @Volatile
     private var processState: ProcessState = this.process.getState()
     @Volatile
     private var visible: Boolean = this.process.isVisible()
@@ -47,6 +49,11 @@ class ProcessUpdateRequestImpl(
         return this
     }
 
+    override fun setOnlinePlayers(onlinePlayers: Int): InternalProcessUpdateRequest {
+        this.onlinePlayers = onlinePlayers
+        return this
+    }
+
     override fun setVisible(visible: Boolean): InternalProcessUpdateRequest {
         this.visible = visible
         return this
@@ -62,6 +69,7 @@ class ProcessUpdateRequestImpl(
             this.process.getMaxMemory(),
             this.process.getUsedMemory(),
             this.maxPlayers,
+            this.onlinePlayers,
             this.process.isStatic(),
             this.process.getProcessType(),
             this.process.getImage().getName(),

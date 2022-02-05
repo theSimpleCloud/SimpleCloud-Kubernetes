@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.api.player
 
+import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.request.player.CloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.request.player.PlayerConnectRequest
@@ -50,5 +51,6 @@ interface CloudPlayer : OfflineCloudPlayer, Audience {
 
     override fun createUpdateRequest(): CloudPlayerUpdateRequest
 
+    override fun toConfiguration(): CloudPlayerConfiguration
 
 }

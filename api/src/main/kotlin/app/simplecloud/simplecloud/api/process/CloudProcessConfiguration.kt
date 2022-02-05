@@ -41,6 +41,7 @@ data class CloudProcessConfiguration(
     val maxMemory: Int,
     val usedMemory: Int,
     val maxPlayers: Int,
+    val onlinePlayers: Int,
     val static: Boolean,
     val processGroupType: ProcessGroupType,
     val imageName: String,

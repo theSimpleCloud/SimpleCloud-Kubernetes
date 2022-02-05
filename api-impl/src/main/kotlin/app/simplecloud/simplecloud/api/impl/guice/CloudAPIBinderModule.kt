@@ -34,7 +34,7 @@ import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
-import app.simplecloud.simplecloud.api.impl.service.DefaultTestProcessOnlineCountService
+import app.simplecloud.simplecloud.api.impl.service.AbstractProcessOnlineCountService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
@@ -64,6 +64,7 @@ class CloudAPIBinderModule(
     private val cloudProcessServiceClass: Class<out InternalCloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
     private val cloudPlayerServiceClass: Class<out InternalCloudPlayerService>,
+    private val processOnlineCountService: Class<out ProcessOnlineCountService>,
 ) : AbstractModule() {
 
     override fun configure() {
@@ -89,6 +90,7 @@ class CloudAPIBinderModule(
                 .build(OfflineCloudPlayerFactory::class.java)
         )
 
+        bind(ProcessOnlineCountService::class.java).to(this.processOnlineCountService)
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudPlayerService::class.java).to(this.cloudPlayerServiceClass)
         bind(InternalCloudPlayerService::class.java).to(this.cloudPlayerServiceClass)
@@ -96,7 +98,7 @@ class CloudAPIBinderModule(
         bind(InternalCloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
         bind(InternalCloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
-        bind(ProcessOnlineCountService::class.java).to(DefaultTestProcessOnlineCountService::class.java)
+        bind(ProcessOnlineCountService::class.java).to(AbstractProcessOnlineCountService::class.java)
 
         bind(IgniteQueryHandler::class.java).to(IgniteQueryHandlerImpl::class.java)
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)

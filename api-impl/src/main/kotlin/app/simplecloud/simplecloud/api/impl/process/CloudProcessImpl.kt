@@ -79,6 +79,10 @@ class CloudProcessImpl @Inject constructor(
         return this.configuration.usedMemory
     }
 
+    override fun getOnlinePlayers(): Int {
+        return this.configuration.onlinePlayers
+    }
+
     override fun getMaxPlayers(): Int {
         return this.configuration.maxPlayers
     }

@@ -24,8 +24,6 @@ package app.simplecloud.simplecloud.ignite.bootstrap
 
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.security.CustomTcpDiscoverySpi
-import app.simplecloud.simplecloud.ignite.bootstrap.security.SecurityPluginConfiguration
-import app.simplecloud.simplecloud.ignite.bootstrap.security.SecurityPluginProvider
 import org.apache.ignite.Ignite
 import org.apache.ignite.Ignition
 import org.apache.ignite.configuration.IgniteConfiguration
@@ -78,8 +76,8 @@ class IgniteBuilder(
 
     fun start(): Ignite {
         val configuration = IgniteConfiguration()
-        val securityPluginConfiguration = SecurityPluginConfiguration(credentials)
-        configuration.setPluginProviders(SecurityPluginProvider(securityPluginConfiguration))
+        //val securityPluginConfiguration = SecurityPluginConfiguration(credentials)
+        //y.setPluginProviders(SecurityPluginProvider(securityPluginConfiguration))
         configuration.discoverySpi = CustomTcpDiscoverySpi()
             .setSecurityCredentials(credentials)
             .setLocalPort(selfHost.port)

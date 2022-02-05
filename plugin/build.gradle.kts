@@ -10,6 +10,8 @@ dependencies {
     compileOnly("org.spigotmc:spigot-api:1.17-R0.1-SNAPSHOT")
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+    implementation("net.kyori:adventure-api:4.9.3")
 }
 
 tasks.getByName<Test>("test") {
@@ -19,7 +21,7 @@ tasks.getByName<Test>("test") {
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
     dependencies {
         exclude { dependency ->
-            val dependenciesToCompile = listOf("kotlin", "ignite", "jackson", "javax", "eu.thesimplecloud")
+            val dependenciesToCompile = listOf("kotlin", "ignite", "jackson", "javax", "app.simplecloud", "net.kyori")
             dependenciesToCompile.all {
                 !dependency.name.contains(it)
             }

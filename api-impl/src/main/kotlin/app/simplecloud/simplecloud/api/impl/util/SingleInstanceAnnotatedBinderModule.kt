@@ -20,32 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.impl.service
+package app.simplecloud.simplecloud.api.impl.util
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
-import java.util.concurrent.CompletableFuture
+import com.google.inject.AbstractModule
 
-open class DefaultTestProcessOnlineCountService : ProcessOnlineCountService {
-    override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration> {
-        return completedFuture(ProcessOnlineCountConfiguration())
-    }
+class SingleInstanceAnnotatedBinderModule<T>(
+    private val clazz: Class<T>,
+    private val instance: T,
+    private val annotationClass: Class<out Annotation>,
+) : AbstractModule() {
 
-    class ProcessOnlineCountConfiguration: ProcessesOnlineCountConfiguration {
-        override fun calculateOnlineCount(group: CloudProcessGroup): Int {
-            return 1
-        }
-
-        override fun getName(): String {
-            return "one"
-        }
-
-        override fun getIdentifier(): String {
-            return "one"
-        }
-
+    override fun configure() {
+        bind(this.clazz).annotatedWith(annotationClass).toInstance(this.instance)
     }
 
 }

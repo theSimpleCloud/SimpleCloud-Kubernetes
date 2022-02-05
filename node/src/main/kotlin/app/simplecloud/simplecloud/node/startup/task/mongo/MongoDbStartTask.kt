@@ -28,6 +28,7 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClients
 import dev.morphia.Datastore
 import dev.morphia.Morphia
+import org.bson.UuidRepresentation
 import org.bson.codecs.configuration.CodecRegistries
 import org.bson.codecs.pojo.PojoCodecProvider
 import java.util.concurrent.CompletableFuture
@@ -60,6 +61,7 @@ class MongoDbStartTask(
         )
         val codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry)
         return MongoClientSettings.builder()
+            .uuidRepresentation(UuidRepresentation.STANDARD)
             .codecRegistry(codecRegistry)
             .applyToSocketSettings {
             it.readTimeout(5, TimeUnit.SECONDS)

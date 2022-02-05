@@ -84,12 +84,4 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
         }.nonNull()
     }
 
-    fun registerListener(listener: AbstractCacheEntryListener<I, T>) {
-        listener.register(this.igniteCache)
-    }
-
-    fun unregisterListener(listener: AbstractCacheEntryListener<I, T>) {
-        listener.unregister(this.igniteCache)
-    }
-
 }

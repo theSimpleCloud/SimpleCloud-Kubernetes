@@ -20,24 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.service
+package app.simplecloud.simplecloud.node.mongo.player
 
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import dev.morphia.Datastore
+import java.util.*
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 03.04.2021
- * Time: 22:22
- * @author Frederick Baier
- */
-interface ProcessOnlineCountService : Service {
-
-    fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration>
-
-    /**
-     * Starts and stops processes by comparing the current number of online processes to the desired one
-     */
-    fun checkProcessOnlineCount()
-
-}
+@Singleton
+class MongoCloudPlayerRepository @Inject constructor(
+    datastore: Datastore
+) : DefaultMongoRepository<UUID, CloudPlayerEntity>(datastore, CloudPlayerEntity::class.java)

@@ -24,34 +24,45 @@ package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
+import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
-import app.simplecloud.simplecloud.plugin.startup.service.CloudPlayerServiceImpl
-import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessGroupServiceImpl
-import app.simplecloud.simplecloud.plugin.startup.service.CloudProcessServiceImpl
-import app.simplecloud.simplecloud.plugin.startup.service.NodeServiceImpl
+import app.simplecloud.simplecloud.plugin.startup.service.*
+import com.google.inject.AbstractModule
 import com.google.inject.Guice
+import com.google.inject.Injector
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
 
-class CloudPlugin {
+class CloudPlugin(
+    private val guiceModule: AbstractModule
+) {
 
-    fun onEnable() {
+    val injector: Injector
+
+    init {
         val ignite = startIgnite()
-        val injector = Guice.createInjector(
+        val intermediateInjector = Guice.createInjector(
             CloudAPIBinderModule(
                 ignite,
                 NodeServiceImpl::class.java,
                 CloudProcessServiceImpl::class.java,
                 CloudProcessGroupServiceImpl::class.java,
-                CloudPlayerServiceImpl::class.java
+                CloudPlayerServiceImpl::class.java,
+                ProcessOnlineCountServiceImpl::class.java
             )
         )
-        injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()
+        val selfProcess = intermediateInjector.getInstance(SelfProcessGetter::class.java).getSelfProcess()
+        this.injector = intermediateInjector.createChildInjector(
+            SingleInstanceBinderModule(CloudProcess::class.java, selfProcess),
+            this.guiceModule
+        )
+        this.injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()
     }
 
     private fun startIgnite(): Ignite {
-       val clusterKey = getClusterKey()
+        val clusterKey = getClusterKey()
         val nodeAddress = Address.fromIpString("ignite:1670")
         val selfAddress = Address.fromIpString("127.0.0.1:1670")
         val igniteBuilder = IgniteBuilder(

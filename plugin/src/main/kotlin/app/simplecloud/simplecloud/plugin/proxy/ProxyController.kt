@@ -20,24 +20,25 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.service
+package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 03.04.2021
- * Time: 22:22
- * @author Frederick Baier
- */
-interface ProcessOnlineCountService : Service {
+interface ProxyController {
 
-    fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration>
+    fun handleLogin(request: PlayerConnectionConfiguration)
 
-    /**
-     * Starts and stops processes by comparing the current number of online processes to the desired one
-     */
-    fun checkProcessOnlineCount()
+    fun handlePostLogin(request: PlayerConnectionConfiguration)
+
+    fun handleDisconnect(request: PlayerConnectionConfiguration)
+
+    fun handleServerPreConnect(request: ServerPreConnectRequest)
+
+    fun handleServerConnected(request: ServerConnectedRequest)
+
+    fun handleServerKick(request: ServerKickRequest)
 
 }

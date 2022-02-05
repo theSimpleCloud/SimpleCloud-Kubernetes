@@ -55,6 +55,10 @@ open class OfflineCloudPlayerImpl @Inject constructor(
         return this
     }
 
+    override fun toConfiguration(): OfflineCloudPlayerConfiguration {
+        return this.configuration
+    }
+
     override fun createUpdateRequest(): OfflineCloudPlayerUpdateRequest {
         return OfflineCloudPlayerUpdateRequestImpl(this, this.cloudPlayerService)
     }

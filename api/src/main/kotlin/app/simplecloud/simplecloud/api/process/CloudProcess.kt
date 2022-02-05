@@ -78,6 +78,11 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     fun getUsedMemory(): Int
 
     /**
+     * Returns the amount of players currently connected to this process
+     */
+    fun getOnlinePlayers(): Int
+
+    /**
      * Returns the maximum amount of players that can be simultaneously connected the process
      */
     fun getMaxPlayers(): Int

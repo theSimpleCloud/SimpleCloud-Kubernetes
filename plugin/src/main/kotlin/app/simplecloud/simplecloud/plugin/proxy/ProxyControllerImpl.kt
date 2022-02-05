@@ -22,23 +22,46 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.player.PlayerConnection
+import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
+import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.service.CloudPlayerService
+import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.plugin.OnlineCountProvider
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.login.PlayerLoginRequestHandler
+import app.simplecloud.simplecloud.plugin.proxy.request.login.PlayerPostLoginRequestHandler
+import com.google.inject.Inject
+import com.google.inject.Singleton
 
-class ProxyControllerImpl : IProxyController {
+@Singleton
+class ProxyControllerImpl @Inject constructor(
+    private val messageChannelManager: MessageChannelManager,
+    private val nodeService: NodeService,
+    private val playerService: CloudPlayerService,
+    private val playerFactory: CloudPlayerFactory,
+    private val selfProcess: CloudProcess,
+    private val onlineCountProvider: OnlineCountProvider
+) : ProxyController {
 
-    override fun handleLogin(request: PlayerConnection) {
-        PlayerLoginRequestHandler(request).handle()
+    override fun handleLogin(request: PlayerConnectionConfiguration) {
+        PlayerLoginRequestHandler(
+            request,
+            this.messageChannelManager,
+            this.nodeService,
+            this.playerFactory,
+            this.playerService
+        ).handle()
     }
 
-    override fun handlePostLogin(request: PlayerConnection) {
-        TODO("Not yet implemented")
+    override fun handlePostLogin(request: PlayerConnectionConfiguration) {
+        PlayerPostLoginRequestHandler(request, this.selfProcess, this.onlineCountProvider).handle()
     }
 
-    override fun handleDisconnect(request: PlayerConnection) {
+    override fun handleDisconnect(request: PlayerConnectionConfiguration) {
         TODO("Not yet implemented")
     }
 

@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture
  *
  */
 class CloudPlayerServiceImpl @Inject constructor(
-    private val igniteRepository: IgniteCloudPlayerRepository,
+    igniteRepository: IgniteCloudPlayerRepository,
     playerFactory: CloudPlayerFactory
 ) : AbstractCloudPlayerService(igniteRepository, playerFactory) {
 

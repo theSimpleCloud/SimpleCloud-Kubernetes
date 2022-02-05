@@ -15,4 +15,14 @@ class PlayerConnectionConfiguration(
     val name: String,
     val address: Address,
     val onlineMode: Boolean,
-)
+) {
+
+    constructor() : this(
+        UUID.randomUUID(),
+        -1,
+        "",
+        Address("", -1),
+        false
+    )
+
+}

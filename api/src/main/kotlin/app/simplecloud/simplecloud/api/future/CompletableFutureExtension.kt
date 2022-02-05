@@ -24,7 +24,10 @@ package app.simplecloud.simplecloud.api.future
 
 import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.utils.future.FutureOriginException
+import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
+import java.util.concurrent.CompletionException
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -141,4 +144,17 @@ fun CompletableFuture<*>.toUnitFuture(): CompletableFuture<Unit> {
         }
     }
     return resultFuture
+}
+
+fun unpackFutureException(ex: Throwable): Throwable {
+    if (ex is CompletionException) {
+        return unpackFutureException(ex.cause!!)
+    }
+    if (ex is InvocationTargetException) {
+        return unpackFutureException(ex.cause!!)
+    }
+    if (ex is FutureOriginException) {
+        return unpackFutureException(ex.cause!!)
+    }
+    return ex
 }

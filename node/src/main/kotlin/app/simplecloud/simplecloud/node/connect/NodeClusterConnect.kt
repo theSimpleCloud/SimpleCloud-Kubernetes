@@ -27,18 +27,15 @@ import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
+import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
-import app.simplecloud.simplecloud.node.service.CloudPlayerServiceImpl
-import app.simplecloud.simplecloud.node.service.CloudProcessGroupServiceImpl
-import app.simplecloud.simplecloud.node.service.CloudProcessServiceImpl
-import app.simplecloud.simplecloud.node.service.NodeServiceImpl
+import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
-import app.simplecloud.simplecloud.node.task.NodeCheckOnlineProcessesTask
-import app.simplecloud.simplecloud.node.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import app.simplecloud.simplecloud.restserver.RestServer
 import com.ea.async.Async.await
 import com.google.inject.Injector
@@ -87,8 +84,8 @@ class NodeClusterConnect @Inject constructor(
 
     private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
         logger.info("Checking for online tasks")
-        val nodeCheckOnlineProcessesTask = injector.getInstance(NodeCheckOnlineProcessesTask::class.java)
-        return nodeCheckOnlineProcessesTask.run()
+        val nodeOnlineProcessesChecker = injector.getInstance(NodeOnlineProcessesChecker::class.java)
+        return nodeOnlineProcessesChecker.run()
     }
 
     private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
@@ -109,7 +106,8 @@ class NodeClusterConnect @Inject constructor(
             NodeServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java,
-            CloudPlayerServiceImpl::class.java
+            CloudPlayerServiceImpl::class.java,
+            ProcessOnlineCountServiceImpl::class.java
         )
         return injector.createChildInjector(
             NodeBinderModule(),

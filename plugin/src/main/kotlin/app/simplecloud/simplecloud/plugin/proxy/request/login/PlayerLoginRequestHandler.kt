@@ -22,15 +22,54 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.request.login
 
+import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.player.PlayerConnection
+import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
+import app.simplecloud.simplecloud.api.service.CloudPlayerService
+import app.simplecloud.simplecloud.api.service.NodeService
 
 class PlayerLoginRequestHandler(
-    private val request: PlayerConnection,
+    private val request: PlayerConnectionConfiguration,
+    private val messageChannelManager: MessageChannelManager,
+    private val nodeService: NodeService,
+    private val playerFactory: CloudPlayerFactory,
+    private val playerService: CloudPlayerService
 ) {
+
+    private val messageChannel = this.messageChannelManager
+        .getOrCreateMessageChannel<PlayerConnectionConfiguration, CloudPlayerConfiguration>("internal_player_login")
+
     fun handle(): CloudPlayer {
-        TODO()
+        checkPlayerAlreadyConnected()
+        return createNewPlayer()
     }
+
+    private fun checkPlayerAlreadyConnected() {
+        if (doesPlayerAlreadyExist()) {
+            throw PlayerAlreadyRegisteredException(this.request)
+        }
+    }
+
+    private fun doesPlayerAlreadyExist(): Boolean {
+        return runCatching { this.playerService.findPlayerByUniqueId(this.request.uniqueId).join() }.isSuccess
+    }
+
+    private fun createNewPlayer(): CloudPlayer {
+        val randomNode = selectRandomNode()
+        val playerConfiguration = this.messageChannel.createMessageRequest(request, randomNode).submit().join()
+        return this.playerFactory.create(playerConfiguration)
+    }
+
+    private fun selectRandomNode(): Node {
+        return this.nodeService.findFirst().join()
+    }
+
+    class PlayerAlreadyRegisteredException(
+        configuration: PlayerConnectionConfiguration
+    ) : Exception("Player ${configuration.name} (${configuration.uniqueId}) is already registered")
 
 
 }

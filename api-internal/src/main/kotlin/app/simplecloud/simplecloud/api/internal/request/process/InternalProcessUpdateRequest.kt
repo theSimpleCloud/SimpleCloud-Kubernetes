@@ -25,6 +25,11 @@ interface InternalProcessUpdateRequest : ProcessUpdateRequest {
      */
     fun setState(processState: ProcessState): InternalProcessUpdateRequest
 
+    /**
+     * Sets the amount of online players for the process
+     */
+    fun setOnlinePlayers(onlinePlayers: Int): InternalProcessUpdateRequest
+
     override fun setMaxPlayers(maxPlayers: Int): InternalProcessUpdateRequest
 
     override fun setVisible(visible: Boolean): InternalProcessUpdateRequest

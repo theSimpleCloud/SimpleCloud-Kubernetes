@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
@@ -48,12 +47,18 @@ import java.util.concurrent.CompletableFuture
 class ProcessGroupUpdateHandler @Inject constructor(
     private val validatorService: ValidatorService,
     private val groupService: CloudProcessGroupService,
-    private val onlineCountService: ProcessOnlineCountService
+    private val onlineCountService: ProcessOnlineCountService,
 ) {
 
     fun update(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
         val group = await(this.groupService.findByName(configuration.name))
-        return updateGroup(group, configuration)
+        val future =  updateGroup(group, configuration)
+        future.thenAccept { checkProcessOnlineCount() }
+        return future
+    }
+
+    private fun checkProcessOnlineCount() {
+        this.onlineCountService.checkProcessOnlineCount()
     }
 
     private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {

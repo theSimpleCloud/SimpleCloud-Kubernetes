@@ -24,12 +24,12 @@ package app.simplecloud.simplecloud.node.startup.task
 
 import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import app.simplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import app.simplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
 import app.simplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
-import app.simplecloud.simplecloud.node.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.restserver.repository.MongoUserRepository
 import com.ea.async.Async.await
 import com.google.inject.Guice

@@ -5,7 +5,7 @@ plugins {
 }
 
 allprojects {
-    group = "eu.thesimplecloud"
+    group = "app.simplecloud"
     version = "3.0.0-SNAPSHOT"
 
     apply {
