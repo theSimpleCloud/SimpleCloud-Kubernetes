@@ -20,28 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.service
-
-import app.simplecloud.simplecloud.restserver.user.User
-import io.ktor.application.*
-import java.util.concurrent.CompletableFuture
+package app.simplecloud.simplecloud.restserver.base.impl
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 14:50
+ * Date: 27.06.2021
+ * Time: 18:25
  * @author Frederick Baier
  */
-interface AuthService {
-
-    /**
-     * Returns the jwt token for the specified credentials
-     */
-    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
-
-    /**
-     * Returns the user from the specified [call]
-     */
-    fun getUserFromCall(call: ApplicationCall): CompletableFuture<User>
-
-}
+class SuccessResponseDto(val result: Any)

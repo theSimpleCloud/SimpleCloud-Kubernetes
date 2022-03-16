@@ -20,19 +20,30 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.service
+package app.simplecloud.simplecloud.restserver.base.exclude.introspector
+
+import com.fasterxml.jackson.databind.introspect.Annotated
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 14:50
+ * Date: 25.06.2021
+ * Time: 12:22
  * @author Frederick Baier
  */
-data class UsernameAndPasswordCredentials(
-    val username: String,
-    val password: String
-) {
+class AnnotationExcludeIntrospector(
+    vararg excludeAnnotations: Class<out Annotation>
+): JacksonAnnotationIntrospector() {
 
-    private constructor(): this("", "")
+    private val excludeAnnotations = excludeAnnotations.toList()
+
+    override fun _isIgnorable(a: Annotated): Boolean {
+        return hasAnnyCustomAnnotation(a) || super._isIgnorable(a)
+    }
+
+    private fun hasAnnyCustomAnnotation(a: Annotated): Boolean {
+        return excludeAnnotations.any { a.hasAnnotation(it) }
+    }
+
 
 }

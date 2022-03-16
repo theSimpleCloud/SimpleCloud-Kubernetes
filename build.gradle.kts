@@ -1,7 +1,7 @@
 plugins {
     java
     id ("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("jvm") version "1.5.31"
+    kotlin("jvm") version "1.6.10"
 }
 
 allprojects {
@@ -17,7 +17,7 @@ allprojects {
     repositories {
         mavenCentral()
         maven {
-            setUrl("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
+            url = uri("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
         }
         maven {
             setUrl("https://repo.vshnv.tech/")

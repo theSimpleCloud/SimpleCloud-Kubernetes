@@ -20,42 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.jwt
+package app.simplecloud.simplecloud.restserver.base.exception
 
-import com.auth0.jwt.JWT
-import com.auth0.jwt.JWTVerifier
-import com.auth0.jwt.algorithms.Algorithm
-import java.util.*
+import io.ktor.http.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 22.06.2021
- * Time: 19:12
+ * Date: 24.06.2021
+ * Time: 10:50
  * @author Frederick Baier
  */
-object JwtConfig {
-
-    private const val secret = "zAP5MBA4B4Ijz0MZaS42"
-    private const val validityInMs = 36_000_00 * 10 // 10 hours
-    private val algorithm = Algorithm.HMAC512(secret)
-
-    val verifier: JWTVerifier = JWT
-        .require(algorithm)
-        //.withIssuer(issuer)
-        .build()
-
-    /**
-     * Produce a token for this combination of User and Account
-     */
-    fun makeToken(username: String): String = JWT.create()
-        .withSubject("Authentication")
-        //.withIssuer(issuer)
-        .withClaim("username", username)
-        .sign(algorithm)
-
-    /**
-     * Calculate the expiration Date based on current time + the given validity
-     */
-    private fun getExpiration() = Date(System.currentTimeMillis() + validityInMs)
-
-}
+class InvalidParameterException(parameterClass: String) : HttpException(HttpStatusCode.InternalServerError, "Invalid parameter: ${parameterClass}")
