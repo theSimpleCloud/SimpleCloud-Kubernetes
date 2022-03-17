@@ -23,6 +23,9 @@
 package app.simplecloud.simplecloud.restserver.controller.load
 
 import app.simplecloud.simplecloud.restserver.annotation.*
+import app.simplecloud.simplecloud.restserver.base.RestServerAPI
+import app.simplecloud.simplecloud.restserver.base.route.Route
+import app.simplecloud.simplecloud.restserver.base.vmethod.VirtualMethod
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import app.simplecloud.simplecloud.restserver.controller.MethodRoute
 import app.simplecloud.simplecloud.restserver.controller.VirtualMethod
@@ -43,19 +46,22 @@ class ControllerLoader(
     private val controllerClass = this.controller::class.java
     private val controllerAnnotation = controllerClass.getAnnotation(RestController::class.java)
 
-    fun generateRoutes(): List<MethodRoute> {
+    fun generateRoutes(): List<Route> {
         checkForControllerAnnotation()
         return generateRoutes0()
     }
 
-    private fun generateRoutes0(): List<MethodRoute> {
+    private fun generateRoutes0(): List<Route> {
         val methods = getMethodsToGenerateRoutesFor()
         return methods.map { createMethodRoute(it) }
     }
 
-    private fun createMethodRoute(method: Method): MethodRoute {
+    private fun createMethodRoute(method: Method): Route {
         val requestMappingAnnotation = method.getAnnotation(RequestMapping::class.java)
         val parameters = method.parameters.map { createParameter(it) }
+        RestServerAPI.RouteMethodBuilderImpl()
+            .setVirtualMethod(VirtualMethod.fromRealMethod(method, controller))
+            .addParameter()
         return MethodRoute(
             requestMappingAnnotation.requestType,
             generatePath(requestMappingAnnotation),

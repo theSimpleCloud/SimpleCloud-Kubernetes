@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.restserver.base.exception
 
-import io.ktor.http.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,4 +29,4 @@ import io.ktor.http.*
  * Time: 10:50
  * @author Frederick Baier
  */
-class MissingPermissionException : HttpException(HttpStatusCode.Forbidden, "Missing Permission")
+class MissingPermissionException : HttpException(403, "Missing Permission")

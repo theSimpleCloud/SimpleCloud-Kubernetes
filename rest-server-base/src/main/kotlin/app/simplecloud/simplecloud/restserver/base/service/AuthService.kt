@@ -22,9 +22,9 @@
 
 package app.simplecloud.simplecloud.restserver.base.service
 
+import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.restserver.base.user.EmptyRequestEntity
 import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
-import io.ktor.application.*
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,8 +41,8 @@ interface AuthService {
     fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
 
     /**
-     * Returns the user from the specified [call] or [EmptyRequestEntity]
+     * Returns the user from the specified [context] or [EmptyRequestEntity]
      */
-    fun getRequestEntityFromCall(call: ApplicationCall): CompletableFuture<RequestEntity>
+    fun getRequestEntityFromContext(context: Context): CompletableFuture<RequestEntity>
 
 }

@@ -13,7 +13,7 @@ class RequestImpl(
     private val requestType: RequestType,
     private val requestPath: String,
     private val requestBody: String,
-    private val entity: RequestEntity,
+    private val entity: RequestEntity?,
     private val pathParameters: Map<String, String>
 ) : Request {
     override fun getRequestType(): RequestType {
@@ -24,7 +24,7 @@ class RequestImpl(
         return this.requestPath
     }
 
-    override fun getRequestingEntity(): RequestEntity {
+    override fun getRequestingEntity(): RequestEntity? {
         return this.entity
     }
 

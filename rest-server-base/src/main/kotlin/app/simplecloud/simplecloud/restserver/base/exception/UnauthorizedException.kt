@@ -20,44 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.controller
-
-import app.simplecloud.simplecloud.restserver.annotation.RequestType
-import java.lang.reflect.InvocationTargetException
+package app.simplecloud.simplecloud.restserver.base.exception
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 23.06.2021
- * Time: 09:42
+ * Date: 24.06.2021
+ * Time: 10:50
  * @author Frederick Baier
  */
-data class MethodRoute(
-    val requestType: RequestType,
-    val path: String,
-    val permission: String,
-    val parameters: List<MethodRouteParameter>,
-    private val virtualMethod: VirtualMethod,
-    private val controller: Controller
-) {
-
-    fun invokeMethodWithArgs(args: List<Any?>): Any? {
-        try {
-            return virtualMethod.invoke(controller, *args.toTypedArray())
-        } catch (ex: Exception) {
-            rethrowWithoutInvocationTargetException(ex)
-        }
-    }
-
-    private fun rethrowWithoutInvocationTargetException(ex: Exception): Nothing {
-        if (ex is InvocationTargetException) {
-            throw ex.cause ?: ex
-        }
-        throw ex
-    }
-
-    class MethodRouteParameter(
-        val parameterType: Class<*>,
-        val annotation: Annotation?
-    )
-
-}
+class UnauthorizedException : HttpException(401, "Not Authenticated")

@@ -9,7 +9,9 @@ dependencies {
     api("org.json:json:20210307")
 
     implementation("com.auth0:java-jwt:3.19.0")
-    implementation("app.simplecloud:simple-rest-server:1.0.1")
+    implementation("app.simplecloud:simple-rest-server:1.0.3")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
 
 }
 

@@ -1,11 +1,11 @@
 package app.simplecloud.simplecloud.restserver.base.impl
 
+import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.restserver.base.exception.HttpException
+import app.simplecloud.simplecloud.restserver.base.exception.MissingPermissionException
+import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.base.request.Request
 import app.simplecloud.simplecloud.restserver.base.route.Route
-import io.ktor.application.*
-import io.ktor.http.*
-import io.ktor.response.*
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletionException
 
@@ -16,12 +16,13 @@ import java.util.concurrent.CompletionException
  *
  */
 class ResponseHandler(
-    private val call: ApplicationCall,
+    private val context: Context,
     private val route: Route,
     private val request: Request
 ) {
-    suspend fun handle() {
+    fun handle() {
         try {
+            checkPermission()
             val response = this.route.handleRequest(this.request)
             handleResponse(response)
         } catch (ex: Exception) {
@@ -30,17 +31,23 @@ class ResponseHandler(
         }
     }
 
-    private suspend fun handleResponse(response: Any?) {
+    private fun checkPermission() {
+        if (!route.hasPermission()) return
+        val requestingEntity = this.request.getRequestingEntity() ?: throw UnauthorizedException()
+        if (!requestingEntity.hasPermission(route.getPermission())) throw MissingPermissionException()
+    }
+
+    private fun handleResponse(response: Any?) {
         if (response == null) {
-            writeStatusCode(HttpStatusCode.InternalServerError)
+            this.context.setResponseCode(500)
             writeResponseObject(ErrorResponseDto.fromException(NullPointerException("Null response")))
             return
         }
-        writeStatusCode(HttpStatusCode.OK)
+        this.context.setResponseCode(200)
         writeResponseObject(response)
     }
 
-    private suspend fun handleException(ex: Exception) {
+    private fun handleException(ex: Exception) {
         ex.printStackTrace()
         val exception = unpackException(ex)
         setErrorStatusCode(exception)
@@ -62,22 +69,18 @@ class ResponseHandler(
 
     private fun setErrorStatusCode(exception: Throwable) {
         if (exception is HttpException) {
-            writeStatusCode(exception.statusCode)
+            this.context.setResponseCode(exception.statusCode)
             return
         }
-        writeStatusCode(HttpStatusCode.BadRequest)
+        this.context.setResponseCode(400)
     }
 
-    private fun writeStatusCode(statusCode: HttpStatusCode) {
-        call.response.status(statusCode)
-    }
-
-    private suspend fun writeResponseObject(any: Any) {
+    private fun writeResponseObject(any: Any) {
         val successResponse = SuccessResponseDto(any)
-        call.respondText(RestServerBase.mapperExcludeOutgoing.writeValueAsString(successResponse))
+        this.context.setResponseBody(RestServerBase.mapperExcludeOutgoing.writeValueAsString(successResponse))
     }
 
-    private suspend fun writeErrorResponse(errorResponseDto: ErrorResponseDto) {
-        call.respondText(RestServerBase.mapperExcludeOutgoing.writeValueAsString(errorResponseDto))
+    private fun writeErrorResponse(errorResponseDto: ErrorResponseDto) {
+        this.context.setResponseBody(RestServerBase.mapperExcludeOutgoing.writeValueAsString(errorResponseDto))
     }
 }

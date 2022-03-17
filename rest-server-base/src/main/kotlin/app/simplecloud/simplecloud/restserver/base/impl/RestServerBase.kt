@@ -22,15 +22,25 @@
 
 package app.simplecloud.simplecloud.restserver.base.impl
 
+import app.simplecloud.rest.Context
+import app.simplecloud.rest.Handler
+import app.simplecloud.rest.RequestMethod
+import app.simplecloud.rest.RestServerFactory
 import app.simplecloud.simplecloud.restserver.base.RestServer
+import app.simplecloud.simplecloud.restserver.base.auth.JwtTokenHandler
+import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeAll
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeIncoming
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeOutgoing
 import app.simplecloud.simplecloud.restserver.base.exclude.introspector.AnnotationExcludeIntrospector
 import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
+import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
+import kotlinx.coroutines.*
+import kotlinx.coroutines.future.await
+import net.bytebuddy.implementation.bind.annotation.Super
 
 
 /**
@@ -43,66 +53,48 @@ class RestServerBase(
     @Volatile
     private var authService: AuthService,
     private val port: Int
-): RestServer {
+) : RestServer {
 
+    private val server = RestServerFactory.createServer(port)
+    private val coroutineScope: CoroutineScope
 
-    private val server = RestServerFa
+    init {
+        val threadContext = newSingleThreadContext("Rest-Server")
+        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
+        //the [SupervisorJob] is necessary to handle exceptions. Without it the coroutine would crash with the first error
+        this.coroutineScope = CoroutineScope(threadContext + exceptionHandler + SupervisorJob())
+    }
 
     override fun setAuthService(authService: AuthService) {
         this.authService = authService
     }
 
     override fun registerRoute(route: Route) {
-        if (route.hasPermission()) {
-            createRequestWithAuth(route)
-            return
-        }
-        createRequestWithoutAuth(route)
+        this.server.registerRoute(
+            RequestMethod.valueOf(route.getRequestType().name),
+            route.getPath(),
+            object : Handler {
+                override fun handle(context: Context) {
+                    coroutineScope.launch {
+                        handleIncomingRequest(route, context)
+                    }
+                }
+            }
+        )
     }
 
     override fun unregisterRoute(route: Route) {
         TODO("Not yet implemented")
     }
 
-    private fun createRequestWithAuth(route: Route) {
-        this.server.application.routing {
-            route(route.getPath(), HttpMethod(route.getRequestType().name)) {
-                authenticate {
-                    handle {
-                        handleIncomingRequest(route, call)
-                    }
-                }
-            }
-        }
-    }
-
-    private fun createRequestWithoutAuth(route: Route) {
-        this.server.application.routing {
-            route(route.getPath(), HttpMethod(route.getRequestType().name)) {
-                handle {
-                    println("receive")
-                    handleIncomingRequest(route, call)
-                }
-            }
-        }
-    }
-
-    private suspend fun handleIncomingRequest(route: Route, call: ApplicationCall) {
-        try {
-            val requestBody = call.receiveText()
-            val request = RequestCreator(route, call, requestBody, this.authService).createRequest()
-            ResponseHandler(call, route, request).handle()
-        } catch (ex: RequestAlreadyConsumedException) {
-            //ignored because the request cannot be already consumed here
-        }
+    private suspend fun handleIncomingRequest(route: Route, context: Context) {
+        val requestBody = context.getRequestBody()
+        val request = RequestCreator(route, context, requestBody, this.authService).createRequest()
+        ResponseHandler(context, route, request).handle()
     }
 
     fun shutdown() {
-        val environment = this.server.application.environment
-        if (environment is ApplicationEngineEnvironment) {
-            environment.stop()
-            this.server.stop(3000, 5000)
-        }
+        this.server.stop()
     }
 
     companion object {

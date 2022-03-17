@@ -17,7 +17,7 @@ interface Request {
 
     fun getRequestPath(): String
 
-    fun getRequestingEntity(): RequestEntity
+    fun getRequestingEntity(): RequestEntity?
 
     fun getRequestBody(): String
 

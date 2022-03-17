@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.restserver.base.exception
 
-import io.ktor.http.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,4 +29,4 @@ import io.ktor.http.*
  * Time: 15:33
  * @author Frederick Baier
  */
-open class HttpException(val statusCode: HttpStatusCode, message: String) : Exception(message)
+open class HttpException(val statusCode: Int, message: String) : Exception(message)

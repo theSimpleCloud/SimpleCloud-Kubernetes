@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.restserver
 
 import app.simplecloud.simplecloud.restserver.repository.MongoUserRepository
 import app.simplecloud.simplecloud.restserver.repository.UserRepository
-import app.simplecloud.simplecloud.restserver.service.AuthService
 import app.simplecloud.simplecloud.restserver.service.AuthServiceImpl
 import app.simplecloud.simplecloud.restserver.service.UserService
 import app.simplecloud.simplecloud.restserver.service.UserServiceImpl
@@ -42,7 +41,6 @@ class RestBinderModule : AbstractModule() {
     override fun configure() {
         bind(UserRepository::class.java).to(MongoUserRepository::class.java)
         bind(UserService::class.java).to(UserServiceImpl::class.java)
-        bind(AuthService::class.java).to(AuthServiceImpl::class.java)
     }
 
 

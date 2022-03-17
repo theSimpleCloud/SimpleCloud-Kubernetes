@@ -1,10 +1,10 @@
 package app.simplecloud.simplecloud.restserver.base.impl
 
+import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.restserver.base.request.Request
 import app.simplecloud.simplecloud.restserver.base.request.RequestImpl
 import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
-import io.ktor.application.*
 import kotlinx.coroutines.future.await
 
 /**
@@ -15,17 +15,14 @@ import kotlinx.coroutines.future.await
  */
 class RequestCreator(
     private val route: Route,
-    private val call: ApplicationCall,
+    private val context: Context,
     private val requestBody: String,
     private val authService: AuthService
 ) {
 
     suspend fun createRequest(): Request {
-        val entity = this.authService.getRequestEntityFromCall(call).await()
-        val pathParameters = call.parameters.entries()
-            .map { it.key to it.value.firstOrNull() }
-            .filter { it.second != null }
-            .toMap() as Map<String, String>
+        val entity = runCatching { this.authService.getRequestEntityFromContext(this.context).await() }.getOrNull()
+        val pathParameters = this.context.getRequestPathParameters()
         return RequestImpl(
             this.route.getRequestType(),
             this.route.getPath(),

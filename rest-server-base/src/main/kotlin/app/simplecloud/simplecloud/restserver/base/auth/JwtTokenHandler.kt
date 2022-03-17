@@ -1,7 +1,7 @@
 package app.simplecloud.simplecloud.restserver.base.auth
 
-import app.simplecloud.rest.base.Context
-import app.simplecloud.rest.base.exception.UnauthorizedException
+import app.simplecloud.rest.Context
+import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
@@ -32,7 +32,7 @@ class JwtTokenHandler(
         }
     }
 
-    fun verify0(context: Context): String {
+    private fun verify0(context: Context): String {
         if (!context.hasRequestHeader("Authorization")) throw UnauthorizedException()
         val authHeader = context.getRequestHeader("Authorization")
         if (!authHeader.startsWith("Bearer ")) throw UnauthorizedException()
@@ -44,7 +44,7 @@ class JwtTokenHandler(
     /**
      * Produce a token for this combination of User and Account
      */
-    override fun makeToken(claim: String): String = JWT.create()
+    fun makeToken(claim: String): String = JWT.create()
         .withSubject("Authentication")
         //.withIssuer(issuer)
         .withClaim("claim", claim)

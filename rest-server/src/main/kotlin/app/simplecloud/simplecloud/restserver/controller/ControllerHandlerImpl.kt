@@ -23,6 +23,7 @@
 package app.simplecloud.simplecloud.restserver.controller
 
 import app.simplecloud.simplecloud.restserver.RestServer
+import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.controller.load.ControllerLoader
 import com.google.inject.Injector
 
@@ -40,7 +41,7 @@ class ControllerHandlerImpl constructor(
 
     override fun registerController(controllerClass: Class<out Controller>) {
         val routes = ControllerLoader(injector.getInstance(controllerClass)).generateRoutes()
-        routes.forEach { this.restServer.registerMethodRoute(it) }
+        routes.forEach { this.restServer.registerRoute(it) }
     }
 
     override fun unregisterController(controllerClass: Class<out Controller>) {

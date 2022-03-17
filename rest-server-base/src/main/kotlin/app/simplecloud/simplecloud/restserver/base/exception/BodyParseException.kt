@@ -1,6 +1,5 @@
 package app.simplecloud.simplecloud.restserver.base.exception
 
-import io.ktor.http.*
 
 /**
  * Date: 14.03.22
@@ -10,5 +9,4 @@ import io.ktor.http.*
  */
 class BodyParseException(
     className: String
-) : HttpException(HttpStatusCode.BadRequest, "Failed to parse body to class '${className}'") {
-}
+) : HttpException(404, "Failed to parse body to class '${className}'")
