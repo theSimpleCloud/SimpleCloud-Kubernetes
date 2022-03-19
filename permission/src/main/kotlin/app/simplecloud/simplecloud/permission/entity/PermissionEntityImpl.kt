@@ -1,7 +1,7 @@
 /*
  * MIT License
  *
- * Copyright (C) 2021 The SimpleCloud authors
+ * Copyright (C) 2020 The SimpleCloud authors
  *
  * Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated
  * documentation files (the "Software"), to deal in the Software without restriction, including without limitation
@@ -20,29 +20,28 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.startup.task
+package app.simplecloud.simplecloud.permission.entity
 
-import app.simplecloud.simplecloud.restserver.RestServer
-import app.simplecloud.simplecloud.restserver.setup.SetupRestServerBinderModule
-import com.google.inject.Guice
-import com.google.inject.Injector
+import app.simplecloud.simplecloud.permission.Permission
+import java.util.concurrent.CopyOnWriteArrayList
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 11:22
- * @author Frederick Baier
- */
-class SetupRestServerStartTask {
 
-    fun run(): RestServer {
-        val injector = initGuice()
-        return injector.getInstance(RestServer::class.java)
+open class PermissionEntityImpl : PermissionEntity {
+
+    private val permissions = CopyOnWriteArrayList<Permission>()
+
+    override fun getPermissions(): Collection<Permission> = this.permissions
+
+    override fun addPermission(permission: Permission) {
+        removePermission(permission.permissionString)
+        this.permissions.add(permission)
     }
 
-    private fun initGuice(): Injector {
-        return Guice.createInjector(SetupRestServerBinderModule())
+    override fun removePermission(permissionString: String) {
+        this.permissions.remove(getPermissionByName(permissionString))
     }
 
-
+    override fun clearAllPermission() {
+        this.permissions.clear()
+    }
 }
