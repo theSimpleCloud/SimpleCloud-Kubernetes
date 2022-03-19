@@ -20,37 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.service
+package app.simplecloud.simplecloud.node.startup.setup.body
 
-import app.simplecloud.simplecloud.restserver.user.User
-import java.util.concurrent.CompletableFuture
+import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 27.06.2021
- * Time: 12:40
+ * Date: 05/08/2021
+ * Time: 12:00
  * @author Frederick Baier
  */
-interface UserService {
+class FirstUserSetupResponseBody(
+    val uniqueId: UUID,
+    val playerName: String,
+    val password: String
+) {
 
-    /**
-     * Returns the user found by the specified [name]
-     */
-    fun getUserByName(name: String): CompletableFuture<User>
-
-    /**
-     * Returns all users
-     */
-    fun getAllUsers(): CompletableFuture<List<User>>
-
-    /**
-     * Creates a user
-     */
-    fun createUser(user: User)
-
-    /**
-     * Returns whether the user exists
-     */
-    fun doesUserExist(username: String): Boolean
+    private constructor() : this(UUID.randomUUID(), "", "")
 
 }

@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.restserver.setup.type
 
-import app.simplecloud.simplecloud.restserver.setup.body.FirstUserSetupResponseBody
 import kotlin.reflect.KClass
 
 /**
@@ -35,10 +34,4 @@ open class Setup<T : Any>(
     val setupName: String,
     val additionalContent: Any,
     val responseClass: KClass<T>
-) {
-
-    companion object {
-        val FIRST_USER = Setup("firstuser", emptyArray<String>(), FirstUserSetupResponseBody::class)
-        val END = Setup("end", "", String::class)
-    }
-}
+)

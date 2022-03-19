@@ -32,11 +32,13 @@ import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
+import app.simplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
+import app.simplecloud.simplecloud.node.mongo.MongoSingleObjectRepository
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
-import app.simplecloud.simplecloud.restserver.RestServer
+import app.simplecloud.simplecloud.restserver.base.RestServer
 import com.ea.async.Async.await
 import com.google.inject.Injector
 import dev.morphia.Datastore
@@ -97,7 +99,7 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun startRestServer(injector: Injector): CompletableFuture<RestServer> {
-        return RestServerStartTask(injector).run()
+        return injector.getInstance(RestServerStartTask::class.java).run()
     }
 
     private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
@@ -128,7 +130,12 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun loadClusterKey(): CompletableFuture<ClusterKey> {
-        val clusterKeyEntity = await(NodeClusterKeyLoader(this.datastore).loadClusterKey())
+        val clusterKeyRepo = MongoSingleObjectRepository(
+            this.datastore,
+            ClusterKeyEntity::class.java,
+            ClusterKeyEntity.KEY
+        )
+        val clusterKeyEntity = await(clusterKeyRepo.loadObject())
         return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
     }
 

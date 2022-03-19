@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.api.player.configuration
 
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import java.util.*
 
 /**
@@ -16,6 +17,7 @@ class CloudPlayerConfiguration(
     onlineTime: Long,
     playerConnection: PlayerConnectionConfiguration,
     displayName: String,
+    webConfig: PlayerWebConfig,
     val connectedServerName: String?,
     val connectedProxyName: String
 ) : OfflineCloudPlayerConfiguration(
@@ -25,5 +27,6 @@ class CloudPlayerConfiguration(
     lastLogin,
     onlineTime,
     displayName,
-    playerConnection
+    playerConnection,
+    webConfig
 )

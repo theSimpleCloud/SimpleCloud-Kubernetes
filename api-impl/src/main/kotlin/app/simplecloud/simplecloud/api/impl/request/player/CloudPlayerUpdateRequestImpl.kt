@@ -3,6 +3,7 @@ package app.simplecloud.simplecloud.api.impl.request.player
 import app.simplecloud.simplecloud.api.internal.request.player.InternalCloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import java.util.concurrent.CompletableFuture
@@ -27,8 +28,12 @@ class CloudPlayerUpdateRequestImpl(
     @Volatile
     private var connectedServerName: String? = this.cloudPlayer.getCurrentServerName()
 
-    override fun setDisplayName(name: String) {
+    @Volatile
+    private var webConfig: PlayerWebConfig = this.cloudPlayer.getWebConfig()
+
+    override fun setDisplayName(name: String): InternalCloudPlayerUpdateRequest {
         this.displayName = name
+        return this
     }
 
     override fun setConnectedProxyName(name: String): InternalCloudPlayerUpdateRequest {
@@ -38,6 +43,11 @@ class CloudPlayerUpdateRequestImpl(
 
     override fun setConnectedServerName(name: String): InternalCloudPlayerUpdateRequest {
         this.connectedServerName = name
+        return this
+    }
+
+    override fun setWebConfig(webConfig: PlayerWebConfig): InternalCloudPlayerUpdateRequest {
+        this.webConfig = webConfig
         return this
     }
 
@@ -58,6 +68,7 @@ class CloudPlayerUpdateRequestImpl(
             this.cloudPlayer.getOnlineTime(),
             connectionConfiguration,
             this.displayName,
+            this.webConfig,
             this.connectedServerName,
             this.connectedProxyName
         )

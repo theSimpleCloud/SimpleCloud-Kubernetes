@@ -4,8 +4,10 @@ import app.simplecloud.simplecloud.api.impl.request.player.OfflineCloudPlayerUpd
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerConnection
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.request.player.OfflineCloudPlayerUpdateRequest
+import app.simplecloud.simplecloud.permission.entity.PermissionEntityImpl
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import java.util.*
@@ -19,7 +21,7 @@ import java.util.*
 open class OfflineCloudPlayerImpl @Inject constructor(
     @Assisted private val configuration: OfflineCloudPlayerConfiguration,
     private val cloudPlayerService: InternalCloudPlayerService
-) : OfflineCloudPlayer {
+) : PermissionEntityImpl(), OfflineCloudPlayer {
 
     private val lastPlayerConnection = PlayerConnectionImpl(this.configuration.lastPlayerConnection)
 
@@ -50,6 +52,11 @@ open class OfflineCloudPlayerImpl @Inject constructor(
     override fun getDisplayName(): String {
         return this.configuration.displayName
     }
+
+    override fun getWebConfig(): PlayerWebConfig {
+        return this.configuration.webConfig
+    }
+
 
     override fun toOfflinePlayer(): OfflineCloudPlayer {
         return this

@@ -8,13 +8,13 @@ package app.simplecloud.simplecloud.restserver.base.route
  */
 interface RouteBuilder {
 
-    fun withPath(path: String): RouteBuilder
+    fun setPath(path: String): RouteBuilder
 
-    fun withPermission(permission: String): RouteBuilder
+    fun setPermission(permission: String): RouteBuilder
 
-    fun withRequestType(requestType: RequestType): RouteBuilder
+    fun setRequestType(requestType: RequestType): RouteBuilder
 
-    fun withMethod(routeMethod: RouteMethod): RouteBuilder
+    fun setMethod(routeMethod: RouteMethod): RouteBuilder
 
     fun build(): Route
 

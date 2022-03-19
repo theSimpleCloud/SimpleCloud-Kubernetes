@@ -32,7 +32,7 @@ class RouteImpl(
 
     override fun handleRequest(request: Request): Any? {
         val methodValues = this.parameters.map { it.resolveValue(request) }
-        return this.virtualMethod.invoke(methodValues.toTypedArray())
+        return this.virtualMethod.invoke(*methodValues.toTypedArray())
     }
 
 

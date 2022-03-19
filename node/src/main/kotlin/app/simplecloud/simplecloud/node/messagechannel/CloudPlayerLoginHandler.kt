@@ -5,6 +5,7 @@ import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullExcepti
 import app.simplecloud.simplecloud.api.future.unpackFutureException
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
@@ -57,6 +58,7 @@ class CloudPlayerLoginHandler(
             0,
             this.configuration,
             this.configuration.name,
+            PlayerWebConfig("", false),
             "",
             this.proxyName
         )
@@ -77,6 +79,7 @@ class CloudPlayerLoginHandler(
             loadedPlayerConfiguration.onlineTime,
             this.configuration,
             loadedPlayerConfiguration.displayName,
+            loadedPlayerConfiguration.webConfig,
             null,
             proxyName
         )

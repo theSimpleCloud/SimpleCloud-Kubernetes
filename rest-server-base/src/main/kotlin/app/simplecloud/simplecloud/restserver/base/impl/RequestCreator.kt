@@ -22,6 +22,7 @@ class RequestCreator(
 
     suspend fun createRequest(): Request {
         val entity = runCatching { this.authService.getRequestEntityFromContext(this.context).await() }.getOrNull()
+        println("RequestCreator found an entity ${entity}")
         val pathParameters = this.context.getRequestPathParameters()
         return RequestImpl(
             this.route.getRequestType(),

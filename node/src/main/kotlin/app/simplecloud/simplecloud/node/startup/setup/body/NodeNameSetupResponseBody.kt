@@ -20,14 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.exception
+package app.simplecloud.simplecloud.node.startup.setup.body
 
-import io.ktor.http.*
+class NodeNameSetupResponseBody(
+    val nodeName: String
+) {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 24.06.2021
- * Time: 10:50
- * @author Frederick Baier
- */
-class NotAuthenticatedException : HttpException(HttpStatusCode.Unauthorized, "Not Authenticated")
+    private constructor() : this("")
+
+}

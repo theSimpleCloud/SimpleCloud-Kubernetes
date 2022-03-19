@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.restserver.controller
 
-import app.simplecloud.simplecloud.restserver.RestServer
 import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.controller.load.ControllerLoader
 import com.google.inject.Injector
@@ -48,5 +47,7 @@ class ControllerHandlerImpl constructor(
         TODO("Not yet implemented")
     }
 
-
+    override fun getRestServer(): RestServer {
+        return this.restServer
+    }
 }

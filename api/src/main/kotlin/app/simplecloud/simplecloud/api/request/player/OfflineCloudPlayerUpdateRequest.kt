@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.api.request.player
 
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**
@@ -35,6 +36,11 @@ interface OfflineCloudPlayerUpdateRequest : Request<Unit> {
     /**
      * Sets the display name of the player
      */
-    fun setDisplayName(name: String)
+    fun setDisplayName(name: String): OfflineCloudPlayerUpdateRequest
+
+    /**
+     * Sets the web config
+     */
+    fun setWebConfig(webConfig: PlayerWebConfig): OfflineCloudPlayerUpdateRequest
 
 }

@@ -27,8 +27,8 @@ import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.node.startup.NodeStartupSetupHandler
 import app.simplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
+import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
 import com.ea.async.Async.await
 import com.google.inject.Inject
 import dev.morphia.Datastore
@@ -42,7 +42,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 class MongoDbSafeStartTask @Inject constructor(
-    private val nodeSetupHandler: NodeStartupSetupHandler,
+    private val restSetupManager: RestSetupManager,
     private val kubeSecretService: KubeSecretService
 ) {
 
@@ -74,7 +74,7 @@ class MongoDbSafeStartTask @Inject constructor(
     }
 
     private fun executeMongoSetup(): CompletableFuture<String> {
-        val connectionString = await(this.nodeSetupHandler.executeSetupTask() { MongoDbSetupTask(it).run() })
+        val connectionString = await(MongoDbSetupTask(this.restSetupManager).run())
         saveResponseToSecret(connectionString)
         return completedFuture(connectionString)
     }

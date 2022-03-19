@@ -27,20 +27,15 @@ import app.simplecloud.rest.Handler
 import app.simplecloud.rest.RequestMethod
 import app.simplecloud.rest.RestServerFactory
 import app.simplecloud.simplecloud.restserver.base.RestServer
-import app.simplecloud.simplecloud.restserver.base.auth.JwtTokenHandler
-import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeAll
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeIncoming
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeOutgoing
 import app.simplecloud.simplecloud.restserver.base.exclude.introspector.AnnotationExcludeIntrospector
 import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
-import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
 import kotlinx.coroutines.*
-import kotlinx.coroutines.future.await
-import net.bytebuddy.implementation.bind.annotation.Super
 
 
 /**
@@ -52,17 +47,22 @@ import net.bytebuddy.implementation.bind.annotation.Super
 class RestServerBase(
     @Volatile
     private var authService: AuthService,
-    private val port: Int
+    port: Int
 ) : RestServer {
 
     private val server = RestServerFactory.createServer(port)
     private val coroutineScope: CoroutineScope
 
     init {
+        this.server.start()
         val threadContext = newSingleThreadContext("Rest-Server")
         val exceptionHandler = CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
         //the [SupervisorJob] is necessary to handle exceptions. Without it the coroutine would crash with the first error
         this.coroutineScope = CoroutineScope(threadContext + exceptionHandler + SupervisorJob())
+    }
+
+    override fun getAuthService(): AuthService {
+        return this.authService
     }
 
     override fun setAuthService(authService: AuthService) {
@@ -75,7 +75,7 @@ class RestServerBase(
             route.getPath(),
             object : Handler {
                 override fun handle(context: Context) {
-                    coroutineScope.launch {
+                    runBlocking {
                         handleIncomingRequest(route, context)
                     }
                 }
@@ -93,7 +93,7 @@ class RestServerBase(
         ResponseHandler(context, route, request).handle()
     }
 
-    fun shutdown() {
+    override fun stop() {
         this.server.stop()
     }
 

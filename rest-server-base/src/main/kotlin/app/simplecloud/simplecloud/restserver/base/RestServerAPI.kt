@@ -25,22 +25,22 @@ object RestServerAPI {
         private var requestType: RequestType = RequestType.GET
         private var routeMethod: RouteMethod? = null
 
-        override fun withPath(path: String): RouteBuilder {
+        override fun setPath(path: String): RouteBuilder {
             this.path = path
             return this
         }
 
-        override fun withPermission(permission: String): RouteBuilder {
+        override fun setPermission(permission: String): RouteBuilder {
             this.permission = permission
             return this
         }
 
-        override fun withRequestType(requestType: RequestType): RouteBuilder {
+        override fun setRequestType(requestType: RequestType): RouteBuilder {
             this.requestType = requestType
             return this
         }
 
-        override fun withMethod(routeMethod: RouteMethod): RouteBuilder {
+        override fun setMethod(routeMethod: RouteMethod): RouteBuilder {
             this.routeMethod = routeMethod
             return this
         }

@@ -20,14 +20,18 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.exception
-
-import io.ktor.http.*
+package app.simplecloud.simplecloud.node.startup.setup.body
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 24.06.2021
- * Time: 15:33
+ * Date: 07/08/2021
+ * Time: 20:56
  * @author Frederick Baier
  */
-open class HttpException(val statusCode: HttpStatusCode, message: String) : Exception(message)
+class ModuleSetupResponseBody(
+    val downloadURL: String
+) {
+
+    private constructor() : this("")
+
+}

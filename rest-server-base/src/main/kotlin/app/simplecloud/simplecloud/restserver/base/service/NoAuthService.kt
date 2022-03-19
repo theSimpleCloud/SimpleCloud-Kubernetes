@@ -1,8 +1,8 @@
 package app.simplecloud.simplecloud.restserver.base.service
 
-import app.simplecloud.simplecloud.restserver.base.user.EmptyRequestEntity
-import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
-import io.ktor.application.*
+import app.simplecloud.rest.Context
+import app.simplecloud.simplecloud.permission.entity.EmptyPermissionEntity
+import app.simplecloud.simplecloud.permission.entity.PermissionEntity
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -16,7 +16,7 @@ class NoAuthService : AuthService {
         throw UnsupportedOperationException("Authentication is currently not supported")
     }
 
-    override fun getRequestEntityFromCall(call: ApplicationCall): CompletableFuture<RequestEntity> {
-        return CompletableFuture.completedFuture(EmptyRequestEntity)
+    override fun getRequestEntityFromContext(context: Context): CompletableFuture<PermissionEntity> {
+        return CompletableFuture.completedFuture(EmptyPermissionEntity)
     }
 }

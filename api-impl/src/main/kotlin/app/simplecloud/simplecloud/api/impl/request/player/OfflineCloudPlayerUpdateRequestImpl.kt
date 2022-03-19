@@ -2,6 +2,7 @@ package app.simplecloud.simplecloud.api.impl.request.player
 
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.request.player.OfflineCloudPlayerUpdateRequest
@@ -21,8 +22,18 @@ class OfflineCloudPlayerUpdateRequestImpl(
     @Volatile
     private var displayName: String = this.offlinePlayer.getDisplayName()
 
-    override fun setDisplayName(name: String) {
+    @Volatile
+    private var webConfig: PlayerWebConfig = this.offlinePlayer.getWebConfig()
+
+
+    override fun setDisplayName(name: String): OfflineCloudPlayerUpdateRequest {
         this.displayName = name
+        return this
+    }
+
+    override fun setWebConfig(webConfig: PlayerWebConfig): OfflineCloudPlayerUpdateRequest {
+        this.webConfig = webConfig
+        return this
     }
 
     override fun submit(): CompletableFuture<Unit> {
@@ -41,7 +52,8 @@ class OfflineCloudPlayerUpdateRequestImpl(
             this.offlinePlayer.getLastLogin(),
             this.offlinePlayer.getOnlineTime(),
             this.displayName,
-            connectionConfiguration
+            connectionConfiguration,
+            this.webConfig
         )
         return this.internalService.updateOfflinePlayerInternal(offlineCloudPlayerConfiguration)
     }

@@ -22,14 +22,17 @@
 
 package app.simplecloud.simplecloud.restserver.controller.load
 
+import app.simplecloud.simplecloud.permission.entity.PermissionEntity
 import app.simplecloud.simplecloud.restserver.annotation.*
 import app.simplecloud.simplecloud.restserver.base.RestServerAPI
+import app.simplecloud.simplecloud.restserver.base.parameter.ParameterType
+import app.simplecloud.simplecloud.restserver.base.parameter.PathParamParameterType
+import app.simplecloud.simplecloud.restserver.base.parameter.RequestBodyParameterType
+import app.simplecloud.simplecloud.restserver.base.parameter.RequestingEntityParameterType
 import app.simplecloud.simplecloud.restserver.base.route.Route
+import app.simplecloud.simplecloud.restserver.base.route.RouteMethod
 import app.simplecloud.simplecloud.restserver.base.vmethod.VirtualMethod
 import app.simplecloud.simplecloud.restserver.controller.Controller
-import app.simplecloud.simplecloud.restserver.controller.MethodRoute
-import app.simplecloud.simplecloud.restserver.controller.VirtualMethod
-import app.simplecloud.simplecloud.restserver.user.User
 import java.lang.reflect.Method
 import java.lang.reflect.Parameter
 
@@ -53,23 +56,26 @@ class ControllerLoader(
 
     private fun generateRoutes0(): List<Route> {
         val methods = getMethodsToGenerateRoutesFor()
-        return methods.map { createMethodRoute(it) }
+        return methods.map { createRoute(it) }
     }
 
-    private fun createMethodRoute(method: Method): Route {
+    private fun createRoute(method: Method): Route {
+        val routeMethod = buildRouteMethod(method)
         val requestMappingAnnotation = method.getAnnotation(RequestMapping::class.java)
+        val routeBuilder = RestServerAPI.RouteBuilderImpl()
+        routeBuilder.setPath(generatePath(requestMappingAnnotation))
+        routeBuilder.setPermission(requestMappingAnnotation.permission)
+        routeBuilder.setRequestType(requestMappingAnnotation.requestType)
+        routeBuilder.setMethod(routeMethod)
+        return routeBuilder.build()
+    }
+
+    private fun buildRouteMethod(method: Method): RouteMethod {
         val parameters = method.parameters.map { createParameter(it) }
-        RestServerAPI.RouteMethodBuilderImpl()
-            .setVirtualMethod(VirtualMethod.fromRealMethod(method, controller))
-            .addParameter()
-        return MethodRoute(
-            requestMappingAnnotation.requestType,
-            generatePath(requestMappingAnnotation),
-            requestMappingAnnotation.permission,
-            parameters,
-            VirtualMethod.fromRealMethod(method),
-            controller
-        )
+        val routeMethodBuilder = RestServerAPI.RouteMethodBuilderImpl()
+        routeMethodBuilder.setVirtualMethod(VirtualMethod.fromRealMethod(method, controller))
+        parameters.forEach { routeMethodBuilder.addParameter(it) }
+        return routeMethodBuilder.build()
     }
 
     private fun generatePath(requestMappingAnnotation: RequestMapping): String {
@@ -88,26 +94,30 @@ class ControllerLoader(
         return "$path/"
     }
 
-    private fun createParameter(parameter: Parameter): MethodRoute.MethodRouteParameter {
-        if (isParameterRequestingUser(parameter)) {
-            return createRequestingUserParameter(parameter)
+    private fun createParameter(parameter: Parameter): ParameterType {
+        if (isParameterRequestingEntity(parameter)) {
+            return RequestingEntityParameterType()
         }
         if (parameter.isAnnotationPresent(RequestPathParam::class.java))
-            return MethodRoute.MethodRouteParameter(parameter.type, parameter.getAnnotation(RequestPathParam::class.java))
+            //TODO add assertion for string type
+            return PathParamParameterType(parameter.getAnnotation(RequestPathParam::class.java).parameterName)
 
-        if (parameter.isAnnotationPresent(RequestBody::class.java))
-            return MethodRoute.MethodRouteParameter(parameter.type, parameter.getAnnotation(RequestBody::class.java))
+        if (parameter.isAnnotationPresent(RequestBody::class.java)) {
+            val requestBody = parameter.getAnnotation(RequestBody::class.java)
+            val classes = if (requestBody.classes.isEmpty())
+                listOf(parameter.type)
+            else
+                requestBody.classes.map { it.java }
+            return RequestBodyParameterType(requestBody.types, classes.toTypedArray())
+        }
 
         throw IllegalArgumentException("Parameter with type ${parameter.type.name} in not annotated with RequestBody, RequestParam or RequestPathParam")
     }
 
-    private fun isParameterRequestingUser(parameter: Parameter) =
-        parameter.type == User::class.java && parameter.isAnnotationPresent(RequestingUser::class.java)
-
-    private fun createRequestingUserParameter(parameter: Parameter): MethodRoute.MethodRouteParameter {
-        val requestingUser = parameter.getAnnotation(RequestingUser::class.java)
-        return MethodRoute.MethodRouteParameter(User::class.java, requestingUser)
+    private fun isParameterRequestingEntity(parameter: Parameter): Boolean {
+        return parameter.type == PermissionEntity::class.java && parameter.isAnnotationPresent(RequestingEntity::class.java)
     }
+
 
     private fun getMethodsToGenerateRoutesFor(): List<Method> {
         return this.controllerClass.methods.filter { it.isAnnotationPresent(RequestMapping::class.java) }

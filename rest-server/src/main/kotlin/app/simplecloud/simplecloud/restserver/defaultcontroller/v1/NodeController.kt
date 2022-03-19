@@ -26,8 +26,8 @@ import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.restserver.annotation.RequestMapping
 import app.simplecloud.simplecloud.restserver.annotation.RequestPathParam
-import app.simplecloud.simplecloud.restserver.annotation.RequestType
 import app.simplecloud.simplecloud.restserver.annotation.RestController
+import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import com.ea.async.Async.await
 import com.google.inject.Inject

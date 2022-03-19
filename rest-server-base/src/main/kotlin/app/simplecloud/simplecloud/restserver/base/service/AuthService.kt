@@ -23,8 +23,7 @@
 package app.simplecloud.simplecloud.restserver.base.service
 
 import app.simplecloud.rest.Context
-import app.simplecloud.simplecloud.restserver.base.user.EmptyRequestEntity
-import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
+import app.simplecloud.simplecloud.permission.entity.PermissionEntity
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,8 +40,8 @@ interface AuthService {
     fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
 
     /**
-     * Returns the user from the specified [context] or [EmptyRequestEntity]
+     * Returns the user from the specified [context]
      */
-    fun getRequestEntityFromContext(context: Context): CompletableFuture<RequestEntity>
+    fun getRequestEntityFromContext(context: Context): CompletableFuture<out PermissionEntity>
 
 }

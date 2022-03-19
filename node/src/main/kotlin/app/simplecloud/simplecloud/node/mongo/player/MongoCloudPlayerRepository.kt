@@ -22,13 +22,24 @@
 
 package app.simplecloud.simplecloud.node.mongo.player
 
+import app.simplecloud.simplecloud.api.future.cloud.nonNull
 import app.simplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
+import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.morphia.Datastore
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Singleton
 class MongoCloudPlayerRepository @Inject constructor(
     datastore: Datastore
-) : DefaultMongoRepository<UUID, CloudPlayerEntity>(datastore, CloudPlayerEntity::class.java)
+) : DefaultMongoRepository<UUID, CloudPlayerEntity>(datastore, CloudPlayerEntity::class.java) {
+
+    fun findByName(name: String): CompletableFuture<CloudPlayerEntity> {
+        return CloudCompletableFuture.supplyAsync {
+            createQuery("name", name).first()
+        }.nonNull()
+    }
+
+}

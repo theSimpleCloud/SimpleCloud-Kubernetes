@@ -1,7 +1,7 @@
 package app.simplecloud.simplecloud.restserver.base.request
 
+import app.simplecloud.simplecloud.permission.entity.PermissionEntity
 import app.simplecloud.simplecloud.restserver.base.route.RequestType
-import app.simplecloud.simplecloud.restserver.base.user.RequestEntity
 
 /**
  * Date: 14.03.22
@@ -13,7 +13,7 @@ class RequestImpl(
     private val requestType: RequestType,
     private val requestPath: String,
     private val requestBody: String,
-    private val entity: RequestEntity?,
+    private val entity: PermissionEntity?,
     private val pathParameters: Map<String, String>
 ) : Request {
     override fun getRequestType(): RequestType {
@@ -24,7 +24,7 @@ class RequestImpl(
         return this.requestPath
     }
 
-    override fun getRequestingEntity(): RequestEntity? {
+    override fun getRequestingEntity(): PermissionEntity? {
         return this.entity
     }
 

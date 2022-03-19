@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.restserver.annotation
 
+import app.simplecloud.simplecloud.restserver.base.route.RequestType
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021

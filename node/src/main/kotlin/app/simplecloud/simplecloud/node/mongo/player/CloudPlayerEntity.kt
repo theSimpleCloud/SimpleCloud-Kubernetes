@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.node.mongo.player
 
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
@@ -31,19 +32,20 @@ import java.util.*
 
 @Entity("v3_players")
 class CloudPlayerEntity(
-    val name: String,
     @Id
     val uniqueId: UUID,
+    val name: String,
     val firstLogin: Long,
     val lastLogin: Long,
     val onlineTime: Long,
     val displayName: String,
-    val lastPlayerConnection: PlayerConnectionConfiguration
+    val lastPlayerConnection: PlayerConnectionConfiguration,
+    val webConfig: PlayerWebConfig
 ) {
 
     private constructor() : this(
-        "",
         UUID.randomUUID(),
+        "",
         -1,
         -1,
         -1,
@@ -54,7 +56,8 @@ class CloudPlayerEntity(
             "",
             Address("", -1),
             false
-        )
+        ),
+        PlayerWebConfig("", false)
     )
 
     fun toConfiguration(): OfflineCloudPlayerConfiguration {
@@ -65,20 +68,22 @@ class CloudPlayerEntity(
             this.lastLogin,
             this.onlineTime,
             this.displayName,
-            this.lastPlayerConnection
+            this.lastPlayerConnection,
+            this.webConfig
         )
     }
 
     companion object {
         fun fromConfiguration(configuration: OfflineCloudPlayerConfiguration): CloudPlayerEntity {
             return CloudPlayerEntity(
-                configuration.name,
                 configuration.uniqueId,
+                configuration.name,
                 configuration.firstLogin,
                 configuration.lastLogin,
                 configuration.onlineTime,
                 configuration.displayName,
-                configuration.lastPlayerConnection
+                configuration.lastPlayerConnection,
+                configuration.webConfig
             )
         }
     }

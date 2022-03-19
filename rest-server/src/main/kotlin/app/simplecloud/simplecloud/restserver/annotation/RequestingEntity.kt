@@ -20,27 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.setup.body
+package app.simplecloud.simplecloud.restserver.annotation
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05/08/2021
- * Time: 12:00
+ * Date: 23.06.2021
+ * Time: 10:06
  * @author Frederick Baier
  */
-class MongoSetupResponseBody(
-    val connectionString: String,
-    val mongoMode: MongoMode
-) {
-
-    private constructor(): this("", MongoMode.EXTERNAL)
-
-    enum class MongoMode {
-
-        CREATE,
-
-        EXTERNAL
-
-    }
-
-}
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.VALUE_PARAMETER)
+annotation class RequestingEntity()

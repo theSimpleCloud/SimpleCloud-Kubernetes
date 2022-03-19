@@ -20,28 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.setup
-
-import app.simplecloud.simplecloud.restserver.exception.NotAuthenticatedException
-import app.simplecloud.simplecloud.restserver.service.AuthService
-import app.simplecloud.simplecloud.restserver.service.UsernameAndPasswordCredentials
-import app.simplecloud.simplecloud.restserver.user.User
-import io.ktor.application.*
-import java.util.concurrent.CompletableFuture
+package app.simplecloud.simplecloud.restserver.setup.response
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 20:05
+ * Date: 09/08/2021
+ * Time: 22:22
  * @author Frederick Baier
  */
-class NoAuthService : AuthService {
-
-    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String> {
-        throw UnsupportedOperationException("Authentication is currently not available")
-    }
-
-    override fun getUserFromCall(call: ApplicationCall): CompletableFuture<User> {
-        throw NotAuthenticatedException()
-    }
+open class SetupEndResponse(token: String) {
+    val nextSetup = "end"
+    val token = token
 }

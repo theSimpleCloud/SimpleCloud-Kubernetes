@@ -86,4 +86,9 @@ open class DefaultMongoRepository<I : Any, T : Any>(
             this.datastore.find(this.entityClass).first()
         }.nonNull()
     }
+
+    protected fun createQuery(field: String, value: Any): Query<T> {
+        return this.datastore.find(this.entityClass)
+            .filter(Filters.eq(field, value))
+    }
 }

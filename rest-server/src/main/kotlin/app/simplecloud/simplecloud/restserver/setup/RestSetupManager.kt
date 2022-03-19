@@ -22,18 +22,17 @@
 
 package app.simplecloud.simplecloud.restserver.setup
 
-import app.simplecloud.simplecloud.restserver.RestServer
-import app.simplecloud.simplecloud.restserver.annotation.RequestBody
-import app.simplecloud.simplecloud.restserver.annotation.RequestType
-import app.simplecloud.simplecloud.restserver.controller.Controller
-import app.simplecloud.simplecloud.restserver.controller.MethodRoute
-import app.simplecloud.simplecloud.restserver.controller.VirtualMethod
+import app.simplecloud.simplecloud.restserver.base.RestServer
+import app.simplecloud.simplecloud.restserver.base.RestServerAPI
+import app.simplecloud.simplecloud.restserver.base.parameter.RequestBodyParameterType
+import app.simplecloud.simplecloud.restserver.base.route.RequestType
+import app.simplecloud.simplecloud.restserver.base.vmethod.VirtualMethod
 import app.simplecloud.simplecloud.restserver.setup.response.CurrentSetupRequestResponse
+import app.simplecloud.simplecloud.restserver.setup.response.SetupEndResponse
 import app.simplecloud.simplecloud.restserver.setup.type.Setup
 import com.google.common.collect.Maps
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.reflect.full.createInstance
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,7 +41,7 @@ import kotlin.reflect.full.createInstance
  * @author Frederick Baier
  */
 class RestSetupManager(
-    private val restServer: RestServer
+    val restServer: RestServer
 ) {
 
     @Volatile
@@ -50,7 +49,10 @@ class RestSetupManager(
         private set
 
     private val setupNameToFuture = Maps.newConcurrentMap<String, CompletableFuture<Any>>()
-    private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<CurrentSetupRequestResponse>>()
+    private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<Any>>()
+
+    @Volatile
+    private var endLoginToken: String = ""
 
     init {
         registerGetCurrentSetupRoute()
@@ -65,66 +67,66 @@ class RestSetupManager(
         return future
     }
 
-    private fun completeAllFuturesWaitingForNextSetup(response: CurrentSetupRequestResponse) {
+    private fun completeAllFuturesWaitingForNextSetup(response: Any) {
         this.futuresWaitingForNextSetup.forEach { it.complete(response) }
     }
 
     private fun registerRoute(setup: Setup<*>) {
-        val requestBody = RequestBody::class.createInstance()
-        val methodRouteParameter = MethodRoute.MethodRouteParameter(setup.responseClass.java, requestBody)
-        val methodRoute = MethodRoute(
-            RequestType.POST,
-            "setup/${setup.setupName}",
-            "",
-            listOf(methodRouteParameter),
-            createVirtualMethod(setup.setupName),
-            object : Controller {}
-        )
-
-        this.restServer.registerMethodRoute(methodRoute)
+        val methodBuilder = RestServerAPI.RouteMethodBuilderImpl()
+        methodBuilder.addParameter(RequestBodyParameterType(emptyArray(), arrayOf(setup.responseClass.java)))
+        methodBuilder.setVirtualMethod(createVirtualMethod(setup.setupName))
+        val routeBuilder = RestServerAPI.RouteBuilderImpl()
+        routeBuilder.setRequestType(RequestType.POST)
+        routeBuilder.setPath("setup/${setup.setupName}")
+        routeBuilder.setMethod(methodBuilder.build())
+        this.restServer.registerRoute(routeBuilder.build())
     }
 
     private fun registerGetCurrentSetupRoute() {
-        val virtualMethod = object : VirtualMethod {
-            override fun invoke(invokeObj: Any, vararg args: Any?): Any? {
+        val methodBuilder = RestServerAPI.RouteMethodBuilderImpl()
+        methodBuilder.setVirtualMethod(object : VirtualMethod {
+            override fun invoke(vararg args: Any?): Any? {
                 val currentSetup = this@RestSetupManager.currentSetup ?: return null
                 return CurrentSetupRequestResponse(currentSetup)
             }
-
-        }
-        val methodRoute = MethodRoute(
-            RequestType.GET,
-            "setup",
-            "",
-            emptyList(),
-            virtualMethod,
-            object : Controller {}
-        )
-
-        this.restServer.registerMethodRoute(methodRoute)
+        })
+        val routeBuilder = RestServerAPI.RouteBuilderImpl()
+        routeBuilder.setRequestType(RequestType.GET)
+        routeBuilder.setPath("setup")
+        routeBuilder.setMethod(methodBuilder.build())
+        this.restServer.registerRoute(routeBuilder.build())
     }
 
     private fun waitForNextSetupName(): CompletableFuture<CurrentSetupRequestResponse> {
         val future = CompletableFuture<CurrentSetupRequestResponse>()
-        this.futuresWaitingForNextSetup.add(future)
+        this.futuresWaitingForNextSetup.add(future as CompletableFuture<Any>)
         return future
     }
 
+    fun setEndToken(token: String) {
+        this.endLoginToken = token
+    }
+
     fun onEndOfAllSetups() {
-        this.currentSetup = Setup.END
-        completeAllFuturesWaitingForNextSetup(CurrentSetupRequestResponse(Setup.END))
+        this.currentSetup = END_SETUP
+        completeAllFuturesWaitingForNextSetup(SetupEndResponse(this.endLoginToken))
+        this.endLoginToken = ""
     }
 
     private fun createVirtualMethod(setupName: String): VirtualMethod {
         return object : VirtualMethod {
 
-            override fun invoke(invokeObj: Any, vararg args: Any?): Any {
+            override fun invoke(vararg args: Any?): Any? {
                 val future = waitForNextSetupName()
                 this@RestSetupManager.setupNameToFuture[setupName]?.complete(args[0])
                 return future.join()
             }
 
         }
+    }
+
+    companion object {
+        private val END_SETUP = Setup("end", "", String::class)
     }
 
 }

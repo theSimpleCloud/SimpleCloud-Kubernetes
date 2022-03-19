@@ -8,7 +8,7 @@ import app.simplecloud.simplecloud.restserver.base.request.Request
  * @author Frederick Baier
  *
  */
-class RequestingUserParameterType : ParameterType {
+class RequestingEntityParameterType : ParameterType {
 
     override fun resolveValue(request: Request): Any? {
         return request.getRequestingEntity()

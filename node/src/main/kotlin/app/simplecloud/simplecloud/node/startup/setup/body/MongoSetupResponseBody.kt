@@ -20,19 +20,27 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.user
+package app.simplecloud.simplecloud.node.startup.setup.body
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 27.06.2021
- * Time: 18:06
+ * Date: 05/08/2021
+ * Time: 12:00
  * @author Frederick Baier
  */
-object EmptyUser : User("<empty>", "<empty>") {
+class MongoSetupResponseBody(
+    val connectionString: String,
+    val mongoMode: MongoMode
+) {
 
-    override fun hasPermission(permission: String): Boolean {
-        if (permission.isEmpty()) return true
-        return false
+    private constructor(): this("", MongoMode.EXTERNAL)
+
+    enum class MongoMode {
+
+        CREATE,
+
+        EXTERNAL
+
     }
 
 }

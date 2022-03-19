@@ -1,6 +1,7 @@
 package app.simplecloud.simplecloud.api.service
 
 import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -12,8 +13,12 @@ import java.util.concurrent.CompletableFuture
  */
 interface CloudPlayerService : Service {
 
-    fun findPlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer>
+    fun findOnlinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer>
 
-    fun findPlayerByName(name: String): CompletableFuture<CloudPlayer>
+    fun findOnlinePlayerByName(name: String): CompletableFuture<CloudPlayer>
+
+    fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer>
+
+    fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer>
 
 }

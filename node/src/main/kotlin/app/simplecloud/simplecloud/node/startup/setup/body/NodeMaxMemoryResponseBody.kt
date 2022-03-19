@@ -20,19 +20,12 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.setup.body
+package app.simplecloud.simplecloud.node.startup.setup.body
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 05/08/2021
- * Time: 12:00
- * @author Frederick Baier
- */
-class FirstUserSetupResponseBody(
-   val username: String,
-   val password: String
+class NodeMaxMemoryResponseBody(
+    val maxMemory: Int
 ) {
 
-    private constructor(): this("", "")
+    private constructor() : this(-1)
 
 }

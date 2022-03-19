@@ -34,7 +34,6 @@ import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
-import app.simplecloud.simplecloud.api.impl.service.AbstractProcessOnlineCountService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
@@ -98,7 +97,6 @@ class CloudAPIBinderModule(
         bind(InternalCloudProcessService::class.java).to(this.cloudProcessServiceClass)
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
         bind(InternalCloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
-        bind(ProcessOnlineCountService::class.java).to(AbstractProcessOnlineCountService::class.java)
 
         bind(IgniteQueryHandler::class.java).to(IgniteQueryHandlerImpl::class.java)
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)

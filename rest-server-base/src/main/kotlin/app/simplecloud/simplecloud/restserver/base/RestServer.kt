@@ -16,11 +16,13 @@ interface RestServer {
 
     fun setAuthService(authService: AuthService)
 
+    fun getAuthService(): AuthService
+
     fun registerRoute(route: Route)
 
     fun unregisterRoute(route: Route)
 
-
+    fun stop()
 
 
 }

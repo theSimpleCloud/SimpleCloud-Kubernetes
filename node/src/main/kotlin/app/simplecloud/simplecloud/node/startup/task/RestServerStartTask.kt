@@ -23,9 +23,14 @@
 package app.simplecloud.simplecloud.node.startup.task
 
 import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import app.simplecloud.simplecloud.restserver.RestServer
+import app.simplecloud.simplecloud.restserver.auth.RestAuthServiceImpl
+import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.controller.ControllerHandlerImpl
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.*
+import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.LoginController
+import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.NodeController
+import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessController
+import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessGroupController
+import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.concurrent.CompletableFuture
 
@@ -35,27 +40,28 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:22
  * @author Frederick Baier
  */
-class RestServerStartTask(
+class RestServerStartTask @Inject constructor(
+    private val authService: RestAuthServiceImpl,
+    private val restServer: RestServer,
     private val injector: Injector
 ) {
 
+    private val controllerHandler = ControllerHandlerImpl(this.restServer, this.injector)
+
+    init {
+        this.restServer.setAuthService(authService)
+    }
+
     fun run(): CompletableFuture<RestServer> {
-        val injector = initGuice()
-        val restServer = injector.getInstance(RestServer::class.java)
-        registerController(restServer.controllerHandler)
+        registerController()
         return CloudCompletableFuture.completedFuture(restServer)
     }
 
-    private fun registerController(controllerHandler: ControllerHandlerImpl) {
-        controllerHandler.registerController(UserController::class.java)
-        controllerHandler.registerController(LoginController::class.java)
-        controllerHandler.registerController(ProcessGroupController::class.java)
-        controllerHandler.registerController(ProcessController::class.java)
-        controllerHandler.registerController(NodeController::class.java)
-    }
-
-    private fun initGuice(): Injector {
-        return this.injector.createChildInjector(app.simplecloud.simplecloud.restserver.RestBinderModule())
+    private fun registerController() {
+        this.controllerHandler.registerController(LoginController::class.java)
+        this.controllerHandler.registerController(ProcessGroupController::class.java)
+        this.controllerHandler.registerController(ProcessController::class.java)
+        this.controllerHandler.registerController(NodeController::class.java)
     }
 
 

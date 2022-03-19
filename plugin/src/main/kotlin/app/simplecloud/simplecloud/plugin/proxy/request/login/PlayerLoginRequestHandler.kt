@@ -54,7 +54,7 @@ class PlayerLoginRequestHandler(
     }
 
     private fun doesPlayerAlreadyExist(): Boolean {
-        return runCatching { this.playerService.findPlayerByUniqueId(this.request.uniqueId).join() }.isSuccess
+        return runCatching { this.playerService.findOnlinePlayerByUniqueId(this.request.uniqueId).join() }.isSuccess
     }
 
     private fun createNewPlayer(): CloudPlayer {

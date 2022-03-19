@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.api.request.player
 
+import app.simplecloud.simplecloud.api.player.PlayerWebConfig
+
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,6 +33,8 @@ package app.simplecloud.simplecloud.api.request.player
  */
 interface CloudPlayerUpdateRequest : OfflineCloudPlayerUpdateRequest {
 
+    override fun setDisplayName(name: String): CloudPlayerUpdateRequest
 
+    override fun setWebConfig(webConfig: PlayerWebConfig): CloudPlayerUpdateRequest
 
 }

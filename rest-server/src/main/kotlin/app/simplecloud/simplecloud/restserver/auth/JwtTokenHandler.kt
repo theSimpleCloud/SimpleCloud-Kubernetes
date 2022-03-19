@@ -1,10 +1,11 @@
-package app.simplecloud.simplecloud.restserver.base.auth
+package app.simplecloud.simplecloud.restserver.auth
 
 import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm
+import com.auth0.jwt.interfaces.DecodedJWT
 import java.util.*
 
 /**
@@ -15,7 +16,6 @@ import java.util.*
  */
 class JwtTokenHandler(
     private val secret: String,
-    private val validityInMs: Long
 ) {
     private val algorithm = Algorithm.HMAC512(secret)
 
@@ -24,7 +24,7 @@ class JwtTokenHandler(
         //.withIssuer(issuer)
         .build()
 
-    fun verify(context: Context): String {
+    fun verify(context: Context): TokenData {
         try {
             return verify0(context)
         } catch (ex: Exception) {
@@ -32,27 +32,43 @@ class JwtTokenHandler(
         }
     }
 
-    private fun verify0(context: Context): String {
+    private fun verify0(context: Context): TokenData {
         if (!context.hasRequestHeader("Authorization")) throw UnauthorizedException()
         val authHeader = context.getRequestHeader("Authorization")
         if (!authHeader.startsWith("Bearer ")) throw UnauthorizedException()
         val token = authHeader.replaceFirst("Bearer ", "")
-        val decodedJWT = this.verifier.verify(token)
-        return decodedJWT.getClaim("claim").asString()
+        val decodedJWT =  this.verifier.verify(token)
+        return TokenData.fromDecodedJWT(decodedJWT)
     }
 
     /**
      * Produce a token for this combination of User and Account
      */
-    fun makeToken(claim: String): String = JWT.create()
+    fun makeToken(data: TokenData, expireDate: Date): String = JWT.create()
         .withSubject("Authentication")
         //.withIssuer(issuer)
-        .withClaim("claim", claim)
+        .withClaim("mode", data.tokenMode.name)
+        .withClaim("id", data.playerUniqueId.toString())
+        .withExpiresAt(expireDate)
         .sign(algorithm)
 
-    /**
-     * Calculate the expiration Date based on current time + the given validity
-     */
-    private fun getExpiration() = Date(System.currentTimeMillis() + validityInMs)
+    class TokenData(
+        val tokenMode: TokenMode,
+        val playerUniqueId: UUID
+    ) {
+
+        companion object {
+            fun fromDecodedJWT(decodedJWT: DecodedJWT): TokenData {
+                val mode = decodedJWT.getClaim("mode").asString()
+                val id = decodedJWT.getClaim("id").asString()
+                return TokenData(TokenMode.valueOf(mode), UUID.fromString(id))
+            }
+        }
+
+    }
+
+    enum class TokenMode {
+        PLAYER, API
+    }
 
 }

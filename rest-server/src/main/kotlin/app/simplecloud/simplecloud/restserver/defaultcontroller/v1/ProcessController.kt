@@ -24,7 +24,11 @@ package app.simplecloud.simplecloud.restserver.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.restserver.annotation.*
+import app.simplecloud.simplecloud.restserver.annotation.RequestBody
+import app.simplecloud.simplecloud.restserver.annotation.RequestMapping
+import app.simplecloud.simplecloud.restserver.annotation.RequestPathParam
+import app.simplecloud.simplecloud.restserver.annotation.RestController
+import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler.ProcessCreateHandler

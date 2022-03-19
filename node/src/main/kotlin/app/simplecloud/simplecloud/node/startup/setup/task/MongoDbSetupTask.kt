@@ -23,8 +23,8 @@
 package app.simplecloud.simplecloud.node.startup.setup.task
 
 import app.simplecloud.simplecloud.api.future.completedFuture
+import app.simplecloud.simplecloud.node.startup.setup.body.MongoSetupResponseBody
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import app.simplecloud.simplecloud.restserver.setup.body.MongoSetupResponseBody
 import app.simplecloud.simplecloud.restserver.setup.type.Setup
 import com.ea.async.Async.await
 import org.apache.logging.log4j.LogManager

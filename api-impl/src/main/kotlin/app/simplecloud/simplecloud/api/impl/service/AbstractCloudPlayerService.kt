@@ -19,11 +19,11 @@ abstract class AbstractCloudPlayerService(
     private val playerFactory: CloudPlayerFactory
 ) : InternalCloudPlayerService {
 
-    override fun findPlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer> {
+    override fun findOnlinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer> {
         return this.igniteRepository.find(uniqueId).thenApply { this.playerFactory.create(it) }
     }
 
-    override fun findPlayerByName(name: String): CompletableFuture<CloudPlayer> {
+    override fun findOnlinePlayerByName(name: String): CompletableFuture<CloudPlayer> {
         return this.igniteRepository.findByName(name).thenApply { this.playerFactory.create(it) }
     }
 
