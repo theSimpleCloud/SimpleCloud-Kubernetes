@@ -1,6 +1,5 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
@@ -14,7 +13,6 @@ class DeleteGroupMessageHandler @Inject constructor(
 
     override fun handleMessage(message: String, sender: NetworkComponent): CompletableFuture<Unit> {
         val processGroup = await(this.groupService.findByName(message))
-        await(processGroup.createDeleteRequest().submit())
-        return unitFuture()
+        return processGroup.createDeleteRequest().submit()
     }
 }

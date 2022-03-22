@@ -20,21 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.permission.entity
+package app.simplecloud.simplecloud.api.permission
 
-import app.simplecloud.simplecloud.permission.Permission
+import java.util.concurrent.CompletableFuture
 
 
 interface PermissionEntity {
 
     /**
-     * Returns whether the group has the specified [permission]
+     * Returns whether the entity has the specified [permission]
      */
-    fun hasPermission(permission: String, processGroup: String? = null): Boolean {
-        if (permission.isBlank()) return true
-        val permissionObj = getPermissionByMatch(permission, processGroup) ?: return hasAllRights()
-        return permissionObj.active
-    }
+    fun hasPermission(permission: String, processGroup: String? = null): CompletableFuture<Boolean>
 
     fun getPermissionByMatch(permission: String, processGroup: String?): Permission? {
         val notExpiredPermissions = getPermissions()
@@ -44,7 +40,9 @@ interface PermissionEntity {
     /**
      * Returns the permission object of the specified [permission]
      */
-    fun getPermissionByName(permission: String): Permission? = getPermissions().firstOrNull { it.permissionString == permission }
+    fun getPermissionByRawString(permission: String): Permission? {
+      return getPermissions().firstOrNull { it.getRawString() == permission }
+    }
 
     /**
      * Returns all permissions of this entity
@@ -52,23 +50,27 @@ interface PermissionEntity {
     fun getPermissions(): Collection<Permission>
 
     /**
-     * Adds the specified [permission] to the list
-     */
-    fun addPermission(permission: Permission)
-
-    /**
-     * Removes the permission object found by the specified [permissionString]
-     */
-    fun removePermission(permissionString: String)
-
-    /**
-     * Removes all permissions from this entity
-     */
-    fun clearAllPermission()
-
-    /**
      * Returns whether this
      */
-    fun hasAllRights(): Boolean = getPermissions().any { it.permissionString == "*" }
+    fun hasAllRightsTopLevel(): Boolean = getPermissions().any { it.getRawString() == "*" }
+
+    /**
+     * Returns whether this entity has the specified group
+     * A top level group is a group that an entity has directly
+     * e.g. You have the "Admin" group and the "Admin" group inherits "Builder".
+     * Then "Admin" is the top level group. So hasTopLevelGroup would return false for "Builder" and true for "Admin".
+     */
+    fun hasTopLevelGroup(groupName: String): Boolean
+
+    /**
+     * Returns the group the player is currently in
+     */
+    fun getTopLevelPermissionGroups(): CompletableFuture<List<PermissionGroup>>
+
+    /**
+     * Returns the highest permission group of the player
+     * @see PermissionGroup.getPriority
+     */
+    fun getHighestTopLevelPermissionGroup(): CompletableFuture<PermissionGroup>
 
 }

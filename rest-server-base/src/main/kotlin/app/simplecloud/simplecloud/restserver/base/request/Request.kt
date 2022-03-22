@@ -1,6 +1,6 @@
 package app.simplecloud.simplecloud.restserver.base.request
 
-import app.simplecloud.simplecloud.permission.entity.PermissionEntity
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.restserver.base.exception.BodyParseException
 import app.simplecloud.simplecloud.restserver.base.impl.RestServerBase
 import app.simplecloud.simplecloud.restserver.base.route.RequestType

@@ -23,6 +23,7 @@
 package app.simplecloud.simplecloud.node.startup.task.mongo
 
 import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.node.startup.task.mongo.codec.*
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
 import com.mongodb.client.MongoClients
@@ -30,7 +31,6 @@ import dev.morphia.Datastore
 import dev.morphia.Morphia
 import org.bson.UuidRepresentation
 import org.bson.codecs.configuration.CodecRegistries
-import org.bson.codecs.pojo.PojoCodecProvider
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
@@ -55,11 +55,19 @@ class MongoDbStartTask(
     }
 
     private fun createClientSettings(): MongoClientSettings {
-        val pojoCodecRegistry = CodecRegistries.fromProviders(
-            PojoCodecProvider.builder().automatic(true).build(),
-            //PojoCodecProvider.builder().register(ClassModel.builder(Address::class.java).idPropertyName())
+        val addressCodec = AddressCodec()
+        val permissionConfigurationCodec = PermissionConfigurationCodec()
+        val codecs = CodecRegistries.fromCodecs(
+            PlayerWebConfigCodec(),
+            PlayerConnectionConfigurationCodec(addressCodec),
+            addressCodec,
+            PermissionPlayerConfigurationCodec(permissionConfigurationCodec),
+            permissionConfigurationCodec
         )
-        val codecRegistry = CodecRegistries.fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry)
+        val codecRegistry = CodecRegistries.fromRegistries(
+            MongoClientSettings.getDefaultCodecRegistry(),
+            codecs
+        )
         return MongoClientSettings.builder()
             .uuidRepresentation(UuidRepresentation.STANDARD)
             .codecRegistry(codecRegistry)

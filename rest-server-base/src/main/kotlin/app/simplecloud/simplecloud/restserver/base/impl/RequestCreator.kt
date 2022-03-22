@@ -1,11 +1,13 @@
 package app.simplecloud.simplecloud.restserver.base.impl
 
 import app.simplecloud.rest.Context
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.restserver.base.request.Request
 import app.simplecloud.simplecloud.restserver.base.request.RequestImpl
 import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import kotlinx.coroutines.future.await
+import org.apache.logging.log4j.LogManager
 
 /**
  * Date: 14.03.22
@@ -21,8 +23,8 @@ class RequestCreator(
 ) {
 
     suspend fun createRequest(): Request {
-        val entity = runCatching { this.authService.getRequestEntityFromContext(this.context).await() }.getOrNull()
-        println("RequestCreator found an entity ${entity}")
+        val entity = getRequestEntity()
+        logger.info("Received a request with entity ${entity} on ${this.route.getPath()}")
         val pathParameters = this.context.getRequestPathParameters()
         return RequestImpl(
             this.route.getRequestType(),
@@ -31,6 +33,19 @@ class RequestCreator(
             entity,
             pathParameters
         )
+    }
+
+    private suspend fun getRequestEntity(): PermissionEntity? {
+        return try {
+            this.authService.getRequestEntityFromContext(this.context).await()
+        } catch (e: Exception) {
+            logger.error("An error occurred while resolving a request entity. Continuing with null.", e)
+            null
+        }
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(RequestCreator::class.java)
     }
 
 }

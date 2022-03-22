@@ -22,8 +22,10 @@
 
 package app.simplecloud.simplecloud.api.request.player
 
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
-import app.simplecloud.simplecloud.api.utils.Request
+import app.simplecloud.simplecloud.api.request.permission.PermissionPlayerUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,7 +33,19 @@ import app.simplecloud.simplecloud.api.utils.Request
  * Time: 18:38
  * @author Frederick Baier
  */
-interface OfflineCloudPlayerUpdateRequest : Request<Unit> {
+interface OfflineCloudPlayerUpdateRequest : PermissionPlayerUpdateRequest {
+
+    override fun clearPermissions(): OfflineCloudPlayerUpdateRequest
+
+    override fun addPermission(permission: Permission): OfflineCloudPlayerUpdateRequest
+
+    override fun removePermission(permissionString: String): OfflineCloudPlayerUpdateRequest
+
+    override fun clearPermissionGroups(): OfflineCloudPlayerUpdateRequest
+
+    override fun addPermissionGroup(permissionGroup: PermissionGroup, expiresAt: Long): OfflineCloudPlayerUpdateRequest
+
+    override fun removePermissionGroup(groupName: String): OfflineCloudPlayerUpdateRequest
 
     /**
      * Sets the display name of the player

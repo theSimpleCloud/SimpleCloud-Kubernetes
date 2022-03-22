@@ -17,6 +17,4 @@ class PlayerWebConfig(
     val hasAccess: Boolean
 ) {
 
-    constructor() : this("", false)
-
 }

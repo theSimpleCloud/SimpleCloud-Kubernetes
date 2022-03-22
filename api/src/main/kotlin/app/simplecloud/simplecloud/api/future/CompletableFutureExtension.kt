@@ -62,6 +62,7 @@ fun <T> CompletableFuture<T>.nullable(): CompletableFuture<T?> {
 }
 
 fun <T> List<CompletableFuture<out T>>.toFutureList(): CompletableFuture<List<T>> {
+    if (isEmpty()) return completedFuture(emptyList())
     val returnFuture = CloudCompletableFuture<List<T>>()
     val list: MutableList<T> = CopyOnWriteArrayList<T>()
     this.map { future ->

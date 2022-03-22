@@ -25,6 +25,9 @@ package app.simplecloud.simplecloud.api.impl.guice
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import app.simplecloud.simplecloud.api.impl.permission.PermissionImpl
+import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupImpl
+import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerImpl
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerImpl
 import app.simplecloud.simplecloud.api.impl.player.OfflineCloudPlayerFactory
@@ -37,7 +40,12 @@ import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
+import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.permission.PermissionGroup
+import app.simplecloud.simplecloud.api.permission.PermissionPlayer
+import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.process.CloudProcess
@@ -64,12 +72,31 @@ class CloudAPIBinderModule(
     private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
     private val cloudPlayerServiceClass: Class<out InternalCloudPlayerService>,
     private val processOnlineCountService: Class<out ProcessOnlineCountService>,
+    private val permissionGroupService: Class<out InternalPermissionGroupService>,
 ) : AbstractModule() {
 
     override fun configure() {
         bind(Ignite::class.java).toInstance(igniteInstance)
 
         bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
+
+        install(
+            FactoryModuleBuilder()
+                .implement(Permission::class.java, PermissionImpl::class.java)
+                .build(Permission.Factory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(PermissionGroup::class.java, PermissionGroupImpl::class.java)
+                .build(PermissionGroup.Factory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(PermissionPlayer::class.java, PermissionPlayerImpl::class.java)
+                .build(PermissionPlayer.Factory::class.java)
+        )
 
         install(
             FactoryModuleBuilder()
@@ -89,6 +116,8 @@ class CloudAPIBinderModule(
                 .build(OfflineCloudPlayerFactory::class.java)
         )
 
+        bind(PermissionGroupService::class.java).to(this.permissionGroupService)
+        bind(InternalPermissionGroupService::class.java).to(this.permissionGroupService)
         bind(ProcessOnlineCountService::class.java).to(this.processOnlineCountService)
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudPlayerService::class.java).to(this.cloudPlayerServiceClass)

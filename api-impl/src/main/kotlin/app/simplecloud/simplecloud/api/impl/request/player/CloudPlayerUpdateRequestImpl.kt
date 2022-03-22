@@ -2,6 +2,9 @@ package app.simplecloud.simplecloud.api.impl.request.player
 
 import app.simplecloud.simplecloud.api.internal.request.player.InternalCloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.permission.PermissionGroup
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
@@ -16,11 +19,10 @@ import java.util.concurrent.CompletableFuture
  */
 class CloudPlayerUpdateRequestImpl(
     private val cloudPlayer: CloudPlayer,
-    private val internalService: InternalCloudPlayerService
-): InternalCloudPlayerUpdateRequest {
-
-    @Volatile
-    private var displayName: String = this.cloudPlayer.getDisplayName()
+    private val internalService: InternalCloudPlayerService,
+    private val permissionFactory: Permission.Factory
+) : OfflineCloudPlayerUpdateRequestImpl(cloudPlayer, internalService, permissionFactory),
+    InternalCloudPlayerUpdateRequest {
 
     @Volatile
     private var connectedProxyName: String = this.cloudPlayer.getCurrentProxyName()
@@ -28,11 +30,41 @@ class CloudPlayerUpdateRequestImpl(
     @Volatile
     private var connectedServerName: String? = this.cloudPlayer.getCurrentServerName()
 
-    @Volatile
-    private var webConfig: PlayerWebConfig = this.cloudPlayer.getWebConfig()
+    override fun clearPermissions(): InternalCloudPlayerUpdateRequest {
+        super.clearPermissions()
+        return this
+    }
+
+    override fun addPermission(permission: Permission): InternalCloudPlayerUpdateRequest {
+        super.addPermission(permission)
+        return this
+    }
+
+    override fun removePermission(permissionString: String): InternalCloudPlayerUpdateRequest {
+        super.removePermission(permissionString)
+        return this
+    }
+
+    override fun clearPermissionGroups(): InternalCloudPlayerUpdateRequest {
+        super.clearPermissionGroups()
+        return this
+    }
+
+    override fun addPermissionGroup(
+        permissionGroup: PermissionGroup,
+        expiresAt: Long
+    ): InternalCloudPlayerUpdateRequest {
+        super.addPermissionGroup(permissionGroup, expiresAt)
+        return this
+    }
+
+    override fun removePermissionGroup(groupName: String): InternalCloudPlayerUpdateRequest {
+        super.removePermissionGroup(groupName)
+        return this
+    }
 
     override fun setDisplayName(name: String): InternalCloudPlayerUpdateRequest {
-        this.displayName = name
+        super.setDisplayName(name)
         return this
     }
 
@@ -47,18 +79,22 @@ class CloudPlayerUpdateRequestImpl(
     }
 
     override fun setWebConfig(webConfig: PlayerWebConfig): InternalCloudPlayerUpdateRequest {
-        this.webConfig = webConfig
+        super.setWebConfig(webConfig)
         return this
     }
 
     override fun submit(): CompletableFuture<Unit> {
-        val playerConnection = cloudPlayer.getPlayerConnection()
+        val playerConnection = this.cloudPlayer.getPlayerConnection()
         val connectionConfiguration = PlayerConnectionConfiguration(
             playerConnection.getUniqueId(),
             playerConnection.getVersion(),
             playerConnection.getName(),
             playerConnection.getAddress(),
             playerConnection.isOnlineMode()
+        )
+        val permissionPlayerConfiguration = PermissionPlayerConfiguration(
+            this.cloudPlayer.getUniqueId(),
+            this.permissions.map { it.toConfiguration() }
         )
         val cloudPlayerConfiguration = CloudPlayerConfiguration(
             this.cloudPlayer.getName(),
@@ -69,6 +105,7 @@ class CloudPlayerUpdateRequestImpl(
             connectionConfiguration,
             this.displayName,
             this.webConfig,
+            permissionPlayerConfiguration,
             this.connectedServerName,
             this.connectedProxyName
         )

@@ -46,7 +46,6 @@ class ProcessGroupCreateRequestImpl(
             throw IllegalArgumentException("Group already exists")
         }
         return this.internalService.createGroupInternal(configuration)
-
     }
 
     private fun doesGroupExist(groupName: String): CompletableFuture<Boolean> {

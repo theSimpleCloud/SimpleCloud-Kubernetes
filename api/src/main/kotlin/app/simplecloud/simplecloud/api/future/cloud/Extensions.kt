@@ -24,10 +24,8 @@ package app.simplecloud.simplecloud.api.future.cloud
 
 import app.simplecloud.simplecloud.api.future.copyTo
 import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullException
-import app.simplecloud.simplecloud.api.future.handleFutureComplete
 import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CopyOnWriteArrayList
 
 
 //CloudCompletableFuture
@@ -53,21 +51,6 @@ fun <T> CloudCompletableFuture<T>.nullable(): CloudCompletableFuture<T?> {
         }
         returnFuture.complete(value)
     }
-    return returnFuture
-}
-
-fun <T> List<CloudCompletableFuture<out T>>.toFutureList(): CloudCompletableFuture<List<T>> {
-    val returnFuture = CloudCompletableFuture<List<T>>()
-    val list: MutableList<T> = CopyOnWriteArrayList<T>()
-    this.map { future ->
-        future.handle { _, _ ->
-            handleFutureComplete(future, list)
-            if (this.all { it.isDone }) {
-                returnFuture.complete(list)
-            }
-        }
-    }
-
     return returnFuture
 }
 

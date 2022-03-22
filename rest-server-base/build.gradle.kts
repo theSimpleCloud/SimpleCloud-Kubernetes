@@ -2,7 +2,6 @@
 dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":api"))
-    implementation(project(":permission"))
     testImplementation("org.junit.jupiter:junit-jupiter-api:5.6.0")
     testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
 

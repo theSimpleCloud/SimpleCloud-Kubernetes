@@ -1,6 +1,7 @@
 package app.simplecloud.simplecloud.restserver.base.impl
 
 import app.simplecloud.rest.Context
+import app.simplecloud.simplecloud.api.utils.future.FutureOriginException
 import app.simplecloud.simplecloud.restserver.base.exception.HttpException
 import app.simplecloud.simplecloud.restserver.base.exception.MissingPermissionException
 import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
@@ -34,7 +35,7 @@ class ResponseHandler(
     private fun checkPermission() {
         if (!route.hasPermission()) return
         val requestingEntity = this.request.getRequestingEntity() ?: throw UnauthorizedException()
-        if (!requestingEntity.hasPermission(route.getPermission())) throw MissingPermissionException()
+        if (!requestingEntity.hasPermission(route.getPermission()).join()) throw MissingPermissionException()
     }
 
     private fun handleResponse(response: Any?) {
@@ -61,9 +62,9 @@ class ResponseHandler(
         if (ex is InvocationTargetException) {
             return unpackException(ex.cause!!)
         }
-        //if (ex is FutureOriginException) {
-        //    return unpackException(ex.cause!!)
-        //}
+        if (ex is FutureOriginException) {
+            return unpackException(ex.cause!!)
+        }
         return ex
     }
 

@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.api.request.player
 
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 
 
@@ -32,6 +34,18 @@ import app.simplecloud.simplecloud.api.player.PlayerWebConfig
  * @author Frederick Baier
  */
 interface CloudPlayerUpdateRequest : OfflineCloudPlayerUpdateRequest {
+
+    override fun clearPermissions(): CloudPlayerUpdateRequest
+
+    override fun addPermission(permission: Permission): CloudPlayerUpdateRequest
+
+    override fun removePermission(permissionString: String): CloudPlayerUpdateRequest
+
+    override fun clearPermissionGroups(): CloudPlayerUpdateRequest
+
+    override fun addPermissionGroup(permissionGroup: PermissionGroup, expiresAt: Long): CloudPlayerUpdateRequest
+
+    override fun removePermissionGroup(groupName: String): CloudPlayerUpdateRequest
 
     override fun setDisplayName(name: String): CloudPlayerUpdateRequest
 

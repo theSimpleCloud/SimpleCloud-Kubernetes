@@ -22,11 +22,10 @@
 
 package app.simplecloud.simplecloud.api.player
 
+import app.simplecloud.simplecloud.api.permission.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.request.player.OfflineCloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Nameable
-import app.simplecloud.simplecloud.permission.entity.PermissionEntity
-import java.util.*
 
 /**
  * Created by IntelliJ IDEA.
@@ -34,12 +33,7 @@ import java.util.*
  * Time: 15:32
  * @author Frederick Baier
  */
-interface OfflineCloudPlayer : PermissionEntity, Nameable {
-
-    /**
-     * Returns the unique id of the player
-     */
-    fun getUniqueId(): UUID
+interface OfflineCloudPlayer : PermissionPlayer, Nameable {
 
     /**
      * Returns the timestamp the player first logged in

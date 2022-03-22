@@ -4,6 +4,7 @@ import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullException
 import app.simplecloud.simplecloud.api.future.unpackFutureException
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
@@ -59,6 +60,10 @@ class CloudPlayerLoginHandler(
             this.configuration,
             this.configuration.name,
             PlayerWebConfig("", false),
+            PermissionPlayerConfiguration(
+                this.configuration.uniqueId,
+                emptyList()
+            ),
             "",
             this.proxyName
         )
@@ -80,6 +85,7 @@ class CloudPlayerLoginHandler(
             this.configuration,
             loadedPlayerConfiguration.displayName,
             loadedPlayerConfiguration.webConfig,
+            loadedPlayerConfiguration.permissionPlayerConfiguration,
             null,
             proxyName
         )

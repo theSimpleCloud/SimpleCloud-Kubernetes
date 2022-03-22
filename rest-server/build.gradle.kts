@@ -4,7 +4,6 @@ dependencies {
     implementation(project(":api-impl"))
     implementation(project(":ignite"))
     api(project(":rest-server-base"))
-    api(project(":permission"))
 
     api("com.fasterxml.jackson.core:jackson-core:2.12.2")
     api("com.fasterxml.jackson.core:jackson-databind:2.12.2")

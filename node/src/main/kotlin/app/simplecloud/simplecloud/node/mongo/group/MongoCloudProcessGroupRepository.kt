@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.node.mongo.group
 
-import app.simplecloud.simplecloud.api.impl.repository.mongo.DefaultMongoRepository
+import app.simplecloud.simplecloud.node.mongo.DefaultMongoRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.morphia.Datastore

@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.node.mongo.player
 
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
@@ -40,7 +41,8 @@ class CloudPlayerEntity(
     val onlineTime: Long,
     val displayName: String,
     val lastPlayerConnection: PlayerConnectionConfiguration,
-    val webConfig: PlayerWebConfig
+    val webConfig: PlayerWebConfig,
+    val permissionConfiguration: PermissionPlayerConfiguration
 ) {
 
     private constructor() : this(
@@ -57,7 +59,11 @@ class CloudPlayerEntity(
             Address("", -1),
             false
         ),
-        PlayerWebConfig("", false)
+        PlayerWebConfig("", false),
+        PermissionPlayerConfiguration(
+            UUID.randomUUID(),
+            emptyList()
+        )
     )
 
     fun toConfiguration(): OfflineCloudPlayerConfiguration {
@@ -69,7 +75,8 @@ class CloudPlayerEntity(
             this.onlineTime,
             this.displayName,
             this.lastPlayerConnection,
-            this.webConfig
+            this.webConfig,
+            this.permissionConfiguration
         )
     }
 
@@ -83,7 +90,8 @@ class CloudPlayerEntity(
                 configuration.onlineTime,
                 configuration.displayName,
                 configuration.lastPlayerConnection,
-                configuration.webConfig
+                configuration.webConfig,
+                configuration.permissionPlayerConfiguration
             )
         }
     }

@@ -23,7 +23,7 @@
 package app.simplecloud.simplecloud.restserver.base.service
 
 import app.simplecloud.rest.Context
-import app.simplecloud.simplecloud.permission.entity.PermissionEntity
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import java.util.concurrent.CompletableFuture
 
 /**

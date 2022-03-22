@@ -109,7 +109,8 @@ class NodeClusterConnect @Inject constructor(
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java,
             CloudPlayerServiceImpl::class.java,
-            ProcessOnlineCountServiceImpl::class.java
+            ProcessOnlineCountServiceImpl::class.java,
+            PermissionGroupServiceImpl::class.java
         )
         return injector.createChildInjector(
             NodeBinderModule(),

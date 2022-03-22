@@ -50,7 +50,8 @@ class CloudPlugin(
                 CloudProcessServiceImpl::class.java,
                 CloudProcessGroupServiceImpl::class.java,
                 CloudPlayerServiceImpl::class.java,
-                ProcessOnlineCountServiceImpl::class.java
+                ProcessOnlineCountServiceImpl::class.java,
+                PermissionGroupServiceImpl::class.java
             )
         )
         val selfProcess = intermediateInjector.getInstance(SelfProcessGetter::class.java).getSelfProcess()

@@ -24,9 +24,9 @@ package app.simplecloud.simplecloud.restserver.auth
 
 import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.api.future.completedFuture
+import app.simplecloud.simplecloud.api.permission.EmptyPermissionEntity
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
-import app.simplecloud.simplecloud.permission.entity.EmptyPermissionEntity
-import app.simplecloud.simplecloud.permission.entity.PermissionEntity
 import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import app.simplecloud.simplecloud.restserver.base.service.UsernameAndPasswordCredentials

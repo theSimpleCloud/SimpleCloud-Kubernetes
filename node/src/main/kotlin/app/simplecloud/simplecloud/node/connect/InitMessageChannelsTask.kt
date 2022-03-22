@@ -3,14 +3,12 @@ package app.simplecloud.simplecloud.node.connect
 import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.node.messagechannel.CloudPlayerLoginMessageHandler
-import app.simplecloud.simplecloud.node.messagechannel.DeleteGroupMessageHandler
-import app.simplecloud.simplecloud.node.messagechannel.StartProcessMessageHandler
-import app.simplecloud.simplecloud.node.messagechannel.UpdateGroupMessageHandler
+import app.simplecloud.simplecloud.node.messagechannel.*
 import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.concurrent.CompletableFuture
@@ -21,6 +19,8 @@ class InitMessageChannelsTask @Inject constructor(
 ) {
 
     fun run(): CompletableFuture<Unit> {
+        registerPermissionGroupDeleteMessageChannel()
+        registerPermissionGroupUpdateMessageChannel()
         registerGroupDeleteMessageChannel()
         registerGroupUpdateMessageChannel()
         registerStartProcessMessageChannel()
@@ -53,6 +53,20 @@ class InitMessageChannelsTask @Inject constructor(
         val messageChannel = this.messageChannelManager
             .registerMessageChannel<String, Unit>("internal_delete_group")
         val deleteGroupMessageHandler = this.injector.getInstance(DeleteGroupMessageHandler::class.java)
+        messageChannel.setMessageHandler(deleteGroupMessageHandler)
+    }
+
+    private fun registerPermissionGroupUpdateMessageChannel() {
+        val messageChannel = this.messageChannelManager
+            .registerMessageChannel<PermissionGroupConfiguration, Unit>("internal_update_permission_group")
+        val updateGroupMessageHandler = this.injector.getInstance(UpdatePermissionGroupMessageHandler::class.java)
+        messageChannel.setMessageHandler(updateGroupMessageHandler)
+    }
+
+    private fun registerPermissionGroupDeleteMessageChannel() {
+        val messageChannel = this.messageChannelManager
+            .registerMessageChannel<String, Unit>("internal_delete_permission_group")
+        val deleteGroupMessageHandler = this.injector.getInstance(DeletePermissionGroupMessageHandler::class.java)
         messageChannel.setMessageHandler(deleteGroupMessageHandler)
     }
 

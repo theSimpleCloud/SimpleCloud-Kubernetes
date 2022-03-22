@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.api.player.configuration
 
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import java.util.*
 
@@ -17,5 +18,6 @@ open class OfflineCloudPlayerConfiguration(
     val onlineTime: Long,
     val displayName: String,
     val lastPlayerConnection: PlayerConnectionConfiguration,
-    val webConfig: PlayerWebConfig
+    val webConfig: PlayerWebConfig,
+    val permissionPlayerConfiguration: PermissionPlayerConfiguration
 )

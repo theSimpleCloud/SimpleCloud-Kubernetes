@@ -23,6 +23,8 @@
 package app.simplecloud.simplecloud.node.startup.setup.task
 
 import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
@@ -77,7 +79,7 @@ class FirstWebUserSetupTask(
 
     private fun saveResponseToMongoDatabase(response: FirstUserSetupResponseBody) {
         val entity = createPlayerEntityFromResponseBody(response)
-        this.playerRepository.save(response.uniqueId, entity)
+        this.playerRepository.save(response.uniqueId, entity).exceptionally { it.printStackTrace() }
     }
 
     private fun createPlayerEntityFromResponseBody(response: FirstUserSetupResponseBody): CloudPlayerEntity {
@@ -96,7 +98,13 @@ class FirstWebUserSetupTask(
                 Address("127.0.0.1", -1),
                 true
             ),
-            PlayerWebConfig(passwordHash, true)
+            PlayerWebConfig(passwordHash, true),
+            PermissionPlayerConfiguration(
+                response.uniqueId,
+                listOf(
+                    PermissionConfiguration("*", true, -1, null)
+                )
+            )
         )
     }
 

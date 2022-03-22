@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.restserver.controller.load
 
-import app.simplecloud.simplecloud.permission.entity.PermissionEntity
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.restserver.annotation.*
 import app.simplecloud.simplecloud.restserver.base.RestServerAPI
 import app.simplecloud.simplecloud.restserver.base.parameter.ParameterType

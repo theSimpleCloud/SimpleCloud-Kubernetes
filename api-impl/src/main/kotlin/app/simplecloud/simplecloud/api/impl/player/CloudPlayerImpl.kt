@@ -3,6 +3,8 @@ package app.simplecloud.simplecloud.api.impl.player
 import app.simplecloud.simplecloud.api.future.failedFuture
 import app.simplecloud.simplecloud.api.impl.request.player.CloudPlayerUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.permission.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerConnection
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
@@ -32,7 +34,9 @@ class CloudPlayerImpl @Inject constructor(
     @Assisted private val configuration: CloudPlayerConfiguration,
     private val cloudPlayerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
-) : OfflineCloudPlayerImpl(configuration, cloudPlayerService), CloudPlayer {
+    private val permissionFactory: Permission.Factory,
+    permissionPlayerFactory: PermissionPlayer.Factory
+) : OfflineCloudPlayerImpl(configuration, cloudPlayerService, permissionFactory, permissionPlayerFactory), CloudPlayer {
 
     private val playerConnection = PlayerConnectionImpl(this.configuration.lastPlayerConnection)
 
@@ -68,7 +72,7 @@ class CloudPlayerImpl @Inject constructor(
     }
 
     override fun createUpdateRequest(): CloudPlayerUpdateRequest {
-        return CloudPlayerUpdateRequestImpl(this, this.cloudPlayerService)
+        return CloudPlayerUpdateRequestImpl(this, this.cloudPlayerService, this.permissionFactory)
     }
 
     override fun sendMessage(source: Identity, message: Component, type: MessageType) {
@@ -120,7 +124,7 @@ class CloudPlayerImpl @Inject constructor(
     }
 
     override fun openBook(book: Book) {
-        
+
     }
 
 }
