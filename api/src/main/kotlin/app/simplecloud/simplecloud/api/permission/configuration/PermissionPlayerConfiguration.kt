@@ -13,6 +13,6 @@ class PermissionPlayerConfiguration(
     val permissions: List<PermissionConfiguration>
 ) {
 
-    constructor() : this(UUID.randomUUID(), emptyList())
+    private constructor() : this(UUID.randomUUID(), emptyList())
 
 }

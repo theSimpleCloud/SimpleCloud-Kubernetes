@@ -38,8 +38,8 @@ import app.simplecloud.simplecloud.api.utils.Nameable
 interface ProcessesOnlineCountConfiguration : Nameable, Identifiable<String> {
 
     /**
-     * Returns the amount of processes that should be online in the moment the method gets called
-     * According to the returned value processes will be stopped and started
+     * Returns the amount of processes that should be online at the moment the method gets called
+     * According to the returned value processes will be stopped or started
      */
     fun calculateOnlineCount(group: CloudProcessGroup): Int
 

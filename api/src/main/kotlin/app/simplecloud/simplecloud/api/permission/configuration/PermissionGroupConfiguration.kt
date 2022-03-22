@@ -11,4 +11,7 @@ class PermissionGroupConfiguration(
     val priority: Int,
     val permissions: List<PermissionConfiguration>,
 ) {
+
+    private constructor() : this("", -1, emptyList())
+
 }

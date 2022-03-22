@@ -8,5 +8,6 @@ package app.simplecloud.simplecloud.restserver.base.exception
  *
  */
 class BodyParseException(
-    className: String
-) : HttpException(404, "Failed to parse body to class '${className}'")
+    className: String,
+    override val cause: Throwable?
+) : HttpException(400, "Failed to parse body to class '${className}'", cause)

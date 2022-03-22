@@ -26,10 +26,7 @@ import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.restserver.auth.RestAuthServiceImpl
 import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.controller.ControllerHandlerImpl
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.LoginController
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.NodeController
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessController
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.ProcessGroupController
+import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.*
 import com.google.inject.Inject
 import com.google.inject.Injector
 import java.util.concurrent.CompletableFuture
@@ -62,6 +59,8 @@ class RestServerStartTask @Inject constructor(
         this.controllerHandler.registerController(ProcessGroupController::class.java)
         this.controllerHandler.registerController(ProcessController::class.java)
         this.controllerHandler.registerController(NodeController::class.java)
+        this.controllerHandler.registerController(PermissionGroupController::class.java)
+        this.controllerHandler.registerController(PlayerController::class.java)
     }
 
 

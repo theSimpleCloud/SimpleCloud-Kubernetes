@@ -14,6 +14,6 @@ class PermissionConfiguration(
     val targetProcessGroup: String?
 ) {
 
-    constructor() : this("", false, 0L, null)
+    private constructor() : this("", false, 0L, null)
 
 }

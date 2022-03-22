@@ -50,7 +50,7 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
     }
 
     override fun find(identifier: I): CompletableFuture<T> {
-        return findOrNull(identifier).nonNull()
+        return findOrNull(identifier).nonNull(NoSuchElementException("No element found by id ${identifier}"))
     }
 
     override fun findOrNull(identifier: I): CompletableFuture<T?> {

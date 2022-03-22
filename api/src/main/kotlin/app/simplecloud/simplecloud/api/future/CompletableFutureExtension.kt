@@ -37,12 +37,11 @@ import java.util.concurrent.CopyOnWriteArrayList
  * @author Frederick Baier
  */
 
-
 /**
  * Creates a not nullable future
  */
-fun <T> CompletableFuture<T?>.nonNull(): CompletableFuture<T> {
-    return this.thenApply { it ?: throw CompletedWithNullException() }
+fun <T> CompletableFuture<T?>.nonNull(exception: Exception = CompletedWithNullException()): CompletableFuture<T> {
+    return this.thenApply { it ?: throw exception }
 }
 
 /**

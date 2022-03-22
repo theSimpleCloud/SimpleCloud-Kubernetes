@@ -65,7 +65,8 @@ class CloudPlayerServiceImpl @Inject constructor(
     }
 
     override fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration): CompletableFuture<Unit> {
-        TODO()
+        val playerEntity = CloudPlayerEntity.fromConfiguration(configuration)
+        return this.mongoCloudPlayerRepository.save(configuration.uniqueId, playerEntity)
     }
 
     private fun convertPlayerEntityToOfflineCloudPlayer(entity: CloudPlayerEntity): OfflineCloudPlayer {

@@ -29,4 +29,8 @@ package app.simplecloud.simplecloud.restserver.base.exception
  * Time: 15:33
  * @author Frederick Baier
  */
-open class HttpException(val statusCode: Int, message: String) : Exception(message)
+open class HttpException(val statusCode: Int, message: String, cause: Throwable?) : Exception(message, cause) {
+
+    constructor(statusCode: Int, message: String) : this(statusCode, message, null)
+
+}

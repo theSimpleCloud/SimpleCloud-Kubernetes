@@ -27,7 +27,7 @@ interface Request {
         try {
             return RestServerBase.mapperExcludeIncoming.readValue(getRequestBody(), clazz)
         } catch (e: Exception) {
-            throw BodyParseException(clazz.name)
+            throw BodyParseException(clazz.name, e)
         }
     }
 

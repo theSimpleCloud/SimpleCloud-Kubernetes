@@ -19,6 +19,12 @@ class PermissionGroupEntity(
     val permissions: List<PermissionConfiguration>
 ) {
 
+    private constructor() : this(
+        "<empty>",
+        -1,
+        emptyList()
+    )
+
     fun toConfiguration(): PermissionGroupConfiguration {
         return PermissionGroupConfiguration(
             this.name,
