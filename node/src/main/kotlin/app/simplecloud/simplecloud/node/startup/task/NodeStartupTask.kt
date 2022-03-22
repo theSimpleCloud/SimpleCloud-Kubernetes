@@ -23,13 +23,10 @@
 package app.simplecloud.simplecloud.node.startup.task
 
 import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import app.simplecloud.simplecloud.node.mongo.MongoSingleObjectRepository
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
-import app.simplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetupTask
 import app.simplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
 import app.simplecloud.simplecloud.node.startup.token.TokenSecretEntity
 import app.simplecloud.simplecloud.restserver.auth.AuthServiceProvider
@@ -67,10 +64,14 @@ class NodeStartupTask(
         val datastore = await(checkForMongoConnectionStringAndStartClient())
         val jwtTokenHandler = await(initJwtTokenHandler(datastore))
         val injector = createSubInjectorWithDatastoreAndTokenHandler(datastore, jwtTokenHandler)
-        await(checkForAnyWebAccount(injector, jwtTokenHandler))
+        await(checkForAnyWebAccount(injector))
         setupEnd()
         logger.info("Node Startup completed")
         return completedFuture(injector)
+    }
+
+    private fun checkForAnyWebAccount(injector: Injector): CompletableFuture<Unit> {
+        return injector.getInstance(FirstAccountCheck::class.java).checkForAccount()
     }
 
     private fun initJwtTokenHandler(datastore: Datastore): CompletableFuture<JwtTokenHandler> {
@@ -105,19 +106,6 @@ class NodeStartupTask(
             SingleInstanceBinderModule(Datastore::class.java, datastore),
             SingleInstanceBinderModule(JwtTokenHandler::class.java, tokenHandler)
         )
-    }
-
-    private fun checkForAnyWebAccount(injector: Injector, tokenHandler: JwtTokenHandler): CompletableFuture<Unit> {
-        val mongoRepository = injector.getInstance(MongoCloudPlayerRepository::class.java)
-        val count = await(mongoRepository.count())
-        if (count == 0L) {
-            return executeFirstUserSetup(mongoRepository, tokenHandler)
-        }
-        return unitFuture()
-    }
-
-    private fun executeFirstUserSetup(mongoRepository: MongoCloudPlayerRepository, tokenHandler: JwtTokenHandler): CompletableFuture<Unit> {
-        return FirstWebUserSetupTask(this.restSetupManager, mongoRepository, tokenHandler).run()
     }
 
     private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
