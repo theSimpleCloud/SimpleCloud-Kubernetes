@@ -55,7 +55,6 @@ class NodeStartupTask(
 
     private val restServer = RestServerAPI.createRestServer(NoAuthService(), 8008)
     private val restSetupManager = RestSetupManager(this.restServer)
-    //TODO change secret
 
     private val injector = createInjector()
 
