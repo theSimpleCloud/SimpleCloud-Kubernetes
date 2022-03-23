@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.restserver.base.service
 
 import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.api.permission.PermissionEntity
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -37,11 +36,11 @@ interface AuthService {
     /**
      * Returns the jwt token for the specified credentials
      */
-    fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String>
+    suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String
 
     /**
      * Returns the user from the specified [context]
      */
-    fun getRequestEntityFromContext(context: Context): CompletableFuture<out PermissionEntity>
+    suspend fun getRequestEntityFromContext(context: Context): PermissionEntity
 
 }

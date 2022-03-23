@@ -22,51 +22,45 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.ea.async.Async.await
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 class ProcessOnlineCountHandler(
     private val group: CloudProcessGroup,
     private val processService: CloudProcessService
 ) {
 
-    fun handle(): CompletableFuture<Unit> {
+    suspend fun handle() {
         logger.info("Checking online count for {}", group.getName())
-        val expectedCount = await(calculateExpectedOnlineCount())
-        val actualCount = await(calculateActualOnlineCount())
+        val expectedCount = calculateExpectedOnlineCount()
+        val actualCount = calculateActualOnlineCount()
         if (expectedCount > actualCount) {
             startServices(expectedCount - actualCount)
-            return unitFuture()
         }
         stopServices(actualCount - expectedCount)
-        return unitFuture()
     }
 
-    private fun stopServices(count: Int) {
+    private suspend fun stopServices(count: Int) {
 
     }
 
-    private fun startServices(count: Int) {
+    private suspend fun startServices(count: Int) {
         for (i in 0 until count) {
-            await(this.processService.createProcessStartRequest(this.group).submit())
+            this.processService.createProcessStartRequest(this.group).submit().await()
         }
     }
 
-    private fun calculateExpectedOnlineCount(): CompletableFuture<Int> {
-        val onlineCountConfiguration = await(this.group.getProcessOnlineCountConfiguration())
-        return completedFuture(onlineCountConfiguration.calculateOnlineCount(this.group))
+    private suspend fun calculateExpectedOnlineCount(): Int {
+        val onlineCountConfiguration = this.group.getProcessOnlineCountConfiguration().await()
+        return onlineCountConfiguration.calculateOnlineCount(this.group)
     }
 
-    private fun calculateActualOnlineCount(): CompletableFuture<Int> {
-        val processes = await(this.group.getProcesses())
-        val count = processes.count { isStateJoinableOrBefore(it.getState()) }
-        return completedFuture(count)
+    private suspend fun calculateActualOnlineCount(): Int {
+        val processes = this.group.getProcesses().await()
+        return processes.count { isStateJoinableOrBefore(it.getState()) }
     }
 
     private fun isStateJoinableOrBefore(processState: ProcessState): Boolean {

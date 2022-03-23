@@ -3,7 +3,6 @@ package app.simplecloud.simplecloud.api.internal.service
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 11.01.22
@@ -13,8 +12,8 @@ import java.util.concurrent.CompletableFuture
  */
 interface InternalCloudPlayerService : CloudPlayerService {
 
-    fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration): CompletableFuture<Unit>
+    suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration)
 
-    fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration): CompletableFuture<Unit>
+    suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration)
 
 }

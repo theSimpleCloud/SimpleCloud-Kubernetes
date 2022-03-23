@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.api.impl.request.player
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.request.permission.AbstractPermissionEntityUpdateRequest
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -75,8 +77,8 @@ open class OfflineCloudPlayerUpdateRequestImpl(
         return this
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        val lastPlayerConnection = this.offlinePlayer.getLastPlayerConnection()
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        val lastPlayerConnection = offlinePlayer.getLastPlayerConnection()
         val connectionConfiguration = PlayerConnectionConfiguration(
             lastPlayerConnection.getUniqueId(),
             lastPlayerConnection.getVersion(),
@@ -85,20 +87,20 @@ open class OfflineCloudPlayerUpdateRequestImpl(
             lastPlayerConnection.isOnlineMode()
         )
         val permissionPlayerConfiguration = PermissionPlayerConfiguration(
-            this.offlinePlayer.getUniqueId(),
-            this.permissions.map { it.toConfiguration() }
+            offlinePlayer.getUniqueId(),
+            permissions.map { it.toConfiguration() }
         )
         val offlineCloudPlayerConfiguration = OfflineCloudPlayerConfiguration(
-            this.offlinePlayer.getName(),
-            this.offlinePlayer.getUniqueId(),
-            this.offlinePlayer.getFirstLogin(),
-            this.offlinePlayer.getLastLogin(),
-            this.offlinePlayer.getOnlineTime(),
-            this.displayName,
+            offlinePlayer.getName(),
+            offlinePlayer.getUniqueId(),
+            offlinePlayer.getFirstLogin(),
+            offlinePlayer.getLastLogin(),
+            offlinePlayer.getOnlineTime(),
+            displayName,
             connectionConfiguration,
-            this.webConfig,
+            webConfig,
             permissionPlayerConfiguration
         )
-        return this.internalService.updateOfflinePlayerInternal(offlineCloudPlayerConfiguration)
+        return@future internalService.updateOfflinePlayerInternal(offlineCloudPlayerConfiguration)
     }
 }

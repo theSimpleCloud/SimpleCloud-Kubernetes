@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.node.startup.setup.task
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
@@ -34,12 +33,10 @@ import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupRespons
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
 import app.simplecloud.simplecloud.restserver.setup.type.Setup
-import com.ea.async.Async.await
 import com.google.common.hash.Hashing
 import org.apache.logging.log4j.LogManager
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 /**
@@ -48,19 +45,17 @@ import java.util.concurrent.TimeUnit
  * Time: 00:06
  * @author Frederick Baier
  */
-class FirstWebUserSetupTask(
+class FirstWebUserSetup(
     private val restSetupManager: RestSetupManager,
     private val playerRepository: MongoCloudPlayerRepository,
     private val jwtTokenHandler: JwtTokenHandler
 ) {
 
-    fun run(): CompletableFuture<Unit> {
+    fun executeSetup() {
         logger.info("Executing First User Setup")
-        val setupFuture = this.restSetupManager.setNextSetup(createFirstUserSetup())
-        val responseBody = await(setupFuture)
+        val responseBody = this.restSetupManager.setNextSetup(createFirstUserSetup()).join()
         setEndToken(responseBody)
         saveResponseToMongoDatabase(responseBody)
-        return unitFuture()
     }
 
     private fun setEndToken(responseBody: FirstUserSetupResponseBody) {
@@ -109,7 +104,7 @@ class FirstWebUserSetupTask(
     }
 
     companion object {
-        private val logger = LogManager.getLogger(FirstWebUserSetupTask::class.java)
+        private val logger = LogManager.getLogger(FirstWebUserSetup::class.java)
     }
 
 }

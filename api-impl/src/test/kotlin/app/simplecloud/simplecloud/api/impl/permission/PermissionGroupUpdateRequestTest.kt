@@ -1,11 +1,11 @@
 package app.simplecloud.simplecloud.api.impl.permission
 
+import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
 import app.simplecloud.simplecloud.api.impl.request.permission.PermissionGroupUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
-import app.simplecloud.simplecloud.api.utils.future.FutureOriginException
 import com.google.inject.Guice
 import com.google.inject.Injector
 import org.junit.jupiter.api.Assertions

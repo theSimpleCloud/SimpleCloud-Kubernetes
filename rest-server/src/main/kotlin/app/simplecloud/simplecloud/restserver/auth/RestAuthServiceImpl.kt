@@ -23,20 +23,18 @@
 package app.simplecloud.simplecloud.restserver.auth
 
 import app.simplecloud.rest.Context
-import app.simplecloud.simplecloud.api.future.completedFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.permission.EmptyPermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import app.simplecloud.simplecloud.restserver.base.service.UsernameAndPasswordCredentials
-import com.ea.async.Async.await
 import com.google.common.hash.Hashing
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.nio.charset.StandardCharsets
 import java.util.*
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 /**
@@ -51,17 +49,16 @@ class RestAuthServiceImpl @Inject constructor(
     private val tokenHandler: JwtTokenHandler
 ) : AuthService {
 
-    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String> {
-        val offlineCloudPlayer =
-            await(this.playerService.findOfflinePlayerByName(usernameAndPasswordCredentials.username))
+    override suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
+        val offlineCloudPlayer = this.playerService.findOfflinePlayerByName(usernameAndPasswordCredentials.username)
+            .await()
 
         val hashedPassword = hashPassword(usernameAndPasswordCredentials.password)
 
         if (hashedPassword != offlineCloudPlayer.getWebConfig().password) {
             throw UnauthorizedException()
         }
-        return completedFuture(
-           generateTokenForPlayer(offlineCloudPlayer.getUniqueId()))
+        return generateTokenForPlayer(offlineCloudPlayer.getUniqueId())
     }
 
     private fun hashPassword(password: String): String {
@@ -70,12 +67,12 @@ class RestAuthServiceImpl @Inject constructor(
             .toString()
     }
 
-    override fun getRequestEntityFromContext(context: Context): CompletableFuture<out PermissionEntity> {
+    override suspend fun getRequestEntityFromContext(context: Context): PermissionEntity {
         val tokenData = this.tokenHandler.verify(context)
         if (tokenData.tokenMode == JwtTokenHandler.TokenMode.PLAYER) {
-            return this.playerService.findOfflinePlayerByUniqueId(tokenData.playerUniqueId)
+            return this.playerService.findOfflinePlayerByUniqueId(tokenData.playerUniqueId).await()
         }
-        return CompletableFuture.completedFuture(EmptyPermissionEntity)
+        return EmptyPermissionEntity
     }
 
     private fun generateTokenForPlayer(uniqueId: UUID): String {

@@ -22,8 +22,6 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
@@ -39,9 +37,9 @@ import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import app.simplecloud.simplecloud.restserver.base.RestServer
-import com.ea.async.Async.await
 import com.google.inject.Injector
 import dev.morphia.Datastore
+import kotlinx.coroutines.runBlocking
 import org.apache.ignite.Ignite
 import org.apache.ignite.plugin.security.SecurityCredentials
 import org.apache.logging.log4j.LogManager
@@ -55,47 +53,47 @@ class NodeClusterConnect @Inject constructor(
 
     private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
 
-    fun run(): CompletableFuture<Unit> {
+    fun connect(){
         logger.info("Connecting to cluster...")
-        val clusterKey = await(loadClusterKey())
-        val ignite = await(startIgnite(clusterKey))
+        val clusterKey = loadClusterKey()
+        val ignite = startIgnite(clusterKey)
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
-        await(registerMessageChannels(finalInjector))
-        await(checkForFirstNodeInCluster(finalInjector, ignite))
-        await(writeSelfNodeInRepository(finalInjector, ignite))
-        await(checkOnlineProcesses(finalInjector))
-        return unitFuture()
+        registerMessageChannels(finalInjector)
+        checkForFirstNodeInCluster(finalInjector, ignite)
+        writeSelfNodeInRepository(finalInjector, ignite)
+        checkOnlineProcesses(finalInjector)
     }
 
-    private fun registerMessageChannels(injector: Injector): CompletableFuture<Unit> {
-        val initMessageChannelsTask = injector.getInstance(InitMessageChannelsTask::class.java)
-        return initMessageChannelsTask.run()
+    private fun registerMessageChannels(injector: Injector){
+        val messageChannelsInitializer = injector.getInstance(MessageChannelsInitializer::class.java)
+        messageChannelsInitializer.initializeMessageChannels()
     }
 
-    private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+    private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite) {
         logger.info("Writing Self-Node into Cluster-Cache")
-        return SelfNodeWriteTask(
+        SelfNodeWriter(
             injector.getInstance(IgniteNodeRepository::class.java),
             NodeConfiguration(
                 this.nodeBindAddress,
                 ignite.cluster().localNode().id(),
             )
-        ).run()
+        ).writeSelfNode()
     }
 
-    private fun checkOnlineProcesses(injector: Injector): CompletableFuture<Unit> {
+    private fun checkOnlineProcesses(injector: Injector) {
         logger.info("Checking for online tasks")
         val nodeOnlineProcessesChecker = injector.getInstance(NodeOnlineProcessesChecker::class.java)
-        return nodeOnlineProcessesChecker.run()
+        runBlocking {
+            nodeOnlineProcessesChecker.checkOnlineCount()
+        }
     }
 
-    private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite): CompletableFuture<Unit> {
+    private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite) {
         if (ignite.cluster().nodes().size == 1) {
-            val nodeInitRepositoriesTask = injector.getInstance(NodeInitRepositoriesTask::class.java)
-            await(nodeInitRepositoriesTask.run())
+            val nodeRepositoriesInitializer = injector.getInstance(NodeRepositoriesInitializer::class.java)
+            nodeRepositoriesInitializer.initializeRepositories()
         }
-        return unitFuture()
     }
 
     private fun startRestServer(injector: Injector): CompletableFuture<RestServer> {
@@ -119,25 +117,23 @@ class NodeClusterConnect @Inject constructor(
         )
     }
 
-    private fun startIgnite(
-        clusterKey: ClusterKey
-    ): CompletableFuture<Ignite> {
+    private fun startIgnite(clusterKey: ClusterKey): Ignite {
         val addresses = getOtherNodesAddressesToConnectTo()
         logger.info("Connecting to {}", addresses)
         val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
         val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
             .withAddressesToConnectTo(*addresses.toTypedArray())
-        return completedFuture(igniteBuilder.start())
+        return igniteBuilder.start()
     }
 
-    private fun loadClusterKey(): CompletableFuture<ClusterKey> {
+    private fun loadClusterKey(): ClusterKey {
         val clusterKeyRepo = MongoSingleObjectRepository(
             this.datastore,
             ClusterKeyEntity::class.java,
             ClusterKeyEntity.KEY
         )
-        val clusterKeyEntity = await(clusterKeyRepo.loadObject())
-        return completedFuture(ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password))
+        val clusterKeyEntity = clusterKeyRepo.loadObject().join()
+        return ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password)
     }
 
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {

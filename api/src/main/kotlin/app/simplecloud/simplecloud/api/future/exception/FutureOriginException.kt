@@ -1,4 +1,4 @@
-package app.simplecloud.simplecloud.api.utils.future
+package app.simplecloud.simplecloud.api.future.exception
 
 /**
  * Created by IntelliJ IDEA.

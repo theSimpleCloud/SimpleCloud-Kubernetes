@@ -22,9 +22,9 @@
 
 package app.simplecloud.simplecloud.restserver.service
 
-import app.simplecloud.simplecloud.api.future.cloud.nonNull
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.api.future.toFutureList
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
@@ -39,7 +39,6 @@ import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.*
@@ -71,6 +70,7 @@ class TestCloudProcessService @Inject constructor(
                 512,
                 512,
                 20,
+                5,
                 false,
                 ProcessGroupType.PROXY,
                 "TEST",
@@ -79,35 +79,33 @@ class TestCloudProcessService @Inject constructor(
         )
     }
 
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        return CloudCompletableFuture.supplyAsync {
-            val process = this.processFactory.create(
-                CloudProcessConfiguration(
-                    configuration.groupName,
-                    UUID.randomUUID(),
-                    Random.nextInt(20),
-                    ProcessState.STARTING,
-                    true,
-                    configuration.maxMemory,
-                    0,
-                    configuration.maxPlayers,
-                    false,
-                    ProcessGroupType.LOBBY,
-                    configuration.imageName,
-                    null
-                )
+    override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
+        val process = this.processFactory.create(
+            CloudProcessConfiguration(
+                configuration.groupName,
+                UUID.randomUUID(),
+                Random.nextInt(20),
+                ProcessState.STARTING,
+                true,
+                configuration.maxMemory,
+                0,
+                configuration.maxPlayers,
+                0,
+                false,
+                ProcessGroupType.LOBBY,
+                configuration.imageName,
+                null
             )
-            this.nameToProcess[process.getName()] = process
-            process
-        }.nonNull()
+        )
+        this.nameToProcess[process.getName()] = process
+        return process
     }
 
-    override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
+    override suspend fun shutdownProcessInternal(process: CloudProcess) {
         this.nameToProcess.remove(process.getName())
-        return unitFuture()
     }
 
-    override fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit> {
+    override suspend fun updateProcessInternal(configuration: CloudProcessConfiguration) {
         TODO("Not yet implemented")
     }
 

@@ -29,7 +29,6 @@ import app.simplecloud.simplecloud.restserver.annotation.RequestPathParam
 import app.simplecloud.simplecloud.restserver.annotation.RestController
 import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import java.util.*
 
@@ -46,13 +45,13 @@ class NodeController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "", "web.cloud.node.get")
     fun handleGetAll(): List<NodeConfiguration> {
-        val processes = await(this.nodeService.findAll())
+        val processes = this.nodeService.findAll().join()
         return processes.map { it.toConfiguration() }
     }
 
     @RequestMapping(RequestType.GET, "{uuid}", "web.cloud.node.get")
     fun handleGetOne(@RequestPathParam("uuid") uuid: String): NodeConfiguration {
-        val process = await(this.nodeService.findNodeByUniqueId(UUID.fromString(uuid)))
+        val process = this.nodeService.findNodeByUniqueId(UUID.fromString(uuid)).join()
         return process.toConfiguration()
     }
 

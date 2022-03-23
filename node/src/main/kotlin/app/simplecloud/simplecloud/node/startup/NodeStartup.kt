@@ -23,7 +23,7 @@
 package app.simplecloud.simplecloud.node.startup
 
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
-import app.simplecloud.simplecloud.node.startup.task.NodeStartupTask
+import app.simplecloud.simplecloud.node.startup.task.NodePreparer
 import com.google.inject.Injector
 import dev.morphia.Datastore
 import org.apache.logging.log4j.LogManager
@@ -40,7 +40,7 @@ class NodeStartup(
 ) {
 
     fun start() {
-        val injector = NodeStartupTask(this.startArguments).run().join()
+        val injector = NodePreparer(this.startArguments).prepare()
         executeClusterConnect(injector)
     }
 
@@ -57,7 +57,7 @@ class NodeStartup(
             injector,
             injector.getInstance(Datastore::class.java),
         )
-        task.run().join()
+        task.connect()
     }
 
     companion object {

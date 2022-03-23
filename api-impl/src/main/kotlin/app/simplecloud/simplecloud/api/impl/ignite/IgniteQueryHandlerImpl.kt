@@ -22,13 +22,13 @@
 
 package app.simplecloud.simplecloud.api.impl.ignite
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.timeout.timout
 import app.simplecloud.simplecloud.api.future.toFutureList
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
@@ -37,7 +37,6 @@ import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
-import kotlin.NoSuchElementException
 
 /**
  * Created by IntelliJ IDEA.

@@ -1,7 +1,8 @@
 package app.simplecloud.simplecloud.node.mongo
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import com.ea.async.Async.await
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import dev.morphia.Datastore
 import java.util.concurrent.CompletableFuture
 
@@ -20,25 +21,25 @@ class MongoSingleObjectRepository<T : Any>(
 
     private val keyRepository = DefaultMongoRepository<String, T>(datastore, entityClass)
 
-    fun loadObject(): CompletableFuture<T> {
-        if (await(doesKeyExistInDatabase())) {
-            return loadKeyFromDatabase()
+    fun loadObject(): CompletableFuture<T> = CloudScope.future {
+        if (doesKeyExistInDatabase()) {
+            return@future loadKeyFromDatabase()
         }
-        return createNewClusterKeyAndSafeToDatabase()
+        return@future createNewClusterKeyAndSafeToDatabase()
     }
 
-    private fun loadKeyFromDatabase(): CompletableFuture<T> {
-        return this.keyRepository.find(this.idFieldName)
+    private suspend fun loadKeyFromDatabase(): T {
+        return this.keyRepository.find(this.idFieldName).await()
     }
 
-    private fun createNewClusterKeyAndSafeToDatabase(): CompletableFuture<T> {
+    private suspend fun createNewClusterKeyAndSafeToDatabase(): T {
         val entity = this.entityClass.getDeclaredConstructor().newInstance()
-        await(this.keyRepository.save(this.idFieldName, entity))
-        return completedFuture(entity)
+        this.keyRepository.save(this.idFieldName, entity).await()
+        return entity
     }
 
-    private fun doesKeyExistInDatabase(): CompletableFuture<Boolean> {
-        return this.keyRepository.doesExist(this.idFieldName)
+    private suspend fun doesKeyExistInDatabase(): Boolean {
+        return this.keyRepository.doesExist(this.idFieldName).await()
     }
 
 }

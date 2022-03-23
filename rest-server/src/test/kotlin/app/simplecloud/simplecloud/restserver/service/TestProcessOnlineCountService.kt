@@ -22,9 +22,9 @@
 
 package app.simplecloud.simplecloud.restserver.service
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
 
@@ -40,5 +40,9 @@ class TestProcessOnlineCountService : ProcessOnlineCountService {
     override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration> {
         if (name != "Test") return CompletableFuture.failedFuture(NoSuchElementException(""))
         return CloudCompletableFuture.completedFuture(TestProcessesOnlineCountConfiguration("Test"))
+    }
+
+    override fun checkProcessOnlineCount() {
+        TODO("Not yet implemented")
     }
 }

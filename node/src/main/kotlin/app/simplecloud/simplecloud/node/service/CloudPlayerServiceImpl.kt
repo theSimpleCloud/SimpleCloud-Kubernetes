@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.node.service
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.flatten
 import app.simplecloud.simplecloud.api.future.isCompletedNormally
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
@@ -9,7 +11,6 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.node.mongo.player.CloudPlayerEntity
 import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
 import com.google.inject.Inject
@@ -64,9 +65,9 @@ class CloudPlayerServiceImpl @Inject constructor(
         return playerEntityFuture.thenApply { convertPlayerEntityToOfflineCloudPlayer(it) }
     }
 
-    override fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration): CompletableFuture<Unit> {
+    override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration){
         val playerEntity = CloudPlayerEntity.fromConfiguration(configuration)
-        return this.mongoCloudPlayerRepository.save(configuration.uniqueId, playerEntity)
+        this.mongoCloudPlayerRepository.save(configuration.uniqueId, playerEntity).await()
     }
 
     private fun convertPlayerEntityToOfflineCloudPlayer(entity: CloudPlayerEntity): OfflineCloudPlayer {

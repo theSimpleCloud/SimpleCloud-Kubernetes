@@ -1,9 +1,11 @@
 package app.simplecloud.simplecloud.node.service
 
+import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.service.AbstractProcessOnlineCountService
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import kotlinx.coroutines.launch
 
 /**
  * Date: 03.02.22
@@ -17,6 +19,8 @@ class ProcessOnlineCountServiceImpl @Inject constructor(
 ) : AbstractProcessOnlineCountService() {
 
     override fun checkProcessOnlineCount() {
-        this.onlineProcessesChecker.run()
+        CloudScope.launch {
+            onlineProcessesChecker.checkOnlineCount()
+        }
     }
 }

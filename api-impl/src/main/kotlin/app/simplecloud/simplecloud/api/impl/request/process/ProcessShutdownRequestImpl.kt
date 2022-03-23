@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.api.impl.request.process
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
@@ -42,7 +44,7 @@ class ProcessShutdownRequestImpl(
         return this.process
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        return this.internalService.shutdownProcessInternal(this.process)
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        internalService.shutdownProcessInternal(process)
     }
 }

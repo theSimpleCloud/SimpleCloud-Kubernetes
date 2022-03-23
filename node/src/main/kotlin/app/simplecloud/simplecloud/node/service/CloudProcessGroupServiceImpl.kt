@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
@@ -32,7 +32,6 @@ import app.simplecloud.simplecloud.node.mongo.group.CombinedProcessGroupEntity
 import app.simplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
@@ -44,13 +43,12 @@ class CloudProcessGroupServiceImpl @Inject constructor(
     groupConfigurationValidator, igniteRepository, processGroupFactory
 ) {
 
-    override fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<Unit> {
-        this.igniteRepository.save(group.getName(), group.toConfiguration())
+    override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
+        this.igniteRepository.save(group.getName(), group.toConfiguration()).await()
         saveToDatabase(group)
-        return unitFuture()
     }
 
-    override fun deleteGroupInternal(group: CloudProcessGroup) {
+    override suspend fun deleteGroupInternal(group: CloudProcessGroup) {
         this.igniteRepository.remove(group.getName())
         deleteGroupFromDatabase(group)
     }

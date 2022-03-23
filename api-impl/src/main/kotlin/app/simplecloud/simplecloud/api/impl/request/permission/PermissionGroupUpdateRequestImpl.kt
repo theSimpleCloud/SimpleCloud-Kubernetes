@@ -1,13 +1,14 @@
 package app.simplecloud.simplecloud.api.impl.request.permission
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.future.toFutureList
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupUpdateRequest
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -64,29 +65,26 @@ class PermissionGroupUpdateRequestImpl(
         return this
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        await(checkForRecursion())
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        checkForRecursion()
         val configuration = PermissionGroupConfiguration(
-            this.group.getName(),
-            this.priority,
-            this.permissions.map { it.toConfiguration() }
+            group.getName(),
+            priority,
+            permissions.map { it.toConfiguration() }
         )
-        await(this.internalService.updateGroupInternal(configuration))
-        return unitFuture()
+        internalService.updateGroupInternal(configuration)
     }
 
-    private fun checkForRecursion(): CompletableFuture<Unit> {
-        if (await(doesAnySubGroupHasThisGroupAsDependency()))
+    private suspend fun checkForRecursion() {
+        if (doesAnySubGroupHasThisGroupAsDependency())
             throw GroupRecursionException("Recursion detected within group ${this.group.getName()}")
-        return unitFuture()
     }
 
-    private fun doesAnySubGroupHasThisGroupAsDependency(): CompletableFuture<Boolean> {
+    private suspend fun doesAnySubGroupHasThisGroupAsDependency(): Boolean {
         val thisGroupPermission = "group.${this.group.getName()}"
-        val subGroups = await(getSubGroups())
+        val subGroups = getSubGroups()
 
-        val hasPermissionFutureList = subGroups.map { it.hasPermission(thisGroupPermission) }.toFutureList()
-        return hasPermissionFutureList.thenApply { it.any() }
+        return subGroups.any { it.hasPermission(thisGroupPermission).await() }
     }
 
     private fun getSubGroupNames(): List<String> {
@@ -94,9 +92,9 @@ class PermissionGroupUpdateRequestImpl(
             .map { it.getRawString().replaceFirst("group.", "") }
     }
 
-    private fun getSubGroups(): CompletableFuture<List<PermissionGroup>> {
+    private suspend fun getSubGroups(): List<PermissionGroup> {
         val subGroupNames = getSubGroupNames()
-        return subGroupNames.map { this.internalService.findPermissionGroupByName(it) }.toFutureList()
+        return subGroupNames.map { this.internalService.findPermissionGroupByName(it) }.toFutureList().await()
     }
 
     class GroupRecursionException(message: String) : Exception(message)

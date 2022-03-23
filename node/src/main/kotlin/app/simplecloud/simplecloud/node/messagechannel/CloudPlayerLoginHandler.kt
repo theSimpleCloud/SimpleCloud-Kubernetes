@@ -1,7 +1,6 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullException
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.unpackFutureException
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
@@ -12,9 +11,7 @@ import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerCo
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.node.mongo.player.CloudPlayerEntity
 import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
-import com.ea.async.Async.await
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 class CloudPlayerLoginHandler(
     private val playerFactory: CloudPlayerFactory,
@@ -23,12 +20,12 @@ class CloudPlayerLoginHandler(
     private val proxyName: String
 ) {
 
-    fun handleLogin(): CompletableFuture<CloudPlayerConfiguration> {
+    suspend fun handleLogin(): CloudPlayerConfiguration {
         logger.info("Player {} is logging in on {}", this.configuration.name, this.proxyName)
-        val player = await(createPlayer())
+        val player = createPlayer()
         savePlayerToDatabase(player)
         player.createUpdateRequest().submit()
-        return completedFuture(player.toConfiguration())
+        return player.toConfiguration()
     }
 
     private fun savePlayerToDatabase(player: CloudPlayer) {
@@ -37,14 +34,14 @@ class CloudPlayerLoginHandler(
         this.mongoPlayerRepository.save(playerEntity.uniqueId, playerEntity)
     }
 
-    private fun createPlayer(): CompletableFuture<CloudPlayer> {
+    private suspend fun createPlayer(): CloudPlayer {
         try {
-            val loadedPlayerConfiguration = await(loadPlayerFromDatabase())
-            return completedFuture(createPlayerFromConfiguration(loadedPlayerConfiguration))
+            val loadedPlayerConfiguration = loadPlayerFromDatabase()
+            return createPlayerFromConfiguration(loadedPlayerConfiguration)
         } catch (e: Exception) {
             val unpackedException = unpackFutureException(e)
-            if (unpackedException is CompletedWithNullException) {
-                return completedFuture(createNewCloudPlayer())
+            if (unpackedException is NoSuchElementException) {
+                return createNewCloudPlayer()
             }
             throw e
         }
@@ -91,8 +88,9 @@ class CloudPlayerLoginHandler(
         )
     }
 
-    private fun loadPlayerFromDatabase(): CompletableFuture<OfflineCloudPlayerConfiguration> {
-        return this.mongoPlayerRepository.find(this.configuration.uniqueId).thenApply { it.toConfiguration() }
+    private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
+        val cloudPlayerEntity = this.mongoPlayerRepository.find(this.configuration.uniqueId).await()
+        return cloudPlayerEntity.toConfiguration()
     }
 
     companion object {

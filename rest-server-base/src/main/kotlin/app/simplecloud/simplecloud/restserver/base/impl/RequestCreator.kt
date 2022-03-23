@@ -6,7 +6,6 @@ import app.simplecloud.simplecloud.restserver.base.request.Request
 import app.simplecloud.simplecloud.restserver.base.request.RequestImpl
 import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
-import kotlinx.coroutines.future.await
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -37,7 +36,7 @@ class RequestCreator(
 
     private suspend fun getRequestEntity(): PermissionEntity? {
         return try {
-            this.authService.getRequestEntityFromContext(this.context).await()
+            this.authService.getRequestEntityFromContext(this.context)
         } catch (e: Exception) {
             logger.error("An error occurred while resolving a request entity. Continuing with null.", e)
             null

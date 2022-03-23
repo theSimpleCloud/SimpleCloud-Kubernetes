@@ -34,8 +34,8 @@ import app.simplecloud.simplecloud.restserver.annotation.RestController
 import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler.ProcessGroupUpdateHandler
-import com.ea.async.Async.await
 import com.google.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 /**
  * Created by IntelliJ IDEA.
@@ -51,13 +51,13 @@ class ProcessGroupController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "", "web.cloud.group.get")
     fun handleGroupGetAll(): List<AbstractCloudProcessGroupConfiguration> {
-        val groups = await(this.groupService.findAll())
+        val groups = this.groupService.findAll().join()
         return groups.map { it.toConfiguration() }
     }
 
     @RequestMapping(RequestType.GET, "{name}", "web.cloud.group.get")
     fun handleGroupGetOne(@RequestPathParam("name") name: String): AbstractCloudProcessGroupConfiguration {
-        val group = await(this.groupService.findByName(name))
+        val group = this.groupService.findByName(name).join()
         return group.toConfiguration()
     }
 
@@ -77,7 +77,7 @@ class ProcessGroupController @Inject constructor(
         ) configuration: AbstractCloudProcessGroupConfiguration
     ): AbstractCloudProcessGroupConfiguration {
         val completableFuture = this.groupService.createGroupCreateRequest(configuration).submit()
-        val group = await(completableFuture)
+        val group = completableFuture.join()
         return group.toConfiguration()
     }
 
@@ -95,16 +95,16 @@ class ProcessGroupController @Inject constructor(
                 CloudServerProcessGroupConfiguration::class
             ]
         ) configuration: AbstractCloudProcessGroupConfiguration
-    ): Boolean {
-        this.groupUpdateHandler.update(configuration).join()
-        return true
+    ): Boolean = runBlocking {
+        groupUpdateHandler.update(configuration)
+        return@runBlocking true
     }
 
     @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.group.delete")
     fun handleDelete(@RequestPathParam("name") groupName: String): Boolean {
-        val group = await(this.groupService.findByName(groupName))
+        val group = this.groupService.findByName(groupName).join()
         val groupDeleteRequest = group.createDeleteRequest()
-        await(groupDeleteRequest.submit())
+        groupDeleteRequest.submit().join()
         return true
     }
 

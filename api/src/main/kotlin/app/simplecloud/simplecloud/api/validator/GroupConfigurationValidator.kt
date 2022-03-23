@@ -22,11 +22,11 @@
 
 package app.simplecloud.simplecloud.api.validator
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
@@ -42,26 +42,22 @@ class GroupConfigurationValidator @Inject constructor(
     private val onlineCountService: ProcessOnlineCountService
 ) : Validator<AbstractCloudProcessGroupConfiguration> {
 
-    override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        return CloudCompletableFuture.runAsync {
-            await(checkProcessOnlineCountConfiguration(value))
-            await(checkImage(value))
-        }
+    override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> = CloudScope.future {
+        checkProcessOnlineCountConfiguration(value)
+        checkImage(value)
     }
 
-    private fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+    private suspend fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration) {
         val onlineCountConfigurationName = configuration.onlineCountConfigurationName
         try {
-            await(this.onlineCountService.findByName(onlineCountConfigurationName))
+            this.onlineCountService.findByName(onlineCountConfigurationName).await()
         } catch (e: Exception) {
             throw NoSuchElementException("OnlineCountConfiguration '${onlineCountConfigurationName}' does not exist")
         }
-        return unitFuture()
     }
 
-    private fun checkImage(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+    private fun checkImage(configuration: AbstractCloudProcessGroupConfiguration) {
         //TODO Validate Image
-        return unitFuture()
     }
 
 }

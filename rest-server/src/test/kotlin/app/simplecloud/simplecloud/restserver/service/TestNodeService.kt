@@ -44,4 +44,8 @@ class TestNodeService : NodeService {
     override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
         TODO("Not yet implemented")
     }
+
+    override fun findFirst(): CompletableFuture<Node> {
+        TODO("Not yet implemented")
+    }
 }

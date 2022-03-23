@@ -22,10 +22,9 @@
 
 package app.simplecloud.simplecloud.node.mongo
 
-import app.simplecloud.simplecloud.api.future.cloud.nonNull
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.api.repository.Repository
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import dev.morphia.Datastore
 import dev.morphia.query.Query
 import dev.morphia.query.experimental.filters.Filters

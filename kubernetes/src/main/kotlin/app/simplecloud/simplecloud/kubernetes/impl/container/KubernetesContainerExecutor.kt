@@ -22,8 +22,8 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.container
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import java.util.concurrent.CompletableFuture

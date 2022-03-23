@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.api.impl.request.player
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.request.player.InternalCloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -83,8 +85,8 @@ class CloudPlayerUpdateRequestImpl(
         return this
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        val playerConnection = this.cloudPlayer.getPlayerConnection()
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        val playerConnection = cloudPlayer.getPlayerConnection()
         val connectionConfiguration = PlayerConnectionConfiguration(
             playerConnection.getUniqueId(),
             playerConnection.getVersion(),
@@ -93,22 +95,22 @@ class CloudPlayerUpdateRequestImpl(
             playerConnection.isOnlineMode()
         )
         val permissionPlayerConfiguration = PermissionPlayerConfiguration(
-            this.cloudPlayer.getUniqueId(),
-            this.permissions.map { it.toConfiguration() }
+            cloudPlayer.getUniqueId(),
+            permissions.map { it.toConfiguration() }
         )
         val cloudPlayerConfiguration = CloudPlayerConfiguration(
-            this.cloudPlayer.getName(),
-            this.cloudPlayer.getUniqueId(),
-            this.cloudPlayer.getFirstLogin(),
-            this.cloudPlayer.getLastLogin(),
-            this.cloudPlayer.getOnlineTime(),
+            cloudPlayer.getName(),
+            cloudPlayer.getUniqueId(),
+            cloudPlayer.getFirstLogin(),
+            cloudPlayer.getLastLogin(),
+            cloudPlayer.getOnlineTime(),
             connectionConfiguration,
-            this.displayName,
-            this.webConfig,
+            displayName,
+            webConfig,
             permissionPlayerConfiguration,
-            this.connectedServerName,
-            this.connectedProxyName
+            connectedServerName,
+            connectedProxyName
         )
-        return this.internalService.updateOnlinePlayerInternal(cloudPlayerConfiguration)
+        return@future internalService.updateOnlinePlayerInternal(cloudPlayerConfiguration)
     }
 }

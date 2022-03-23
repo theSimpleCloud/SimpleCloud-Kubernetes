@@ -22,12 +22,11 @@
 
 package app.simplecloud.simplecloud.node.startup.task
 
-import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
 import app.simplecloud.simplecloud.node.mongo.MongoSingleObjectRepository
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
-import app.simplecloud.simplecloud.node.startup.task.mongo.MongoDbSafeStartTask
+import app.simplecloud.simplecloud.node.startup.task.mongo.MongoClientSafeStarter
 import app.simplecloud.simplecloud.node.startup.token.TokenSecretEntity
 import app.simplecloud.simplecloud.restserver.auth.AuthServiceProvider
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
@@ -36,12 +35,10 @@ import app.simplecloud.simplecloud.restserver.base.RestServerAPI
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import app.simplecloud.simplecloud.restserver.base.service.NoAuthService
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import com.ea.async.Async.await
 import com.google.inject.Guice
 import com.google.inject.Injector
 import dev.morphia.Datastore
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,7 +46,7 @@ import java.util.concurrent.CompletableFuture
  * Time: 18:12
  * @author Frederick Baier
  */
-class NodeStartupTask(
+class NodePreparer(
     private val startArguments: NodeStartArgumentParserMain
 ) {
 
@@ -58,29 +55,29 @@ class NodeStartupTask(
 
     private val injector = createInjector()
 
-    fun run(): CompletableFuture<Injector> {
+    fun prepare(): Injector {
         logger.info("Starting Node...")
-        val datastore = await(checkForMongoConnectionStringAndStartClient())
-        val jwtTokenHandler = await(initJwtTokenHandler(datastore))
+        val datastore = checkForMongoConnectionStringAndStartClient()
+        val jwtTokenHandler = initJwtTokenHandler(datastore)
         val injector = createSubInjectorWithDatastoreAndTokenHandler(datastore, jwtTokenHandler)
-        await(checkForAnyWebAccount(injector))
+        checkForAnyWebAccount(injector)
         setupEnd()
         logger.info("Node Startup completed")
-        return completedFuture(injector)
+        return injector
     }
 
-    private fun checkForAnyWebAccount(injector: Injector): CompletableFuture<Unit> {
-        return injector.getInstance(FirstAccountCheck::class.java).checkForAccount()
+    private fun checkForAnyWebAccount(injector: Injector) {
+        injector.getInstance(FirstAccountCheck::class.java).checkForAccount()
     }
 
-    private fun initJwtTokenHandler(datastore: Datastore): CompletableFuture<JwtTokenHandler> {
+    private fun initJwtTokenHandler(datastore: Datastore): JwtTokenHandler {
         val tokenSecretRepo = MongoSingleObjectRepository(
             datastore,
             TokenSecretEntity::class.java,
             TokenSecretEntity.KEY
         )
-        val entity = await(tokenSecretRepo.loadObject())
-        return completedFuture(JwtTokenHandler(entity.secret))
+        val entity = tokenSecretRepo.loadObject().join()
+        return JwtTokenHandler(entity.secret)
     }
 
     private fun setupEnd() {
@@ -107,12 +104,12 @@ class NodeStartupTask(
         )
     }
 
-    private fun checkForMongoConnectionStringAndStartClient(): CompletableFuture<Datastore> {
-        return this.injector.getInstance(MongoDbSafeStartTask::class.java).run()
+    private fun checkForMongoConnectionStringAndStartClient(): Datastore {
+        return this.injector.getInstance(MongoClientSafeStarter::class.java).startMongoClient()
     }
 
     companion object {
-        private val logger = LogManager.getLogger(NodeStartupTask::class.java)
+        private val logger = LogManager.getLogger(NodePreparer::class.java)
     }
 
 }

@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.api.future
 
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import java.util.concurrent.CompletableFuture
 
 /**

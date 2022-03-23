@@ -30,6 +30,7 @@ import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.base.service.UsernameAndPasswordCredentials
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import com.google.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 /**
  * Created by IntelliJ IDEA.
@@ -43,10 +44,10 @@ class LoginController @Inject constructor(
 ) : Controller {
 
     @RequestMapping(RequestType.POST, "", "")
-    fun handleLogin(@RequestBody credentials: UsernameAndPasswordCredentials): TokenResponse {
-        val authService = this.authServiceProvider.getAuthService()
-        val token = authService.authenticate(credentials).join()
-        return TokenResponse(token)
+    fun handleLogin(@RequestBody credentials: UsernameAndPasswordCredentials): TokenResponse = runBlocking {
+        val authService = authServiceProvider.getAuthService()
+        val token = authService.authenticate(credentials)
+        return@runBlocking TokenResponse(token)
     }
 
     class TokenResponse(val token: String)

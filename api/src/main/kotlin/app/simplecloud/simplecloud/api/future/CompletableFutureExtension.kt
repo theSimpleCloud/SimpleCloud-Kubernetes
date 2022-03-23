@@ -23,8 +23,7 @@
 package app.simplecloud.simplecloud.api.future
 
 import app.simplecloud.simplecloud.api.future.exception.CompletedWithNullException
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import app.simplecloud.simplecloud.api.utils.future.FutureOriginException
+import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
@@ -106,8 +105,8 @@ fun <T> CompletableFuture<T>.copyTo(otherFuture: CompletableFuture<T>) {
     }
 }
 
-fun List<CompletableFuture<*>>.combineToVoidFuture(): CompletableFuture<Void> {
-    val returnFuture = CloudCompletableFuture<Void>()
+fun List<CompletableFuture<*>>.combineToUnitFuture(): CompletableFuture<Unit> {
+    val returnFuture = CloudCompletableFuture<Unit>()
 
     for (future in this) {
         future.handle { _, _ ->

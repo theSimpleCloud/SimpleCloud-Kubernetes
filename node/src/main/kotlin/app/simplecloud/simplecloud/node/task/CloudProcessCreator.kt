@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.api.future.completedFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
@@ -30,69 +30,66 @@ import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.ea.async.Async.await
 import java.util.*
-import java.util.concurrent.CompletableFuture
 
-class CloudProcessCreationTask(
+class CloudProcessCreator(
     private val startConfiguration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
     private val groupService: CloudProcessGroupService,
     private val factory: CloudProcessFactory
 ) {
 
-    fun run(): CompletableFuture<CloudProcess> {
-        val processNumber = await(getProcessNumber())
-        val group = await(this.groupService.findByName(this.startConfiguration.groupName))
-        val process = this.factory.create(
+    suspend fun createProcess(): CloudProcess {
+        val processNumber = getProcessNumber()
+        val group = this.groupService.findByName(this.startConfiguration.groupName).await()
+        return this.factory.create(
             CloudProcessConfiguration(
-                this.startConfiguration.groupName,
+                startConfiguration.groupName,
                 UUID.randomUUID(),
                 processNumber,
                 ProcessState.PREPARED,
                 true,
-                this.startConfiguration.maxMemory,
+                startConfiguration.maxMemory,
                 0,
-                this.startConfiguration.maxPlayers,
+                startConfiguration.maxPlayers,
                 0,
                 group.isStatic(),
                 group.getProcessGroupType(),
-                this.startConfiguration.imageName,
+                startConfiguration.imageName,
                 null
             )
         )
-        return completedFuture(process)
     }
 
-    private fun getProcessNumber(): CompletableFuture<Int> {
+    private suspend fun getProcessNumber(): Int {
         if (!this.startConfiguration.isProcessNumberSet()) {
             return generateNewProcessNumber()
         }
         return validateProcessNumber()
     }
 
-    private fun validateProcessNumber(): CompletableFuture<Int> {
+    private suspend fun validateProcessNumber(): Int {
         val processNumber = this.startConfiguration.processNumber
-        if (await(isProcessNumberInUse(processNumber))) {
+        if (isProcessNumberInUse(processNumber)) {
             throw IllegalArgumentException("Process number $processNumber is already in use")
         }
-        return completedFuture(processNumber)
+        return processNumber
     }
 
-    private fun generateNewProcessNumber(): CompletableFuture<Int> {
+    private suspend fun generateNewProcessNumber(): Int {
         var number = 1
-        while (await(isProcessNumberInUse(number))) {
+        while (isProcessNumberInUse(number)) {
             number++
         }
-        return completedFuture(number)
+        return number
     }
 
-    private fun isProcessNumberInUse(number: Int): CompletableFuture<Boolean> {
+    private suspend fun isProcessNumberInUse(number: Int): Boolean {
         return try {
-            await(this.processService.findProcessByName(getNewProcessName(number)))
-            completedFuture(true)
+            this.processService.findProcessByName(getNewProcessName(number)).await()
+            true
         } catch (e: Exception) {
-            completedFuture(false)
+            false
         }
     }
 

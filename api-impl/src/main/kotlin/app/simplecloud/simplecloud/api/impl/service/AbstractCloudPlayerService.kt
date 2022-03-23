@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.api.impl.service
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
@@ -27,8 +28,8 @@ abstract class AbstractCloudPlayerService(
         return this.igniteRepository.findByName(name).thenApply { this.playerFactory.create(it) }
     }
 
-    override fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration): CompletableFuture<Unit> {
-        return this.igniteRepository.save(configuration.uniqueId, configuration)
+    override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {
+        this.igniteRepository.save(configuration.uniqueId, configuration).await()
     }
 
 }

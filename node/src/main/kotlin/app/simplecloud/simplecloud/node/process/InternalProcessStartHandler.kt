@@ -1,6 +1,5 @@
 package app.simplecloud.simplecloud.node.process
 
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessService
@@ -14,14 +13,10 @@ class InternalProcessStartHandler(
 
     private val processStarter = this.processStarterFactory.create(this.configuration)
 
-    fun startProcess(): CompletableFuture<CloudProcess> {
-        val future = this.processStarter.startProcess()
-        updateProcessToCluster(future)
-        return future
-    }
-
-    private fun updateProcessToCluster(future: CompletableFuture<CloudProcess>): CompletableFuture<Unit> {
-        return future.thenApply { updateProcessToCluster(it) }
+    suspend fun startProcess(): CloudProcess {
+        val process = this.processStarter.startProcess()
+        updateProcessToCluster(process)
+        return process
     }
 
     private fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {

@@ -99,10 +99,7 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun submit0(
-        image: Image?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<Unit> {
+    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
         val updateObj = CloudProxyProcessGroupConfiguration(
             this.proxyGroup.getName(),
             this.maxMemory,

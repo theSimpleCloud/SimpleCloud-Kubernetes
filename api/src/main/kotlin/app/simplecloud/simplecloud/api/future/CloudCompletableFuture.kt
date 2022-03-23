@@ -20,8 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.utils.future
+package app.simplecloud.simplecloud.api.future
 
+import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
 import java.util.concurrent.*
 import java.util.function.*
 import java.util.function.Function

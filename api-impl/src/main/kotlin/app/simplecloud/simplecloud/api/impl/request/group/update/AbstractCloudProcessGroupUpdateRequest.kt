@@ -22,12 +22,14 @@
 
 package app.simplecloud.simplecloud.api.impl.request.group.update
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -114,18 +116,15 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
         return this
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        val onlineCountConfiguration = await(this.onlineCountConfigurationFuture)
-        return submit0(
-            this.image,
-            onlineCountConfiguration
-        )
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        val onlineCountConfiguration = onlineCountConfigurationFuture.await()
+        submit0(image, onlineCountConfiguration)
     }
 
-    abstract fun submit0(
+    abstract suspend fun submit0(
         image: Image?,
         onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<Unit>
+    )
 
 
 }

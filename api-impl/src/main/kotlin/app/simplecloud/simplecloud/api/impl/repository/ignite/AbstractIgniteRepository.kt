@@ -22,10 +22,9 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
-import app.simplecloud.simplecloud.api.future.cloud.nonNull
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.api.repository.Repository
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.ScanQuery
 import org.apache.ignite.lang.IgniteBiPredicate

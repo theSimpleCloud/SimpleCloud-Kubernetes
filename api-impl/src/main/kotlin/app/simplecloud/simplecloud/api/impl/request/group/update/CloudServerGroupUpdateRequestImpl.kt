@@ -28,7 +28,6 @@ import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -42,10 +41,7 @@ class CloudServerGroupUpdateRequestImpl(
 ) : AbstractCloudProcessGroupUpdateRequest(serverGroup),
     CloudServerGroupUpdateRequest {
 
-    override fun submit0(
-        image: Image?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<Unit> {
+    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
         val updateObj = CloudServerProcessGroupConfiguration(
             this.serverGroup.getName(),
             this.maxMemory,

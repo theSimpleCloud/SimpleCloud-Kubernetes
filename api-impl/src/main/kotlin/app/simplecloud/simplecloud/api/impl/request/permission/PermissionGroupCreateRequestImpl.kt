@@ -1,11 +1,12 @@
 package app.simplecloud.simplecloud.api.impl.request.permission
 
-import app.simplecloud.simplecloud.api.future.isCompletedNormally
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupCreateRequest
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -19,15 +20,19 @@ class PermissionGroupCreateRequestImpl(
     private val internalService: InternalPermissionGroupService
 ) : PermissionGroupCreateRequest {
 
-    override fun submit(): CompletableFuture<PermissionGroup> {
-        if (await(doesGroupExist(configuration.name))) {
+    override fun submit(): CompletableFuture<PermissionGroup> = CloudScope.future {
+        if (doesGroupExist(configuration.name)) {
             throw IllegalArgumentException("Group already exists")
         }
-        return this.internalService.createGroupInternal(configuration)
+        return@future internalService.createGroupInternal(configuration)
     }
 
-    private fun doesGroupExist(groupName: String): CompletableFuture<Boolean> {
-        val completableFuture = this.internalService.findPermissionGroupByName(groupName)
-        return completableFuture.handle { _, _ -> completableFuture.isCompletedNormally }
+    private suspend fun doesGroupExist(groupName: String): Boolean {
+        return try {
+            this.internalService.findPermissionGroupByName(groupName).await()
+            true
+        } catch (e: NoSuchElementException) {
+            false
+        }
     }
 }

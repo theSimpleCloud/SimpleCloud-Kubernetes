@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.node.startup.task.mongo
 
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.node.startup.task.mongo.codec.*
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
@@ -31,7 +30,6 @@ import dev.morphia.Datastore
 import dev.morphia.Morphia
 import org.bson.UuidRepresentation
 import org.bson.codecs.configuration.CodecRegistries
-import java.util.concurrent.CompletableFuture
 import java.util.concurrent.TimeUnit
 
 
@@ -41,17 +39,16 @@ import java.util.concurrent.TimeUnit
  * Time: 10:01
  * @author Frederick Baier
  */
-class MongoDbStartTask(
+class MongoDBClientStarter(
     connectionString: String
 ) {
 
     private val connectionString = ConnectionString(connectionString)
 
-    fun run(): CompletableFuture<Datastore> {
+    fun startClient(): Datastore {
         println(connectionString.toString())
         val mongoClient = MongoClients.create(createClientSettings())
-        val datastore = Morphia.createDatastore(mongoClient, this.connectionString.database!!)
-        return CloudCompletableFuture.completedFuture(datastore)
+       return Morphia.createDatastore(mongoClient, this.connectionString.database!!)
     }
 
     private fun createClientSettings(): MongoClientSettings {

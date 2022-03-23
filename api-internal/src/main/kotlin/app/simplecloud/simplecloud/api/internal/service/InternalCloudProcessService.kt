@@ -26,7 +26,6 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -40,14 +39,14 @@ interface InternalCloudProcessService : CloudProcessService {
      * Starts a new process with the specified [configuration]
      * @return the newly registered process
      */
-    fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess>
+    suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess
 
     /**
      * Shuts the [process] down
      * @return the [CloudProcess.terminationFuture] of the process
      */
-    fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit>
+    suspend fun shutdownProcessInternal(process: CloudProcess)
 
-    fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit>
+    suspend fun updateProcessInternal(configuration: CloudProcessConfiguration)
 
 }

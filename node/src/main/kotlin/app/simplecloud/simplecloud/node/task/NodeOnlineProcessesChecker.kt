@@ -22,14 +22,12 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 @Singleton
 class NodeOnlineProcessesChecker @Inject constructor(
@@ -37,13 +35,12 @@ class NodeOnlineProcessesChecker @Inject constructor(
     private val processService: CloudProcessService
 ) {
 
-    fun run(): CompletableFuture<Unit> {
-        val groups = await(this.groupService.findAll())
+    suspend fun checkOnlineCount() {
+        val groups = this.groupService.findAll().await()
         logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
         groups.forEach {
-            await(ProcessOnlineCountHandler(it, processService).handle())
+            ProcessOnlineCountHandler(it, processService).handle()
         }
-        return unitFuture()
     }
 
     companion object {

@@ -40,8 +40,9 @@ subprojects {
         implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
-        implementation("com.ea.async:ea-async:1.2.4")
         implementation("dev.morphia.morphia:morphia-core:2.2.1")
+
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
         //implementation("io.github.slimjar:slimjar:1.2.4")
     }
 
@@ -54,26 +55,6 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
-    }
-
-    val instrumentTask by tasks.register("instrument", JavaExec::class) {
-        main = "com.ea.async.instrumentation.Main"
-        classpath = project.sourceSets.main.get().compileClasspath
-        args = listOf("$buildDir")
-    }
-
-    val compileJava by tasks.getting(JavaCompile::class) {
-        this.doLast {
-            println("Instrumenting")
-            instrumentTask.exec()
-        }
-    }
-
-    val compileKotlin by tasks.getting(org.jetbrains.kotlin.gradle.tasks.KotlinCompile::class) {
-        this.doLast {
-            println("Instrumenting")
-            instrumentTask.exec()
-        }
     }
 
 }

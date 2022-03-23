@@ -22,14 +22,13 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -42,16 +41,18 @@ import com.google.inject.Singleton
 @Singleton
 class ProcessCreateHandler @Inject constructor(
     private val groupService: CloudProcessGroupService,
-    private val processService: CloudProcessService,
-    private val onlineCountService: ProcessOnlineCountService
+    private val processService: CloudProcessService
 ) {
 
-    fun create(configuration: CloudProcessCreateRequestDto): CloudProcess {
-        val group = await(this.groupService.findByName(configuration.groupName))
+    suspend fun create(configuration: CloudProcessCreateRequestDto): CloudProcess {
+        val group = this.groupService.findByName(configuration.groupName).await()
         return createProcess(group, configuration)
     }
 
-    private fun createProcess(group: CloudProcessGroup, configuration: CloudProcessCreateRequestDto): CloudProcess {
+    private suspend fun createProcess(
+        group: CloudProcessGroup,
+        configuration: CloudProcessCreateRequestDto
+    ): CloudProcess {
         val request = this.processService.createProcessStartRequest(group)
         if (configuration.maxMemory != null) {
             request.setMaxMemory(configuration.maxMemory)
@@ -62,7 +63,7 @@ class ProcessCreateHandler @Inject constructor(
         if (configuration.imageName != null) {
             request.setImage(ImageImpl(configuration.imageName))
         }
-        return await(request.submit())
+        return request.submit().await()
     }
 
 }

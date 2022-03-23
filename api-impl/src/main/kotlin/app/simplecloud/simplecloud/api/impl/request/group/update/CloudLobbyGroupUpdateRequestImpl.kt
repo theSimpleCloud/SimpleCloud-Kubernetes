@@ -99,10 +99,7 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun submit0(
-        image: Image?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    ): CompletableFuture<Unit> {
+    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
         val updateObj = CloudLobbyProcessGroupConfiguration(
             this.lobbyGroup.getName(),
             this.maxMemory,

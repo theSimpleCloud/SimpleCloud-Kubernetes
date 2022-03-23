@@ -1,6 +1,6 @@
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -10,7 +10,6 @@ import app.simplecloud.simplecloud.node.mongo.permission.MongoPermissionGroupRep
 import app.simplecloud.simplecloud.node.mongo.permission.PermissionGroupEntity
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 20.03.22
@@ -26,10 +25,9 @@ class PermissionGroupServiceImpl @Inject constructor(
     private val permissionFactory: Permission.Factory,
 ) : AbstractPermissionGroupService(igniteRepository, groupFactory, permissionFactory) {
 
-    override fun updateGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<Unit> {
-        this.igniteRepository.save(configuration.name, configuration)
+    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
+        this.igniteRepository.save(configuration.name, configuration).await()
         saveToDatabase(configuration)
-        return unitFuture()
     }
 
     private fun saveToDatabase(configuration: PermissionGroupConfiguration) {
@@ -37,7 +35,7 @@ class PermissionGroupServiceImpl @Inject constructor(
         this.mongoRepository.save(groupEntity.name, groupEntity)
     }
 
-    override fun deleteGroupInternal(group: PermissionGroup) {
+    override suspend fun deleteGroupInternal(group: PermissionGroup) {
         this.igniteRepository.remove(group.getName())
         deleteGroupFromDatabase(group)
     }

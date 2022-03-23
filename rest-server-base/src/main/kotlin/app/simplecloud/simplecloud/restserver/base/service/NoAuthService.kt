@@ -3,7 +3,6 @@ package app.simplecloud.simplecloud.restserver.base.service
 import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.api.permission.EmptyPermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionEntity
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 14.03.22
@@ -12,11 +11,12 @@ import java.util.concurrent.CompletableFuture
  *
  */
 class NoAuthService : AuthService {
-    override fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): CompletableFuture<String> {
+
+    override suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
         throw UnsupportedOperationException("Authentication is currently not supported")
     }
 
-    override fun getRequestEntityFromContext(context: Context): CompletableFuture<PermissionEntity> {
-        return CompletableFuture.completedFuture(EmptyPermissionEntity)
+    override suspend fun getRequestEntityFromContext(context: Context): PermissionEntity {
+        return EmptyPermissionEntity
     }
 }

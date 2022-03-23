@@ -31,7 +31,6 @@ import app.simplecloud.simplecloud.node.process.InternalProcessStartHandler
 import app.simplecloud.simplecloud.node.process.ProcessStarter
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
@@ -41,12 +40,12 @@ class CloudProcessServiceImpl @Inject constructor(
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
+    override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
         return InternalProcessStartHandler(this.processStarterFactory, this, configuration)
             .startProcess()
     }
 
-    override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
+    override suspend fun shutdownProcessInternal(process: CloudProcess) {
         TODO("Not yet implemented")
     }
 }

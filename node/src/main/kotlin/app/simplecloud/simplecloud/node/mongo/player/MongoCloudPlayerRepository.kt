@@ -22,8 +22,8 @@
 
 package app.simplecloud.simplecloud.node.mongo.player
 
-import app.simplecloud.simplecloud.api.future.cloud.nonNull
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.node.mongo.DefaultMongoRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton

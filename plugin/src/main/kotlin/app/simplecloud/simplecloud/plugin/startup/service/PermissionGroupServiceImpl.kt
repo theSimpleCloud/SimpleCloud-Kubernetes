@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.plugin.startup.service
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
@@ -10,7 +11,6 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupC
 import app.simplecloud.simplecloud.api.service.NodeService
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 20.03.22
@@ -34,24 +34,22 @@ class PermissionGroupServiceImpl @Inject constructor(
     private val updateMessageChannel =
         this.messageChannelManager.getOrCreateMessageChannel<PermissionGroupConfiguration, Unit>("internal_update_permission_group")
 
-    override fun updateGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<Unit> {
-        return this.nodeService.findFirst().thenApply {
-            sendUpdateRequestToNode(configuration, it)
-        }
+    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration){
+        val node = this.nodeService.findFirst().await()
+        sendUpdateRequestToNode(configuration, node)
     }
 
-    override fun deleteGroupInternal(group: PermissionGroup) {
-        this.nodeService.findFirst().thenApply {
-            sendDeleteRequestToNode(group, it)
-        }
+    override suspend fun deleteGroupInternal(group: PermissionGroup) {
+        val node = this.nodeService.findFirst().await()
+        sendDeleteRequestToNode(group, node)
     }
 
-    private fun sendUpdateRequestToNode(configuration: PermissionGroupConfiguration, node: Node) {
-        this.updateMessageChannel.createMessageRequest(configuration, node).submit()
+    private suspend fun sendUpdateRequestToNode(configuration: PermissionGroupConfiguration, node: Node) {
+        this.updateMessageChannel.createMessageRequest(configuration, node).submit().await()
     }
 
-    private fun sendDeleteRequestToNode(group: PermissionGroup, node: Node) {
-        this.deleteMessageChannel.createMessageRequest(group.getName(), node).submit()
+    private suspend fun sendDeleteRequestToNode(group: PermissionGroup, node: Node) {
+        this.deleteMessageChannel.createMessageRequest(group.getName(), node).submit().await()
     }
 
 }

@@ -22,6 +22,8 @@
 
 package app.simplecloud.simplecloud.api.impl.request.process
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
@@ -82,14 +84,14 @@ class ProcessStartRequestImpl(
         return startProcess()
     }
 
-    private fun startProcess(): CompletableFuture<CloudProcess> {
+    private fun startProcess(): CompletableFuture<CloudProcess> = CloudScope.future {
         val startConfiguration = ProcessStartConfiguration(
-            this.processGroup.getName(),
-            this.processNumber,
-            this.image.getName(),
-            this.maxMemory,
-            this.maxPlayers
+            processGroup.getName(),
+            processNumber,
+            image.getName(),
+            maxMemory,
+            maxPlayers
         )
-        return this.internalService.startNewProcessInternal(startConfiguration)
+        return@future internalService.startNewProcessInternal(startConfiguration)
     }
 }

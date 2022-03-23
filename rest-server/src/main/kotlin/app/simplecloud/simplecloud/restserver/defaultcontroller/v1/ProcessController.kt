@@ -32,8 +32,8 @@ import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
 import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler.ProcessCreateHandler
-import com.ea.async.Async.await
 import com.google.inject.Inject
+import kotlinx.coroutines.runBlocking
 
 /**
  * Created by IntelliJ IDEA.
@@ -49,24 +49,24 @@ class ProcessController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "", "web.cloud.process.get")
     fun handleGetAll(): List<CloudProcessConfiguration> {
-        val processes = await(this.processService.findAll())
+        val processes = this.processService.findAll().join()
         return processes.map { it.toConfiguration() }
     }
 
     @RequestMapping(RequestType.GET, "{name}", "web.cloud.process.get")
     fun handleGetOne(@RequestPathParam("name") name: String): CloudProcessConfiguration {
-        val process = await(this.processService.findProcessByName(name))
+        val process = this.processService.findProcessByName(name).join()
         return process.toConfiguration()
     }
 
     @RequestMapping(RequestType.POST, "", "web.cloud.process.create")
-    fun handleCreate(@RequestBody configuration: CloudProcessCreateRequestDto): CloudProcessConfiguration {
-        return this.processCreateHandler.create(configuration).toConfiguration()
+    fun handleCreate(@RequestBody configuration: CloudProcessCreateRequestDto): CloudProcessConfiguration = runBlocking {
+        return@runBlocking processCreateHandler.create(configuration).toConfiguration()
     }
 
     @RequestMapping(RequestType.DELETE, "{name}", "web.cloud.process.delete")
     fun handleShutdown(@RequestPathParam("name") name: String): Boolean {
-        val process = await(this.processService.findProcessByName(name))
+        val process = this.processService.findProcessByName(name).join()
         process.createShutdownRequest().submit()
         return true
     }

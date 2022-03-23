@@ -35,7 +35,7 @@ import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
-class ProcessStartTask(
+class KubernetesProcessStarter(
     private val process: CloudProcess,
     private val containerFactory: Container.Factory,
     private val volumeFactory: KubeVolumeClaim.Factory,
@@ -46,7 +46,7 @@ class ProcessStartTask(
     private val processLabel = Label("cloud-process", this.process.getName())
     private val groupLabel = Label("cloud-group", this.process.getGroupName())
 
-    fun run(): CompletableFuture<Unit> {
+    fun startProcess(): CompletableFuture<Unit> {
         logger.info("Starting Process {}", process.getName())
 
         startContainer()
@@ -111,7 +111,7 @@ class ProcessStartTask(
     }
 
     companion object {
-        private val logger = LogManager.getLogger(ProcessStartTask::class.java)
+        private val logger = LogManager.getLogger(KubernetesProcessStarter::class.java)
     }
 
 }

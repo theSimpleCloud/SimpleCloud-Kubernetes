@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.node.process
 
-import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
@@ -32,13 +31,11 @@ import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.kubernetes.api.container.Container
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
-import app.simplecloud.simplecloud.node.task.CloudProcessCreationTask
-import app.simplecloud.simplecloud.node.task.ProcessStartTask
+import app.simplecloud.simplecloud.node.task.CloudProcessCreator
+import app.simplecloud.simplecloud.node.task.KubernetesProcessStarter
 import app.simplecloud.simplecloud.node.util.UncaughtExceptions
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
-import java.util.concurrent.CompletableFuture
 
 class ProcessStarterImpl @Inject constructor(
     @Assisted private val configuration: ProcessStartConfiguration,
@@ -51,29 +48,29 @@ class ProcessStarterImpl @Inject constructor(
     private val clusterKey: ClusterKey
 ) : ProcessStarter {
 
-    override fun startProcess(): CompletableFuture<CloudProcess> {
-        val process = await(createProcess(configuration))
+    override suspend fun startProcess(): CloudProcess {
+        val process = createProcess(this.configuration)
         startProcess(process)
-        return completedFuture(process)
+        return process
     }
 
-    private fun createProcess(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        return CloudProcessCreationTask(
+    private suspend fun createProcess(configuration: ProcessStartConfiguration): CloudProcess {
+        return CloudProcessCreator(
             configuration,
             this.processService,
             this.groupService,
             this.processFactory
-        ).run()
+        ).createProcess()
     }
 
     private fun startProcess(process: CloudProcess) {
-        ProcessStartTask(
+        KubernetesProcessStarter(
             process,
             this.containerFactory,
             this.kubeVolumeClaimFactory,
             this.kubeServiceFactory,
             this.clusterKey
-        ).run().exceptionally { UncaughtExceptions.handle(it) }
+        ).startProcess().exceptionally { UncaughtExceptions.handle(it) }
     }
 
 

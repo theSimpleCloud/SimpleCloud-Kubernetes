@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.api.impl.request.process
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
@@ -59,23 +61,23 @@ class ProcessUpdateRequestImpl(
         return this
     }
 
-    override fun submit(): CompletableFuture<Unit> {
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
         val configuration = CloudProcessConfiguration(
-            this.process.getGroupName(),
-            this.process.getUniqueId(),
-            this.process.getProcessNumber(),
-            this.processState,
-            this.visible,
-            this.process.getMaxMemory(),
-            this.process.getUsedMemory(),
-            this.maxPlayers,
-            this.onlinePlayers,
-            this.process.isStatic(),
-            this.process.getProcessType(),
-            this.process.getImage().getName(),
-            this.igniteId
+            process.getGroupName(),
+            process.getUniqueId(),
+            process.getProcessNumber(),
+            processState,
+            visible,
+            process.getMaxMemory(),
+            process.getUsedMemory(),
+            maxPlayers,
+            onlinePlayers,
+            process.isStatic(),
+            process.getProcessType(),
+            process.getImage().getName(),
+            igniteId
         )
-        return this.internalService.updateProcessInternal(configuration)
+        internalService.updateProcessInternal(configuration)
     }
 
     private fun getIgniteIdIfSet(): UUID? {

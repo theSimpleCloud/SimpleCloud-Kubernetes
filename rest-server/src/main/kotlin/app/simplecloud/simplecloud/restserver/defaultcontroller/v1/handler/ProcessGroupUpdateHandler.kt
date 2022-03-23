@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1.handler
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
@@ -32,10 +33,8 @@ import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdat
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import app.simplecloud.simplecloud.api.validator.ValidatorService
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -50,19 +49,18 @@ class ProcessGroupUpdateHandler @Inject constructor(
     private val onlineCountService: ProcessOnlineCountService,
 ) {
 
-    fun update(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        val group = await(this.groupService.findByName(configuration.name))
-        val future =  updateGroup(group, configuration)
-        future.thenAccept { checkProcessOnlineCount() }
-        return future
+    suspend fun update(configuration: AbstractCloudProcessGroupConfiguration) {
+        val group = this.groupService.findByName(configuration.name).await()
+        updateGroup(group, configuration)
+        checkProcessOnlineCount()
     }
 
     private fun checkProcessOnlineCount() {
         this.onlineCountService.checkProcessOnlineCount()
     }
 
-    private fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        this.validatorService.getValidator(configuration::class.java).validate(configuration)
+    private suspend fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
+        this.validatorService.getValidator(configuration::class.java).validate(configuration).await()
         val request = group.createUpdateRequest()
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
@@ -83,7 +81,7 @@ class ProcessGroupUpdateHandler @Inject constructor(
             request.setLobbyPriority(configuration.lobbyPriority)
         }
 
-        return request.submit()
+        return request.submit().await()
     }
 
 }

@@ -30,7 +30,7 @@ class CloudPlayerServiceImpl @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration): CompletableFuture<Unit> {
+    override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
         TODO()
     }
 }

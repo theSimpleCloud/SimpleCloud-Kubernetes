@@ -1,6 +1,7 @@
 package app.simplecloud.simplecloud.api.impl.request.permission
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupDeleteRequest
@@ -21,8 +22,7 @@ class PermissionGroupDeleteRequestImpl(
         return this.permissionGroup
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        this.internalService.deleteGroupInternal(this.permissionGroup)
-        return unitFuture()
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        internalService.deleteGroupInternal(permissionGroup)
     }
 }

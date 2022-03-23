@@ -3,7 +3,6 @@ package app.simplecloud.simplecloud.api.internal.service
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 20.03.22
@@ -13,10 +12,10 @@ import java.util.concurrent.CompletableFuture
  */
 interface InternalPermissionGroupService : PermissionGroupService {
 
-    fun updateGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<Unit>
+    suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration)
 
-    fun deleteGroupInternal(group: PermissionGroup)
+    suspend fun deleteGroupInternal(group: PermissionGroup)
 
-    fun createGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<PermissionGroup>
+    suspend fun createGroupInternal(configuration: PermissionGroupConfiguration): PermissionGroup
 
 }

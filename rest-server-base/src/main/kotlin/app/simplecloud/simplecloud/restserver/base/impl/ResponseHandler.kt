@@ -1,7 +1,7 @@
 package app.simplecloud.simplecloud.restserver.base.impl
 
 import app.simplecloud.rest.Context
-import app.simplecloud.simplecloud.api.utils.future.FutureOriginException
+import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
 import app.simplecloud.simplecloud.restserver.base.exception.HttpException
 import app.simplecloud.simplecloud.restserver.base.exception.MissingPermissionException
 import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException

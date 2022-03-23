@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequestImpl
@@ -30,7 +31,6 @@ import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -59,17 +59,18 @@ abstract class AbstractCloudProcessGroupService(
         return ProcessGroupCreateRequestImpl(this, configuration)
     }
 
-    override fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
-        await(this.groupConfigurationValidator.validate(configuration))
+    override suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration) {
+        this.groupConfigurationValidator.validate(configuration).await()
         val group = this.processGroupFactory.create(configuration)
-        return updateGroupInternal0(group)
+        updateGroupInternal0(group)
     }
 
-    abstract fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<Unit>
+    abstract suspend fun updateGroupInternal0(group: CloudProcessGroup)
 
-    override fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup> {
-        await(this.groupConfigurationValidator.validate(configuration))
+    override suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
+        this.groupConfigurationValidator.validate(configuration).await()
         val group = this.processGroupFactory.create(configuration)
-        return updateGroupInternal0(group).thenApply { group }
+        updateGroupInternal0(group)
+        return group
     }
 }

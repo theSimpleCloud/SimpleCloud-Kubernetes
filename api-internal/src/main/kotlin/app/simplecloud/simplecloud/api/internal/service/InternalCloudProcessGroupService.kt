@@ -25,7 +25,6 @@ package app.simplecloud.simplecloud.api.internal.service
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,10 +34,10 @@ import java.util.concurrent.CompletableFuture
  */
 interface InternalCloudProcessGroupService : CloudProcessGroupService {
 
-    fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit>
+    suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration)
 
-    fun deleteGroupInternal(group: CloudProcessGroup)
+    suspend fun deleteGroupInternal(group: CloudProcessGroup)
 
-    fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CompletableFuture<CloudProcessGroup>
+    suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup
 
 }

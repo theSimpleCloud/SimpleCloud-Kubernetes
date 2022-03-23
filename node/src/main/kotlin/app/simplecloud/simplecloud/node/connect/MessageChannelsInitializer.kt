@@ -1,6 +1,5 @@
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
@@ -11,21 +10,19 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
 import app.simplecloud.simplecloud.node.messagechannel.*
 import com.google.inject.Inject
 import com.google.inject.Injector
-import java.util.concurrent.CompletableFuture
 
-class InitMessageChannelsTask @Inject constructor(
+class MessageChannelsInitializer @Inject constructor(
     private val messageChannelManager: MessageChannelManager,
     private val injector: Injector
 ) {
 
-    fun run(): CompletableFuture<Unit> {
+    fun initializeMessageChannels() {
         registerPermissionGroupDeleteMessageChannel()
         registerPermissionGroupUpdateMessageChannel()
         registerGroupDeleteMessageChannel()
         registerGroupUpdateMessageChannel()
         registerStartProcessMessageChannel()
         registerPlayerLoginMessageChannel()
-        return unitFuture()
     }
 
     private fun registerPlayerLoginMessageChannel() {

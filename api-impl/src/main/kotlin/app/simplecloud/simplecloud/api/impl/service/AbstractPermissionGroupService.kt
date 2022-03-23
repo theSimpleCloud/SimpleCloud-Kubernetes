@@ -47,9 +47,10 @@ abstract class AbstractPermissionGroupService(
         return PermissionGroupUpdateRequestImpl(group, this, this.permissionFactory)
     }
 
-    override fun createGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<PermissionGroup> {
+    override suspend fun createGroupInternal(configuration: PermissionGroupConfiguration): PermissionGroup {
         val permissionGroup = this.groupFactory.create(configuration)
-        return updateGroupInternal(configuration).thenApply { permissionGroup }
+        updateGroupInternal(configuration)
+        return permissionGroup
     }
 
 

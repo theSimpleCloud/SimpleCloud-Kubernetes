@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup.service
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
@@ -34,7 +34,6 @@ import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
@@ -53,24 +52,22 @@ class CloudProcessGroupServiceImpl @Inject constructor(
     private val updateMessageChannel =
         this.messageChannelManager.getOrCreateMessageChannel<AbstractCloudProcessGroupConfiguration, Unit>("internal_update_group")
 
-    override fun updateGroupInternal0(group: CloudProcessGroup): CompletableFuture<Unit> {
-        return this.nodeService.findFirst().thenApply {
-            sendUpdateRequestToNode(group, it)
-        }
+    override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
+        val node = this.nodeService.findFirst().await()
+        sendUpdateRequestToNode(group, node)
     }
 
-    override fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.nodeService.findFirst().thenApply {
-            sendDeleteRequestToNode(group, it)
-        }
+    override suspend fun deleteGroupInternal(group: CloudProcessGroup) {
+        val node = this.nodeService.findFirst().await()
+        sendDeleteRequestToNode(group, node)
     }
 
-    private fun sendUpdateRequestToNode(group: CloudProcessGroup, node: Node) {
-        this.updateMessageChannel.createMessageRequest(group.toConfiguration(), node).submit()
+    private suspend fun sendUpdateRequestToNode(group: CloudProcessGroup, node: Node) {
+        this.updateMessageChannel.createMessageRequest(group.toConfiguration(), node).submit().await()
     }
 
-    private fun sendDeleteRequestToNode(group: CloudProcessGroup, node: Node) {
-        this.deleteMessageChannel.createMessageRequest(group.getName(), node).submit()
+    private suspend fun sendDeleteRequestToNode(group: CloudProcessGroup, node: Node) {
+        this.deleteMessageChannel.createMessageRequest(group.getName(), node).submit().await()
     }
 
 

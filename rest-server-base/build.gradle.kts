@@ -10,8 +10,6 @@ dependencies {
     api("org.json:json:20210307")
 
     api("app.simplecloud:simple-rest-server:1.0.3")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
-    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-jdk8:1.6.0")
 
 }
 

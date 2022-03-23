@@ -22,7 +22,7 @@
 
 package app.simplecloud.simplecloud.node.startup.task
 
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.restserver.auth.RestAuthServiceImpl
 import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.controller.ControllerHandlerImpl

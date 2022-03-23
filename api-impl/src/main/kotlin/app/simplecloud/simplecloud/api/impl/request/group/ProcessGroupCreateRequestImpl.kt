@@ -22,12 +22,13 @@
 
 package app.simplecloud.simplecloud.api.impl.request.group
 
-import app.simplecloud.simplecloud.api.future.isCompletedNormally
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -41,16 +42,20 @@ class ProcessGroupCreateRequestImpl(
     private val configuration: AbstractCloudProcessGroupConfiguration
 ) : ProcessGroupCreateRequest {
 
-    override fun submit(): CompletableFuture<CloudProcessGroup> {
-        if (await(doesGroupExist(configuration.name))) {
+    override fun submit(): CompletableFuture<CloudProcessGroup> = CloudScope.future {
+        if (doesGroupExist(configuration.name)) {
             throw IllegalArgumentException("Group already exists")
         }
-        return this.internalService.createGroupInternal(configuration)
+        return@future internalService.createGroupInternal(configuration)
     }
 
-    private fun doesGroupExist(groupName: String): CompletableFuture<Boolean> {
-        val completableFuture = this.internalService.findByName(groupName)
-        return completableFuture.handle { _, _ -> completableFuture.isCompletedNormally }
+    private suspend fun doesGroupExist(groupName: String): Boolean {
+        return try {
+            this.internalService.findByName(groupName).await()
+            true
+        } catch (e: NoSuchElementException) {
+            false
+        }
     }
 
 }

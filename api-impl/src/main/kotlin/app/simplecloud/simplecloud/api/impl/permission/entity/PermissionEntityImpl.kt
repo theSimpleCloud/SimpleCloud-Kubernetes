@@ -22,14 +22,11 @@
 
 package app.simplecloud.simplecloud.api.impl.permission.entity
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.nonNull
-import app.simplecloud.simplecloud.api.future.toFutureList
+import app.simplecloud.simplecloud.api.future.*
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
-import com.ea.async.Async.await
 import java.util.concurrent.CompletableFuture
 
 
@@ -47,10 +44,12 @@ open class PermissionEntityImpl(
         return hasPermissionInGroups(permission, processGroup)
     }
 
-    private fun hasPermissionInGroups(permission: String, processGroup: String?): CompletableFuture<Boolean> {
-        val topLevelGroups = await(getTopLevelPermissionGroups())
-        val hasPermissionsFuture = topLevelGroups.map { it.hasPermission(permission, processGroup) }.toFutureList()
-        return hasPermissionsFuture.thenApply { it.any() }
+    private fun hasPermissionInGroups(
+        permission: String,
+        processGroup: String?
+    ): CompletableFuture<Boolean> = CloudScope.future {
+        val topLevelGroups = getTopLevelPermissionGroups().await()
+        return@future topLevelGroups.any { it.hasPermission(permission, processGroup).await() }
     }
 
     override fun hasTopLevelGroup(groupName: String): Boolean {

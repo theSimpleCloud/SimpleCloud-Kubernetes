@@ -22,13 +22,10 @@
 
 package app.simplecloud.simplecloud.node.startup.setup.task
 
-import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.node.startup.setup.body.MongoSetupResponseBody
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
 import app.simplecloud.simplecloud.restserver.setup.type.Setup
-import com.ea.async.Async.await
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -36,19 +33,17 @@ import java.util.concurrent.CompletableFuture
  * Time: 00:06
  * @author Frederick Baier
  */
-class MongoDbSetupTask(
+class MongoDbSetup(
     private val restSetupManager: RestSetupManager
 ) {
 
-    fun run(): CompletableFuture<String> {
+    fun executeSetup(): String {
         logger.info("Executing MongoDB setup")
-        val setupFuture = this.restSetupManager.setNextSetup(createSetup())
-        val mongoSetupResponseBody = await(setupFuture)
+        val mongoSetupResponseBody = this.restSetupManager.setNextSetup(createSetup()).join()
         if (mongoSetupResponseBody.mongoMode == MongoSetupResponseBody.MongoMode.CREATE) {
-            val newConnectionString = await(createMongoDockerContainer(mongoSetupResponseBody))
-            return completedFuture(newConnectionString)
+            return createMongoDockerContainer(mongoSetupResponseBody)
         }
-        return completedFuture(mongoSetupResponseBody.connectionString)
+        return mongoSetupResponseBody.connectionString
     }
 
     private fun createSetup(): Setup<MongoSetupResponseBody> {
@@ -62,12 +57,12 @@ class MongoDbSetupTask(
         return arrayOf(MongoSetupResponseBody.MongoMode.EXTERNAL)
     }
 
-    private fun createMongoDockerContainer(mongoSetupResponseBody: MongoSetupResponseBody): CompletableFuture<String> {
+    private fun createMongoDockerContainer(mongoSetupResponseBody: MongoSetupResponseBody): String {
         throw IllegalStateException("Cannot create mongodb container because docker is not available")
     }
 
     companion object {
-        private val logger = LogManager.getLogger(MongoDbSetupTask::class.java)
+        private val logger = LogManager.getLogger(MongoDbSetup::class.java)
     }
 
 }

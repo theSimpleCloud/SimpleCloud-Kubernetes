@@ -22,8 +22,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup.service
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.future.flatten
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
@@ -33,10 +32,8 @@ import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
@@ -51,17 +48,17 @@ class CloudProcessServiceImpl @Inject constructor(
     private val startProcessMessageChannel =
         this.messageChannelManager.getOrCreateMessageChannel<ProcessStartConfiguration, CloudProcessConfiguration>("internal_start_process")
 
-    override fun startNewProcessInternal(configuration: ProcessStartConfiguration): CompletableFuture<CloudProcess> {
-        val node = await(this.nodeService.findFirst())
-        val processConfiguration = await(sendStartRequestToNode(configuration, node))
-        return completedFuture(this.processFactory.create(processConfiguration))
+    override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
+        val node = this.nodeService.findFirst().await()
+        val processConfiguration = sendStartRequestToNode(configuration, node)
+        return this.processFactory.create(processConfiguration)
     }
 
-    private fun sendStartRequestToNode(configuration: ProcessStartConfiguration, node: Node): CompletableFuture<CloudProcessConfiguration> {
-        return this.startProcessMessageChannel.createMessageRequest(configuration, node).submit()
+    private suspend fun sendStartRequestToNode(configuration: ProcessStartConfiguration, node: Node): CloudProcessConfiguration {
+        return this.startProcessMessageChannel.createMessageRequest(configuration, node).submit().await()
     }
 
-    override fun shutdownProcessInternal(process: CloudProcess): CompletableFuture<Unit> {
+    override suspend fun shutdownProcessInternal(process: CloudProcess) {
         TODO()
     }
 }

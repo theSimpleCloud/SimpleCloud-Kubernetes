@@ -22,7 +22,8 @@
 
 package app.simplecloud.simplecloud.api.impl.request.group
 
-import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
@@ -42,8 +43,7 @@ class ProcessGroupDeleteRequestImpl(
         return this.processGroup
     }
 
-    override fun submit(): CompletableFuture<Unit> {
-        this.internalService.deleteGroupInternal(this.processGroup)
-        return unitFuture()
+    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        internalService.deleteGroupInternal(processGroup)
     }
 }

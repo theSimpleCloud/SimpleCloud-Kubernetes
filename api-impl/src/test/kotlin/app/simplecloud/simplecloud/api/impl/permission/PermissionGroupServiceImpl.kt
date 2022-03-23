@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.api.impl.permission
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -8,7 +9,6 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupC
 import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 23.03.22
@@ -23,11 +23,11 @@ class PermissionGroupServiceImpl @Inject constructor(
     private val permissionFactory: Permission.Factory
 ) : AbstractPermissionGroupService(repository, groupFactory, permissionFactory), InternalPermissionGroupService {
 
-    override fun updateGroupInternal(configuration: PermissionGroupConfiguration): CompletableFuture<Unit> {
-        return this.repository.save(configuration.name, configuration)
+    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
+        this.repository.save(configuration.name, configuration).await()
     }
 
-    override fun deleteGroupInternal(group: PermissionGroup) {
+    override suspend fun deleteGroupInternal(group: PermissionGroup) {
         TODO("Not yet implemented")
     }
 }

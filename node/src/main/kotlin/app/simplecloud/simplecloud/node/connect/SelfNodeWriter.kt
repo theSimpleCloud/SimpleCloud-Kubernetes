@@ -20,38 +20,17 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver
+package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.*
-import com.ea.async.Async
-import com.google.inject.Guice
-import java.io.File
+import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
+import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 16/07/2021
- * Time: 21:24
- * @author Frederick Baier
- */
-class Test {
+class SelfNodeWriter(
+    private val repository: IgniteNodeRepository,
+    private val nodeConfiguration: NodeConfiguration
+) {
 
-
-
-
-}
-
-fun main() {
-    Async.init()
-    val injector = Guice.createInjector(TestRestBinderModule())
-    println(File(".").absolutePath)
-    val restServer = injector.getInstance(RestServer::class.java)
-    val controllerHandler = restServer.controllerHandler
-    controllerHandler.registerController(UserController::class.java)
-    controllerHandler.registerController(LoginController::class.java)
-    controllerHandler.registerController(ProcessGroupController::class.java)
-    controllerHandler.registerController(ProcessController::class.java)
-    controllerHandler.registerController(NodeController::class.java)
-    while (true) {
-
+    fun writeSelfNode() {
+        this.repository.save(nodeConfiguration.igniteId, nodeConfiguration).join()
     }
 }

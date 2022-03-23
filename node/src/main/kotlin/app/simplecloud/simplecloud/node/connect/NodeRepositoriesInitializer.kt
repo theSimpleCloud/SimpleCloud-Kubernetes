@@ -27,47 +27,44 @@ import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcess
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
 import app.simplecloud.simplecloud.node.mongo.group.MongoCloudProcessGroupRepository
 import app.simplecloud.simplecloud.node.mongo.permission.MongoPermissionGroupRepository
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
-class NodeInitRepositoriesTask @Inject constructor(
+class NodeRepositoriesInitializer @Inject constructor(
     private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
     private val ignitePermissionGroupRepository: IgnitePermissionGroupRepository,
     private val mongoPermissionGroupRepository: MongoPermissionGroupRepository,
 ) {
 
-    fun run(): CompletableFuture<Unit> {
+    fun initializeRepositories() {
         logger.info("Initializing Ignite Repositories")
-        await(initGroups())
-        await(initPermissionGroups())
-        return unitFuture()
+        initGroups()
+        initPermissionGroups()
     }
 
     private fun initPermissionGroups(): CompletableFuture<Unit> {
-        val groups = await(this.mongoPermissionGroupRepository.findAll())
+        val groups = this.mongoPermissionGroupRepository.findAll().join()
         logger.info("Found PermissionGroups: {}", groups.map { it.name })
         val configurations = groups.map { it.toConfiguration() }
         for (config in configurations) {
-            await(this.ignitePermissionGroupRepository.save(config.name, config))
+            this.ignitePermissionGroupRepository.save(config.name, config).join()
         }
         return unitFuture()
     }
 
-    private fun initGroups(): CompletableFuture<Unit> {
-        val groups = await(this.mongoCloudProcessGroupRepository.findAll())
+    private fun initGroups(){
+        val groups = this.mongoCloudProcessGroupRepository.findAll().join()
         logger.info("Found Groups: {}", groups.map { it.name })
         val groupConfigurations = groups.map { it.toConfiguration() }
         for (config in groupConfigurations) {
-            await(this.igniteGroupRepository.save(config.name, config))
+            this.igniteGroupRepository.save(config.name, config).join()
         }
-        return unitFuture()
     }
 
     companion object {
-        private val logger = LogManager.getLogger(NodeInitRepositoriesTask::class.java)
+        private val logger = LogManager.getLogger(NodeRepositoriesInitializer::class.java)
     }
 
 }

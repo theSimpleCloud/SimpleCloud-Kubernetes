@@ -22,18 +22,14 @@
 
 package app.simplecloud.simplecloud.node.startup.task.mongo
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.utils.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.node.startup.setup.task.MongoDbSetupTask
+import app.simplecloud.simplecloud.node.startup.setup.task.MongoDbSetup
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import com.ea.async.Async.await
 import com.google.inject.Inject
 import dev.morphia.Datastore
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -41,15 +37,15 @@ import java.util.concurrent.CompletableFuture
  * Time: 09:59
  * @author Frederick Baier
  */
-class MongoDbSafeStartTask @Inject constructor(
+class MongoClientSafeStarter @Inject constructor(
     private val restSetupManager: RestSetupManager,
     private val kubeSecretService: KubeSecretService
 ) {
 
-    fun run(): CompletableFuture<Datastore> {
+    fun startMongoClient(): Datastore {
         logger.info("Starting MongoDB")
         if (!isSecretAvailable()) {
-            await(executeMongoSetup())
+            executeMongoSetup()
         }
         return startClientAndTestConnection()
     }
@@ -58,13 +54,13 @@ class MongoDbSafeStartTask @Inject constructor(
         return runCatching { this.kubeSecretService.getSecret(MONGO_SECRET_NAME) }.isSuccess
     }
 
-    private fun startClientAndTestConnection(): CompletableFuture<Datastore> {
+    private fun startClientAndTestConnection(): Datastore {
         val secret = loadSecret()
         val connectionString = secret.getStringValueOf("mongo")
-        val datastore = await(startMongoDbClient(connectionString))
+        val datastore = startMongoDbClient(connectionString)
         if (isConnectedToDatabase(datastore)) {
             logger.info("Connected to database")
-            return completedFuture(datastore)
+            return datastore
         }
         throw IllegalArgumentException("Connection String is invalid ${connectionString}")
     }
@@ -73,20 +69,18 @@ class MongoDbSafeStartTask @Inject constructor(
         return this.kubeSecretService.getSecret(MONGO_SECRET_NAME)
     }
 
-    private fun executeMongoSetup(): CompletableFuture<String> {
-        val connectionString = await(MongoDbSetupTask(this.restSetupManager).run())
+    private fun executeMongoSetup(): String {
+        val connectionString = MongoDbSetup(this.restSetupManager).executeSetup()
         saveResponseToSecret(connectionString)
-        return completedFuture(connectionString)
+        return connectionString
     }
 
     private fun isConnectedToDatabase(datastore: Datastore): Boolean {
         return runCatching { datastore.startSession() }.isSuccess
     }
 
-    private fun startMongoDbClient(connectionString: String): CompletableFuture<Datastore> {
-        val future = MongoDbStartTask(connectionString).run()
-        val mongoDatastore = await(future)
-        return CloudCompletableFuture.completedFuture(mongoDatastore)
+    private fun startMongoDbClient(connectionString: String): Datastore {
+        return MongoDBClientStarter(connectionString).startClient()
     }
 
     private fun saveResponseToSecret(connectionString: String) {
@@ -95,7 +89,7 @@ class MongoDbSafeStartTask @Inject constructor(
 
     companion object {
         const val MONGO_SECRET_NAME = "mongo"
-        private val logger = LogManager.getLogger(MongoDbSafeStartTask::class.java)
+        private val logger = LogManager.getLogger(MongoClientSafeStarter::class.java)
     }
 
 }

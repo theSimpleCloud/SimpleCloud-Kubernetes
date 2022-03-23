@@ -22,6 +22,7 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.toFutureList
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
@@ -85,8 +86,8 @@ abstract class AbstractCloudProcessService(
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
-    override fun updateProcessInternal(configuration: CloudProcessConfiguration): CompletableFuture<Unit> {
-        return this.igniteRepository.save(configuration.getProcessName(), configuration)
+    override suspend fun updateProcessInternal(configuration: CloudProcessConfiguration) {
+        this.igniteRepository.save(configuration.getProcessName(), configuration).await()
     }
 
     override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {

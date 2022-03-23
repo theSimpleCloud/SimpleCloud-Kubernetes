@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
@@ -12,7 +14,11 @@ class StartProcessMessageHandler @Inject constructor(
     private val processService: InternalCloudProcessService
 ) : MessageHandler<ProcessStartConfiguration, CloudProcessConfiguration> {
 
-    override fun handleMessage(message: ProcessStartConfiguration, sender: NetworkComponent): CompletableFuture<CloudProcessConfiguration> {
-        return this.processService.startNewProcessInternal(message).thenApply { it.toConfiguration() }
+    override fun handleMessage(
+        message: ProcessStartConfiguration,
+        sender: NetworkComponent
+    ): CompletableFuture<CloudProcessConfiguration> = CloudScope.future {
+        val cloudProcess = processService.startNewProcessInternal(message)
+        return@future cloudProcess.toConfiguration()
     }
 }

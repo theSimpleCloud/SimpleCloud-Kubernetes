@@ -1,5 +1,7 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
@@ -17,8 +19,8 @@ class CloudPlayerLoginMessageHandler @Inject constructor(
     override fun handleMessage(
         message: PlayerConnectionConfiguration,
         sender: NetworkComponent
-    ): CompletableFuture<CloudPlayerConfiguration> {
-        return CloudPlayerLoginHandler(this.playerFactory, this.mongoPlayerRepository, message, sender.getName())
+    ): CompletableFuture<CloudPlayerConfiguration> = CloudScope.future {
+        return@future CloudPlayerLoginHandler(playerFactory, mongoPlayerRepository, message, sender.getName())
             .handleLogin()
     }
 
