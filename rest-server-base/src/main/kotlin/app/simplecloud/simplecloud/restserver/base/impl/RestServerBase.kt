@@ -35,7 +35,8 @@ import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import kotlinx.coroutines.*
+import kotlinx.coroutines.runBlocking
+import java.util.concurrent.CopyOnWriteArrayList
 
 
 /**
@@ -51,14 +52,11 @@ class RestServerBase(
 ) : RestServer {
 
     private val server = RestServerFactory.createServer(port)
-    private val coroutineScope: CoroutineScope
+
+    private val registeredRoutes = CopyOnWriteArrayList<RegisteredRoute>()
 
     init {
         this.server.start()
-        val threadContext = newSingleThreadContext("Rest-Server")
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable -> throwable.printStackTrace() }
-        //the [SupervisorJob] is necessary to handle exceptions. Without it the coroutine would crash with the first error
-        this.coroutineScope = CoroutineScope(threadContext + exceptionHandler + SupervisorJob())
     }
 
     override fun getAuthService(): AuthService {
@@ -70,7 +68,7 @@ class RestServerBase(
     }
 
     override fun registerRoute(route: Route) {
-        this.server.registerRoute(
+        val lowRoute = this.server.registerRoute(
             RequestMethod.valueOf(route.getRequestType().name),
             route.getPath(),
             object : Handler {
@@ -81,10 +79,12 @@ class RestServerBase(
                 }
             }
         )
+        this.registeredRoutes.add(RegisteredRoute(route, lowRoute))
     }
 
     override fun unregisterRoute(route: Route) {
-        TODO("Not yet implemented")
+        val lowRoute = this.registeredRoutes.firstOrNull { it.highRoute == route }?.lowRoute
+        lowRoute?.let { this.server.unregisterRoute(it) }
     }
 
     private suspend fun handleIncomingRequest(route: Route, context: Context) {
@@ -96,6 +96,11 @@ class RestServerBase(
     override fun stop() {
         this.server.stop()
     }
+
+    class RegisteredRoute(
+        val highRoute: Route,
+        val lowRoute: app.simplecloud.rest.Route
+    )
 
     companion object {
 

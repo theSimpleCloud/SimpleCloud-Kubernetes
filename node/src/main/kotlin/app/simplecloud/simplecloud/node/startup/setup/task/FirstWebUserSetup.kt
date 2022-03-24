@@ -60,12 +60,11 @@ class FirstWebUserSetup(
 
     private fun setEndToken(responseBody: FirstUserSetupResponseBody) {
         val expireDate = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
-        this.restSetupManager.setEndToken(
-            this.jwtTokenHandler.makeToken(
-                JwtTokenHandler.TokenData(JwtTokenHandler.TokenMode.PLAYER, responseBody.uniqueId),
-                expireDate
-            )
+        val token = this.jwtTokenHandler.makeToken(
+            JwtTokenHandler.TokenData(JwtTokenHandler.TokenMode.PLAYER, responseBody.uniqueId),
+            expireDate
         )
+        this.restSetupManager.setEndToken(token)
     }
 
     private fun createFirstUserSetup(): Setup<FirstUserSetupResponseBody> {

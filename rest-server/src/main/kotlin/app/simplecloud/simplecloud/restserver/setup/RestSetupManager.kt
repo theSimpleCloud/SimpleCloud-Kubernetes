@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.base.RestServerAPI
 import app.simplecloud.simplecloud.restserver.base.parameter.RequestBodyParameterType
 import app.simplecloud.simplecloud.restserver.base.route.RequestType
+import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.vmethod.VirtualMethod
 import app.simplecloud.simplecloud.restserver.setup.response.CurrentSetupRequestResponse
 import app.simplecloud.simplecloud.restserver.setup.response.SetupEndResponse
@@ -50,6 +51,7 @@ class RestSetupManager(
 
     private val setupNameToFuture = Maps.newConcurrentMap<String, CompletableFuture<Any>>()
     private val futuresWaitingForNextSetup = CopyOnWriteArrayList<CompletableFuture<Any>>()
+    private val routes = CopyOnWriteArrayList<Route>()
 
     @Volatile
     private var endLoginToken: String = ""
@@ -59,7 +61,7 @@ class RestSetupManager(
     }
 
     fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T> {
-        registerRoute(setup)
+        registerSetupRoute(setup)
         this.currentSetup = setup
         val future = CompletableFuture<T>()
         this.setupNameToFuture[setup.setupName] = future as CompletableFuture<Any>
@@ -67,11 +69,16 @@ class RestSetupManager(
         return future
     }
 
+    private fun registerRoute(route: Route) {
+        this.routes.add(route)
+        this.restServer.registerRoute(route)
+    }
+
     private fun completeAllFuturesWaitingForNextSetup(response: Any) {
         this.futuresWaitingForNextSetup.forEach { it.complete(response) }
     }
 
-    private fun registerRoute(setup: Setup<*>) {
+    private fun registerSetupRoute(setup: Setup<*>) {
         val methodBuilder = RestServerAPI.RouteMethodBuilderImpl()
         methodBuilder.addParameter(RequestBodyParameterType(emptyArray(), arrayOf(setup.responseClass.java)))
         methodBuilder.setVirtualMethod(createVirtualMethod(setup.setupName))
@@ -79,7 +86,7 @@ class RestSetupManager(
         routeBuilder.setRequestType(RequestType.POST)
         routeBuilder.setPath("setup/${setup.setupName}")
         routeBuilder.setMethod(methodBuilder.build())
-        this.restServer.registerRoute(routeBuilder.build())
+        registerRoute(routeBuilder.build())
     }
 
     private fun registerGetCurrentSetupRoute() {
@@ -94,7 +101,7 @@ class RestSetupManager(
         routeBuilder.setRequestType(RequestType.GET)
         routeBuilder.setPath("setup")
         routeBuilder.setMethod(methodBuilder.build())
-        this.restServer.registerRoute(routeBuilder.build())
+        registerRoute(routeBuilder.build())
     }
 
     private fun waitForNextSetupName(): CompletableFuture<CurrentSetupRequestResponse> {
@@ -108,9 +115,14 @@ class RestSetupManager(
     }
 
     fun onEndOfAllSetups() {
+        unregisterAllRoutes()
         this.currentSetup = END_SETUP
         completeAllFuturesWaitingForNextSetup(SetupEndResponse(this.endLoginToken))
         this.endLoginToken = ""
+    }
+
+    private fun unregisterAllRoutes() {
+        this.routes.forEach { this.restServer.unregisterRoute(it) }
     }
 
     private fun createVirtualMethod(setupName: String): VirtualMethod {
