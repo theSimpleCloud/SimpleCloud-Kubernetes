@@ -26,7 +26,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import app.simplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.Nameable
@@ -65,6 +65,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
 
     fun createUpdateRequest(): CloudProcessGroupUpdateRequest
 
-    fun createDeleteRequest(): ProcessGroupDeleteRequest
+    fun createDeleteRequest(): CloudProcessGroupDeleteRequest
 
 }

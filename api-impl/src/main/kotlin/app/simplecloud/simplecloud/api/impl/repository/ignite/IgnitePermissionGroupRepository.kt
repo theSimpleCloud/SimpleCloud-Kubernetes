@@ -1,7 +1,7 @@
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import org.apache.ignite.Ignite

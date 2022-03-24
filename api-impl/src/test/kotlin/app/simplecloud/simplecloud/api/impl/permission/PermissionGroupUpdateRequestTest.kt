@@ -5,7 +5,7 @@ import app.simplecloud.simplecloud.api.impl.request.permission.PermissionGroupUp
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import com.google.inject.Guice
 import com.google.inject.Injector
 import org.junit.jupiter.api.Assertions
@@ -39,12 +39,12 @@ class PermissionGroupUpdateRequestTest {
         val groupConfiguration = PermissionGroupConfiguration("Test", 5, emptyList())
         this.permissionGroupRepository.save("Test", groupConfiguration)
 
-        val permissionGroup = this.permissionGroupService.findPermissionGroupByName("Test").join()
+        val permissionGroup = this.permissionGroupService.findByName("Test").join()
         val updateRequest = this.permissionGroupService.createUpdateRequest(permissionGroup)
         updateRequest.setPriority(2)
         updateRequest.submit().join()
 
-        val changedGroup = this.permissionGroupService.findPermissionGroupByName("Test").join()
+        val changedGroup = this.permissionGroupService.findByName("Test").join()
         Assertions.assertEquals(2, changedGroup.getPriority())
     }
 
@@ -59,7 +59,7 @@ class PermissionGroupUpdateRequestTest {
         )
         this.permissionGroupRepository.save("test", groupConfiguration)
 
-        val permissionGroup = this.permissionGroupService.findPermissionGroupByName("test").join()
+        val permissionGroup = this.permissionGroupService.findByName("test").join()
         val updateRequest = this.permissionGroupService.createUpdateRequest(permissionGroup)
         Assertions.assertThrows(PermissionGroupUpdateRequestImpl.GroupRecursionException::class.java) {
             try {
@@ -90,7 +90,7 @@ class PermissionGroupUpdateRequestTest {
         this.permissionGroupRepository.save("admin", groupConfiguration)
         this.permissionGroupRepository.save("builder", groupConfiguration2)
 
-        val permissionGroup = this.permissionGroupService.findPermissionGroupByName("admin").join()
+        val permissionGroup = this.permissionGroupService.findByName("admin").join()
         val updateRequest = this.permissionGroupService.createUpdateRequest(permissionGroup)
 
         Assertions.assertThrows(PermissionGroupUpdateRequestImpl.GroupRecursionException::class.java) {
@@ -131,7 +131,7 @@ class PermissionGroupUpdateRequestTest {
         this.permissionGroupRepository.save("builder", groupConfiguration2)
         this.permissionGroupRepository.save("mod", groupConfiguration3)
 
-        val permissionGroup = this.permissionGroupService.findPermissionGroupByName("admin").join()
+        val permissionGroup = this.permissionGroupService.findByName("admin").join()
         val updateRequest = this.permissionGroupService.createUpdateRequest(permissionGroup)
 
         Assertions.assertThrows(PermissionGroupUpdateRequestImpl.GroupRecursionException::class.java) {

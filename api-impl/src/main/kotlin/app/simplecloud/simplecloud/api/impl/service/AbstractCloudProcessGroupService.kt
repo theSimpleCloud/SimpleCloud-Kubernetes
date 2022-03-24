@@ -25,11 +25,14 @@ package app.simplecloud.simplecloud.api.impl.service
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupDeleteRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
+import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import java.util.concurrent.CompletableFuture
 
@@ -55,8 +58,17 @@ abstract class AbstractCloudProcessGroupService(
         return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it) } }
     }
 
-    override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): ProcessGroupCreateRequest {
-        return ProcessGroupCreateRequestImpl(this, configuration)
+    override fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest {
+        return CloudProcessGroupCreateRequestImpl(this, configuration)
+    }
+
+    override fun createUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest {
+        //The returned request object depends on the type of the group. So the request is created within the group.
+        return group.createUpdateRequest()
+    }
+
+    override fun createDeleteRequest(group: CloudProcessGroup): CloudProcessGroupDeleteRequest {
+        return CloudProcessGroupDeleteRequestImpl(this, group)
     }
 
     override suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration) {

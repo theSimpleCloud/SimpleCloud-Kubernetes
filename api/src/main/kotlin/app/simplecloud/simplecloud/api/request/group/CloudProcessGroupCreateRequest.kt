@@ -31,4 +31,4 @@ import app.simplecloud.simplecloud.api.utils.Request
  * Time: 21:34
  * @author Frederick Baier
  */
-interface ProcessGroupCreateRequest : Request<CloudProcessGroup>
+interface CloudProcessGroupCreateRequest : Request<CloudProcessGroup>

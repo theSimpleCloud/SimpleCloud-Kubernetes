@@ -42,7 +42,7 @@ interface NodeService : Service {
     /**
      * Returns the node found by the specified [uniqueId]
      */
-    fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node>
+    fun findByUniqueId(uniqueId: UUID): CompletableFuture<Node>
 
     /**
      * Returns the first node found

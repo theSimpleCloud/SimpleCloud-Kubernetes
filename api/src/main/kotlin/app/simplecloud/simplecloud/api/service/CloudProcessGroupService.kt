@@ -24,7 +24,9 @@ package app.simplecloud.simplecloud.api.service
 
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
+import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -35,10 +37,31 @@ import java.util.concurrent.CompletableFuture
  */
 interface CloudProcessGroupService : Service {
 
+    /**
+     * Returns the group found by [name] or the futures fails with [NoSuchElementException]
+     */
     fun findByName(name: String): CompletableFuture<CloudProcessGroup>
 
+    /**
+     * Returns all groups
+     */
     fun findAll(): CompletableFuture<List<CloudProcessGroup>>
 
-    fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): ProcessGroupCreateRequest
+    /**
+     * Creates a request to create a new group
+     */
+    fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest
+
+    /**
+     * Creates a request to update an existing group
+     * The returned request type depends on the type of the [group]
+     * @see [CloudProcessGroup.createUpdateRequest]
+     */
+    fun createUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest
+
+    /**
+     * Creates a request to delete an existing group
+     */
+    fun createDeleteRequest(group: CloudProcessGroup): CloudProcessGroupDeleteRequest
 
 }

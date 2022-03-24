@@ -57,31 +57,31 @@ abstract class AbstractCloudProcessService(
         }
     }
 
-    override fun findProcessByName(name: String): CompletableFuture<CloudProcess> {
+    override fun findByName(name: String): CompletableFuture<CloudProcess> {
         val completableFuture = this.igniteRepository.find(name)
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
-    override fun findProcessesByName(vararg names: String): CompletableFuture<List<CloudProcess>> {
-        val futures = names.map { findProcessByName(it) }
+    override fun findByNames(vararg names: String): CompletableFuture<List<CloudProcess>> {
+        val futures = names.map { findByName(it) }
         return futures.toFutureList()
     }
 
-    override fun findProcessesByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
-        return findProcessesByGroup(group.getName())
+    override fun findByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
+        return findByGroup(group.getName())
     }
 
-    override fun findProcessesByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
+    override fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
         val processesFuture = this.igniteRepository.findProcessesByGroupName(groupName)
         return processesFuture.thenApply { list -> list.map { this.processFactory.create(it) } }
     }
 
-    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
+    override fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
         val completableFuture = this.igniteRepository.findProcessByUniqueId(uniqueId)
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
-    override fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
+    override fun findByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
         val completableFuture = this.igniteRepository.findProcessByIgniteId(igniteId)
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
@@ -90,7 +90,7 @@ abstract class AbstractCloudProcessService(
         this.igniteRepository.save(configuration.getProcessName(), configuration).await()
     }
 
-    override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {
+    override fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest {
         return ProcessStartRequestImpl(this, group)
     }
 
@@ -98,7 +98,7 @@ abstract class AbstractCloudProcessService(
         return ProcessUpdateRequestImpl(this, process)
     }
 
-    override fun createProcessShutdownRequest(process: CloudProcess): ProcessShutdownRequest {
+    override fun createShutdownRequest(process: CloudProcess): ProcessShutdownRequest {
         return ProcessShutdownRequestImpl(this, process)
     }
 

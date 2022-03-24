@@ -109,43 +109,43 @@ class TestCloudProcessService @Inject constructor(
         TODO("Not yet implemented")
     }
 
-    override fun findProcessByName(name: String): CompletableFuture<CloudProcess> {
+    override fun findByName(name: String): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             this.nameToProcess[name] ?: throw NoSuchElementException("Process does not exist")
         }.nonNull()
     }
 
-    override fun findProcessesByName(vararg names: String): CompletableFuture<List<CloudProcess>> {
-        return names.map { findProcessByName(it) }.toFutureList()
+    override fun findByNames(vararg names: String): CompletableFuture<List<CloudProcess>> {
+        return names.map { findByName(it) }.toFutureList()
     }
 
-    override fun findProcessesByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
-        return findProcessesByGroup(group.getName())
+    override fun findByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
+        return findByGroup(group.getName())
     }
 
-    override fun findProcessesByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
+    override fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.filter { it.getGroupName() == groupName }
         }.nonNull()
     }
 
-    override fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
+    override fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.firstOrNull { it.getUniqueId() == uniqueId }
         }.nonNull()
     }
 
-    override fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
+    override fun findByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.nameToProcess.values.firstOrNull { it.getIgniteId() == igniteId }
         }.nonNull()
     }
 
-    override fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest {
+    override fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest {
         return ProcessStartRequestImpl(this, group)
     }
 
-    override fun createProcessShutdownRequest(group: CloudProcess): ProcessShutdownRequest {
+    override fun createShutdownRequest(group: CloudProcess): ProcessShutdownRequest {
         return ProcessShutdownRequestImpl(this, group)
     }
 

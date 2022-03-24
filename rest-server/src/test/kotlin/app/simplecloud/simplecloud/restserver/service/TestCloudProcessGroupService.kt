@@ -26,11 +26,14 @@ import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.request.group.ProcessGroupCreateRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupDeleteRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.request.group.ProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
+import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.validator.ValidatorService
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -83,7 +86,17 @@ class TestCloudProcessGroupService @Inject constructor(
         return CloudCompletableFuture.supplyAsync { this.groups.values.toList() }.nonNull()
     }
 
-    override fun createGroupCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): ProcessGroupCreateRequest {
-        return ProcessGroupCreateRequestImpl(this, configuration)
+    override fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest {
+        return CloudProcessGroupCreateRequestImpl(this, configuration)
     }
+
+    override fun createDeleteRequest(group: CloudProcessGroup): CloudProcessGroupDeleteRequest {
+        return CloudProcessGroupDeleteRequestImpl(this, group)
+    }
+
+    override fun createUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest {
+        return group.createUpdateRequest()
+    }
+
+
 }

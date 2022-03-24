@@ -4,7 +4,7 @@ import app.simplecloud.simplecloud.api.impl.permission.entity.PermissionEntityIm
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionPlayer
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import java.util.*

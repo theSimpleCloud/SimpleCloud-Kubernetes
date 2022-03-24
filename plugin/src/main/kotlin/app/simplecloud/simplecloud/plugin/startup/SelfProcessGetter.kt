@@ -13,7 +13,7 @@ class SelfProcessGetter @Inject constructor(
 
     private val internalProcessId = UUID.fromString(System.getenv("SIMPLECLOUD_PROCESS_ID"))
 
-    private val cloudProcess = this.processService.findProcessByUniqueId(this.internalProcessId).join()
+    private val cloudProcess = this.processService.findByUniqueId(this.internalProcessId).join()
 
     fun getSelfProcess(): CloudProcess {
         return this.cloudProcess

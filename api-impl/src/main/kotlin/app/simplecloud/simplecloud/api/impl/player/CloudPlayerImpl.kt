@@ -52,11 +52,11 @@ class CloudPlayerImpl @Inject constructor(
     override fun getCurrentServer(): CompletableFuture<CloudProcess> {
         val connectedServerName = this.configuration.connectedServerName
             ?: return failedFuture(NullPointerException("Connected-Server not set"))
-        return this.processService.findProcessByName(connectedServerName)
+        return this.processService.findByName(connectedServerName)
     }
 
     override fun getCurrentProxy(): CompletableFuture<CloudProcess> {
-        return this.processService.findProcessByName(this.configuration.connectedProxyName)
+        return this.processService.findByName(this.configuration.connectedProxyName)
     }
 
     override fun getPlayerConnection(): PlayerConnection {

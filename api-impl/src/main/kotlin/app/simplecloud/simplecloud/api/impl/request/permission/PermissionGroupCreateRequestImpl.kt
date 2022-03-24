@@ -29,7 +29,7 @@ class PermissionGroupCreateRequestImpl(
 
     private suspend fun doesGroupExist(groupName: String): Boolean {
         return try {
-            this.internalService.findPermissionGroupByName(groupName).await()
+            this.internalService.findByName(groupName).await()
             true
         } catch (e: NoSuchElementException) {
             false

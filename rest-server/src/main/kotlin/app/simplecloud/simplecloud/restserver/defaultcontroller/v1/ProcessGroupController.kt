@@ -76,7 +76,7 @@ class ProcessGroupController @Inject constructor(
             ]
         ) configuration: AbstractCloudProcessGroupConfiguration
     ): AbstractCloudProcessGroupConfiguration {
-        val completableFuture = this.groupService.createGroupCreateRequest(configuration).submit()
+        val completableFuture = this.groupService.createCreateRequest(configuration).submit()
         val group = completableFuture.join()
         return group.toConfiguration()
     }

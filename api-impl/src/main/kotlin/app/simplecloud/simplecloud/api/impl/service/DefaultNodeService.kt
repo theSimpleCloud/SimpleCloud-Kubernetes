@@ -44,7 +44,7 @@ open class DefaultNodeService(
         return completableFuture.thenApply { list -> list.map { NodeImpl(it) } }
     }
 
-    override fun findNodeByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
+    override fun findByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
         val completableFuture = this.igniteRepository.find(uniqueId)
         return completableFuture.thenApply { NodeImpl(it) }
     }

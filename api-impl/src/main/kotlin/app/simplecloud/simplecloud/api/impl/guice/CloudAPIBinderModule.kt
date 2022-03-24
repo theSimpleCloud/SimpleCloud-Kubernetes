@@ -45,7 +45,6 @@ import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelMana
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.PermissionPlayer
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.process.CloudProcess

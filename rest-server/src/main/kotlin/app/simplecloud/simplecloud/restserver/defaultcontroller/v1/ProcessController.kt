@@ -55,7 +55,7 @@ class ProcessController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "{name}", "web.cloud.process.get")
     fun handleGetOne(@RequestPathParam("name") name: String): CloudProcessConfiguration {
-        val process = this.processService.findProcessByName(name).join()
+        val process = this.processService.findByName(name).join()
         return process.toConfiguration()
     }
 
@@ -66,7 +66,7 @@ class ProcessController @Inject constructor(
 
     @RequestMapping(RequestType.DELETE, "{name}", "web.cloud.process.delete")
     fun handleShutdown(@RequestPathParam("name") name: String): Boolean {
-        val process = this.processService.findProcessByName(name).join()
+        val process = this.processService.findByName(name).join()
         process.createShutdownRequest().submit()
         return true
     }

@@ -2,7 +2,7 @@ package app.simplecloud.simplecloud.api.internal.service
 
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 
 /**
  * Date: 20.03.22

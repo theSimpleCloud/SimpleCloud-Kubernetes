@@ -20,14 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.module
+package app.simplecloud.simplecloud.api.request.group
+
+import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07/08/2021
- * Time: 20:19
+ * Date: 18.03.2021
+ * Time: 15:18
  * @author Frederick Baier
  */
-enum class ModuleType {
+interface CloudProcessGroupDeleteRequest : Request<Unit> {
+
+    /**
+     * Returns the process group this request will start a process of
+     */
+    fun getProcessGroup(): CloudProcessGroup
 
 }

@@ -23,27 +23,39 @@
 package app.simplecloud.simplecloud.api.impl.request.group
 
 import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.request.group.ProcessGroupDeleteRequest
+import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
 import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 05.04.2021
- * Time: 21:43
+ * Date: 01/07/2021
+ * Time: 21:35
  * @author Frederick Baier
  */
-class ProcessGroupDeleteRequestImpl(
+class CloudProcessGroupCreateRequestImpl(
     private val internalService: InternalCloudProcessGroupService,
-    private val processGroup: CloudProcessGroup
-) : ProcessGroupDeleteRequest {
-    override fun getProcessGroup(): CloudProcessGroup {
-        return this.processGroup
+    private val configuration: AbstractCloudProcessGroupConfiguration
+) : CloudProcessGroupCreateRequest {
+
+    override fun submit(): CompletableFuture<CloudProcessGroup> = CloudScope.future {
+        if (doesGroupExist(configuration.name)) {
+            throw IllegalArgumentException("Group already exists")
+        }
+        return@future internalService.createGroupInternal(configuration)
     }
 
-    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
-        internalService.deleteGroupInternal(processGroup)
+    private suspend fun doesGroupExist(groupName: String): Boolean {
+        return try {
+            this.internalService.findByName(groupName).await()
+            true
+        } catch (e: NoSuchElementException) {
+            false
+        }
     }
+
 }

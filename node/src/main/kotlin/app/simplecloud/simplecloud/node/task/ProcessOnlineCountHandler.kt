@@ -49,7 +49,7 @@ class ProcessOnlineCountHandler(
 
     private suspend fun startServices(count: Int) {
         for (i in 0 until count) {
-            this.processService.createProcessStartRequest(this.group).submit().await()
+            this.processService.createStartRequest(this.group).submit().await()
         }
     }
 

@@ -26,7 +26,7 @@ import app.simplecloud.simplecloud.api.future.*
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 import java.util.concurrent.CompletableFuture
 
 
@@ -58,7 +58,7 @@ open class PermissionEntityImpl(
 
     override fun getTopLevelPermissionGroups(): CompletableFuture<List<PermissionGroup>> {
         val permissionGroupNames = getPermissionGroupNames()
-        return permissionGroupNames.map { this.permissionGroupService.findPermissionGroupByName(it) }.toFutureList()
+        return permissionGroupNames.map { this.permissionGroupService.findByName(it) }.toFutureList()
     }
 
     override fun getHighestTopLevelPermissionGroup(): CompletableFuture<PermissionGroup> {

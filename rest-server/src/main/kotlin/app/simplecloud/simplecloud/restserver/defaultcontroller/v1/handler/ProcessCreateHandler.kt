@@ -53,7 +53,7 @@ class ProcessCreateHandler @Inject constructor(
         group: CloudProcessGroup,
         configuration: CloudProcessCreateRequestDto
     ): CloudProcess {
-        val request = this.processService.createProcessStartRequest(group)
+        val request = this.processService.createStartRequest(group)
         if (configuration.maxMemory != null) {
             request.setMaxMemory(configuration.maxMemory)
         }

@@ -134,9 +134,9 @@ class IgniteQueryHandlerImpl @Inject constructor(
 
     private fun getNetworkComponentByUniqueId(senderNodeId: UUID): CompletableFuture<out NetworkComponent> {
         checkServicesInitialized()
-        val nodeFuture: CompletableFuture<out NetworkComponent> = this.nodeService.findNodeByUniqueId(senderNodeId)
+        val nodeFuture: CompletableFuture<out NetworkComponent> = this.nodeService.findByUniqueId(senderNodeId)
         val processFuture: CompletableFuture<out NetworkComponent> =
-            this.processService.findProcessByIgniteId(senderNodeId)
+            this.processService.findByIgniteId(senderNodeId)
         val futureList = listOf(nodeFuture, processFuture).toFutureList()
         return futureList.thenApply { it.first() }
             .exceptionally { throw NoSuchElementException("Could not find NetworkComponent by id: $senderNodeId") }

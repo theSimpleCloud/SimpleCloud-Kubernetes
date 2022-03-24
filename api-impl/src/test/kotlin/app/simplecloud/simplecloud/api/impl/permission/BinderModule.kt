@@ -4,8 +4,8 @@ import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
-import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
+import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 

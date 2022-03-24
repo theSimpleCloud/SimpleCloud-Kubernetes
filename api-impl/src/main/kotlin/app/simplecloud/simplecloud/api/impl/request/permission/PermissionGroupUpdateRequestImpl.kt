@@ -94,7 +94,7 @@ class PermissionGroupUpdateRequestImpl(
 
     private suspend fun getSubGroups(): List<PermissionGroup> {
         val subGroupNames = getSubGroupNames()
-        return subGroupNames.map { this.internalService.findPermissionGroupByName(it) }.toFutureList().await()
+        return subGroupNames.map { this.internalService.findByName(it) }.toFutureList().await()
     }
 
     class GroupRecursionException(message: String) : Exception(message)

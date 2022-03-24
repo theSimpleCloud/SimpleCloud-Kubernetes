@@ -51,7 +51,7 @@ class NodeController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "{uuid}", "web.cloud.node.get")
     fun handleGetOne(@RequestPathParam("uuid") uuid: String): NodeConfiguration {
-        val process = this.nodeService.findNodeByUniqueId(UUID.fromString(uuid)).join()
+        val process = this.nodeService.findByUniqueId(UUID.fromString(uuid)).join()
         return process.toConfiguration()
     }
 

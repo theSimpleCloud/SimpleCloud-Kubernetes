@@ -136,7 +136,7 @@ class CloudProcessImpl @Inject constructor(
     }
 
     override fun createShutdownRequest(): ProcessShutdownRequest {
-        return this.processService.createProcessShutdownRequest(this)
+        return this.processService.createShutdownRequest(this)
     }
 
 }

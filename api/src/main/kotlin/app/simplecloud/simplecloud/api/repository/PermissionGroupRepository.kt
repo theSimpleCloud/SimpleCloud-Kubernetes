@@ -1,7 +1,6 @@
-package app.simplecloud.simplecloud.api.permission.repository
+package app.simplecloud.simplecloud.api.repository
 
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.repository.Repository
 
 /**
  * Date: 19.03.22

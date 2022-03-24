@@ -7,7 +7,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupS
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupCreateRequest
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupUpdateRequest
@@ -25,7 +25,7 @@ abstract class AbstractPermissionGroupService(
     private val permissionFactory: Permission.Factory
 ) : InternalPermissionGroupService {
 
-    override fun findPermissionGroupByName(name: String): CompletableFuture<PermissionGroup> {
+    override fun findByName(name: String): CompletableFuture<PermissionGroup> {
         val completableFuture = this.repository.find(name)
         return completableFuture.thenApply { this.groupFactory.create(it) }
     }

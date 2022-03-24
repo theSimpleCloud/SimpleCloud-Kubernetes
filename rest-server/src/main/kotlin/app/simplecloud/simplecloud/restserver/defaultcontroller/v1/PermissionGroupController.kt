@@ -24,7 +24,7 @@ package app.simplecloud.simplecloud.restserver.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.service.PermissionGroupService
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 import app.simplecloud.simplecloud.restserver.annotation.RequestBody
 import app.simplecloud.simplecloud.restserver.annotation.RequestMapping
 import app.simplecloud.simplecloud.restserver.annotation.RequestPathParam
@@ -53,7 +53,7 @@ class PermissionGroupController @Inject constructor(
 
     @RequestMapping(RequestType.GET, "{name}", "web.cloud.permissiongroup.get")
     fun handleGroupGetOne(@RequestPathParam("name") name: String): PermissionGroupConfiguration {
-        val group = this.groupService.findPermissionGroupByName(name).join()
+        val group = this.groupService.findByName(name).join()
         return group.toConfiguration()
     }
 
@@ -76,7 +76,7 @@ class PermissionGroupController @Inject constructor(
             classes = [PermissionGroupConfiguration::class]
         ) configuration: PermissionGroupConfiguration
     ): Boolean {
-        val permissionGroup = this.groupService.findPermissionGroupByName(configuration.name).join()
+        val permissionGroup = this.groupService.findByName(configuration.name).join()
         val updateRequest = this.groupService.createUpdateRequest(permissionGroup)
         val permissions = configuration.permissions.map { this.permissionFactory.create(it) }
         updateRequest.clearPermissions()
@@ -88,7 +88,7 @@ class PermissionGroupController @Inject constructor(
 
     @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.permissiongroup.delete")
     fun handleDelete(@RequestPathParam("name") groupName: String): Boolean {
-        val group = this.groupService.findPermissionGroupByName(groupName).join()
+        val group = this.groupService.findByName(groupName).join()
         val groupDeleteRequest = this.groupService.createDeleteRequest(group)
         groupDeleteRequest.submit().join()
         return true

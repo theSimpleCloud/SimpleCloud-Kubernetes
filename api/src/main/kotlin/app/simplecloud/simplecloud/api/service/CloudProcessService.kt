@@ -41,42 +41,42 @@ interface CloudProcessService : Service {
     /**
      * Returns the processes found by the specified [name]
      */
-    fun findProcessByName(name: String): CompletableFuture<CloudProcess>
+    fun findByName(name: String): CompletableFuture<CloudProcess>
 
     /**
      * Returns the processes found by the specified [names]
      */
-    fun findProcessesByName(vararg names: String): CompletableFuture<List<CloudProcess>>
+    fun findByNames(vararg names: String): CompletableFuture<List<CloudProcess>>
 
     /**
      * Returns the processes found by the specified [group]
      */
-    fun findProcessesByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>>
+    fun findByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>>
 
     /**
      * Returns the processes found by the specified [groupName]
      */
-    fun findProcessesByGroup(groupName: String): CompletableFuture<List<CloudProcess>>
+    fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>>
 
     /**
      * Returns the process found by the specified [uniqueId]
      */
-    fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess>
+    fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess>
 
     /**
      * Returns the process found by the specified [igniteId]
      */
-    fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess>
+    fun findByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess>
 
     /**
      * Creates a request to start a process
      */
-    fun createProcessStartRequest(group: CloudProcessGroup): ProcessStartRequest
+    fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest
 
     /**
      * Creates a request to stop a process
      */
-    fun createProcessShutdownRequest(process: CloudProcess): ProcessShutdownRequest
+    fun createShutdownRequest(process: CloudProcess): ProcessShutdownRequest
 
     /**
      * Creates a request to update a process

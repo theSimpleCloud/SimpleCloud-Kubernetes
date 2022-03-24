@@ -86,7 +86,7 @@ class CloudProcessCreator(
 
     private suspend fun isProcessNumberInUse(number: Int): Boolean {
         return try {
-            this.processService.findProcessByName(getNewProcessName(number)).await()
+            this.processService.findByName(getNewProcessName(number)).await()
             true
         } catch (e: Exception) {
             false

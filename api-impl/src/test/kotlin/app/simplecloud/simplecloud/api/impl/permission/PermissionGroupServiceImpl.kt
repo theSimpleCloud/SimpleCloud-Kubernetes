@@ -6,7 +6,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupS
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.api.permission.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
