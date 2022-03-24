@@ -9,7 +9,7 @@ dependencies {
     api("com.fasterxml.jackson.core:jackson-databind:2.12.2")
     api("org.json:json:20210307")
 
-    api("app.simplecloud:simple-rest-server:1.0.3")
+    api("app.simplecloud:simple-rest-server:1.0.4")
 
 }
 

@@ -26,6 +26,7 @@ import app.simplecloud.rest.Context
 import app.simplecloud.rest.Handler
 import app.simplecloud.rest.RequestMethod
 import app.simplecloud.rest.RestServerFactory
+import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.restserver.base.RestServer
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeAll
 import app.simplecloud.simplecloud.restserver.base.exclude.annotation.WebExcludeIncoming
@@ -35,7 +36,7 @@ import app.simplecloud.simplecloud.restserver.base.route.Route
 import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.databind.SerializationFeature
-import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.launch
 import java.util.concurrent.CopyOnWriteArrayList
 
 
@@ -73,8 +74,9 @@ class RestServerBase(
             route.getPath(),
             object : Handler {
                 override fun handle(context: Context) {
-                    runBlocking {
+                    CloudScope.launch {
                         handleIncomingRequest(route, context)
+                        context.flush()
                     }
                 }
             }
