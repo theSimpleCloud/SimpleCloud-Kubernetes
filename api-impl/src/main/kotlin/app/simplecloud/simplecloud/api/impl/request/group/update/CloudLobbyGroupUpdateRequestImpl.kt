@@ -26,9 +26,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -69,16 +67,6 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudLobbyGroupUpdateRequest {
-        super.setOnlineCountConfiguration(onlineCountConfiguration)
-        return this
-    }
-
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudLobbyGroupUpdateRequest {
-        super.setOnlineCountConfiguration(onlineCountConfigurationFuture)
-        return this
-    }
-
     override fun setMaintenance(maintenance: Boolean): CloudLobbyGroupUpdateRequest {
         super.setMaintenance(maintenance)
         return this
@@ -99,14 +87,13 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
-    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
+    override suspend fun submit0(image: Image?) {
         val updateObj = CloudLobbyProcessGroupConfiguration(
             this.lobbyGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            onlineCountConfiguration.getName(),
             this.lobbyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,

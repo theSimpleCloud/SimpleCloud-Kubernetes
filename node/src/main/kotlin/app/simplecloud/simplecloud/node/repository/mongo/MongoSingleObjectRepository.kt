@@ -1,4 +1,4 @@
-package app.simplecloud.simplecloud.node.mongo
+package app.simplecloud.simplecloud.node.repository.mongo
 
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await

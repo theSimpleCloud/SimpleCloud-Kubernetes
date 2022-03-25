@@ -22,13 +22,10 @@
 
 package app.simplecloud.simplecloud.api.impl.request.group.update
 
-import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
@@ -63,10 +60,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     @Volatile
     protected var image: Image? = runCatching { this.processGroup.getImage() }.getOrNull()
 
-    @Volatile
-    protected var onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration> =
-        this.processGroup.getProcessOnlineCountConfiguration()
-
     override fun getProcessGroup(): CloudProcessGroup {
         return this.processGroup
     }
@@ -83,16 +76,6 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
 
     override fun setImage(image: Image?): CloudProcessGroupUpdateRequest {
         this.image = image
-        return this
-    }
-
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProcessGroupUpdateRequest {
-        this.onlineCountConfigurationFuture = CloudCompletableFuture.completedFuture(onlineCountConfiguration)
-        return this
-    }
-
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProcessGroupUpdateRequest {
-        this.onlineCountConfigurationFuture = onlineCountConfigurationFuture
         return this
     }
 
@@ -117,14 +100,10 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun submit(): CompletableFuture<Unit> = CloudScope.future {
-        val onlineCountConfiguration = onlineCountConfigurationFuture.await()
-        submit0(image, onlineCountConfiguration)
+        submit0(image)
     }
 
-    abstract suspend fun submit0(
-        image: Image?,
-        onlineCountConfiguration: ProcessesOnlineCountConfiguration
-    )
+    abstract suspend fun submit0(image: Image?)
 
 
 }

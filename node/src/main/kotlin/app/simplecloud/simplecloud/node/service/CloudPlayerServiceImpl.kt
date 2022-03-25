@@ -11,8 +11,8 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.node.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
+import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.*

@@ -1,4 +1,4 @@
-package app.simplecloud.simplecloud.node.mongo.permission
+package app.simplecloud.simplecloud.node.repository.mongo.permission
 
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration

@@ -20,21 +20,24 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.util
+package app.simplecloud.simplecloud.node.repository.ignite
 
-class OwnContainerIdProvider(
-    val containerId: String
-) {
+import app.simplecloud.simplecloud.api.impl.repository.ignite.AbstractIgniteRepository
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import org.apache.ignite.Ignite
 
-    companion object {
-        @Volatile
-        var INSTANCE = OwnContainerIdProvider(System.getenv("HOSTNAME"))
-            private set
-
-        fun setContainerId(containerId: String) {
-            this.INSTANCE = OwnContainerIdProvider(containerId)
-        }
-
-    }
-
-}
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 21.04.2021
+ * Time: 21:21
+ * @author Frederick Baier
+ *
+ * This repository saves the process group to its online count strategy
+ */
+@Singleton
+class IgniteOnlineCountStrategyMapRepository @Inject constructor(
+    ignite: Ignite
+) : AbstractIgniteRepository<String, String>(
+    ignite.getOrCreateCache("cloud-online-strategy-map")
+)

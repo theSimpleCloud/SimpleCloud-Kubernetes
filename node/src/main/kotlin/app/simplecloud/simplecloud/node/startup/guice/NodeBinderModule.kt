@@ -22,9 +22,10 @@
 
 package app.simplecloud.simplecloud.node.startup.guice
 
-import app.simplecloud.simplecloud.api.impl.process.CloudProcessImpl
-import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
-import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyRegistry
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyRegistryImpl
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyServiceImpl
 import app.simplecloud.simplecloud.node.process.ProcessStarter
 import app.simplecloud.simplecloud.node.process.ProcessStarterImpl
 import com.google.inject.AbstractModule
@@ -39,6 +40,10 @@ import com.google.inject.assistedinject.FactoryModuleBuilder
 class NodeBinderModule() : AbstractModule() {
 
     override fun configure() {
+
+        bind(NodeProcessOnlineStrategyRegistry::class.java).to(NodeProcessOnlineStrategyRegistryImpl::class.java)
+        bind(NodeProcessOnlineStrategyService::class.java).to(NodeProcessOnlineStrategyServiceImpl::class.java)
+
         install(
             FactoryModuleBuilder()
                 .implement(ProcessStarter::class.java, ProcessStarterImpl::class.java)

@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.mongo.group
+package app.simplecloud.simplecloud.node.repository.mongo.group
 
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
@@ -38,7 +38,6 @@ class CombinedProcessGroupEntity(
     val maxPlayers: Int,
     val maintenance: Boolean,
     val imageName: String?,
-    val onlineCountConfigurationName: String,
     val static: Boolean,
     val stateUpdating: Boolean,
     val startPriority: Int,
@@ -53,7 +52,6 @@ class CombinedProcessGroupEntity(
         1,
         1,
         false,
-        "",
         "",
         false,
         false,
@@ -71,7 +69,6 @@ class CombinedProcessGroupEntity(
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.onlineCountConfigurationName,
                     this.static,
                     this.stateUpdating,
                     this.startPriority,
@@ -86,7 +83,6 @@ class CombinedProcessGroupEntity(
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.onlineCountConfigurationName,
                     this.static,
                     this.stateUpdating,
                     this.startPriority,
@@ -101,7 +97,6 @@ class CombinedProcessGroupEntity(
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.onlineCountConfigurationName,
                     this.static,
                     this.stateUpdating,
                     this.startPriority,
@@ -122,7 +117,6 @@ class CombinedProcessGroupEntity(
                 configuration.maxPlayers,
                 configuration.maintenance,
                 configuration.imageName,
-                configuration.onlineCountConfigurationName,
                 configuration.static,
                 configuration.stateUpdating,
                 configuration.startPriority,

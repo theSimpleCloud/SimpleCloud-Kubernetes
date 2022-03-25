@@ -26,7 +26,6 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudServerGroupUpdateRequest
 
 /**
@@ -41,14 +40,13 @@ class CloudServerGroupUpdateRequestImpl(
 ) : AbstractCloudProcessGroupUpdateRequest(serverGroup),
     CloudServerGroupUpdateRequest {
 
-    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
+    override suspend fun submit0(image: Image?) {
         val updateObj = CloudServerProcessGroupConfiguration(
             this.serverGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            onlineCountConfiguration.getName(),
             this.serverGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,

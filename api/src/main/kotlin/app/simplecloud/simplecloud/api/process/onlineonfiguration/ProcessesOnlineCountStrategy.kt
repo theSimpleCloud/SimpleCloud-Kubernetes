@@ -20,26 +20,31 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.mongo.player
+package app.simplecloud.simplecloud.api.process.onlineonfiguration
 
-import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
-import app.simplecloud.simplecloud.api.future.nonNull
-import app.simplecloud.simplecloud.node.mongo.DefaultMongoRepository
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import dev.morphia.Datastore
-import java.util.*
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.utils.Identifiable
+import app.simplecloud.simplecloud.api.utils.Nameable
 
-@Singleton
-class MongoCloudPlayerRepository @Inject constructor(
-    datastore: Datastore
-) : DefaultMongoRepository<UUID, CloudPlayerEntity>(datastore, CloudPlayerEntity::class.java) {
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 16.03.2021
+ * Time: 19:50
+ * @author Frederick Baier
+ *
+ * Describes how much processes shall be online
+ *
+ */
+interface ProcessesOnlineCountStrategy : Nameable, Identifiable<String> {
 
-    fun findByName(name: String): CompletableFuture<CloudPlayerEntity> {
-        return CloudCompletableFuture.supplyAsync {
-            createQuery("name", name).first()
-        }.nonNull()
+    /**
+     * Returns the amount of processes that should be online at the moment the method gets called
+     * According to the returned value processes will be stopped or started
+     */
+    fun calculateOnlineCount(group: CloudProcessGroup): Int
+
+    override fun getIdentifier(): String {
+        return getName()
     }
 
 }

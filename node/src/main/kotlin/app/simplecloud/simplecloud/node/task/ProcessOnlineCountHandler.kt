@@ -26,11 +26,13 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
 import org.apache.logging.log4j.LogManager
 
 class ProcessOnlineCountHandler(
     private val group: CloudProcessGroup,
-    private val processService: CloudProcessService
+    private val processService: CloudProcessService,
+    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
 ) {
 
     suspend fun handle() {
@@ -54,8 +56,8 @@ class ProcessOnlineCountHandler(
     }
 
     private suspend fun calculateExpectedOnlineCount(): Int {
-        val onlineCountConfiguration = this.group.getProcessOnlineCountConfiguration().await()
-        return onlineCountConfiguration.calculateOnlineCount(this.group)
+        val config = this.nodeProcessOnlineStrategyService.getByProcessGroupName(this.group.getName()).await()
+        return config.calculateOnlineCount(this.group)
     }
 
     private suspend fun calculateActualOnlineCount(): Int {

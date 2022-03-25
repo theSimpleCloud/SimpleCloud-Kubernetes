@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.mongo.player
+package app.simplecloud.simplecloud.node.repository.mongo.player
 
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig

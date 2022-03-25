@@ -24,7 +24,7 @@ package app.simplecloud.simplecloud.node.startup.task
 
 import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
-import app.simplecloud.simplecloud.node.mongo.MongoSingleObjectRepository
+import app.simplecloud.simplecloud.node.repository.mongo.MongoSingleObjectRepository
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
 import app.simplecloud.simplecloud.node.startup.task.mongo.MongoClientSafeStarter
 import app.simplecloud.simplecloud.node.startup.token.TokenSecretEntity

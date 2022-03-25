@@ -27,7 +27,6 @@ import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import app.simplecloud.simplecloud.api.validator.ValidatorService
 import app.simplecloud.simplecloud.api.validator.ValidatorServiceImpl
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
@@ -36,7 +35,6 @@ import app.simplecloud.simplecloud.restserver.base.service.AuthService
 import app.simplecloud.simplecloud.restserver.service.TestCloudProcessGroupService
 import app.simplecloud.simplecloud.restserver.service.TestCloudProcessService
 import app.simplecloud.simplecloud.restserver.service.TestNodeService
-import app.simplecloud.simplecloud.restserver.service.TestProcessOnlineCountService
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 
@@ -55,7 +53,6 @@ class TestRestBinderModule : AbstractModule() {
 
 
         bind(CloudProcessGroupService::class.java).to(TestCloudProcessGroupService::class.java)
-        bind(ProcessOnlineCountService::class.java).to(TestProcessOnlineCountService::class.java)
         bind(CloudProcessService::class.java).to(TestCloudProcessService::class.java)
         bind(NodeService::class.java).to(TestNodeService::class.java)
 

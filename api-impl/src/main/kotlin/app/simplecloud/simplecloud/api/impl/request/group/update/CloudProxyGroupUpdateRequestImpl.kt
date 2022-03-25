@@ -26,9 +26,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -69,16 +67,6 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProxyGroupUpdateRequest {
-        super.setOnlineCountConfiguration(onlineCountConfiguration)
-        return this
-    }
-
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProxyGroupUpdateRequest {
-        super.setOnlineCountConfiguration(onlineCountConfigurationFuture)
-        return this
-    }
-
     override fun setMaintenance(maintenance: Boolean): CloudProxyGroupUpdateRequest {
         super.setMaintenance(maintenance)
         return this
@@ -99,14 +87,13 @@ class CloudProxyGroupUpdateRequestImpl(
         return this
     }
 
-    override suspend fun submit0(image: Image?, onlineCountConfiguration: ProcessesOnlineCountConfiguration) {
+    override suspend fun submit0(image: Image?) {
         val updateObj = CloudProxyProcessGroupConfiguration(
             this.proxyGroup.getName(),
             this.maxMemory,
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            onlineCountConfiguration.getName(),
             this.proxyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,

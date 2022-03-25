@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -48,10 +47,6 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
     override fun setMaxPlayers(players: Int): CloudProxyGroupUpdateRequest
 
     override fun setImage(image: Image?): CloudProxyGroupUpdateRequest
-
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProxyGroupUpdateRequest
-
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProxyGroupUpdateRequest
 
     override fun setMaintenance(maintenance: Boolean): CloudProxyGroupUpdateRequest
 

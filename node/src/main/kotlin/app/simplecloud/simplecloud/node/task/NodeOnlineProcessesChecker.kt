@@ -25,6 +25,7 @@ package app.simplecloud.simplecloud.node.task
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import org.apache.logging.log4j.LogManager
@@ -32,14 +33,15 @@ import org.apache.logging.log4j.LogManager
 @Singleton
 class NodeOnlineProcessesChecker @Inject constructor(
     private val groupService: CloudProcessGroupService,
-    private val processService: CloudProcessService
+    private val processService: CloudProcessService,
+    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
 ) {
 
     suspend fun checkOnlineCount() {
         val groups = this.groupService.findAll().await()
         logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
         groups.forEach {
-            ProcessOnlineCountHandler(it, processService).handle()
+            ProcessOnlineCountHandler(it, this.processService, this.nodeProcessOnlineStrategyService).handle()
         }
     }
 

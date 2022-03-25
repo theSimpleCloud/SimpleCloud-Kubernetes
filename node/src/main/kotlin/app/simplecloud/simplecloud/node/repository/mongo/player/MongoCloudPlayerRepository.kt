@@ -20,32 +20,26 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.restserver.service
+package app.simplecloud.simplecloud.node.repository.mongo.player
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.nonNull
+import app.simplecloud.simplecloud.node.repository.mongo.DefaultMongoRepository
+import com.google.inject.Inject
 import com.google.inject.Singleton
+import dev.morphia.Datastore
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04/07/2021
- * Time: 15:22
- * @author Frederick Baier
- */
 @Singleton
-class TestProcessesOnlineCountConfiguration(
-    private val name: String
-) : ProcessesOnlineCountConfiguration {
+class MongoCloudPlayerRepository @Inject constructor(
+    datastore: Datastore
+) : DefaultMongoRepository<UUID, CloudPlayerEntity>(datastore, CloudPlayerEntity::class.java) {
 
-    override fun calculateOnlineCount(group: CloudProcessGroup): Int {
-        TODO("Not yet implemented")
+    fun findByName(name: String): CompletableFuture<CloudPlayerEntity> {
+        return CloudCompletableFuture.supplyAsync {
+            createQuery("name", name).first()
+        }.nonNull()
     }
 
-    override fun getName(): String {
-        return this.name
-    }
-
-    override fun getIdentifier(): String {
-        return getName()
-    }
 }

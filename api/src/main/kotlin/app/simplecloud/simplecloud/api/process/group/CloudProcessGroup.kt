@@ -25,7 +25,6 @@ package app.simplecloud.simplecloud.api.process.group
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Identifiable
@@ -44,10 +43,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun isInMaintenance(): Boolean
 
     fun getImage(): Image
-
-    fun getProcessOnlineCountConfigurationName(): String
-
-    fun getProcessOnlineCountConfiguration(): CompletableFuture<ProcessesOnlineCountConfiguration>
 
     fun getProcessGroupType(): ProcessGroupType
 

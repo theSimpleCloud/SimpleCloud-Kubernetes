@@ -1,6 +1,6 @@
 package app.simplecloud.simplecloud.node.startup.task
 
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetup
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager

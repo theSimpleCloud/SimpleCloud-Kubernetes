@@ -20,7 +20,7 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.mongo
+package app.simplecloud.simplecloud.node.repository.mongo
 
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.nonNull

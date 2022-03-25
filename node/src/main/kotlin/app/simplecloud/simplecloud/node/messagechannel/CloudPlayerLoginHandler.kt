@@ -9,8 +9,8 @@ import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.node.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
+import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import org.apache.logging.log4j.LogManager
 
 class CloudPlayerLoginHandler(

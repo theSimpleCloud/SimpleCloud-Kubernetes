@@ -28,10 +28,8 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGrou
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -44,7 +42,6 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
     private val processGroupService: InternalCloudProcessGroupService,
 ) : CloudProcessGroup {
@@ -70,14 +67,6 @@ abstract class AbstractCloudProcessGroup constructor(
         val imageName = this.configuration.imageName
             ?: throw app.simplecloud.simplecloud.api.impl.exception.NoImageProvidedException(getName())
         return ImageImpl(imageName)
-    }
-
-    override fun getProcessOnlineCountConfigurationName(): String {
-        return this.configuration.onlineCountConfigurationName
-    }
-
-    override fun getProcessOnlineCountConfiguration(): CompletableFuture<ProcessesOnlineCountConfiguration> {
-        return this.processOnlineCountService.findByName(this.configuration.onlineCountConfigurationName)
     }
 
     override fun getJoinPermission(): String? {

@@ -7,7 +7,7 @@ import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 

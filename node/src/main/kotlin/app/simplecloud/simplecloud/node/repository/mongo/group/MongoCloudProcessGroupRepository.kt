@@ -20,32 +20,14 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.impl.service
+package app.simplecloud.simplecloud.node.repository.mongo.group
 
-import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.node.repository.mongo.DefaultMongoRepository
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import dev.morphia.Datastore
 
-abstract class AbstractProcessOnlineCountService : ProcessOnlineCountService {
-    override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration> {
-        return completedFuture(ProcessOnlineCountConfiguration())
-    }
-
-    class ProcessOnlineCountConfiguration: ProcessesOnlineCountConfiguration {
-        override fun calculateOnlineCount(group: CloudProcessGroup): Int {
-            return 1
-        }
-
-        override fun getName(): String {
-            return "one"
-        }
-
-        override fun getIdentifier(): String {
-            return "one"
-        }
-
-    }
-
-}
+@Singleton
+class MongoCloudProcessGroupRepository @Inject constructor(
+    datastore: Datastore
+) : DefaultMongoRepository<String, CombinedProcessGroupEntity>(datastore, CombinedProcessGroupEntity::class.java)

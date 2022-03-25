@@ -50,7 +50,6 @@ class CloudPlugin(
                 CloudProcessServiceImpl::class.java,
                 CloudProcessGroupServiceImpl::class.java,
                 CloudPlayerServiceImpl::class.java,
-                ProcessOnlineCountServiceImpl::class.java,
                 PermissionGroupServiceImpl::class.java
             )
         )

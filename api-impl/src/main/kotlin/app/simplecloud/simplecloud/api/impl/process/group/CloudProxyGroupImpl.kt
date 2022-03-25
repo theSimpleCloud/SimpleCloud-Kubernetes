@@ -30,7 +30,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 
@@ -42,12 +41,10 @@ import com.google.inject.assistedinject.Assisted
  */
 class CloudProxyGroupImpl @Inject constructor(
     @Assisted private val configuration: CloudProxyProcessGroupConfiguration,
-    private val processOnlineCountService: ProcessOnlineCountService,
     private val processService: CloudProcessService,
     private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    processOnlineCountService,
     processService,
     processGroupService
 ), CloudProxyGroup {

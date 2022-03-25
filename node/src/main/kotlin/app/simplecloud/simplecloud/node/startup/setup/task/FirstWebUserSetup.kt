@@ -27,8 +27,8 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.node.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
+import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager

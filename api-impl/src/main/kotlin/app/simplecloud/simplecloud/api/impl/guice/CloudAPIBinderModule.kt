@@ -70,7 +70,6 @@ class CloudAPIBinderModule(
     private val cloudProcessServiceClass: Class<out InternalCloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
     private val cloudPlayerServiceClass: Class<out InternalCloudPlayerService>,
-    private val processOnlineCountService: Class<out ProcessOnlineCountService>,
     private val permissionGroupService: Class<out InternalPermissionGroupService>,
 ) : AbstractModule() {
 
@@ -117,7 +116,6 @@ class CloudAPIBinderModule(
 
         bind(PermissionGroupService::class.java).to(this.permissionGroupService)
         bind(InternalPermissionGroupService::class.java).to(this.permissionGroupService)
-        bind(ProcessOnlineCountService::class.java).to(this.processOnlineCountService)
         bind(NodeService::class.java).to(this.nodeServiceClass)
         bind(CloudPlayerService::class.java).to(this.cloudPlayerServiceClass)
         bind(InternalCloudPlayerService::class.java).to(this.cloudPlayerServiceClass)

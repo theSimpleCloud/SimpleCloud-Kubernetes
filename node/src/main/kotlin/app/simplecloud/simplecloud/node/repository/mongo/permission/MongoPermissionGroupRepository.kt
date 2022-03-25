@@ -1,6 +1,6 @@
-package app.simplecloud.simplecloud.node.mongo.permission
+package app.simplecloud.simplecloud.node.repository.mongo.permission
 
-import app.simplecloud.simplecloud.node.mongo.DefaultMongoRepository
+import app.simplecloud.simplecloud.node.repository.mongo.DefaultMongoRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import dev.morphia.Datastore

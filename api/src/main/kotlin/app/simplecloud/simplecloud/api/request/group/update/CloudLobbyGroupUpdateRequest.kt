@@ -24,7 +24,6 @@ package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -48,10 +47,6 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
     override fun setMaxPlayers(players: Int): CloudLobbyGroupUpdateRequest
 
     override fun setImage(image: Image?): CloudLobbyGroupUpdateRequest
-
-    override fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudLobbyGroupUpdateRequest
-
-    override fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudLobbyGroupUpdateRequest
 
     override fun setMaintenance(maintenance: Boolean): CloudLobbyGroupUpdateRequest
 

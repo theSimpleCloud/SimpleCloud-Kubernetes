@@ -20,10 +20,9 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.service
+package app.simplecloud.simplecloud.node.onlinestrategy
 
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountStrategy
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,13 +30,25 @@ import java.util.concurrent.CompletableFuture
  * Time: 22:22
  * @author Frederick Baier
  */
-interface ProcessOnlineCountService : Service {
-
-    fun findByName(name: String): CompletableFuture<ProcessesOnlineCountConfiguration>
+interface NodeProcessOnlineStrategyRegistry {
 
     /**
-     * Starts and stops processes by comparing the current number of online processes to the desired one
+     * Registers the specified strategy
      */
-    fun checkProcessOnlineCount()
+    fun register(strategy: ProcessesOnlineCountStrategy)
+
+    /**
+     * Unregisters the specified strategy
+     */
+    fun unregister(strategy: ProcessesOnlineCountStrategy)
+
+    /**
+     * Returns the strategy found by the specified name or throws a [NoSuchElementException]
+     */
+    fun getStrategyByName(name: String): ProcessesOnlineCountStrategy
+    /**
+     * Returns all available strategies
+     */
+    fun getAvailableStrategies(): Collection<ProcessesOnlineCountStrategy>
 
 }

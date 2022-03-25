@@ -31,7 +31,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyPro
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 import app.simplecloud.simplecloud.api.validator.ValidatorService
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -45,18 +44,12 @@ import com.google.inject.Singleton
 @Singleton
 class ProcessGroupUpdateHandler @Inject constructor(
     private val validatorService: ValidatorService,
-    private val groupService: CloudProcessGroupService,
-    private val onlineCountService: ProcessOnlineCountService,
+    private val groupService: CloudProcessGroupService
 ) {
 
     suspend fun update(configuration: AbstractCloudProcessGroupConfiguration) {
         val group = this.groupService.findByName(configuration.name).await()
         updateGroup(group, configuration)
-        checkProcessOnlineCount()
-    }
-
-    private fun checkProcessOnlineCount() {
-        this.onlineCountService.checkProcessOnlineCount()
     }
 
     private suspend fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
@@ -65,7 +58,6 @@ class ProcessGroupUpdateHandler @Inject constructor(
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
         request.setImage(ImageImpl.fromName(configuration.imageName))
-        request.setOnlineCountConfiguration(this.onlineCountService.findByName(configuration.onlineCountConfigurationName))
         request.setMaintenance(configuration.maintenance)
         request.setJoinPermission(configuration.joinPermission)
         request.setStateUpdating(configuration.stateUpdating)

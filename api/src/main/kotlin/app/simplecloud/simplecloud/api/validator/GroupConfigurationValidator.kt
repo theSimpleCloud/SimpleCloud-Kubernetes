@@ -23,11 +23,8 @@
 package app.simplecloud.simplecloud.api.validator
 
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
-import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
 
@@ -38,22 +35,10 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 @Singleton
-class GroupConfigurationValidator @Inject constructor(
-    private val onlineCountService: ProcessOnlineCountService
-) : Validator<AbstractCloudProcessGroupConfiguration> {
+class GroupConfigurationValidator : Validator<AbstractCloudProcessGroupConfiguration> {
 
     override fun validate(value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> = CloudScope.future {
-        checkProcessOnlineCountConfiguration(value)
         checkImage(value)
-    }
-
-    private suspend fun checkProcessOnlineCountConfiguration(configuration: AbstractCloudProcessGroupConfiguration) {
-        val onlineCountConfigurationName = configuration.onlineCountConfigurationName
-        try {
-            this.onlineCountService.findByName(onlineCountConfigurationName).await()
-        } catch (e: Exception) {
-            throw NoSuchElementException("OnlineCountConfiguration '${onlineCountConfigurationName}' does not exist")
-        }
     }
 
     private fun checkImage(configuration: AbstractCloudProcessGroupConfiguration) {

@@ -25,7 +25,6 @@ package app.simplecloud.simplecloud.api
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.api.service.ProcessOnlineCountService
 
 /**
  * Created by IntelliJ IDEA.
@@ -45,8 +44,6 @@ abstract class CloudAPI {
     abstract fun getProcessService(): CloudProcessService
 
     abstract fun getNodeService(): NodeService
-
-    abstract fun getProcessOnlineCountService(): ProcessOnlineCountService
 
 
     companion object {

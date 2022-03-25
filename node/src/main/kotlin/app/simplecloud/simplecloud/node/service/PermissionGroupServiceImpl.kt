@@ -6,8 +6,8 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupServi
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.node.mongo.permission.MongoPermissionGroupRepository
-import app.simplecloud.simplecloud.node.mongo.permission.PermissionGroupEntity
+import app.simplecloud.simplecloud.node.repository.mongo.permission.MongoPermissionGroupRepository
+import app.simplecloud.simplecloud.node.repository.mongo.permission.PermissionGroupEntity
 import com.google.inject.Inject
 import com.google.inject.Singleton
 

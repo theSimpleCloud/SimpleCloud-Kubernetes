@@ -24,10 +24,8 @@ package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.utils.Request
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -62,18 +60,6 @@ interface CloudProcessGroupUpdateRequest : Request<Unit> {
      * @return this
      */
     fun setImage(image: Image?): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the online count configuration for the group
-     * @return this
-     */
-    fun setOnlineCountConfiguration(onlineCountConfiguration: ProcessesOnlineCountConfiguration): CloudProcessGroupUpdateRequest
-
-    /**
-     * Sets the online count configuration for the group
-     * @return this
-     */
-    fun setOnlineCountConfiguration(onlineCountConfigurationFuture: CompletableFuture<ProcessesOnlineCountConfiguration>): CloudProcessGroupUpdateRequest
 
     /**
      * Sets the maintenance state for the group
