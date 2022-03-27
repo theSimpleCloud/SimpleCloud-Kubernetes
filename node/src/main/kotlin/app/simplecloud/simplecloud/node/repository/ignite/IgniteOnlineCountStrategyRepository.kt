@@ -20,35 +20,35 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.onlinestrategy
+package app.simplecloud.simplecloud.node.repository.ignite
 
-import app.simplecloud.simplecloud.api.process.onlineonfiguration.ProcessesOnlineCountStrategy
+import app.simplecloud.simplecloud.api.impl.repository.ignite.AbstractIgniteRepository
+import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.node.repository.ignite.predicate.OnlineCountCompareTargetGroupPredicate
+import com.google.inject.Inject
+import com.google.inject.Singleton
+import org.apache.ignite.Ignite
+import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 03.04.2021
- * Time: 22:22
+ * Date: 21.04.2021
+ * Time: 21:21
  * @author Frederick Baier
+ *
  */
-interface NodeProcessOnlineStrategyRegistry {
+@Singleton
+class IgniteOnlineCountStrategyRepository @Inject constructor(
+    ignite: Ignite
+) : AbstractIgniteRepository<String, ProcessOnlineCountStrategyConfiguration>(
+    ignite.getOrCreateCache("cloud-online-strategy")
+) {
 
     /**
-     * Registers the specified strategy
+     * Returns the process group names that are using the specified strategy
      */
-    fun register(strategy: ProcessesOnlineCountStrategy)
-
-    /**
-     * Unregisters the specified strategy
-     */
-    fun unregister(strategy: ProcessesOnlineCountStrategy)
-
-    /**
-     * Returns the strategy found by the specified name or throws a [NoSuchElementException]
-     */
-    fun getStrategyByName(name: String): ProcessesOnlineCountStrategy
-    /**
-     * Returns all available strategies
-     */
-    fun getAvailableStrategies(): Collection<ProcessesOnlineCountStrategy>
+    fun findByTargetProcessGroup(groupName: String): CompletableFuture<List<ProcessOnlineCountStrategyConfiguration>> {
+        return executeQuery(OnlineCountCompareTargetGroupPredicate(groupName))
+    }
 
 }

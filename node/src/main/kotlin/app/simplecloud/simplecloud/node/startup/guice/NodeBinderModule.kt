@@ -22,12 +22,12 @@
 
 package app.simplecloud.simplecloud.node.startup.guice
 
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyRegistry
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyRegistryImpl
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyServiceImpl
+import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
+import app.simplecloud.simplecloud.node.process.ProcessShutdownHandlerImpl
 import app.simplecloud.simplecloud.node.process.ProcessStarter
 import app.simplecloud.simplecloud.node.process.ProcessStarterImpl
+import app.simplecloud.simplecloud.node.service.NodeProcessOnlineStrategyServiceImpl
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 
@@ -40,14 +40,18 @@ import com.google.inject.assistedinject.FactoryModuleBuilder
 class NodeBinderModule() : AbstractModule() {
 
     override fun configure() {
-
-        bind(NodeProcessOnlineStrategyRegistry::class.java).to(NodeProcessOnlineStrategyRegistryImpl::class.java)
         bind(NodeProcessOnlineStrategyService::class.java).to(NodeProcessOnlineStrategyServiceImpl::class.java)
 
         install(
             FactoryModuleBuilder()
                 .implement(ProcessStarter::class.java, ProcessStarterImpl::class.java)
                 .build(ProcessStarter.Factory::class.java)
+        )
+
+        install(
+            FactoryModuleBuilder()
+                .implement(ProcessShutdownHandler::class.java, ProcessShutdownHandlerImpl::class.java)
+                .build(ProcessShutdownHandler.Factory::class.java)
         )
     }
 

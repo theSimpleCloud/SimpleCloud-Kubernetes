@@ -182,13 +182,13 @@ public suspend fun <T> CompletionStage<T>.await(): T {
             @Suppress("UNCHECKED_CAST", "BlockingMethodInNonBlockingContext")
             return future.get() as T
         } catch (e: ExecutionException) {
-            throw e.cause ?: e // unwrap original cause from ExecutionException
+            throw unwrapFutureException(e) // unwrap original cause from ExecutionException
         }
     }
     // slow path -- suspend
     return suspendCancellableCoroutine { cont: CancellableContinuation<T> ->
         val consumer = ContinuationConsumer(cont)
-        whenComplete(consumer)
+        this.whenComplete(consumer)
         cont.invokeOnCancellation {
             future.cancel(false)
             consumer.cont = null // shall clear reference to continuation to aid GC
@@ -207,7 +207,7 @@ private class ContinuationConsumer<T>(
             cont.resume(result as T)
         } else {
             // the future has completed with an exception, unwrap it to provide consistent view of .await() result and to propagate only original exception
-            cont.resumeWithException((exception as? CompletionException)?.cause ?: exception)
+            cont.resumeWithException(unwrapFutureException(exception))
         }
     }
 }

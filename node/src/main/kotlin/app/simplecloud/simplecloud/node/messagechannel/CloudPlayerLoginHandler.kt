@@ -1,7 +1,6 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.future.unpackFutureException
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
@@ -38,12 +37,8 @@ class CloudPlayerLoginHandler(
         try {
             val loadedPlayerConfiguration = loadPlayerFromDatabase()
             return createPlayerFromConfiguration(loadedPlayerConfiguration)
-        } catch (e: Exception) {
-            val unpackedException = unpackFutureException(e)
-            if (unpackedException is NoSuchElementException) {
-                return createNewCloudPlayer()
-            }
-            throw e
+        } catch (e: NoSuchElementException) {
+            return createNewCloudPlayer()
         }
     }
 

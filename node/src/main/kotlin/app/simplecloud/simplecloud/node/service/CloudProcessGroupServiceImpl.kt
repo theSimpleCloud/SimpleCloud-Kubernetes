@@ -27,8 +27,8 @@ import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGr
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.node.repository.mongo.group.CombinedProcessGroupEntity
 import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
 import com.google.inject.Inject

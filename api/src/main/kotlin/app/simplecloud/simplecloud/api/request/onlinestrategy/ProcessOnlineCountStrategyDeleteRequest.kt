@@ -20,33 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.task
+package app.simplecloud.simplecloud.api.request.onlinestrategy
 
-import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import org.apache.logging.log4j.LogManager
+import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
+import app.simplecloud.simplecloud.api.utils.Request
 
-@Singleton
-class NodeOnlineProcessesChecker @Inject constructor(
-    private val groupService: CloudProcessGroupService,
-    private val processService: CloudProcessService,
-    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
-) {
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 01/07/2021
+ * Time: 21:34
+ * @author Frederick Baier
+ */
+interface ProcessOnlineCountStrategyDeleteRequest : Request<Unit> {
 
-    suspend fun checkOnlineCount() {
-        val groups = this.groupService.findAll().await()
-        logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
-        groups.forEach {
-            ProcessOnlineCountHandler(it, this.processService, this.nodeProcessOnlineStrategyService).handle()
-        }
-    }
-
-    companion object {
-        private val logger = LogManager.getLogger(NodeOnlineProcessesChecker::class.java)
-    }
+    /**
+     * Returns the strategy to delete
+     */
+    fun getStrategy(): ProcessesOnlineCountStrategy
 
 }

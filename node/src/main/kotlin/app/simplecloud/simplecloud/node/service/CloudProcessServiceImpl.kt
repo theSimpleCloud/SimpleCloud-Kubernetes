@@ -27,7 +27,9 @@ import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcess
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.node.process.InternalProcessShutdownHandler
 import app.simplecloud.simplecloud.node.process.InternalProcessStartHandler
+import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
 import app.simplecloud.simplecloud.node.process.ProcessStarter
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -36,16 +38,18 @@ import com.google.inject.Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: CloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
-    private val processStarterFactory: ProcessStarter.Factory
+    private val processStarterFactory: ProcessStarter.Factory,
+    private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
     override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
-        return InternalProcessStartHandler(this.processStarterFactory, this, configuration)
+        return InternalProcessStartHandler(configuration, this, this.processStarterFactory)
             .startProcess()
     }
 
     override suspend fun shutdownProcessInternal(process: CloudProcess) {
-        TODO("Not yet implemented")
+        return InternalProcessShutdownHandler(process, this.processShutdownHandlerFactory)
+            .shutdownProcess()
     }
 }

@@ -22,7 +22,6 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.container
 
-import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import io.kubernetes.client.custom.Quantity
 import io.kubernetes.client.openapi.apis.CoreV1Api
@@ -30,7 +29,6 @@ import io.kubernetes.client.openapi.models.*
 
 class KubernetesContainerStarter(
     private val containerName: String,
-    private val image: Image,
     private val containerSpec: ContainerSpec,
     private val api: CoreV1Api
 ) {
@@ -46,6 +44,8 @@ class KubernetesContainerStarter(
         val volumes = createVolumes()
         val volumeMounts = createVolumeMounts()
 
+        val image = containerSpec.image
+        require(image != null) { "Image must be not null" }
         val pod = V1Pod()
             .metadata(
                 V1ObjectMeta()
@@ -57,7 +57,7 @@ class KubernetesContainerStarter(
                         listOf(
                             V1Container()
                                 .name("simplecloud-process")
-                                .image(image.getName().lowercase())
+                                .image(image.lowercase())
                                 .ports(listOf(containerPort))
                                 .env(environmentVariables)
                                 .resources(

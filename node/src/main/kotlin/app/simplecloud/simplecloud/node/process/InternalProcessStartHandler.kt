@@ -6,9 +6,9 @@ import app.simplecloud.simplecloud.api.service.CloudProcessService
 import java.util.concurrent.CompletableFuture
 
 class InternalProcessStartHandler(
-    private val processStarterFactory: ProcessStarter.Factory,
+    private val configuration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
-    private val configuration: ProcessStartConfiguration
+    private val processStarterFactory: ProcessStarter.Factory
 ) {
 
     private val processStarter = this.processStarterFactory.create(this.configuration)

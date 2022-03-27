@@ -46,6 +46,9 @@ class ContainerSpec {
     var containerPort: Int = -1
         private set
 
+    var image: String? = null
+        private set
+
     fun withContainerPort(containerPort: Int): ContainerSpec {
         this.containerPort = containerPort
         return this
@@ -63,6 +66,11 @@ class ContainerSpec {
 
     fun withVolumes(vararg volumes: MountableVolume): ContainerSpec {
         this.volumes.addAll(volumes)
+        return this
+    }
+
+    fun withImage(image: String): ContainerSpec {
+        this.image = image
         return this
     }
 

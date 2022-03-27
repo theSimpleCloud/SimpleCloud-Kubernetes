@@ -22,40 +22,30 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.container
 
-import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
-import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import io.kubernetes.client.openapi.apis.CoreV1Api
-import java.util.concurrent.CompletableFuture
 
 
 class KubernetesContainerExecutor(
     private val containerName: String,
-    private val image: Image,
-    private val containerSpec: ContainerSpec,
     private val api: CoreV1Api
 ) {
 
-    private val terminationFuture = CloudCompletableFuture<Unit>()
+    fun startContainer(containerSpec: ContainerSpec) {
+        if (doesContainerExist()) throw IllegalStateException("Container does already exist")
 
-    @Volatile
-    private var wasStarted = false
-
-    fun terminationFuture(): CompletableFuture<Unit> {
-        return this.terminationFuture
-    }
-
-    fun startContainer() {
-        if (this.wasStarted) throw IllegalStateException("Cannot start container twice")
-        this.wasStarted = true
-
-        KubernetesContainerStarter(this.containerName, this.image, this.containerSpec, this.api)
+        KubernetesContainerStarter(this.containerName, containerSpec, this.api)
             .startContainer()
     }
 
-    fun shutdownContainer(): CompletableFuture<Unit> {
+    private fun doesContainerExist(): Boolean {
+        return runCatching {
+            this.api.readNamespacedPod(this.containerName, "default", null)
+        }.isSuccess
+    }
+
+    fun shutdownContainer() {
         killContainer()
-        return this.terminationFuture
     }
 
     fun killContainer() {
@@ -73,7 +63,7 @@ class KubernetesContainerExecutor(
     }
 
     fun isContainerRunning(): Boolean {
-        return this.wasStarted && !this.terminationFuture.isDone
+        return doesContainerExist()
     }
 
 

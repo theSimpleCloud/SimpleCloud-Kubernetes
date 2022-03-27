@@ -9,7 +9,7 @@ interface ProcessStarter {
 
     interface Factory {
 
-        fun create(configuration: ProcessStartConfiguration): ProcessStarterImpl
+        fun create(configuration: ProcessStartConfiguration): ProcessStarter
 
     }
 

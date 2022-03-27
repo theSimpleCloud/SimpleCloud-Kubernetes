@@ -20,31 +20,22 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.api.process.onlineonfiguration
+package app.simplecloud.simplecloud.node.repository.ignite.predicate
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.utils.Identifiable
-import app.simplecloud.simplecloud.api.utils.Nameable
+import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import org.apache.ignite.lang.IgniteBiPredicate
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 16.03.2021
- * Time: 19:50
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
- *
- * Describes how much processes shall be online
- *
  */
-interface ProcessesOnlineCountStrategy : Nameable, Identifiable<String> {
+class OnlineCountCompareTargetGroupPredicate(
+    private val compareName: String
+) : IgniteBiPredicate<String, ProcessOnlineCountStrategyConfiguration> {
 
-    /**
-     * Returns the amount of processes that should be online at the moment the method gets called
-     * According to the returned value processes will be stopped or started
-     */
-    fun calculateOnlineCount(group: CloudProcessGroup): Int
-
-    override fun getIdentifier(): String {
-        return getName()
+    override fun apply(name: String, configuration: ProcessOnlineCountStrategyConfiguration): Boolean {
+        return configuration.targetGroupNames.contains(compareName)
     }
-
 }

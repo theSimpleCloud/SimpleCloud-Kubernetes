@@ -23,10 +23,11 @@
 package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.node.onlinestrategy.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 import org.apache.logging.log4j.LogManager
 
 class ProcessOnlineCountHandler(
@@ -46,7 +47,10 @@ class ProcessOnlineCountHandler(
     }
 
     private suspend fun stopServices(count: Int) {
-
+        if (count < 1) return
+        val processes = this.group.getProcesses().await()
+        val stoppableServices = processes.filter { it.getState() == ProcessState.ONLINE && it.isVisible() }
+        stoppableServices.take(count).forEach { it.createShutdownRequest().submit() }
     }
 
     private suspend fun startServices(count: Int) {
@@ -56,19 +60,20 @@ class ProcessOnlineCountHandler(
     }
 
     private suspend fun calculateExpectedOnlineCount(): Int {
-        val config = this.nodeProcessOnlineStrategyService.getByProcessGroupName(this.group.getName()).await()
+        val config = this.nodeProcessOnlineStrategyService.findByProcessGroupName(this.group.getName()).await()
         return config.calculateOnlineCount(this.group)
     }
 
     private suspend fun calculateActualOnlineCount(): Int {
         val processes = this.group.getProcesses().await()
-        return processes.count { isStateJoinableOrBefore(it.getState()) }
+        return processes.count { isProcessAvailableJoinableOrBefore(it) }
     }
 
-    private fun isStateJoinableOrBefore(processState: ProcessState): Boolean {
-        return processState == ProcessState.PREPARED ||
-                processState == ProcessState.STARTING ||
-                processState == ProcessState.ONLINE
+    private fun isProcessAvailableJoinableOrBefore(process: CloudProcess): Boolean {
+        val state = process.getState()
+        return state == ProcessState.PREPARED ||
+                state == ProcessState.STARTING ||
+                (state == ProcessState.ONLINE && process.isVisible())
     }
 
 

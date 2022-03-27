@@ -20,73 +20,47 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.container
+package app.simplecloud.simplecloud.api.request.onlinestrategy
 
-import java.io.File
+import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07.04.2021
- * Time: 19:11
+ * Date: 01/07/2021
+ * Time: 21:34
  * @author Frederick Baier
  */
-interface Container {
+interface ProcessOnlineCountStrategyUpdateRequest : Request<Unit> {
 
     /**
-     * Returns the name of this container
+     * Returns the strategy to update
      */
-    fun getName(): String
+    fun getStrategy(): ProcessesOnlineCountStrategy
 
     /**
-     * Executes the specified [command]
+     * Clears the groups this strategy was linked to
+     * @return this
      */
-    fun execute(command: String)
+    fun clearTargetGroups(): ProcessOnlineCountStrategyUpdateRequest
 
     /**
-     * Starts this container
+     * Links a group to this strategy.
+     * The given group now uses this strategy if no other strategy points to the specified group.
+     * @return this
      */
-    fun start(containerSpec: ContainerSpec)
+    fun addTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest
 
     /**
-     * Shuts this container down
+     *  Removes a group from the strategy
+     * @return this
      */
-    fun shutdown()
+    fun removeTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest
 
     /**
-     * Shuts this container down immediately
+     * Sets the data this strategy needs
+     * @return this
      */
-    fun forceShutdown()
-
-    /**
-     * Returns whether this container is running
-     */
-    fun isRunning(): Boolean
-
-    /**
-     * Returns the logs saved
-     */
-    fun getLogs(): List<String>
-
-    /**
-     * Copies a file from this container to the specified [dest]
-     */
-    fun copyFromContainer(source: String, dest: File)
-
-    /**
-     * Deletes the container once it stops or dies
-     */
-    fun deleteOnShutdown()
-
-
-    interface Factory {
-
-        /**
-         * Creates a container
-         */
-        fun create(
-            name: String
-        ): Container
-
-    }
+    fun setData(data: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest
 
 }

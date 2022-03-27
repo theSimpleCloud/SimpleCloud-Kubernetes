@@ -20,72 +20,47 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.container
+package app.simplecloud.simplecloud.api.process.onlinestrategy
 
-import java.io.File
+import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.utils.Identifiable
+import app.simplecloud.simplecloud.api.utils.Nameable
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 07.04.2021
- * Time: 19:11
+ * Date: 16.03.2021
+ * Time: 19:50
  * @author Frederick Baier
+ *
+ * Describes how many processes shall be online
+ *
  */
-interface Container {
+interface ProcessesOnlineCountStrategy : Nameable, Identifiable<String> {
 
     /**
-     * Returns the name of this container
+     * Returns the names of the groups to which this strategy should be applied
      */
-    fun getName(): String
+    fun getTargetGroupNames(): Set<String>
 
     /**
-     * Executes the specified [command]
+     * Returns the amount of processes that should be online at the moment the method gets called
+     * According to the returned value processes will be stopped or started
      */
-    fun execute(command: String)
+    fun calculateOnlineCount(group: CloudProcessGroup): Int
 
     /**
-     * Starts this container
+     * Returns the configuration of this strategy
      */
-    fun start(containerSpec: ContainerSpec)
+    fun toConfiguration(): ProcessOnlineCountStrategyConfiguration
 
-    /**
-     * Shuts this container down
-     */
-    fun shutdown()
-
-    /**
-     * Shuts this container down immediately
-     */
-    fun forceShutdown()
-
-    /**
-     * Returns whether this container is running
-     */
-    fun isRunning(): Boolean
-
-    /**
-     * Returns the logs saved
-     */
-    fun getLogs(): List<String>
-
-    /**
-     * Copies a file from this container to the specified [dest]
-     */
-    fun copyFromContainer(source: String, dest: File)
-
-    /**
-     * Deletes the container once it stops or dies
-     */
-    fun deleteOnShutdown()
-
+    override fun getIdentifier(): String {
+        return getName()
+    }
 
     interface Factory {
 
-        /**
-         * Creates a container
-         */
-        fun create(
-            name: String
-        ): Container
+        fun create(configuration: ProcessOnlineCountStrategyConfiguration): ProcessesOnlineCountStrategy
 
     }
 

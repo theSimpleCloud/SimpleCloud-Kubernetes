@@ -28,6 +28,7 @@ import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CompletionException
 import java.util.concurrent.CopyOnWriteArrayList
+import java.util.concurrent.ExecutionException
 
 /**
  * Created by IntelliJ IDEA.
@@ -145,15 +146,19 @@ fun CompletableFuture<*>.toUnitFuture(): CompletableFuture<Unit> {
     return resultFuture
 }
 
-fun unpackFutureException(ex: Throwable): Throwable {
+fun unwrapFutureException(ex: Throwable): Throwable {
     if (ex is CompletionException) {
-        return unpackFutureException(ex.cause!!)
+        return unwrapFutureException(ex.cause!!)
     }
     if (ex is InvocationTargetException) {
-        return unpackFutureException(ex.cause!!)
+        return unwrapFutureException(ex.cause!!)
     }
     if (ex is FutureOriginException) {
-        return unpackFutureException(ex.cause!!)
+        return unwrapFutureException(ex.cause!!)
     }
+    if (ex is ExecutionException) {
+        return unwrapFutureException(ex.cause!!)
+    }
+
     return ex
 }

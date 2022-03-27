@@ -22,52 +22,50 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
-import app.simplecloud.simplecloud.node.repository.ignite.IgniteOnlineCountStrategyMapRepository
+import app.simplecloud.simplecloud.node.repository.ignite.IgniteOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
+import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.MongoOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.permission.MongoPermissionGroupRepository
-import app.simplecloud.simplecloud.node.repository.mongo.strategymap.MongoOnlineCountStrategyMapRepository
 import com.google.inject.Inject
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 class NodeRepositoriesInitializer @Inject constructor(
     private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
     private val ignitePermissionGroupRepository: IgnitePermissionGroupRepository,
     private val mongoPermissionGroupRepository: MongoPermissionGroupRepository,
-    private val igniteOnlineCountStrategyMapRepository: IgniteOnlineCountStrategyMapRepository,
-    private val mongoOnlineCountStrategyMapRepository: MongoOnlineCountStrategyMapRepository
+    private val igniteOnlineCountStrategyRepository: IgniteOnlineCountStrategyRepository,
+    private val mongoOnlineCountStrategyRepository: MongoOnlineCountStrategyRepository
 ) {
 
     fun initializeRepositories() {
         logger.info("Initializing Ignite Repositories")
         initGroups()
         initPermissionGroups()
-        initOnlineCountStrategyMap()
+        initOnlineCountStrategies()
     }
 
-    private fun initOnlineCountStrategyMap() {
-        val entities = this.mongoOnlineCountStrategyMapRepository.findAll().join()
-        logger.info("Found OnlineCountStrategy Mappings: {}", entities.map { it.groupName + " to " + it.onlineStrategyName })
-        for (entity in entities) {
-            this.igniteOnlineCountStrategyMapRepository.save(entity.groupName, entity.onlineStrategyName).join()
+    private fun initOnlineCountStrategies() {
+        val entities = this.mongoOnlineCountStrategyRepository.findAll().join()
+        logger.info("Found OnlineCountStrategies: {}", entities.map { it.name })
+        val configurations = entities.map { it.toConfiguration() }
+        for (config in configurations) {
+            this.igniteOnlineCountStrategyRepository.save(config.name, config).join()
         }
     }
 
-    private fun initPermissionGroups(): CompletableFuture<Unit> {
+    private fun initPermissionGroups() {
         val groups = this.mongoPermissionGroupRepository.findAll().join()
         logger.info("Found PermissionGroups: {}", groups.map { it.name })
         val configurations = groups.map { it.toConfiguration() }
         for (config in configurations) {
             this.ignitePermissionGroupRepository.save(config.name, config).join()
         }
-        return unitFuture()
     }
 
-    private fun initGroups(){
+    private fun initGroups() {
         val groups = this.mongoCloudProcessGroupRepository.findAll().join()
         logger.info("Found Groups: {}", groups.map { it.name })
         val groupConfigurations = groups.map { it.toConfiguration() }

@@ -22,46 +22,34 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.container
 
-import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.kubernetes.api.container.Container
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import java.io.File
-import java.util.concurrent.CompletableFuture
 
 class KubernetesContainer @Inject constructor(
     @Assisted private val name: String,
-    @Assisted private val image: Image,
-    @Assisted private val containerSpec: ContainerSpec,
     private val api: CoreV1Api,
 ) : Container {
 
-    private val executor = KubernetesContainerExecutor(this.name, this.image, this.containerSpec, this.api)
+    private val executor = KubernetesContainerExecutor(this.name, this.api)
 
     override fun getName(): String {
         return this.name
-    }
-
-    override fun getImage(): Image {
-        return this.image
     }
 
     override fun execute(command: String) {
         this.executor.executeCommand(command)
     }
 
-    override fun start() {
-        this.executor.startContainer()
+    override fun start(containerSpec: ContainerSpec) {
+        this.executor.startContainer(containerSpec)
     }
 
-    override fun shutdown(): CompletableFuture<Unit> {
-        return this.executor.shutdownContainer()
-    }
-
-    override fun terminationFuture(): CompletableFuture<Unit> {
-        return this.executor.terminationFuture()
+    override fun shutdown() {
+        this.executor.shutdownContainer()
     }
 
     override fun forceShutdown() {

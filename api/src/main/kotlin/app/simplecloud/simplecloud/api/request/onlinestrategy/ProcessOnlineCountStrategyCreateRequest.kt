@@ -20,24 +20,15 @@
  * DEALINGS IN THE SOFTWARE.
  */
 
-package app.simplecloud.simplecloud.node.repository.ignite
+package app.simplecloud.simplecloud.api.request.onlinestrategy
 
-import app.simplecloud.simplecloud.api.impl.repository.ignite.AbstractIgniteRepository
-import com.google.inject.Inject
-import com.google.inject.Singleton
-import org.apache.ignite.Ignite
+import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 21.04.2021
- * Time: 21:21
+ * Date: 01/07/2021
+ * Time: 21:34
  * @author Frederick Baier
- *
- * This repository saves the process group to its online count strategy
  */
-@Singleton
-class IgniteOnlineCountStrategyMapRepository @Inject constructor(
-    ignite: Ignite
-) : AbstractIgniteRepository<String, String>(
-    ignite.getOrCreateCache("cloud-online-strategy-map")
-)
+interface ProcessOnlineCountStrategyCreateRequest : Request<ProcessesOnlineCountStrategy>

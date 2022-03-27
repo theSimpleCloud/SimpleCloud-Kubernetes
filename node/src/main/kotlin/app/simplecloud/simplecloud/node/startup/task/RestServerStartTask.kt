@@ -61,6 +61,7 @@ class RestServerStartTask @Inject constructor(
         this.controllerHandler.registerController(NodeController::class.java)
         this.controllerHandler.registerController(PermissionGroupController::class.java)
         this.controllerHandler.registerController(PlayerController::class.java)
+        this.controllerHandler.registerController(OnlineStrategyController::class.java)
     }
 
 
