@@ -16,18 +16,11 @@ allprojects {
 
     repositories {
         mavenCentral()
-        maven {
-            url = uri("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
-        }
-        maven {
-            setUrl("https://repo.vshnv.tech/")
-        }
-        maven {
-            setUrl("https://oss.sonatype.org/content/repositories/snapshots")
-        }
-        maven {
-            setUrl("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
-        }
+        maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots")
+        maven("https://oss.sonatype.org/content/repositories/central")
     }
 
 }
