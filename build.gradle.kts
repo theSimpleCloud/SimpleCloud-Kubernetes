@@ -43,17 +43,25 @@ allprojects {
 
 }
 
+
 subprojects {
 
+
+    val coroutinesVersion by extra("1.6.0")
+    val morphiaVersion by extra("2.2.1")
+    val guiceVersion by extra("5.1.0")
+    val jacksonVersion by extra("2.13.2")
+
     dependencies {
-        implementation("org.jetbrains.kotlin:kotlin-stdlib:1.5.21")
-        implementation("com.google.inject:guice:5.0.1")
-        implementation("com.google.inject.extensions:guice-assistedinject:5.0.1")
+        implementation(kotlin("stdlib"))
+        implementation("com.google.inject:guice:${guiceVersion}")
+        implementation("com.google.inject.extensions:guice-assistedinject:${guiceVersion}")
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
-        implementation("dev.morphia.morphia:morphia-core:2.2.1")
+        testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+        implementation("dev.morphia.morphia:morphia-core:${morphiaVersion}")
+        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
 
-        implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.0")
         //implementation("io.github.slimjar:slimjar:1.2.4")
     }
 

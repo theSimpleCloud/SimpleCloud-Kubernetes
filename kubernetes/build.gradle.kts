@@ -19,6 +19,6 @@
 dependencies {
     implementation("commons-io:commons-io:2.11.0")
     implementation(project(":api"))
-    implementation("io.kubernetes:client-java:14.0.0")
+    implementation("io.kubernetes:client-java:14.0.1")
 
 }

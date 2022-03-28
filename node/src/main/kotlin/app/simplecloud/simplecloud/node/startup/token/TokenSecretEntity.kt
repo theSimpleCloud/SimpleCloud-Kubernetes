@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.startup.token
 
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
-import org.apache.commons.lang.RandomStringUtils
+import org.apache.commons.lang3.RandomStringUtils
 
 /**
  * Date: 19.03.22

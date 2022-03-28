@@ -18,5 +18,5 @@
 
 
 dependencies {
-    implementation(project(":api"))
+    api(project(":api"))
 }
