@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.repository.NodeRepository
 import com.google.inject.Inject
@@ -33,9 +34,11 @@ import java.util.*
  */
 @Singleton
 class IgniteNodeRepository @Inject constructor(
-    private val ignite: Ignite
+    private val ignite: Ignite,
+    igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : AbstractIgniteRepository<UUID, NodeConfiguration>(
-    ignite.getOrCreateCache("cloud-nodes")
+    ignite.getOrCreateCache("cloud-nodes"),
+    igniteCacheUpdateMessaging
 ), NodeRepository {
 
 }

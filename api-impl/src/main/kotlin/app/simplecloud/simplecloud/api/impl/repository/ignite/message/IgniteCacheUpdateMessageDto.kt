@@ -16,15 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.impl.ignite
+package app.simplecloud.simplecloud.api.impl.repository.ignite.message
 
-import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import java.util.concurrent.CompletableFuture
-
-interface IgniteQueryHandler {
-
-    fun <T> sendQuery(topic: String, message: Any, networkComponent: NetworkComponent): CompletableFuture<T>
-
-    fun sendToAll(topic: String, message: Any)
-
-}
+/**
+ * Date: 28.03.22
+ * Time: 18:35
+ * @author Frederick Baier
+ *
+ */
+class IgniteCacheUpdateMessageDto<K>(
+    val cacheName: String,
+    val action: CacheAction,
+    val key: K
+)

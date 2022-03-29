@@ -29,6 +29,7 @@ import com.google.inject.Inject
 import com.google.inject.Injector
 import com.google.inject.Singleton
 import org.apache.ignite.Ignite
+import org.apache.ignite.IgniteMessaging
 import org.apache.ignite.lang.IgniteBiPredicate
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -62,8 +63,14 @@ class IgniteQueryHandlerImpl @Inject constructor(
         createIgniteQuery(requestId, future)
 
         val transferObject = IgniteDataTransferObject(topic, requestId, Result.success(message), false)
-        sendPacket(transferObject, networkComponent.getIgniteId())
+        sendPacketToSingleReceiver(transferObject, networkComponent.getIgniteId())
         return future
+    }
+
+    override fun sendToAll(topic: String, message: Any) {
+        val requestId = UUID.randomUUID()
+        val transferObject = IgniteDataTransferObject(topic, requestId, Result.success(message), false)
+        sendPacketToMessaging(this.ignite.message(), transferObject)
     }
 
     private fun <T> createFutureWithTimeout(timeout: Long): CompletableFuture<T> {
@@ -79,9 +86,13 @@ class IgniteQueryHandlerImpl @Inject constructor(
         return igniteQuery
     }
 
-    fun sendPacket(transferObject: IgniteDataTransferObject, receiverNodeId: UUID) {
-        val clusterGroup = ignite.cluster().forNodeId(receiverNodeId)
-        ignite.message(clusterGroup).send("cloud-topic", transferObject)
+    fun sendPacketToSingleReceiver(transferObject: IgniteDataTransferObject, receiverNodeId: UUID) {
+        val clusterGroup = this.ignite.cluster().forNodeId(receiverNodeId)
+        sendPacketToMessaging(this.ignite.message(clusterGroup), transferObject)
+    }
+
+    private fun sendPacketToMessaging(messaging: IgniteMessaging, transferObject: IgniteDataTransferObject) {
+        messaging.send("cloud-topic", transferObject)
     }
 
     private fun <T> registerUnregisterListenerForQuery(future: CompletableFuture<T>, igniteQuery: IgniteQuery) {
@@ -91,7 +102,7 @@ class IgniteQueryHandlerImpl @Inject constructor(
     }
 
     private fun startListening() {
-        ignite.message().localListen("cloud-topic", IgniteBiPredicate<UUID, IgniteDataTransferObject> { uuid, data ->
+        this.ignite.message().localListen("cloud-topic", IgniteBiPredicate<UUID, IgniteDataTransferObject> { uuid, data ->
             handleMessage(uuid, data)
             return@IgniteBiPredicate true
         })

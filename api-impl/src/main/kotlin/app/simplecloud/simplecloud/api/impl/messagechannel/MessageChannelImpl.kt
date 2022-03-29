@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.messagechannel.request.AllReceiverMessageRequest
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.MultipleReceiverMessageRequest
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.SingleReceiverMessageRequest
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
@@ -47,6 +48,10 @@ class MessageChannelImpl<T : Any, R : Any>(
 
     override fun createMessageRequest(message: T, receivers: List<NetworkComponent>): MessageRequest<Unit> {
         return MultipleReceiverMessageRequest(this.name, message, receivers, queryHandler)
+    }
+
+    override fun createMessageRequestToAll(message: T): MessageRequest<Unit> {
+        return AllReceiverMessageRequest(this.name, message, queryHandler)
     }
 
     override fun setMessageHandler(handler: MessageHandler<T, R>) {

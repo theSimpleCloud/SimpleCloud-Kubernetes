@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import com.google.inject.Inject
@@ -32,8 +33,10 @@ import org.apache.ignite.Ignite
  */
 @Singleton
 class IgnitePermissionGroupRepository @Inject constructor(
-    private val ignite: Ignite
+    private val ignite: Ignite,
+    igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : AbstractIgniteRepository<String, PermissionGroupConfiguration>(
-    ignite.getOrCreateCache("cloud-permission-groups")
+    ignite.getOrCreateCache("cloud-permission-groups"),
+    igniteCacheUpdateMessaging
 ), PermissionGroupRepository {
 }

@@ -20,6 +20,9 @@ package app.simplecloud.simplecloud.api.impl.repository.ignite
 
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.nonNull
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.CacheAction
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessageDto
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.repository.Repository
 import org.apache.ignite.IgniteCache
 import org.apache.ignite.cache.query.ScanQuery
@@ -33,8 +36,11 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 abstract class AbstractIgniteRepository<I: Any, T : Any>(
-    private val igniteCache: IgniteCache<I, T>
+    private val igniteCache: IgniteCache<I, T>,
+    private val igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : Repository<I, T> {
+
+    private val cacheName = this.igniteCache.name
 
     override fun findAll(): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync { this.igniteCache.toList().map { it.value } }.nonNull()
@@ -55,6 +61,7 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
     override fun save(identifier: I, value: T): CompletableFuture<Unit> {
         return CloudCompletableFuture.runAsync {
             this.igniteCache.put(identifier, value)
+            sendUpdateMessage(identifier, CacheAction.UPDATE)
         }
     }
 
@@ -71,12 +78,17 @@ abstract class AbstractIgniteRepository<I: Any, T : Any>(
 
     override fun remove(identifier: I) {
         this.igniteCache.removeAsync(identifier)
+        sendUpdateMessage(identifier, CacheAction.DELETE)
     }
 
     override fun count(): CompletableFuture<Long> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync this.igniteCache.sizeLong()
         }.nonNull()
+    }
+
+    private fun sendUpdateMessage(identifier: I, action: CacheAction) {
+        this.igniteCacheUpdateMessaging.sendMessage(IgniteCacheUpdateMessageDto(this.cacheName, action, identifier))
     }
 
 }

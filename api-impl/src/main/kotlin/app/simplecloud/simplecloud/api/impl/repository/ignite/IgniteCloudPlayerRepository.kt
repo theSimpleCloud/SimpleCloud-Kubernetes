@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
 import app.simplecloud.simplecloud.api.impl.ignite.predicate.CloudPlayerCompareNamePredicate
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudPlayerRepository
 import com.google.inject.Inject
@@ -33,9 +34,11 @@ import java.util.concurrent.CompletableFuture
  *
  */
 class IgniteCloudPlayerRepository @Inject constructor(
-    private val ignite: Ignite
+    private val ignite: Ignite,
+    igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : AbstractIgniteRepository<UUID, CloudPlayerConfiguration>(
-    ignite.getOrCreateCache("cloud-players")
+    ignite.getOrCreateCache("cloud-players"),
+    igniteCacheUpdateMessaging
 ), CloudPlayerRepository {
 
     override fun findByName(name: String): CompletableFuture<CloudPlayerConfiguration> {

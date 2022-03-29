@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.ignite
 
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessGroupRepository
 import com.google.inject.Inject
@@ -32,7 +33,9 @@ import org.apache.ignite.Ignite
  */
 @Singleton
 class IgniteCloudProcessGroupRepository @Inject constructor(
-    private val ignite: Ignite
+    private val ignite: Ignite,
+    igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : AbstractIgniteRepository<String, AbstractCloudProcessGroupConfiguration>(
-    ignite.getOrCreateCache("cloud-process-groups")
+    ignite.getOrCreateCache("cloud-process-groups"),
+    igniteCacheUpdateMessaging
 ), CloudProcessGroupRepository

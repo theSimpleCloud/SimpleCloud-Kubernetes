@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.repository.ignite
 
 import app.simplecloud.simplecloud.api.impl.repository.ignite.AbstractIgniteRepository
+import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.node.repository.ignite.predicate.OnlineCountCompareTargetGroupPredicate
 import com.google.inject.Inject
@@ -35,9 +36,11 @@ import java.util.concurrent.CompletableFuture
  */
 @Singleton
 class IgniteOnlineCountStrategyRepository @Inject constructor(
-    ignite: Ignite
+    ignite: Ignite,
+    igniteCacheUpdateMessaging: IgniteCacheUpdateMessaging
 ) : AbstractIgniteRepository<String, ProcessOnlineCountStrategyConfiguration>(
-    ignite.getOrCreateCache("cloud-online-strategy")
+    ignite.getOrCreateCache("cloud-online-strategy"),
+    igniteCacheUpdateMessaging
 ) {
 
     /**

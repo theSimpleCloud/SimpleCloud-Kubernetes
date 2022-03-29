@@ -52,6 +52,13 @@ interface MessageChannel<T : Any, R: Any> : Nameable {
     fun createMessageRequest(message: T, receivers: List<NetworkComponent>): MessageRequest<Unit>
 
     /**
+     * Creates a message request to all [NetworkComponent]s in the cluster (servers and nodes)
+     * @param message the message to be sent
+     * @return the created message request with no response
+     */
+    fun createMessageRequestToAll(message: T): MessageRequest<Unit>
+
+    /**
      * Sets the message handler to be used for incoming messages
      * The handler is notified every time a message is received
      * @param handler the message handler to handle incoming messages

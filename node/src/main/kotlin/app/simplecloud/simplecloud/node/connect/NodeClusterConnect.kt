@@ -56,8 +56,8 @@ class NodeClusterConnect @Inject constructor(
         val finalInjector = createFinalInjector(ignite, clusterKey)
         startRestServer(finalInjector)
         registerMessageChannels(finalInjector)
-        checkForFirstNodeInCluster(finalInjector, ignite)
         writeSelfNodeInRepository(finalInjector, ignite)
+        checkForFirstNodeInCluster(finalInjector, ignite)
         checkOnlineProcesses(finalInjector)
     }
 

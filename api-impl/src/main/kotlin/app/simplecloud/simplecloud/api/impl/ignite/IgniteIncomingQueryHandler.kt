@@ -51,7 +51,7 @@ class IgniteIncomingQueryHandler(
     }
 
     private fun handleFutureResult(result: Result<Any>) {
-        this.igniteQueryHandler.sendPacket(
+        this.igniteQueryHandler.sendPacketToSingleReceiver(
             createResultResponseObject(result),
             this.networkComponent.getIgniteId()
         )

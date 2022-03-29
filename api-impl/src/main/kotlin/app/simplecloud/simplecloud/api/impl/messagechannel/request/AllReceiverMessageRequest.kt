@@ -16,15 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.impl.ignite
+package app.simplecloud.simplecloud.api.impl.messagechannel.request
 
-import app.simplecloud.simplecloud.api.utils.NetworkComponent
+import app.simplecloud.simplecloud.api.future.unitFuture
+import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
 import java.util.concurrent.CompletableFuture
 
-interface IgniteQueryHandler {
+class AllReceiverMessageRequest(
+    private val topic: String,
+    private val message: Any,
+    private val queryHandler: IgniteQueryHandler
+) : MessageRequest<Unit> {
 
-    fun <T> sendQuery(topic: String, message: Any, networkComponent: NetworkComponent): CompletableFuture<T>
-
-    fun sendToAll(topic: String, message: Any)
+    override fun submit(): CompletableFuture<Unit> {
+        this.queryHandler.sendToAll(topic, message)
+        return unitFuture()
+    }
 
 }
