@@ -53,7 +53,7 @@ interface ProcessStartRequest : Request<CloudProcess> {
 
     /**
      * Sets the number of the new process
-     * e.g: Lobby-2 -> 2 is the procoess number
+     * e.g: Lobby-2 -> 2 is the process number
      * @return this
      */
     fun setProcessNumber(number: Int): ProcessStartRequest
