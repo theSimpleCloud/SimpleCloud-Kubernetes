@@ -21,10 +21,12 @@ package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import com.google.inject.Inject
+import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.PendingConnection
-import net.md_5.bungee.api.event.LoginEvent
-import net.md_5.bungee.api.event.PostLoginEvent
+import net.md_5.bungee.api.event.*
 import net.md_5.bungee.api.plugin.Listener
 import net.md_5.bungee.event.EventHandler
 import net.md_5.bungee.event.EventPriority
@@ -50,11 +52,54 @@ class BungeeListener @Inject constructor(
     }
 
     @EventHandler
-    fun on(event: PostLoginEvent) {
+    fun handlePostLogin(event: PostLoginEvent) {
         val proxiedPlayer = event.player
         proxiedPlayer.reconnectServer = null
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
         this.proxyController.handlePostLogin(configuration)
+    }
+
+    @EventHandler
+    fun handlePreConnect(event: ServerConnectEvent) {
+        if (event.isCancelled) return
+        val proxiedPlayer = event.player
+        val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
+        val currentServerName: String? = proxiedPlayer.server?.info?.name
+        try {
+            this.proxyController.handleServerPreConnect(
+                ServerPreConnectRequest(configuration, currentServerName, event.target.name)
+            )
+        } catch (ex: ProxyController.NoLobbyServerFoundException) {
+            proxiedPlayer.disconnect(*TextComponent.fromLegacyText("§cNo fallback server found"))
+            event.isCancelled = true
+        } catch (ex: ProxyController.NoSuchProcessException) {
+            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cProcess not found"))
+            event.isCancelled = true
+        } catch (ex: ProxyController.IllegalGroupTypeException) {
+            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cCannot connect to a proxy process"))
+            event.isCancelled = true
+        } catch (ex: ProxyController.IllegalProcessStateException) {
+            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cProcess is not online"))
+            event.isCancelled = true
+        } catch (ex: ProxyController.NoPermissionToJoinGroupException) {
+            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cYou don't have the permission to join this group"))
+            event.isCancelled = true
+        }
+
+    }
+
+    @EventHandler
+    fun handleConnect(event: ServerConnectedEvent) {
+        val proxiedPlayer = event.player
+        val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
+        this.proxyController.handleServerConnected(ServerConnectedRequest(configuration, event.server.info.name))
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun handleDisconnect(event: PlayerDisconnectEvent) {
+        val proxiedPlayer = event.player
+        val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
+        this.proxyController.handleDisconnect(configuration)
     }
 
     private fun createConnectionConfiguration(connection: PendingConnection): PlayerConnectionConfiguration {

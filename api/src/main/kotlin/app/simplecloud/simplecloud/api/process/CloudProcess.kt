@@ -84,6 +84,11 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     fun getMaxPlayers(): Int
 
     /**
+     * Returns whether this process is full
+     */
+    fun isFull(): Boolean
+
+    /**
      * Returns the address of the process
      */
     fun getAddress(): Address

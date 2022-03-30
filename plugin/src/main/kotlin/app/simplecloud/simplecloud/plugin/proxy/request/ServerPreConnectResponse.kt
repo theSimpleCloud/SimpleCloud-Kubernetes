@@ -16,16 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin
+package app.simplecloud.simplecloud.plugin.proxy.request
 
 /**
- * Date: 23.01.22
- * Time: 19:09
+ * Date: 29.03.22
+ * Time: 14:40
  * @author Frederick Baier
  *
  */
-interface OnlineCountProvider {
-
-    fun getOnlineCount(): Int
-
-}
+class ServerPreConnectResponse(
+    val targetProcessName: String
+)

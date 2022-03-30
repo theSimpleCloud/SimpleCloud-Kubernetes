@@ -20,8 +20,6 @@ package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.api.impl.util.ClusterKey
-import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
-import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
 import app.simplecloud.simplecloud.plugin.startup.service.*
@@ -49,9 +47,7 @@ class CloudPlugin(
                 PermissionGroupServiceImpl::class.java
             )
         )
-        val selfProcess = intermediateInjector.getInstance(SelfProcessGetter::class.java).getSelfProcess()
         this.injector = intermediateInjector.createChildInjector(
-            SingleInstanceBinderModule(CloudProcess::class.java, selfProcess),
             this.guiceModule
         )
         this.injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()

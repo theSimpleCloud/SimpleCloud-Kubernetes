@@ -74,7 +74,7 @@ class CloudPlayerLoginHandler(
                 this.configuration.uniqueId,
                 emptyList()
             ),
-            "",
+            null,
             this.proxyName
         )
         return this.playerFactory.create(cloudPlayerConfiguration)

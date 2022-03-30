@@ -1,0 +1,57 @@
+/*
+ * SimpleCloud is a software for administrating a minecraft server network.
+ * Copyright (C) 2022 Frederick Baier & Philipp Eistrach
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package app.simplecloud.simplecloud.plugin.util
+
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+
+/**
+ * Date: 29.03.22
+ * Time: 15:50
+ * @author Frederick Baier
+ *
+ */
+class PlayerProcessGroupJoinChecker(
+    private val player: CloudPlayer,
+    private val processGroup: CloudProcessGroup
+) {
+
+    suspend fun isAllowedToJoin(): Boolean {
+        if (processGroup.isInMaintenance())
+            return doesPlayerHasMaintenancePermission()
+        if (hasJoinPermission(processGroup))
+            return doesPlayerHasGroupsJoinPermission()
+        return false
+    }
+
+    private suspend fun doesPlayerHasGroupsJoinPermission(): Boolean {
+        val groupPermission = this.processGroup.getJoinPermission()!!
+        return this.player.hasPermission(groupPermission).await()
+    }
+
+    private fun hasJoinPermission(processGroup: CloudProcessGroup): Boolean {
+        return processGroup.getJoinPermission() != null
+    }
+
+    private suspend fun doesPlayerHasMaintenancePermission(): Boolean {
+        return this.player.hasPermission("cloud.maintenance.join").await()
+    }
+
+}

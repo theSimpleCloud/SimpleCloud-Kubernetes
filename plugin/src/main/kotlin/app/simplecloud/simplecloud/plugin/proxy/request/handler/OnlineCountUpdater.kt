@@ -16,27 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.startup
+package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
-import app.simplecloud.simplecloud.api.process.state.ProcessState
-import com.google.inject.Inject
-import org.apache.ignite.Ignite
+import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
+import app.simplecloud.simplecloud.plugin.util.OnlineCountProvider
 
-class SelfIgniteProcessUpdater @Inject constructor(
-    private val ignite: Ignite,
-    private val selfProcessProvider: SelfProcessProvider
+/**
+ * Date: 30.03.22
+ * Time: 13:32
+ * @author Frederick Baier
+ *
+ */
+class OnlineCountUpdater(
+    private val selfProcessProvider: SelfProcessProvider,
+    private val onlineCountProvider: OnlineCountProvider
 ) {
 
-    private val igniteSelfId = this.ignite.cluster().localNode().id()
+    fun updateOnlineCount() {
+        val selfProcessFuture = this.selfProcessProvider.getSelfProcess()
+        selfProcessFuture.thenApply { updateOnlineCount0(it) }
+    }
 
-    fun updateProcessInIgniteBlocking() {
-        val cloudProcess = this.selfProcessProvider.getSelfProcess().join()
-        val updateRequest = cloudProcess.createUpdateRequest()
+    private fun updateOnlineCount0(selfProcess: CloudProcess) {
+        val updateRequest = selfProcess.createUpdateRequest()
         updateRequest as InternalProcessUpdateRequest
-        updateRequest.setIgniteId(this.igniteSelfId)
-        updateRequest.setState(ProcessState.ONLINE)
-        updateRequest.submit().join()
+        updateRequest.setOnlinePlayers(this.onlineCountProvider.getOnlineCount())
+        updateRequest.submit()
     }
 
 }

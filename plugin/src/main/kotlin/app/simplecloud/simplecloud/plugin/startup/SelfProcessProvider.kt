@@ -23,18 +23,17 @@ import app.simplecloud.simplecloud.api.service.CloudProcessService
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.*
+import java.util.concurrent.CompletableFuture
 
 @Singleton
-class SelfProcessGetter @Inject constructor(
+class SelfProcessProvider @Inject constructor(
     private val processService: CloudProcessService
 ) {
 
     private val internalProcessId = UUID.fromString(System.getenv("SIMPLECLOUD_PROCESS_ID"))
 
-    private val cloudProcess = this.processService.findByUniqueId(this.internalProcessId).join()
-
-    fun getSelfProcess(): CloudProcess {
-        return this.cloudProcess
+    fun getSelfProcess(): CompletableFuture<CloudProcess> {
+        return this.processService.findByUniqueId(this.internalProcessId)
     }
 
 }

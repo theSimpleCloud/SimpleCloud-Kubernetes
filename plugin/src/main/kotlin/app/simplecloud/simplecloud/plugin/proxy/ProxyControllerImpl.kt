@@ -18,55 +18,83 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
+import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
+import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.plugin.OnlineCountProvider
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.login.PlayerLoginRequestHandler
-import app.simplecloud.simplecloud.plugin.proxy.request.login.PlayerPostLoginRequestHandler
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
+import app.simplecloud.simplecloud.plugin.proxy.request.handler.*
+import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
+import app.simplecloud.simplecloud.plugin.util.OnlineCountProvider
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 
 @Singleton
 class ProxyControllerImpl @Inject constructor(
     private val messageChannelManager: MessageChannelManager,
     private val nodeService: NodeService,
     private val playerService: CloudPlayerService,
+    private val processService: CloudProcessService,
+    private val processGroupService: CloudProcessGroupService,
     private val playerFactory: CloudPlayerFactory,
-    private val selfProcess: CloudProcess,
-    private val onlineCountProvider: OnlineCountProvider
+    private val selfProcessProvider: SelfProcessProvider,
+    private val onlineCountProvider: OnlineCountProvider,
+    private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository,
 ) : ProxyController {
 
     override fun handleLogin(request: PlayerConnectionConfiguration) {
-        PlayerLoginRequestHandler(
-            request,
-            this.messageChannelManager,
-            this.nodeService,
-            this.playerFactory,
-            this.playerService
-        ).handle()
+        runBlocking {
+            PlayerLoginRequestHandler(
+                request,
+                messageChannelManager,
+                nodeService,
+                playerFactory,
+                playerService
+            ).handle()
+        }
     }
 
     override fun handlePostLogin(request: PlayerConnectionConfiguration) {
-        PlayerPostLoginRequestHandler(request, this.selfProcess, this.onlineCountProvider).handle()
+        PlayerPostLoginRequestHandler(request, this.selfProcessProvider, this.onlineCountProvider).handle()
     }
 
     override fun handleDisconnect(request: PlayerConnectionConfiguration) {
-        TODO("Not yet implemented")
+        PlayerDisconnectRequestHandler(
+            request,
+            this.selfProcessProvider,
+            this.onlineCountProvider,
+            this.igniteCloudPlayerRepository
+        ).handler()
     }
 
-    override fun handleServerPreConnect(request: ServerPreConnectRequest) {
-        TODO("Not yet implemented")
+    override fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse {
+        return runBlocking {
+            return@runBlocking PlayerServerPreConnectRequestHandler(
+                request,
+                processService,
+                playerService,
+                processGroupService
+            ).handle()
+        }
     }
 
     override fun handleServerConnected(request: ServerConnectedRequest) {
-        TODO("Not yet implemented")
+        CloudScope.launch {
+            PlayerServerConnectedRequestHandler(
+                request,
+                playerService
+            ).handle()
+        }
     }
 
     override fun handleServerKick(request: ServerKickRequest) {

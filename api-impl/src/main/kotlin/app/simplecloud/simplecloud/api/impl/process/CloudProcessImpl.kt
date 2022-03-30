@@ -83,6 +83,10 @@ class CloudProcessImpl @Inject constructor(
         return this.configuration.maxPlayers
     }
 
+    override fun isFull(): Boolean {
+        return getOnlinePlayers() >= getMaxPlayers()
+    }
+
     override fun getAddress(): Address {
         return Address(getName(), 25565)
     }

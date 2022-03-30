@@ -16,35 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.request.login
+package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
-import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
+import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.plugin.OnlineCountProvider
+import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
+import app.simplecloud.simplecloud.plugin.util.OnlineCountProvider
 
-/**
- * Date: 18.01.22
- * Time: 10:12
- * @author Frederick Baier
- *
- */
-class PlayerPostLoginRequestHandler(
-    private val request: PlayerConnectionConfiguration,
-    private val selfProcess: CloudProcess,
-    private val onlineCountProvider: OnlineCountProvider
+class PlayerDisconnectRequestHandler(
+    private val connection: PlayerConnectionConfiguration,
+    private val selfProcessProvider: SelfProcessProvider,
+    private val onlineCountProvider: OnlineCountProvider,
+    private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository
 ) {
-
-    fun handle() {
-        updateOnlineCount()
+    fun handler() {
+        this.igniteCloudPlayerRepository.remove(connection.uniqueId)
+        OnlineCountUpdater(selfProcessProvider, onlineCountProvider).updateOnlineCount()
     }
-
-    private fun updateOnlineCount() {
-        val updateRequest = this.selfProcess.createUpdateRequest()
-        updateRequest as InternalProcessUpdateRequest
-        updateRequest.setOnlinePlayers(this.onlineCountProvider.getOnlineCount())
-        updateRequest.submit()
-    }
-
 
 }

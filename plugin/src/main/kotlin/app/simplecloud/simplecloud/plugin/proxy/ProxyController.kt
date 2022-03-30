@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
 
 interface ProxyController {
 
@@ -31,10 +32,27 @@ interface ProxyController {
 
     fun handleDisconnect(request: PlayerConnectionConfiguration)
 
-    fun handleServerPreConnect(request: ServerPreConnectRequest)
+    /**
+     * @throws NoLobbyServerFoundException no lobby server was found
+     * @throws NoPermissionToJoinGroupException the player doesn't have the permission to join processes of the group
+     * @throws IllegalGroupTypeException the group is a proxy group
+     * @throws IllegalProcessStateException the process is not online and therefore cannot be joined
+     * @throws NoLobbyServerFoundException if no lobby server was found
+     */
+    fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse
 
     fun handleServerConnected(request: ServerConnectedRequest)
 
     fun handleServerKick(request: ServerKickRequest)
+
+    class NoPermissionToJoinGroupException() : Exception("No Permission to join group")
+
+    class IllegalGroupTypeException() : Exception("Cannot connect to groups with that type")
+
+    class IllegalProcessStateException() : Exception("Cannot connect to a Proxy server")
+
+    class NoSuchProcessException() : Exception("Cannot find requested process")
+
+    class NoLobbyServerFoundException() : Exception("No Lobby-Server found")
 
 }

@@ -18,10 +18,10 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.request
 
-import app.simplecloud.simplecloud.api.player.PlayerConnection
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 
 class ServerPreConnectRequest(
-    val playerConnection: PlayerConnection,
-    val serverNameFrom: String,
+    val playerConnection: PlayerConnectionConfiguration,
+    val serverNameFrom: String?,
     val serverNameTo: String
 )

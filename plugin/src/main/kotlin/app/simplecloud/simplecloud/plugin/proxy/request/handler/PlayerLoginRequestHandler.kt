@@ -16,8 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.request.login
+package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.node.Node
@@ -38,29 +39,29 @@ class PlayerLoginRequestHandler(
     private val messageChannel = this.messageChannelManager
         .getOrCreateMessageChannel<PlayerConnectionConfiguration, CloudPlayerConfiguration>("internal_player_login")
 
-    fun handle(): CloudPlayer {
+    suspend fun handle(): CloudPlayer {
         checkPlayerAlreadyConnected()
         return createNewPlayer()
     }
 
-    private fun checkPlayerAlreadyConnected() {
+    private suspend fun checkPlayerAlreadyConnected() {
         if (doesPlayerAlreadyExist()) {
             throw PlayerAlreadyRegisteredException(this.request)
         }
     }
 
-    private fun doesPlayerAlreadyExist(): Boolean {
-        return runCatching { this.playerService.findOnlinePlayerByUniqueId(this.request.uniqueId).join() }.isSuccess
+    private suspend fun doesPlayerAlreadyExist(): Boolean {
+        return runCatching { this.playerService.findOnlinePlayerByUniqueId(this.request.uniqueId).await() }.isSuccess
     }
 
-    private fun createNewPlayer(): CloudPlayer {
+    private suspend fun createNewPlayer(): CloudPlayer {
         val randomNode = selectRandomNode()
-        val playerConfiguration = this.messageChannel.createMessageRequest(request, randomNode).submit().join()
+        val playerConfiguration = this.messageChannel.createMessageRequest(request, randomNode).submit().await()
         return this.playerFactory.create(playerConfiguration)
     }
 
-    private fun selectRandomNode(): Node {
-        return this.nodeService.findFirst().join()
+    private suspend fun selectRandomNode(): Node {
+        return this.nodeService.findFirst().await()
     }
 
     class PlayerAlreadyRegisteredException(
