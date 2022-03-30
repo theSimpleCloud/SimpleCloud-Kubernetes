@@ -27,19 +27,17 @@ import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
-    groupConfigurationValidator: GroupConfigurationValidator,
     igniteRepository: IgniteCloudProcessGroupRepository,
     processGroupFactory: CloudProcessGroupFactory,
     private val messageChannelManager: MessageChannelManager,
     private val nodeService: NodeService
 ) : AbstractCloudProcessGroupService(
-    groupConfigurationValidator, igniteRepository, processGroupFactory
+    igniteRepository, processGroupFactory
 ) {
 
     private val deleteMessageChannel =

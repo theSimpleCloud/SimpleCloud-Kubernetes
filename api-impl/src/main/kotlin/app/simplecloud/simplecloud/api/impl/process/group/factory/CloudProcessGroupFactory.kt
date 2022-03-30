@@ -23,7 +23,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -37,13 +36,10 @@ import com.google.inject.Singleton
 class CloudProcessGroupFactory @Inject constructor(
     private val lobbyGroupFactory: CloudLobbyGroup.Factory,
     private val proxyGroupFactory: CloudProxyGroup.Factory,
-    private val serverGroupFactory: CloudServerGroup.Factory,
-    private val groupConfigurationValidator: GroupConfigurationValidator
+    private val serverGroupFactory: CloudServerGroup.Factory
 ) {
 
     fun create(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
-        this.groupConfigurationValidator.validate(configuration)
-
         return when (configuration.type) {
             ProcessGroupType.PROXY -> {
                 this.proxyGroupFactory.create(configuration as CloudProxyProcessGroupConfiguration)

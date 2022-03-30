@@ -24,7 +24,6 @@ import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcess
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import app.simplecloud.simplecloud.node.repository.mongo.group.CombinedProcessGroupEntity
 import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
 import com.google.inject.Inject
@@ -32,13 +31,12 @@ import com.google.inject.Singleton
 
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
-    groupConfigurationValidator: GroupConfigurationValidator,
     processGroupFactory: CloudProcessGroupFactory,
     private val igniteRepository: IgniteCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
     private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
 ) : AbstractCloudProcessGroupService(
-    groupConfigurationValidator, igniteRepository, processGroupFactory
+    igniteRepository, processGroupFactory
 ) {
 
     override suspend fun updateGroupInternal0(group: CloudProcessGroup) {

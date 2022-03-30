@@ -48,8 +48,6 @@ import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.service.*
-import app.simplecloud.simplecloud.api.validator.ValidatorService
-import app.simplecloud.simplecloud.api.validator.ValidatorServiceImpl
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
 import org.apache.ignite.Ignite
@@ -71,8 +69,6 @@ class CloudAPIBinderModule(
 
     override fun configure() {
         bind(Ignite::class.java).toInstance(igniteInstance)
-
-        bind(ValidatorService::class.java).to(ValidatorServiceImpl::class.java)
 
         install(
             FactoryModuleBuilder()

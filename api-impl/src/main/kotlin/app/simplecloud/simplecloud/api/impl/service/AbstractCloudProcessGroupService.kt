@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
@@ -29,7 +28,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
-import app.simplecloud.simplecloud.api.validator.GroupConfigurationValidator
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,7 +37,6 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 abstract class AbstractCloudProcessGroupService(
-    private val groupConfigurationValidator: GroupConfigurationValidator,
     private val igniteRepository: IgniteCloudProcessGroupRepository,
     private val processGroupFactory: CloudProcessGroupFactory
 ) : InternalCloudProcessGroupService {
@@ -68,7 +65,6 @@ abstract class AbstractCloudProcessGroupService(
     }
 
     override suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration) {
-        this.groupConfigurationValidator.validate(configuration).await()
         val group = this.processGroupFactory.create(configuration)
         updateGroupInternal0(group)
     }
@@ -76,7 +72,6 @@ abstract class AbstractCloudProcessGroupService(
     abstract suspend fun updateGroupInternal0(group: CloudProcessGroup)
 
     override suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
-        this.groupConfigurationValidator.validate(configuration).await()
         val group = this.processGroupFactory.create(configuration)
         updateGroupInternal0(group)
         return group

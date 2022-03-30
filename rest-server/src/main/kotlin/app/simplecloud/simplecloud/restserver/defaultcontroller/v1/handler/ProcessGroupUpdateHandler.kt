@@ -27,7 +27,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyPro
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.validator.ValidatorService
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -39,7 +38,6 @@ import com.google.inject.Singleton
  */
 @Singleton
 class ProcessGroupUpdateHandler @Inject constructor(
-    private val validatorService: ValidatorService,
     private val groupService: CloudProcessGroupService
 ) {
 
@@ -49,7 +47,6 @@ class ProcessGroupUpdateHandler @Inject constructor(
     }
 
     private suspend fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
-        this.validatorService.getValidator(configuration::class.java).validate(configuration).await()
         val request = group.createUpdateRequest()
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
