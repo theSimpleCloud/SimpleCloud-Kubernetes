@@ -17,18 +17,8 @@
  */
 
 dependencies {
-    implementation(kotlin("stdlib"))
-    api(project(":api"))
-    api(project(":api-impl"))
-    api(project(":ignite"))
-    compileOnly("net.md-5:bungeecord-api:1.18-R0.1-SNAPSHOT")
-    compileOnly("org.spigotmc:spigot-api:1.18.2-R0.1-SNAPSHOT")
-
-    implementation("net.kyori:adventure-api:4.10.1")
-}
-
-tasks.getByName<Test>("test") {
-    useJUnitPlatform()
+    api(project(":plugin-parent:bungeecord"))
+    api(project(":plugin-parent:plugin"))
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {

@@ -27,7 +27,11 @@ include("module-loader")
 include("kubernetes")
 include("rest-server")
 include("node")
-include("plugin")
+include("plugin-parent")
 include("content-server")
 include("process-prepare")
 include("rest-server-base")
+include("plugin-parent:bungeecord")
+findProject(":plugin-parent:bungeecord")?.name = "bungeecord"
+include("plugin-parent:plugin")
+findProject(":plugin-parent:plugin")?.name = "plugin"
