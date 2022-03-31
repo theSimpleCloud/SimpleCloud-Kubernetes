@@ -41,7 +41,7 @@ class CloudPlayerLoginHandler(
         logger.info("Player {} is logging in on {}", this.configuration.name, this.proxyName)
         val player = createPlayer()
         savePlayerToDatabase(player)
-        player.createUpdateRequest().submit()
+        player.createUpdateRequest().submit().await()
         return player.toConfiguration()
     }
 

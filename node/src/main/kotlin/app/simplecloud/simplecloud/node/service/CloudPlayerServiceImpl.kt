@@ -52,10 +52,10 @@ class CloudPlayerServiceImpl @Inject constructor(
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         val onlinePlayerFuture = findOnlinePlayerByName(name)
-        return onlinePlayerFuture.handle { _, _ -> findOnlinePlayerByName0(name, onlinePlayerFuture) }.flatten()
+        return onlinePlayerFuture.handle { _, _ -> findOfflinePlayerByName0(name, onlinePlayerFuture) }.flatten()
     }
 
-    private fun findOnlinePlayerByName0(
+    private fun findOfflinePlayerByName0(
         name: String,
         completedOnlinePlayerFuture: CompletableFuture<CloudPlayer>
     ): CompletableFuture<OfflineCloudPlayer> {

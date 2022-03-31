@@ -35,3 +35,5 @@ include("plugin-parent:bungeecord")
 findProject(":plugin-parent:bungeecord")?.name = "bungeecord"
 include("plugin-parent:plugin")
 findProject(":plugin-parent:plugin")?.name = "plugin"
+include("plugin-parent:spigot")
+findProject(":plugin-parent:spigot")?.name = "spigot"

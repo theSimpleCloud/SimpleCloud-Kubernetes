@@ -21,9 +21,11 @@ package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
+import app.simplecloud.simplecloud.plugin.proxy.request.PlayerDisconnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import com.google.inject.Inject
+import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.PendingConnection
 import net.md_5.bungee.api.event.*
@@ -40,15 +42,15 @@ import java.net.InetSocketAddress
  */
 class BungeeListener @Inject constructor(
     private val proxyController: ProxyController,
+    private val proxyServer: ProxyServer
 ) : Listener {
 
     @EventHandler(priority = EventPriority.LOW)
     fun handleJoin(event: LoginEvent) {
         if (event.isCancelled) return
-        println("handle login")
         val connection = event.connection
         val configuration = createConnectionConfiguration(connection)
-        this.proxyController.handleLogin(configuration)
+        val cloudPlayer = this.proxyController.handleLogin(configuration)
     }
 
     @EventHandler
@@ -66,9 +68,15 @@ class BungeeListener @Inject constructor(
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
         val currentServerName: String? = proxiedPlayer.server?.info?.name
         try {
-            this.proxyController.handleServerPreConnect(
-                ServerPreConnectRequest(configuration, currentServerName, event.target.name)
+            val response = this.proxyController.handleServerPreConnect(
+                ServerPreConnectRequest(
+                    configuration,
+                    currentServerName,
+                    event.target.name
+                )
             )
+            val serverInfo = this.proxyServer.getServerInfo(response.targetProcessName)
+            event.target = serverInfo
         } catch (ex: ProxyController.NoLobbyServerFoundException) {
             proxiedPlayer.disconnect(*TextComponent.fromLegacyText("§cNo fallback server found"))
             event.isCancelled = true
@@ -99,7 +107,8 @@ class BungeeListener @Inject constructor(
     fun handleDisconnect(event: PlayerDisconnectEvent) {
         val proxiedPlayer = event.player
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
-        this.proxyController.handleDisconnect(configuration)
+        val request = PlayerDisconnectRequest(configuration, proxiedPlayer.server.info.name)
+        this.proxyController.handleDisconnect(request)
     }
 
     private fun createConnectionConfiguration(connection: PendingConnection): PlayerConnectionConfiguration {

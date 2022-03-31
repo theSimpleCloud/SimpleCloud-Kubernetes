@@ -18,7 +18,8 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
-import app.simplecloud.simplecloud.plugin.util.OnlineCountProvider
+import app.simplecloud.simplecloud.plugin.proxy.AbstractOnlineCountUpdater
+import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import net.md_5.bungee.api.ProxyServer
@@ -30,12 +31,13 @@ import net.md_5.bungee.api.ProxyServer
  *
  */
 @Singleton
-class BungeeOnlineCountProvider @Inject constructor(
-    private val proxyServer: ProxyServer
-) : OnlineCountProvider {
+class BungeeOnlineCountUpdater @Inject constructor(
+    private val proxyServer: ProxyServer,
+    private val selfProcessProvider: SelfProcessProvider
+) : AbstractOnlineCountUpdater(selfProcessProvider) {
 
-    override fun getOnlineCount(): Int {
-        return proxyServer.onlineCount
+    override fun getSelfOnlineCount(): Int {
+        return this.proxyServer.onlineCount
     }
 
 }

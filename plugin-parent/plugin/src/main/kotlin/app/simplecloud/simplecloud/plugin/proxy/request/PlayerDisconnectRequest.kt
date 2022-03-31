@@ -16,27 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.type.bungee.guice
+package app.simplecloud.simplecloud.plugin.proxy.request
 
-import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
-import app.simplecloud.simplecloud.plugin.proxy.type.bungee.BungeeOnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.proxy.type.bungee.BungeeProxyServerRegistry
-import com.google.inject.AbstractModule
-import net.md_5.bungee.api.ProxyServer
+import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 
 /**
- * Date: 24.01.22
- * Time: 19:04
+ * Date: 31.03.22
+ * Time: 10:51
  * @author Frederick Baier
  *
  */
-class BungeeBinderModule : AbstractModule() {
-
-    override fun configure() {
-        bind(ProxyServer::class.java).toInstance(ProxyServer.getInstance())
-        bind(ProxyServerRegistry::class.java).to(BungeeProxyServerRegistry::class.java)
-        bind(OnlineCountUpdater::class.java).to(BungeeOnlineCountUpdater::class.java)
-    }
-
+class PlayerDisconnectRequest(
+    val connection: PlayerConnectionConfiguration,
+    val lastProcessName: String
+) {
 }

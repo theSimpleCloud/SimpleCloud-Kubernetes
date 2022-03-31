@@ -39,4 +39,6 @@ interface CloudPlayerService : Service {
 
     fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer>
 
+    fun findOnlinePlayers(): CompletableFuture<List<CloudPlayer>>
+
 }

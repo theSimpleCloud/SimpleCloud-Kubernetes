@@ -18,16 +18,28 @@
 
 dependencies {
     api(project(":plugin-parent:bungeecord"))
+    api(project(":plugin-parent:spigot"))
     api(project(":plugin-parent:plugin"))
 }
 
 tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
+    /*
     dependencies {
         exclude { dependency ->
-            val dependenciesToCompile = listOf("kotlin", "ignite", "jackson", "javax", "app.simplecloud", "net.kyori")
+            val dependenciesToCompile = listOf(
+                "kotlin",
+                "ignite",
+                "jackson",
+                "javax",
+                "app.simplecloud",
+                "net.kyori",
+                "com.google.inject"
+            )
             dependenciesToCompile.all {
                 !dependency.name.contains(it)
             }
         }
     }
+
+     */
 }

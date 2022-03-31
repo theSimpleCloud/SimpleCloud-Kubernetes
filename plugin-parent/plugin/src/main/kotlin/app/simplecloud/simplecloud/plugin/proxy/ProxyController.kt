@@ -18,19 +18,17 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
+import app.simplecloud.simplecloud.plugin.proxy.request.*
 
 interface ProxyController {
 
-    fun handleLogin(request: PlayerConnectionConfiguration)
+    fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer
 
     fun handlePostLogin(request: PlayerConnectionConfiguration)
 
-    fun handleDisconnect(request: PlayerConnectionConfiguration)
+    fun handleDisconnect(request: PlayerDisconnectRequest)
 
     /**
      * @throws NoLobbyServerFoundException no lobby server was found

@@ -46,6 +46,11 @@ abstract class AbstractCloudPlayerService(
         return this.igniteRepository.findByName(name).thenApply { this.playerFactory.create(it) }
     }
 
+    override fun findOnlinePlayers(): CompletableFuture<List<CloudPlayer>> {
+        val future = this.igniteRepository.findAll()
+        return future.thenApply { list -> list.map { this.playerFactory.create(it) } }
+    }
+
     override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {
         this.igniteRepository.save(configuration.uniqueId, configuration).await()
     }

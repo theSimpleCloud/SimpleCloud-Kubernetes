@@ -25,11 +25,10 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.function.BiConsumer
 import kotlin.coroutines.*
 
-
 private val threadContext = newCachedThreadPoolContext("cloud")
 private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
-    println("CoroutineExceptionHandler got $exception")
-    println(Thread.currentThread().name)
+    println("Caught exception in thread: ${Thread.currentThread().name}")
+    exception.printStackTrace()
 }
 
 fun newCachedThreadPoolContext(name: String): ExecutorCoroutineDispatcher {

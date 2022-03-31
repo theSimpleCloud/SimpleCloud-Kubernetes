@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.request.player.InternalCloudPlayerUpdateRequest
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 
@@ -30,10 +31,16 @@ class PlayerServerConnectedRequestHandler(
     suspend fun handle() {
         val playerUniqueId = request.playerConnection.uniqueId
         val cloudPlayer = this.playerService.findOnlinePlayerByUniqueId(playerUniqueId).await()
+        updateConnectedServer(cloudPlayer)
+    }
+
+    private suspend fun updateConnectedServer(cloudPlayer: CloudPlayer) {
         val updateRequest = cloudPlayer.createUpdateRequest()
         updateRequest as InternalCloudPlayerUpdateRequest
         updateRequest.setConnectedServerName(this.request.serverName)
         updateRequest.submit().await()
     }
+
+
 
 }

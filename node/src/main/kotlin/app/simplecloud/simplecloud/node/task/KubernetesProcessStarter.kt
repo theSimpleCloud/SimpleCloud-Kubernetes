@@ -66,7 +66,7 @@ class KubernetesProcessStarter(
     }
 
     private fun createContainerSpecifications(): ContainerSpec {
-        val volume = createVolumeClaim()
+        //val volume = createVolumeClaim()
 
         val processUniqueIdEnvironment = createProcessIdEnvironmentVariable()
         val clusterKeyEnvironment = createClusterKeyEnvironmentVariable()
@@ -74,7 +74,7 @@ class KubernetesProcessStarter(
             .withContainerPort(25565)
             .withMaxMemory(this.process.getMaxMemory())
             .withLabels(this.processLabel, this.groupLabel)
-            .withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
+            //.withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
             .withEnvironmentVariables(clusterKeyEnvironment, processUniqueIdEnvironment)
             .withImage(this.process.getImage().getName())
     }

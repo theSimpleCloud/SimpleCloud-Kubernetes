@@ -16,16 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.util
+package app.simplecloud.simplecloud.plugin.server.type.spigot.guice
+
+import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
+import app.simplecloud.simplecloud.plugin.server.type.spigot.SpigotOnlineCountUpdater
+import com.google.inject.AbstractModule
+import org.bukkit.Server
 
 /**
- * Date: 23.01.22
- * Time: 19:09
+ * Date: 24.01.22
+ * Time: 19:04
  * @author Frederick Baier
  *
  */
-interface OnlineCountProvider {
+class SpigotBinderModule(
+    private val server: Server
+) : AbstractModule() {
 
-    fun getOnlineCount(): Int
+    override fun configure() {
+        bind(Server::class.java).toInstance(this.server)
+        bind(OnlineCountUpdater::class.java).to(SpigotOnlineCountUpdater::class.java)
+    }
 
 }

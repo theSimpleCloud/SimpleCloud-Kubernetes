@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.restserver.annotation.RequestBody
@@ -51,6 +52,12 @@ class PlayerController @Inject constructor(
             this.playerService.findOfflinePlayerByName(nameOrUuid).join()
         }
         return player.toConfiguration()
+    }
+
+    @RequestMapping(RequestType.GET, "", "web.cloud.player.get")
+    fun handleGetOnlinePlayer(): List<CloudPlayerConfiguration> {
+        val onlinePlayers = this.playerService.findOnlinePlayers().join()
+        return onlinePlayers.map { it.toConfiguration() }
     }
 
     @RequestMapping(RequestType.PUT, "", "web.cloud.player.update")

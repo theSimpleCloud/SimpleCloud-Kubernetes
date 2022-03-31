@@ -16,29 +16,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.request.handler
+package app.simplecloud.simplecloud.plugin.server.type.spigot.guice
 
-import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import kotlinx.coroutines.launch
+import com.google.inject.Inject
+import kotlinx.coroutines.runBlocking
+import org.bukkit.event.EventHandler
+import org.bukkit.event.Listener
+import org.bukkit.event.player.PlayerJoinEvent
+import org.bukkit.event.player.PlayerKickEvent
+import org.bukkit.event.player.PlayerQuitEvent
 
 /**
- * Date: 18.01.22
- * Time: 10:12
+ * Date: 31.03.22
+ * Time: 12:38
  * @author Frederick Baier
  *
  */
-class PlayerPostLoginRequestHandler(
-    private val request: PlayerConnectionConfiguration,
+class SpigotListener @Inject constructor(
     private val onlineCountUpdater: OnlineCountUpdater
-) {
+) : Listener {
 
-    fun handle() {
-        CloudScope.launch {
+    @EventHandler
+    fun handleJoin(event: PlayerJoinEvent) {
+        runBlocking {
             onlineCountUpdater.updateSelfOnlineCount()
         }
     }
 
+    @EventHandler
+    fun handleJoin(event: PlayerQuitEvent) {
+        runBlocking {
+            onlineCountUpdater.updateSelfOnlineCount(-1)
+        }
+    }
+
+    @EventHandler
+    fun handleJoin(event: PlayerKickEvent) {
+        runBlocking {
+            onlineCountUpdater.updateSelfOnlineCount(-1)
+        }
+    }
 
 }

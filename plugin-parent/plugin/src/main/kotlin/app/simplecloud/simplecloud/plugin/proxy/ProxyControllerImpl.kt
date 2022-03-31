@@ -22,18 +22,15 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
+import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
+import app.simplecloud.simplecloud.plugin.proxy.request.*
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.*
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
-import app.simplecloud.simplecloud.plugin.util.OnlineCountProvider
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import kotlinx.coroutines.launch
@@ -47,14 +44,13 @@ class ProxyControllerImpl @Inject constructor(
     private val processService: CloudProcessService,
     private val processGroupService: CloudProcessGroupService,
     private val playerFactory: CloudPlayerFactory,
-    private val selfProcessProvider: SelfProcessProvider,
-    private val onlineCountProvider: OnlineCountProvider,
+    private val onlineCountUpdater: OnlineCountUpdater,
     private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository,
 ) : ProxyController {
 
-    override fun handleLogin(request: PlayerConnectionConfiguration) {
-        runBlocking {
-            PlayerLoginRequestHandler(
+    override fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
+        return runBlocking {
+            return@runBlocking PlayerLoginRequestHandler(
                 request,
                 messageChannelManager,
                 nodeService,
@@ -65,14 +61,13 @@ class ProxyControllerImpl @Inject constructor(
     }
 
     override fun handlePostLogin(request: PlayerConnectionConfiguration) {
-        PlayerPostLoginRequestHandler(request, this.selfProcessProvider, this.onlineCountProvider).handle()
+        PlayerPostLoginRequestHandler(request, this.onlineCountUpdater).handle()
     }
 
-    override fun handleDisconnect(request: PlayerConnectionConfiguration) {
+    override fun handleDisconnect(request: PlayerDisconnectRequest) {
         PlayerDisconnectRequestHandler(
             request,
-            this.selfProcessProvider,
-            this.onlineCountProvider,
+            this.onlineCountUpdater,
             this.igniteCloudPlayerRepository
         ).handler()
     }
