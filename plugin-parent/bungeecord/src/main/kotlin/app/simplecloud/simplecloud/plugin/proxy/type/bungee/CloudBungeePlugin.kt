@@ -30,7 +30,7 @@ import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
-    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule()))
+    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule(this)))
     private val injector = cloudPlugin.injector
 
     override fun onLoad() {

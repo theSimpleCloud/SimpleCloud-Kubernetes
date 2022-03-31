@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.plugin.proxy.type.bungee.BungeeOnlineCountUpd
 import app.simplecloud.simplecloud.plugin.proxy.type.bungee.BungeeProxyServerRegistry
 import com.google.inject.AbstractModule
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.plugin.Plugin
 
 /**
  * Date: 24.01.22
@@ -31,9 +32,12 @@ import net.md_5.bungee.api.ProxyServer
  * @author Frederick Baier
  *
  */
-class BungeeBinderModule : AbstractModule() {
+class BungeeBinderModule(
+    private val plugin: Plugin
+) : AbstractModule() {
 
     override fun configure() {
+        bind(Plugin::class.java).toInstance(plugin)
         bind(ProxyServer::class.java).toInstance(ProxyServer.getInstance())
         bind(ProxyServerRegistry::class.java).to(BungeeProxyServerRegistry::class.java)
         bind(OnlineCountUpdater::class.java).to(BungeeOnlineCountUpdater::class.java)

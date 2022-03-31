@@ -48,16 +48,14 @@ class ProxyControllerImpl @Inject constructor(
     private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository,
 ) : ProxyController {
 
-    override fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
-        return runBlocking {
-            return@runBlocking PlayerLoginRequestHandler(
-                request,
-                messageChannelManager,
-                nodeService,
-                playerFactory,
-                playerService
-            ).handle()
-        }
+    override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
+        return PlayerLoginRequestHandler(
+            request,
+            messageChannelManager,
+            nodeService,
+            playerFactory,
+            playerService
+        ).handle()
     }
 
     override fun handlePostLogin(request: PlayerConnectionConfiguration) {
