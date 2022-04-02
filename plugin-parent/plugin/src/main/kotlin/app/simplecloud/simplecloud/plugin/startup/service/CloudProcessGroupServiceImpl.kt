@@ -22,10 +22,9 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
-import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -34,17 +33,15 @@ import com.google.inject.Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
     igniteRepository: IgniteCloudProcessGroupRepository,
     processGroupFactory: CloudProcessGroupFactory,
-    private val messageChannelManager: MessageChannelManager,
+    internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
 ) : AbstractCloudProcessGroupService(
     igniteRepository, processGroupFactory
 ) {
 
-    private val deleteMessageChannel =
-        this.messageChannelManager.getOrCreateMessageChannel<String, Unit>("internal_delete_group")
+    private val deleteMessageChannel = internalMessageChannelProvider.getInternalDeleteGroupChannel()
 
-    private val updateMessageChannel =
-        this.messageChannelManager.getOrCreateMessageChannel<AbstractCloudProcessGroupConfiguration, Unit>("internal_update_group")
+    private val updateMessageChannel = internalMessageChannelProvider.getInternalUpdateGroupChannel()
 
     override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
         val node = this.nodeService.findFirst().await()

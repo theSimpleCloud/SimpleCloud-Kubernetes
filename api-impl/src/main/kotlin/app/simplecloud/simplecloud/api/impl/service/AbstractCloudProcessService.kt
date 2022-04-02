@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.toFutureList
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.request.process.ProcessExecuteCommandRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessUpdateRequestImpl
@@ -29,6 +30,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessServ
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
@@ -96,6 +98,13 @@ abstract class AbstractCloudProcessService(
 
     override fun createShutdownRequest(process: CloudProcess): ProcessShutdownRequest {
         return ProcessShutdownRequestImpl(this, process)
+    }
+
+    override fun createExecuteCommandRequest(
+        cloudProcess: CloudProcess,
+        command: String
+    ): ProcessExecuteCommandRequest {
+        return ProcessExecuteCommandRequestImpl(command, cloudProcess, this)
     }
 
 }

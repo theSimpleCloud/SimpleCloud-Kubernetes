@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.plugin.proxy
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
-import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
@@ -38,7 +38,7 @@ import kotlinx.coroutines.runBlocking
 
 @Singleton
 class ProxyControllerImpl @Inject constructor(
-    private val messageChannelManager: MessageChannelManager,
+    private val internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService,
     private val playerService: CloudPlayerService,
     private val processService: CloudProcessService,
@@ -51,7 +51,7 @@ class ProxyControllerImpl @Inject constructor(
     override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
         return PlayerLoginRequestHandler(
             request,
-            messageChannelManager,
+            internalMessageChannelProvider,
             nodeService,
             playerFactory,
             playerService

@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.api.service
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
@@ -80,8 +81,18 @@ interface CloudProcessService : Service {
     fun createUpdateRequest(process: CloudProcess): ProcessUpdateRequest
 
     /**
+     * Creates a request to execute a command on a process
+     */
+    fun createExecuteCommandRequest(cloudProcess: CloudProcess, command: String): ProcessExecuteCommandRequest
+
+    /**
      * Returns all registered processes
      */
     fun findAll(): CompletableFuture<List<CloudProcess>>
+
+    /**
+     * Returns the logs of the process
+     */
+    fun getLogs(process: CloudProcess): CompletableFuture<List<String>>
 
 }

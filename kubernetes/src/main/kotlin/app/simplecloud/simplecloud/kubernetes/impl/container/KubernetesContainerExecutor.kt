@@ -18,8 +18,20 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.container
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.nonNull
+import app.simplecloud.simplecloud.api.future.timeout.timout
 import app.simplecloud.simplecloud.kubernetes.api.container.ContainerSpec
+import io.kubernetes.client.Attach
+import io.kubernetes.client.PodLogs
 import io.kubernetes.client.openapi.apis.CoreV1Api
+import io.kubernetes.client.openapi.models.V1Pod
+import kotlinx.coroutines.runBlocking
+import java.io.BufferedReader
+import java.io.InputStreamReader
+import java.nio.charset.StandardCharsets
+import java.util.concurrent.CopyOnWriteArrayList
 
 
 class KubernetesContainerExecutor(
@@ -64,16 +76,43 @@ class KubernetesContainerExecutor(
 
 
     fun executeCommand(command: String) {
-        TODO()
+        val attach = Attach(this.api.apiClient)
+        val result = attach.attach("default", this.containerName, true)
+        val output = result.standardInputStream
+        output.write(command.toByteArray(StandardCharsets.UTF_8))
+        output.write('\n'.code)
+        output.flush()
     }
 
     fun getLogs(): List<String> {
-        TODO()
+        val logs = PodLogs(this.api.apiClient)
+        val pod: V1Pod = this.api.readNamespacedPod(this.containerName, "default", null)
+        val inputStream = logs.streamNamespacedPodLog(pod)
+        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
+
+        val list = readLinesBlocking(bufferedReader)
+        inputStream.close()
+        return list
+    }
+
+    private fun readLinesBlocking(bufferedReader: BufferedReader): List<String> {
+        val list = CopyOnWriteArrayList<String>()
+        runBlocking {
+            while (true) {
+                val line = readSingleLine(bufferedReader) ?: break
+                list.add(line)
+            }
+        }
+        return list
+    }
+
+    private suspend fun readSingleLine(bufferedReader: BufferedReader): String? {
+        val future = CloudCompletableFuture.supplyAsync { bufferedReader.readLine() }.nonNull()
+        future.timout(50)
+        return runCatching { future.await() }.getOrNull()
     }
 
     fun deleteContainerOnShutdown() {
 
     }
-
-
 }

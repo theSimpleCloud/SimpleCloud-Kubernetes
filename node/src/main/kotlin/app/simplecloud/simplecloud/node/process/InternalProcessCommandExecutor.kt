@@ -16,8 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
-    implementation("io.kubernetes:client-java:14.0.1")
+package app.simplecloud.simplecloud.node.process
+
+import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
+import app.simplecloud.simplecloud.kubernetes.api.container.Container
+
+/**
+ * Date: 01.04.22
+ * Time: 16:22
+ * @author Frederick Baier
+ *
+ */
+class InternalProcessCommandExecutor(
+    private val configuration: ProcessExecuteCommandConfiguration,
+    private val containerFactory: Container.Factory
+) {
+
+    fun executeCommand() {
+        val container = this.containerFactory.create(this.configuration.processName)
+        container.execute(this.configuration.command)
+    }
 }

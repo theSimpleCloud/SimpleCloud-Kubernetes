@@ -16,8 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
-    implementation("io.kubernetes:client-java:14.0.1")
+package app.simplecloud.simplecloud.api.internal.configutation
+
+/**
+ * Date: 01.04.22
+ * Time: 16:05
+ * @author Frederick Baier
+ *
+ */
+class ProcessExecuteCommandConfiguration(
+    val processName: String,
+    val command: String
+) {
+
+    private constructor() : this("", "")
+
 }

@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.internal.service
 
+import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
@@ -36,6 +37,11 @@ interface InternalCloudProcessService : CloudProcessService {
      * @return the newly registered process
      */
     suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess
+
+    /**
+     * Executes a command on the specified process
+     */
+    suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration)
 
     /**
      * Shuts the [process] down

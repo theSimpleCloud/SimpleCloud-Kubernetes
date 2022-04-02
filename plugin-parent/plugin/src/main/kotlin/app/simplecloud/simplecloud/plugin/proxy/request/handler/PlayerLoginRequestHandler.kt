@@ -20,24 +20,22 @@ package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.NodeService
 
 class PlayerLoginRequestHandler(
     private val request: PlayerConnectionConfiguration,
-    private val messageChannelManager: MessageChannelManager,
+    internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService,
     private val playerFactory: CloudPlayerFactory,
     private val playerService: CloudPlayerService
 ) {
 
-    private val messageChannel = this.messageChannelManager
-        .getOrCreateMessageChannel<PlayerConnectionConfiguration, CloudPlayerConfiguration>("internal_player_login")
+    private val messageChannel = internalMessageChannelProvider.getInternalPlayerLoginChannel()
 
     suspend fun handle(): CloudPlayer {
         checkPlayerAlreadyConnected()

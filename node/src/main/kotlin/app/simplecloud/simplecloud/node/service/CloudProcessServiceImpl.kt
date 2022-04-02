@@ -18,24 +18,27 @@
 
 package app.simplecloud.simplecloud.node.service
 
+import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
+import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.node.process.InternalProcessShutdownHandler
-import app.simplecloud.simplecloud.node.process.InternalProcessStartHandler
-import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
-import app.simplecloud.simplecloud.node.process.ProcessStarter
+import app.simplecloud.simplecloud.kubernetes.api.container.Container
+import app.simplecloud.simplecloud.node.process.*
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import java.util.concurrent.CompletableFuture
 
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: CloudProcessFactory,
     igniteRepository: IgniteCloudProcessRepository,
     private val processStarterFactory: ProcessStarter.Factory,
-    private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory
+    private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
+    private val containerFactory: Container.Factory
 ) : AbstractCloudProcessService(
     processFactory, igniteRepository
 ) {
@@ -47,5 +50,13 @@ class CloudProcessServiceImpl @Inject constructor(
     override suspend fun shutdownProcessInternal(process: CloudProcess) {
         return InternalProcessShutdownHandler(process, this.processShutdownHandlerFactory)
             .shutdownProcess()
+    }
+
+    override suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration) {
+        return InternalProcessCommandExecutor(configuration, this.containerFactory).executeCommand()
+    }
+
+    override fun getLogs(process: CloudProcess): CompletableFuture<List<String>> = CloudScope.future {
+        return@future containerFactory.create(process.getName()).getLogs()
     }
 }

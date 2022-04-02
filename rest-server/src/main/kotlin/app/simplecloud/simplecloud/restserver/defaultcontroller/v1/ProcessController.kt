@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1
 
+import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.restserver.annotation.RequestBody
@@ -65,6 +66,19 @@ class ProcessController @Inject constructor(
         val process = this.processService.findByName(name).join()
         process.createShutdownRequest().submit()
         return true
+    }
+
+    @RequestMapping(RequestType.POST, "execute", "web.cloud.process.execute")
+    fun handleExecuteCommand(@RequestBody configuration: ProcessExecuteCommandConfiguration): Boolean {
+        val process = this.processService.findByName(configuration.processName).join()
+        process.creatExecuteCommandRequest(configuration.command).submit().join()
+        return true
+    }
+
+    @RequestMapping(RequestType.GET, "{name}/logs", "web.cloud.process.logs")
+    fun handleGetLogs(@RequestPathParam("name") name: String): List<String> {
+        val process = this.processService.findByName(name).join()
+        return process.getLogs().join()
     }
 
 }

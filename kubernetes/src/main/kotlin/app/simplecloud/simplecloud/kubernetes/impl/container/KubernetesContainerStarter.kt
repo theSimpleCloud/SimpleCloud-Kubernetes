@@ -56,6 +56,8 @@ class KubernetesContainerStarter(
                                 .image(image.lowercase())
                                 .ports(listOf(containerPort))
                                 .env(environmentVariables)
+                                .stdin(true)
+                                .tty(true)
                                 .resources(
                                     V1ResourceRequirements()
                                         .requests(
@@ -71,7 +73,6 @@ class KubernetesContainerStarter(
                         volumes
                     )
             )
-
         this.api.createNamespacedPod("default", pod, null, null, null)
     }
 

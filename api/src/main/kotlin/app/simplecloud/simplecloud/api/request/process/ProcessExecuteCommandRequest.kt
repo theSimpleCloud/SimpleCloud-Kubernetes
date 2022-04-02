@@ -16,8 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
-    implementation("io.kubernetes:client-java:14.0.1")
-}
+package app.simplecloud.simplecloud.api.request.process
+
+import app.simplecloud.simplecloud.api.utils.Request
+
+/**
+ * Date: 31.03.22
+ * Time: 23:03
+ * @author Frederick Baier
+ *
+ */
+interface ProcessExecuteCommandRequest : Request<Unit>

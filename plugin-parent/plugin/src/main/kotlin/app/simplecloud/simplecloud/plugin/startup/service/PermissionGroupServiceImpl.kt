@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.plugin.startup.service
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
-import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
@@ -41,18 +41,16 @@ class PermissionGroupServiceImpl @Inject constructor(
     private val igniteRepository: IgnitePermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
-    private val messageChannelManager: MessageChannelManager,
+    internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
 ) : AbstractPermissionGroupService(igniteRepository, groupFactory, permissionFactory) {
 
 
-    private val deleteMessageChannel =
-        this.messageChannelManager.getOrCreateMessageChannel<String, Unit>("internal_delete_permission_group")
+    private val deleteMessageChannel = internalMessageChannelProvider.getInternalDeletePermissionGroupChannel()
 
-    private val updateMessageChannel =
-        this.messageChannelManager.getOrCreateMessageChannel<PermissionGroupConfiguration, Unit>("internal_update_permission_group")
+    private val updateMessageChannel = internalMessageChannelProvider.getInternalUpdatePermissionGroupChannel()
 
-    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration){
+    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
         val node = this.nodeService.findFirst().await()
         sendUpdateRequestToNode(configuration, node)
     }

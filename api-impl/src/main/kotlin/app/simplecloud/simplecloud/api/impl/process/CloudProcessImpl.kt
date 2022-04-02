@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
+import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
@@ -129,6 +130,14 @@ class CloudProcessImpl @Inject constructor(
 
     override fun getIgniteId(): UUID {
         return this.configuration.igniteId ?: throw NullPointerException("Ignite id not set")
+    }
+
+    override fun creatExecuteCommandRequest(command: String): ProcessExecuteCommandRequest {
+        return this.processService.createExecuteCommandRequest(this, command)
+    }
+
+    override fun getLogs(): CompletableFuture<List<String>> {
+        return this.processService.getLogs(this)
     }
 
     override fun createUpdateRequest(): ProcessUpdateRequest {

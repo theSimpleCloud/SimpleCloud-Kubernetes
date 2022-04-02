@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.api.impl.guice
 
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
 import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
+import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionImpl
 import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupImpl
@@ -33,6 +34,7 @@ import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.impl.process.group.CloudLobbyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudProxyGroupImpl
 import app.simplecloud.simplecloud.api.impl.process.group.CloudServerGroupImpl
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
@@ -118,6 +120,7 @@ class CloudAPIBinderModule(
 
         bind(IgniteQueryHandler::class.java).to(IgniteQueryHandlerImpl::class.java)
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
+        bind(InternalMessageChannelProvider::class.java).to(InternalMessageChannelProviderImpl::class.java)
 
         install(
             FactoryModuleBuilder()

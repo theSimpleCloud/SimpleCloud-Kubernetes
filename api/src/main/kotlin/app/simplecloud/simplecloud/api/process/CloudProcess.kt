@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
+import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Address
@@ -109,6 +110,11 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     fun getImage(): Image
 
     /**
+     * Returns the logs of the process
+     */
+    fun getLogs(): CompletableFuture<List<String>>
+
+    /**
      * Returns the termination future
      * The termination future will be completed when the process was stopped
      * This methods always returns the same [CompletableFuture]
@@ -126,6 +132,11 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
      * Returns the configuration of this group
      */
     fun toConfiguration(): CloudProcessConfiguration
+
+    /**
+     * Creates a request to execute a command
+     */
+    fun creatExecuteCommandRequest(command: String): ProcessExecuteCommandRequest
 
     /**
      * Creates a request to update this service
