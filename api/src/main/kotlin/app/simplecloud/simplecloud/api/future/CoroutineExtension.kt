@@ -43,6 +43,10 @@ fun newCachedThreadPoolContext(name: String): ExecutorCoroutineDispatcher {
 
 val CloudScope = CoroutineScope(threadContext + exceptionHandler + SupervisorJob())
 
+/*
+ * Copyright 2016-2021 JetBrains s.r.o. Use of this source code is governed by the Apache 2.0 license.
+ */
+
 /**
  * Starts a new coroutine and returns its result as an implementation of [CompletableFuture].
  * The running coroutine is cancelled when the resulting future is cancelled or otherwise completed.
