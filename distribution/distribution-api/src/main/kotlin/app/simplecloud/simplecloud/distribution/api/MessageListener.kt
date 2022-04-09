@@ -16,16 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.ignite.bootstrap.security
+package app.simplecloud.simplecloud.distribution.api
 
-import org.apache.ignite.plugin.PluginConfiguration
-import org.apache.ignite.plugin.security.SecurityCredentials
+interface MessageListener {
+
+    fun messageReceived(message: Any)
 
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04.06.2021
- * Time: 11:51
- * This is implementation of [PluginConfiguration] for [SecurityPlugin]
- */
-class SecurityPluginConfiguration(val securityCredentials: SecurityCredentials) : PluginConfiguration
+}

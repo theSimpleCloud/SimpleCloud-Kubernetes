@@ -16,10 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package app.simplecloud.simplecloud.distribution.api
 
-dependencies {
-    api( "org.apache.ignite:ignite-core:2.11.0")
-    implementation(project(":api-impl"))
-    implementation(project(":api-internal"))
-    implementation(project(":api"))
-}
+/**
+ * Date: 03.04.22
+ * Time: 15:43
+ * @author Frederick Baier
+ *
+ */
+interface Cache<K, V> : MutableMap<K, V>

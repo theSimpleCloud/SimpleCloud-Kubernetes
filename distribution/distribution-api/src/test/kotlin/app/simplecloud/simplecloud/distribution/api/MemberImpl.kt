@@ -16,40 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.ignite.bootstrap.security
+package app.simplecloud.simplecloud.distribution.api
 
-import org.apache.ignite.plugin.security.SecurityPermissionSet
-import org.apache.ignite.plugin.security.SecuritySubject
-import org.apache.ignite.plugin.security.SecuritySubjectType
-import java.net.InetSocketAddress
 import java.util.*
 
+class MemberImpl(
+    private val id: UUID
+) : Member {
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 04.06.2021
- * Time: 12:01
- *
- * This implementation defines subject information with permissions
- */
-class SecuritySubjectImpl : SecuritySubject {
-    override fun id(): UUID? {
-        return null
+    override fun getUniqueId(): UUID {
+        return this.id
     }
 
-    override fun type(): SecuritySubjectType? {
-        return null
+
+    override fun hashCode(): Int {
+        return id.hashCode()
     }
 
-    override fun login(): Any? {
-        return null
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as MemberImpl
+
+        if (id != other.id) return false
+
+        return true
     }
 
-    override fun address(): InetSocketAddress? {
-        return null
-    }
-
-    override fun permissions(): SecurityPermissionSet {
-        return SecurityPermissionsSetImpl()
-    }
 }

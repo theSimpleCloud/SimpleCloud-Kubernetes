@@ -21,7 +21,7 @@ include("api")
 include("api-impl")
 include("api-internal")
 include("event-api")
-include("ignite")
+include("distribution")
 include("application-loader")
 include("module-loader")
 include("kubernetes")
@@ -37,3 +37,5 @@ include("plugin-parent:plugin")
 findProject(":plugin-parent:plugin")?.name = "plugin"
 include("plugin-parent:spigot")
 findProject(":plugin-parent:spigot")?.name = "spigot"
+include("distribution:distribution-api")
+findProject(":distribution:distribution-api")?.name = "distribution-api"

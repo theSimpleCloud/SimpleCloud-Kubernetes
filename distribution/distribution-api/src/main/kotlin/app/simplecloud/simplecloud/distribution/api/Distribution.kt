@@ -16,14 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.ignite.bootstrap.security
-
-import org.apache.ignite.plugin.IgnitePlugin
+package app.simplecloud.simplecloud.distribution.api
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 04.06.2021
- * Time: 11:51
+ * Date: 03.04.22
+ * Time: 15:25
+ * @author Frederick Baier
  *
  */
-class SecurityPlugin : IgnitePlugin
+interface Distribution {
+
+    fun getSelfMember(): Member
+
+    fun getMembers(): List<Member>
+
+    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
+
+    fun getMessageManager(): MessageManager
+
+    //messages für jeden Node einen topic erstellen auf den nur dieser Node hört.
+    // Noch einen topic für all
+
+}

@@ -19,7 +19,7 @@
 plugins {
     java
     id ("com.github.johnrengelman.shadow") version "7.0.0"
-    kotlin("jvm") version "1.6.10"
+    kotlin("jvm") version "1.6.20"
 }
 
 allprojects {

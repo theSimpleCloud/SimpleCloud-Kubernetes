@@ -20,7 +20,6 @@ dependencies {
     implementation(kotlin("stdlib"))
     implementation(project(":api"))
     implementation(project(":api-impl"))
-    implementation(project(":ignite"))
     api(project(":rest-server-base"))
     implementation("com.auth0:java-jwt:3.19.0")
     implementation("com.google.guava:guava:31.1-jre")

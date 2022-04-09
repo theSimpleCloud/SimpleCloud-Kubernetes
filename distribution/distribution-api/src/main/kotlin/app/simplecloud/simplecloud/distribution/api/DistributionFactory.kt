@@ -16,28 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("com.github.ajalt:clikt:2.8.0")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+package app.simplecloud.simplecloud.distribution.api
+
+import app.simplecloud.simplecloud.api.utils.Address
 
 
-    implementation(project(":rest-server"))
-    implementation(project(":module-loader"))
-    implementation(project(":application-loader"))
-    api(project(":api"))
-    implementation(project(":api-impl"))
-    implementation(project(":api-internal"))
-    implementation(project(":kubernetes"))
-    implementation(project(":distribution"))
+/**
+ * Date: 03.04.22
+ * Time: 15:25
+ * @author Frederick Baier
+ *
+ */
+interface DistributionFactory {
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.1")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.1")
+    fun createServer(port: Int, connectAddresses: List<Address>): Distribution
 
-}
+    fun createClient(connectAddress: Address): Distribution
 
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "app.simplecloud.simplecloud.node.startup.NodeMainKt"
-    }
 }

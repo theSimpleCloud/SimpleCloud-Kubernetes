@@ -16,20 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.ignite.bootstrap
+package app.simplecloud.simplecloud.distribution.api
 
-import org.apache.ignite.events.Event
+import app.simplecloud.simplecloud.api.utils.Address
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 01.06.2021
- * Time: 08:41
- * @author Frederick Baier
- */
-interface IIgniteEventListener {
+class TestDistributionFactoryImpl : DistributionFactory {
 
-    fun getEventType(): Int
+    override fun createServer(port: Int, addresses: List<Address>): Distribution {
+        return TestServerDistributionImpl(port, addresses)
+    }
 
-    fun onEvent(event: Event)
+    override fun createClient(address: Address): Distribution {
+        return TestClientDistributionImpl(address)
+    }
+
 
 }

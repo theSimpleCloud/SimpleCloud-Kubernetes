@@ -16,28 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+
 dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("com.github.ajalt:clikt:2.8.0")
-    implementation("org.apache.commons:commons-lang3:3.12.0")
-
-
-    implementation(project(":rest-server"))
-    implementation(project(":module-loader"))
-    implementation(project(":application-loader"))
-    api(project(":api"))
-    implementation(project(":api-impl"))
-    implementation(project(":api-internal"))
-    implementation(project(":kubernetes"))
-    implementation(project(":distribution"))
-
-    implementation("org.apache.logging.log4j:log4j-core:2.17.1")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.1")
-
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "app.simplecloud.simplecloud.node.startup.NodeMainKt"
-    }
 }
