@@ -41,4 +41,4 @@ We are planning to release following plugins:
 
 ## Contributing
 
-If you are interested in contributing you can start by reading our [Contributing-Guidelines](https://github.com/theSimpleCloud/SimpleCloud-v3/CONTRIBUTING.md).
+If you are interested in contributing you can start by reading our [Contributing-Guidelines](CONTRIBUTING.md).
