@@ -19,8 +19,10 @@
 package app.simplecloud.simplecloud.distribution.api.test
 
 import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.distribution.api.*
-import org.junit.jupiter.api.AfterEach
+import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
+import app.simplecloud.simplecloud.distribution.api.Member
+import app.simplecloud.simplecloud.distribution.api.MessageListener
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
@@ -38,14 +40,8 @@ class DistributionMessageTest {
 
     @BeforeEach
     fun setUp() {
-        this.factory = TestDistributionFactoryImpl()
+        this.factory = HazelcastDistributionFactory()
     }
-
-    @AfterEach
-    fun tearDown() {
-        VirtualNetwork.reset()
-    }
-
     @Test
     fun newServer_receiveSelfMessages() {
         val server = this.factory.createServer(1630, emptyList())

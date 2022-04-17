@@ -39,3 +39,5 @@ include("plugin-parent:spigot")
 findProject(":plugin-parent:spigot")?.name = "spigot"
 include("distribution:distribution-api")
 findProject(":distribution:distribution-api")?.name = "distribution-api"
+include("distribution:distribution-hazelcast")
+findProject(":distribution:distribution-hazelcast")?.name = "distribution-hazelcast"

@@ -16,11 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distibution.hazelcast
 
-interface MessageListener {
+import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 
-    fun messageReceived(message: Any, sender: Member)
+/**
+ * Date: 09.04.22
+ * Time: 11:38
+ * @author Frederick Baier
+ *
+ */
+class HazelcastDistributionFactory : DistributionFactory {
 
+    override fun createServer(
+        port: Int,
+        connectAddresses: List<Address>
+    ): Distribution {
+        return HazelCastServerDistribution(port, connectAddresses)
+    }
 
+    override fun createClient(connectAddress: Address): Distribution {
+        return HazelCastClientDistribution(connectAddress)
+    }
 }

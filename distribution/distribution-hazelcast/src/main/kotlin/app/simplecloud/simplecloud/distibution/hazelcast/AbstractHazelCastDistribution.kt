@@ -16,11 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distibution.hazelcast
 
-interface MessageListener {
+import app.simplecloud.simplecloud.distribution.api.*
+import com.hazelcast.core.HazelcastInstance
 
-    fun messageReceived(message: Any, sender: Member)
+/**
+ * Date: 10.04.22
+ * Time: 18:19
+ * @author Frederick Baier
+ *
+ */
+abstract class AbstractHazelCastDistribution : Distribution {
 
+    abstract fun getHazelCastInstance(): HazelcastInstance
+
+    override fun getMembers(): List<Member> {
+        return getHazelCastInstance().cluster.members.map { SimpleMemberImpl(it.uuid) }
+    }
+
+    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
+        return HazelCastCache(getHazelCastInstance().getMap(name))
+    }
+
+    override fun getMessageManager(): MessageManager {
+        return HazelCastMessageManager(getSelfMember(), getHazelCastInstance())
+    }
 
 }

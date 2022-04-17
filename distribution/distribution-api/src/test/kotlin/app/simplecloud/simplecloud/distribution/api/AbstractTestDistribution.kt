@@ -29,7 +29,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class AbstractTestDistribution : Distribution {
 
-    private val selfMember = MemberImpl(UUID.randomUUID())
+    protected val selfMember = SimpleMemberImpl(UUID.randomUUID())
 
     private val members = CopyOnWriteArrayList<Member>()
 

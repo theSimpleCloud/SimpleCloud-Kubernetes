@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.distribution.api
 
 import java.util.*
 
-class MemberImpl(
+class SimpleMemberImpl(
     private val id: UUID
 ) : Member {
 
@@ -37,7 +37,7 @@ class MemberImpl(
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
 
-        other as MemberImpl
+        other as SimpleMemberImpl
 
         if (id != other.id) return false
 

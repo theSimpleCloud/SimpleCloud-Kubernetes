@@ -26,10 +26,14 @@ class TestClientDistributionImpl(
 
     private val virtualCluster = VirtualNetwork.connectClient(this, this.address.port)
 
-    override val messageManager: TestMessageManager = TestMessageManager(this.virtualCluster)
+    override val messageManager: TestMessageManager = TestMessageManager(this.selfMember, this.virtualCluster)
 
     override fun getVirtualCluster(): VirtualCluster {
         return this.virtualCluster
+    }
+
+    override fun shutdown() {
+
     }
 
 }

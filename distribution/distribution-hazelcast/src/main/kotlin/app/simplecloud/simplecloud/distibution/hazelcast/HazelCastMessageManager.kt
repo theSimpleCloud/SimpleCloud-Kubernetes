@@ -16,11 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distibution.hazelcast
 
-class TestMessageManager(
+import app.simplecloud.simplecloud.distribution.api.Member
+import app.simplecloud.simplecloud.distribution.api.MessageListener
+import app.simplecloud.simplecloud.distribution.api.MessageManager
+import app.simplecloud.simplecloud.distribution.api.SimpleMemberImpl
+import com.hazelcast.core.HazelcastInstance
+import com.hazelcast.topic.ITopic
+
+class HazelCastMessageManager(
     private val selfMember: Member,
-    private val virtualCluster: VirtualCluster
+    private val hazelCast: HazelcastInstance
 ) : MessageManager {
 
     @Volatile
@@ -29,20 +36,39 @@ class TestMessageManager(
         }
     }
 
+    init {
+        createAddressedMessageListener()
+        createAllMessageListener()
+    }
+
     override fun sendMessage(any: Any) {
-        virtualCluster.sendMessage(selfMember, any)
+        TODO("Not yet implemented")
     }
 
     override fun sendMessage(any: Any, receiver: Member) {
-        virtualCluster.sendMessage(selfMember, any, receiver)
+        TODO("Not yet implemented")
     }
 
     override fun setMessageListener(messageListener: MessageListener) {
         this.messageListener = messageListener
     }
 
-    fun onReceive(message: Any, sender: Member) {
-        this.messageListener.messageReceived(message, sender)
+    private fun createAddressedMessageListener() {
+        val topic = this.hazelCast.getTopic<Any>(this.selfMember.getUniqueId().toString())
+        addListenerToTopic(topic)
+    }
+
+    private fun createAllMessageListener() {
+        val topic = this.hazelCast.getTopic<Any>("all")
+        addListenerToTopic(topic)
+    }
+
+    private fun addListenerToTopic(topic: ITopic<Any>) {
+        topic.addMessageListener {
+            val messageObject = it.messageObject
+            val sender = SimpleMemberImpl(it.publishingMember.uuid)
+            this.messageListener.messageReceived(messageObject, sender)
+        }
     }
 
 }

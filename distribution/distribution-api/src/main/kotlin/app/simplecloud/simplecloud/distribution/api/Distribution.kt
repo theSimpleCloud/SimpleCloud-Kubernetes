@@ -34,7 +34,6 @@ interface Distribution {
 
     fun getMessageManager(): MessageManager
 
-    //messages für jeden Node einen topic erstellen auf den nur dieser Node hört.
-    // Noch einen topic für all
+    fun shutdown()
 
 }

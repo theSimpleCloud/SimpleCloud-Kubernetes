@@ -64,13 +64,13 @@ class VirtualCluster(
         return this.servers.map { it.port }
     }
 
-    fun sendMessage(message: Any) {
-        this.getAllDistributions().forEach { it.messageManager.onReceive(message) }
+    fun sendMessage(sender: Member, message: Any) {
+        this.getAllDistributions().forEach { it.messageManager.onReceive(message, sender) }
     }
 
-    fun sendMessage(message: Any, receiver: Member) {
+    fun sendMessage(sender: Member, message: Any, receiver: Member) {
         val receiverDistribution = getAllDistributions().firstOrNull { it.getSelfMember() == receiver }
-        receiverDistribution?.messageManager?.onReceive(message)
+        receiverDistribution?.messageManager?.onReceive(message, sender)
     }
 
     fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
