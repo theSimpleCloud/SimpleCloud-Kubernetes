@@ -16,12 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distribution.api.impl
 
+import app.simplecloud.simplecloud.distribution.api.ClientComponent
 import java.util.*
 
-interface Member {
+/**
+ * Date: 18.04.22
+ * Time: 12:46
+ * @author Frederick Baier
+ *
+ */
+class ClientComponentImpl(
+    private val uniqueId: UUID
+) : ClientComponent {
 
-    fun getUniqueId(): UUID
-
+    override fun getUniqueId(): UUID {
+        return this.uniqueId
+    }
 }

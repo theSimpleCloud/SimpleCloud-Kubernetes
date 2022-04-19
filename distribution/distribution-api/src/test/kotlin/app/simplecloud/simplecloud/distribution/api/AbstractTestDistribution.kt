@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import java.util.*
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -29,22 +28,12 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class AbstractTestDistribution : Distribution {
 
-    protected val selfMember = SimpleMemberImpl(UUID.randomUUID())
-
-    private val members = CopyOnWriteArrayList<Member>()
+    protected val servers = CopyOnWriteArrayList<ServerComponent>()
 
     abstract val messageManager: TestMessageManager
 
-    init {
-        this.members.add(this.selfMember)
-    }
-
-    override fun getSelfMember(): Member {
-        return this.selfMember
-    }
-
-    override fun getMembers(): List<Member> {
-        return this.members
+    override fun getServers(): List<ServerComponent> {
+        return this.servers
     }
 
     override fun getMessageManager(): MessageManager {
@@ -55,9 +44,11 @@ abstract class AbstractTestDistribution : Distribution {
         return getVirtualCluster().getOrCreateCache(name)
     }
 
-    fun onMemberJoin(member: Member) {
-        if (!this.members.contains(member))
-            this.members.add(member)
+    open fun onComponentJoin(component: NetworkComponent) {
+        if (component is ServerComponent) {
+            if (!this.servers.contains(component))
+                this.servers.add(component)
+        }
     }
 
     abstract fun getVirtualCluster(): VirtualCluster

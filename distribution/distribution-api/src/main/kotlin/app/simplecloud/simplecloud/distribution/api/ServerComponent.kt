@@ -18,31 +18,12 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-class TestMessageManager(
-    private val selfComponent: NetworkComponent,
-    private val virtualCluster: VirtualCluster
-) : MessageManager {
-
-    @Volatile
-    private var messageListener: MessageListener = object : MessageListener {
-        override fun messageReceived(message: Any, sender: NetworkComponent) {
-        }
-    }
-
-    override fun sendMessage(any: Any) {
-        virtualCluster.sendMessage(selfComponent, any)
-    }
-
-    override fun sendMessage(any: Any, receiver: NetworkComponent) {
-        virtualCluster.sendMessage(selfComponent, any, receiver)
-    }
-
-    override fun setMessageListener(messageListener: MessageListener) {
-        this.messageListener = messageListener
-    }
-
-    fun onReceive(message: Any, sender: NetworkComponent) {
-        this.messageListener.messageReceived(message, sender)
-    }
-
+/**
+ * Date: 18.04.22
+ * Time: 11:22
+ * @author Frederick Baier
+ *
+ * Represents a
+ */
+interface ServerComponent : NetworkComponent {
 }

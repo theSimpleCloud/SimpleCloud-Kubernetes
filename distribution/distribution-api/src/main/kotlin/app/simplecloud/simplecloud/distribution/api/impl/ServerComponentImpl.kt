@@ -16,11 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distribution.api.impl
 
-interface MessageListener {
+import app.simplecloud.simplecloud.distribution.api.ServerComponent
+import java.util.*
 
-    fun messageReceived(message: Any, sender: NetworkComponent)
+/**
+ * Date: 18.04.22
+ * Time: 12:46
+ * @author Frederick Baier
+ *
+ */
+class ServerComponentImpl(
+    private val uniqueId: UUID
+) : ServerComponent {
 
-
+    override fun getUniqueId(): UUID {
+        return this.uniqueId
+    }
 }

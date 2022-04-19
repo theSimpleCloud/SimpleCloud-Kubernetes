@@ -18,30 +18,11 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import java.util.*
-
-class SimpleMemberImpl(
-    private val id: UUID
-) : Member {
-
-    override fun getUniqueId(): UUID {
-        return this.id
-    }
-
-
-    override fun hashCode(): Int {
-        return id.hashCode()
-    }
-
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (javaClass != other?.javaClass) return false
-
-        other as SimpleMemberImpl
-
-        if (id != other.id) return false
-
-        return true
-    }
-
+/**
+ * Date: 18.04.22
+ * Time: 11:23
+ * @author Frederick Baier
+ *
+ */
+interface ClientComponent : NetworkComponent {
 }

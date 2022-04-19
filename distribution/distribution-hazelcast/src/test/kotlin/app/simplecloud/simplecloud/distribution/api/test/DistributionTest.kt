@@ -22,11 +22,8 @@ import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
-import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.*
 import org.junit.jupiter.api.Assertions.assertEquals
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.assertThrows
 import java.net.ConnectException
 
 /**
@@ -35,13 +32,15 @@ import java.net.ConnectException
  * @author Frederick Baier
  *
  */
+@Disabled
 class DistributionTest {
 
     private lateinit var factory: DistributionFactory
 
-    private var client: Distribution? = null
     private var server: Distribution? = null
     private var server2: Distribution? = null
+    private var server3: Distribution? = null
+    private var client: Distribution? = null
 
     @BeforeEach
     fun setUp() {
@@ -50,68 +49,82 @@ class DistributionTest {
 
     @AfterEach
     fun tearDown() {
-        this.client?.shutdown()
         this.server?.shutdown()
         this.server2?.shutdown()
+        this.server3?.shutdown()
+        this.client?.shutdown()
     }
 
     @Test
-    fun newDistributionServer_hasOneMember() {
-        server = factory.createServer(1330, emptyList())
-        val members = server!!.getMembers()
-        assertEquals(1, members.size)
+    fun newDistributionServer_hasOneServerAndZeroClients() {
+        this.server = factory.createServer(1330, emptyList())
+        assertEquals(1, this.server!!.getServers().size)
+        assertEquals(0, this.server!!.getConnectedClients().size)
     }
 
     @Test
     fun newClientWithoutServer_WillThrowError() {
         assertThrows<ConnectException> {
-            client = factory.createClient(Address("127.0.0.1", 1630))
+            factory.createClient(Address("127.0.0.1", 1630))
         }
     }
 
     @Test
     fun newClientWithWrongAddressAndServer_wilThrowError() {
-        server = factory.createServer(1630, emptyList())
+        this.server = factory.createServer(1630, emptyList())
         assertThrows<ConnectException> {
-            client = factory.createClient(Address("127.0.0.1", 1631))
+            factory.createClient(Address("127.0.0.1", 1631))
         }
     }
 
     @Test
     fun newClientWithServer_wilNotThrowError() {
-        server = factory.createServer(1630, emptyList())
-        client = factory.createClient(Address("127.0.0.1", 1630))
+        this.server = factory.createServer(1630, emptyList())
+        this.client = factory.createClient(Address("127.0.0.1", 1630))
     }
 
     @Test
-    fun newClientWithServer_membersSizeIsTwo() {
-        server = factory.createServer(1630, emptyList())
-        client = factory.createClient(Address("127.0.0.1", 1630))
-        assertEquals(2, client!!.getMembers().size)
+    fun newClientWithServer_HasOneClientAndOneServer() {
+        this.server = factory.createServer(1630, emptyList())
+        this.client = factory.createClient(Address("127.0.0.1", 1630))
+        assertEquals(1, client!!.getServers().size)
+        assertEquals(1, server!!.getServers().size)
+        assertEquals(1, server!!.getConnectedClients().size)
     }
 
     @Test
     fun newServerWithNotExistingServerToConnectTo_willNotThrow() {
-        server = factory.createServer(1630, listOf(Address("127.0.0.1", 1631)))
-        assertEquals(1, server!!.getMembers().size)
+        this.server = factory.createServer(1630, listOf(Address("127.0.0.1", 1631)))
+        assertEquals(1, server!!.getServers().size)
+        assertEquals(0, server!!.getConnectedClients().size)
     }
 
     @Test
     fun serverConnectToServer() {
-        server = factory.createServer(1630, emptyList())
-        server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
-        assertEquals(2, server!!.getMembers().size)
-        assertEquals(2, server2!!.getMembers().size)
+        this.server = factory.createServer(1630, emptyList())
+        this.server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        assertEquals(2, server!!.getServers().size)
+        assertEquals(2, server2!!.getServers().size)
     }
 
     @Test
     fun twoServerAndClient() {
-        server = factory.createServer(1630, emptyList())
-        server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
-        client = factory.createClient(Address("127.0.0.1", 1630))
-        assertEquals(3, server!!.getMembers().size)
-        assertEquals(3, server2!!.getMembers().size)
-        assertEquals(3, client!!.getMembers().size)
+        this.server = factory.createServer(1630, emptyList())
+        this.server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        this.client = factory.createClient(Address("127.0.0.1", 1630))
+        assertEquals(2, server!!.getServers().size)
+        assertEquals(2, server2!!.getServers().size)
+        assertEquals(2, client!!.getServers().size)
+    }
+
+    @Test
+    fun serverAndClientCluster_ServerJoin_HaveNewServer() {
+        this.server = factory.createServer(1630, emptyList())
+        this.client = factory.createClient(Address("127.0.0.1", 1630))
+        this.server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        assertEquals(2, client!!.getServers().size)
+        assertEquals(2, client!!.getServers().size)
+        assertEquals(2, server2!!.getServers().size)
     }
 
 }

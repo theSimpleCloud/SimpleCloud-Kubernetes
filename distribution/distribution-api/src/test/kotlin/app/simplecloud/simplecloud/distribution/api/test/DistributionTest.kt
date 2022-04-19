@@ -50,10 +50,10 @@ class DistributionTest {
     }
 
     @Test
-    fun newDistributionServer_hasOneMember() {
+    fun newDistributionServer_hasOneServerAndZeroClients() {
         val distribution = factory.createServer(1330, emptyList())
-        val members = distribution.getMembers()
-        assertEquals(1, members.size)
+        assertEquals(1, distribution.getServers().size)
+        assertEquals(0, distribution.getConnectedClients().size)
     }
 
     @Test
@@ -78,18 +78,21 @@ class DistributionTest {
     }
 
     @Test
-    fun newClientWithServer_membersSizeIsTwo() {
+    fun newClientWithServer_HasOneClientAndOneServer() {
         val factory = TestDistributionFactoryImpl()
-        factory.createServer(1630, emptyList())
+        val server = factory.createServer(1630, emptyList())
         val clientDistribution = factory.createClient(Address("127.0.0.1", 1630))
-        assertEquals(2, clientDistribution.getMembers().size)
+        assertEquals(1, clientDistribution.getServers().size)
+        assertEquals(1, server.getServers().size)
+        assertEquals(1, server.getConnectedClients().size)
     }
 
     @Test
     fun newServerWithNotExistingServerToConnectTo_willNotThrow() {
         val factory = TestDistributionFactoryImpl()
         val server = factory.createServer(1630, listOf(Address("127.0.0.1", 1631)))
-        assertEquals(1, server.getMembers().size)
+        assertEquals(1, server.getServers().size)
+        assertEquals(0, server.getConnectedClients().size)
     }
 
     @Test
@@ -97,8 +100,8 @@ class DistributionTest {
         val factory = TestDistributionFactoryImpl()
         val server1 = factory.createServer(1630, emptyList())
         val server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
-        assertEquals(2, server1.getMembers().size)
-        assertEquals(2, server2.getMembers().size)
+        assertEquals(2, server1.getServers().size)
+        assertEquals(2, server2.getServers().size)
     }
 
     @Test
@@ -107,9 +110,20 @@ class DistributionTest {
         val server1 = factory.createServer(1630, emptyList())
         val server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
         val clientDistribution = factory.createClient(Address("127.0.0.1", 1630))
-        assertEquals(3, server1.getMembers().size)
-        assertEquals(3, server2.getMembers().size)
-        assertEquals(3, clientDistribution.getMembers().size)
+        assertEquals(2, server1.getServers().size)
+        assertEquals(2, server2.getServers().size)
+        assertEquals(2, clientDistribution.getServers().size)
+    }
+
+    @Test
+    fun serverAndClientCluster_ServerJoin_HaveNewServer() {
+        val factory = TestDistributionFactoryImpl()
+        val server1 = factory.createServer(1630, emptyList())
+        val clientDistribution = factory.createClient(Address("127.0.0.1", 1630))
+        val server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        assertEquals(2, server1.getServers().size)
+        assertEquals(2, clientDistribution.getServers().size)
+        assertEquals(2, server2.getServers().size)
     }
 
 }

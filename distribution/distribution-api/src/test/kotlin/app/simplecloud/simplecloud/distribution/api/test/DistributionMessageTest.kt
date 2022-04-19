@@ -53,7 +53,7 @@ class DistributionMessageTest {
         var messageReceived = false
         messageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: Member) {
+            override fun messageReceived(message: Any, sender: NetworkComponent) {
                 messageReceived = true
             }
 
@@ -71,7 +71,7 @@ class DistributionMessageTest {
         var received = 0
         clientMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: Member) {
+            override fun messageReceived(message: Any, sender: NetworkComponent) {
                 received++
             }
 
@@ -79,7 +79,7 @@ class DistributionMessageTest {
         val serverMessageManager = server.getMessageManager()
         serverMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: Member) {
+            override fun messageReceived(message: Any, sender: NetworkComponent) {
                 received++
             }
 
@@ -97,7 +97,7 @@ class DistributionMessageTest {
         var received = 0
         clientMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: Member) {
+            override fun messageReceived(message: Any, sender: NetworkComponent) {
                 received++
             }
 
@@ -105,12 +105,12 @@ class DistributionMessageTest {
         val serverMessageManager = server.getMessageManager()
         serverMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: Member) {
+            override fun messageReceived(message: Any, sender: NetworkComponent) {
                 received++
             }
 
         })
-        serverMessageManager.sendMessage("test", client.getSelfMember())
+        serverMessageManager.sendMessage("test", client.getSelfComponent())
 
         assertEquals(1, received)
     }

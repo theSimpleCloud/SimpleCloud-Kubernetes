@@ -42,34 +42,33 @@ class VirtualCluster(
 
     fun addServer(server: TestServerDistributionImpl) {
         this.servers.add(server)
-        onDistributionJoin(server)
+        onServerJoin(server)
     }
 
-    fun addClient(client: TestClientDistributionImpl) {
+    fun addClient(client: TestClientDistributionImpl, server: TestServerDistributionImpl) {
         this.clients.add(client)
-        onDistributionJoin(client)
+        server.onComponentJoin(client.getSelfComponent())
+        this.servers.forEach { client.onComponentJoin(it.getSelfComponent()) }
     }
 
-    private fun onDistributionJoin(joiningDistribution: AbstractTestDistribution) {
-        val allDistributions = getAllDistributions()
-        allDistributions.forEach { it.onMemberJoin(joiningDistribution.getSelfMember()) }
-        allDistributions.forEach { joiningDistribution.onMemberJoin(it.getSelfMember()) }
-    }
-
-    fun getAllDistributions(): Set<AbstractTestDistribution> {
-        return this.servers.union(this.clients)
+    private fun onServerJoin(joiningDistribution: AbstractTestDistribution) {
+        getAllDistributions().forEach { it.onComponentJoin(joiningDistribution.getSelfComponent()) }
     }
 
     fun getServerPorts(): List<Int> {
         return this.servers.map { it.port }
     }
 
-    fun sendMessage(sender: Member, message: Any) {
+    fun sendMessage(sender: NetworkComponent, message: Any) {
         this.getAllDistributions().forEach { it.messageManager.onReceive(message, sender) }
     }
 
-    fun sendMessage(sender: Member, message: Any, receiver: Member) {
-        val receiverDistribution = getAllDistributions().firstOrNull { it.getSelfMember() == receiver }
+    private fun getAllDistributions(): Set<AbstractTestDistribution> {
+        return this.servers.union(this.clients)
+    }
+
+    fun sendMessage(sender: NetworkComponent, message: Any, receiver: NetworkComponent) {
+        val receiverDistribution = getAllDistributions().firstOrNull { it.getSelfComponent() == receiver }
         receiverDistribution?.messageManager?.onReceive(message, sender)
     }
 
@@ -80,6 +79,10 @@ class VirtualCluster(
         val cache = TestCacheImpl<K, V>()
         this.cacheNameToCache[name] = cache
         return cache
+    }
+
+    fun getServerByPort(port: Int): TestServerDistributionImpl? {
+        return this.servers.firstOrNull { it.port == port }
     }
 
 

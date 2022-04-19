@@ -26,10 +26,27 @@ package app.simplecloud.simplecloud.distribution.api
  */
 interface Distribution {
 
-    fun getSelfMember(): Member
+    /**
+     * Returns the self component
+     * [ClientComponent] if this is a client
+     * [ServerComponent] if this is a server
+     */
+    fun getSelfComponent(): NetworkComponent
 
-    fun getMembers(): List<Member>
+    /**
+     * Returns all servers currently connected to the cluster
+     */
+    fun getServers(): List<ServerComponent>
 
+    /**
+     * Returns the clients currently connected to this server
+     * If this is not a server the list will be empty
+     */
+    fun getConnectedClients(): List<ClientComponent>
+
+    /**
+     * Creates a distributed key value store
+     */
     fun <K, V> getOrCreateCache(name: String): Cache<K, V>
 
     fun getMessageManager(): MessageManager

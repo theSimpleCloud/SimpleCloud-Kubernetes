@@ -16,11 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distibution.hazelcast
 
-interface MessageListener {
+import app.simplecloud.simplecloud.distribution.api.NetworkComponent
 
-    fun messageReceived(message: Any, sender: NetworkComponent)
-
-
-}
+/**
+ * Date: 18.04.22
+ * Time: 16:41
+ * @author Frederick Baier
+ *
+ */
+data class HazelCastPacket(
+    val sender: NetworkComponent,
+    val message: Any
+) : java.io.Serializable

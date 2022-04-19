@@ -19,11 +19,14 @@
 package app.simplecloud.simplecloud.distibution.hazelcast
 
 import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.distribution.api.Member
-import app.simplecloud.simplecloud.distribution.api.SimpleMemberImpl
-import com.hazelcast.config.Config
-import com.hazelcast.core.Hazelcast
+import app.simplecloud.simplecloud.distribution.api.ClientComponent
+import app.simplecloud.simplecloud.distribution.api.NetworkComponent
+import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
+import com.hazelcast.client.HazelcastClient
+import com.hazelcast.client.config.ClientConfig
+import com.hazelcast.client.config.ClientConnectionStrategyConfig
 import com.hazelcast.core.HazelcastInstance
+import java.net.ConnectException
 
 class HazelCastClientDistribution(
     private val connectAddress: Address
@@ -31,21 +34,31 @@ class HazelCastClientDistribution(
 
     private val hazelCast: HazelcastInstance = createHazelCastInstance()
 
-    private val selfMember: Member = SimpleMemberImpl(this.hazelCast.cluster.localMember.uuid)
-
+    private val selfComponent = ClientComponentImpl(this.hazelCast.localEndpoint.uuid)
 
     private fun createHazelCastInstance(): HazelcastInstance {
-        val config = Config()
-        config.networkConfig.join.tcpIpConfig.addMember(connectAddress.asIpString())
-        return Hazelcast.newHazelcastInstance(config)
+        val config = ClientConfig()
+        config.networkConfig.addAddress(connectAddress.asIpString())
+        config.connectionStrategyConfig.reconnectMode = ClientConnectionStrategyConfig.ReconnectMode.OFF
+        config.connectionStrategyConfig.connectionRetryConfig.clusterConnectTimeoutMillis = 1
+        val hazelcastClient = try {
+            HazelcastClient.newHazelcastClient(config)
+        } catch (e: IllegalStateException) {
+            throw ConnectException()
+        }
+        return hazelcastClient
     }
 
     override fun getHazelCastInstance(): HazelcastInstance {
         return this.hazelCast
     }
 
-    override fun getSelfMember(): Member {
-        return this.selfMember
+    override fun getSelfComponent(): NetworkComponent {
+        return this.selfComponent
+    }
+
+    override fun getConnectedClients(): List<ClientComponent> {
+        return emptyList()
     }
 
     override fun shutdown() {

@@ -18,21 +18,20 @@
 
 package app.simplecloud.simplecloud.distibution.hazelcast
 
-import app.simplecloud.simplecloud.distribution.api.Member
 import app.simplecloud.simplecloud.distribution.api.MessageListener
 import app.simplecloud.simplecloud.distribution.api.MessageManager
-import app.simplecloud.simplecloud.distribution.api.SimpleMemberImpl
+import app.simplecloud.simplecloud.distribution.api.NetworkComponent
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.topic.ITopic
 
 class HazelCastMessageManager(
-    private val selfMember: Member,
+    private val selfComponent: NetworkComponent,
     private val hazelCast: HazelcastInstance
 ) : MessageManager {
 
     @Volatile
     private var messageListener: MessageListener = object : MessageListener {
-        override fun messageReceived(message: Any, sender: Member) {
+        override fun messageReceived(message: Any, sender: NetworkComponent) {
         }
     }
 
@@ -42,11 +41,13 @@ class HazelCastMessageManager(
     }
 
     override fun sendMessage(any: Any) {
-        TODO("Not yet implemented")
+        this.hazelCast.getTopic<HazelCastPacket>("all")
+            .publish(HazelCastPacket(this.selfComponent, any))
     }
 
-    override fun sendMessage(any: Any, receiver: Member) {
-        TODO("Not yet implemented")
+    override fun sendMessage(any: Any, receiver: NetworkComponent) {
+        this.hazelCast.getTopic<HazelCastPacket>(receiver.getUniqueId().toString())
+            .publish(HazelCastPacket(this.selfComponent, any))
     }
 
     override fun setMessageListener(messageListener: MessageListener) {
@@ -54,20 +55,19 @@ class HazelCastMessageManager(
     }
 
     private fun createAddressedMessageListener() {
-        val topic = this.hazelCast.getTopic<Any>(this.selfMember.getUniqueId().toString())
+        val topic = this.hazelCast.getTopic<HazelCastPacket>(this.selfComponent.getUniqueId().toString())
         addListenerToTopic(topic)
     }
 
     private fun createAllMessageListener() {
-        val topic = this.hazelCast.getTopic<Any>("all")
+        val topic = this.hazelCast.getTopic<HazelCastPacket>("all")
         addListenerToTopic(topic)
     }
 
-    private fun addListenerToTopic(topic: ITopic<Any>) {
+    private fun addListenerToTopic(topic: ITopic<HazelCastPacket>) {
         topic.addMessageListener {
-            val messageObject = it.messageObject
-            val sender = SimpleMemberImpl(it.publishingMember.uuid)
-            this.messageListener.messageReceived(messageObject, sender)
+            val packet = it.messageObject
+            this.messageListener.messageReceived(packet.message, packet.sender)
         }
     }
 

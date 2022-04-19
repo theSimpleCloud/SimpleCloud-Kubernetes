@@ -18,7 +18,11 @@
 
 package app.simplecloud.simplecloud.distibution.hazelcast
 
-import app.simplecloud.simplecloud.distribution.api.*
+import app.simplecloud.simplecloud.distribution.api.Cache
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.MessageManager
+import app.simplecloud.simplecloud.distribution.api.ServerComponent
+import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.core.HazelcastInstance
 
 /**
@@ -31,8 +35,8 @@ abstract class AbstractHazelCastDistribution : Distribution {
 
     abstract fun getHazelCastInstance(): HazelcastInstance
 
-    override fun getMembers(): List<Member> {
-        return getHazelCastInstance().cluster.members.map { SimpleMemberImpl(it.uuid) }
+    override fun getServers(): List<ServerComponent> {
+        return getHazelCastInstance().cluster.members.map { ServerComponentImpl(it.uuid) }
     }
 
     override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
@@ -40,7 +44,7 @@ abstract class AbstractHazelCastDistribution : Distribution {
     }
 
     override fun getMessageManager(): MessageManager {
-        return HazelCastMessageManager(getSelfMember(), getHazelCastInstance())
+        return HazelCastMessageManager(getSelfComponent(), getHazelCastInstance())
     }
 
 }

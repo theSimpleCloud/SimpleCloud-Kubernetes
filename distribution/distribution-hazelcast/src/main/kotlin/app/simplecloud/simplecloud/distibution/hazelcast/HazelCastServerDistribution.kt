@@ -19,8 +19,10 @@
 package app.simplecloud.simplecloud.distibution.hazelcast
 
 import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.distribution.api.Member
-import app.simplecloud.simplecloud.distribution.api.SimpleMemberImpl
+import app.simplecloud.simplecloud.distribution.api.ClientComponent
+import app.simplecloud.simplecloud.distribution.api.NetworkComponent
+import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
+import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.config.Config
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
@@ -32,7 +34,7 @@ class HazelCastServerDistribution(
 
     private val hazelCast: HazelcastInstance = createHazelCastInstance()
 
-    private val selfMember: Member = SimpleMemberImpl(this.hazelCast.cluster.localMember.uuid)
+    private val selfComponent = ServerComponentImpl(this.hazelCast.cluster.localMember.uuid)
 
 
     private fun createHazelCastInstance(): HazelcastInstance {
@@ -48,8 +50,12 @@ class HazelCastServerDistribution(
         return this.hazelCast
     }
 
-    override fun getSelfMember(): Member {
-        return this.selfMember
+    override fun getSelfComponent(): NetworkComponent {
+        return this.selfComponent
+    }
+
+    override fun getConnectedClients(): List<ClientComponent> {
+        return this.hazelCast.clientService.connectedClients.map { ClientComponentImpl(it.uuid) }
     }
 
     override fun shutdown() {
