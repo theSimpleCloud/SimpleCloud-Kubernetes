@@ -19,11 +19,28 @@
 package app.simplecloud.simplecloud.distibution.hazelcast
 
 import app.simplecloud.simplecloud.distribution.api.Cache
+import app.simplecloud.simplecloud.distribution.api.EntryListener
+import app.simplecloud.simplecloud.distribution.api.Predicate
+import com.google.common.collect.Maps
+import com.hazelcast.core.EntryEvent
 import com.hazelcast.map.IMap
+import java.util.*
+
 
 class HazelCastCache<K, V>(
     private val hazelMap: IMap<K, V>
 ) : Cache<K, V> {
+
+    private val listenerToId = Maps.newConcurrentMap<EntryListener<K, V>, UUID>()
+
+    override fun getName(): String {
+        return this.hazelMap.name
+    }
+
+    override fun first(): Map.Entry<K, V> {
+        return this.hazelMap.first()
+    }
+
     override val size: Int
         get() = this.hazelMap.size
 
@@ -64,6 +81,29 @@ class HazelCastCache<K, V>(
 
     override fun remove(key: K): V? {
         return this.hazelMap.remove(key)
+    }
+
+    override fun addEntryListener(entryListener: EntryListener<K, V>) {
+        val mapListener = object : HazelCastEntryListener<K, V> {
+            override fun entryAdded(event: EntryEvent<K, V>) {
+                entryListener.entryUpdated(event.key to event.value)
+            }
+
+            override fun entryUpdated(event: EntryEvent<K, V>) {
+                entryListener.entryUpdated(event.key to event.value)
+            }
+
+            override fun entryRemoved(event: EntryEvent<K, V>) {
+                entryListener.entryRemoved(event.key to event.oldValue)
+            }
+
+        }
+        val listenerId = this.hazelMap.addEntryListener(mapListener, true)
+        this.listenerToId[entryListener] = listenerId
+    }
+
+    override fun distributedQuery(predicate: Predicate<K, V>): Collection<V> {
+        return this.hazelMap.values { predicate.apply(it.key to it.value) }
     }
 
 }

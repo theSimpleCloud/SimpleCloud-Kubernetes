@@ -24,4 +24,14 @@ package app.simplecloud.simplecloud.distribution.api
  * @author Frederick Baier
  *
  */
-interface Cache<K, V> : MutableMap<K, V>
+interface Cache<K, V> : MutableMap<K, V>  {
+
+    fun getName(): String
+
+    fun first(): Map.Entry<K, V>
+
+    fun addEntryListener(entryListener: EntryListener<K, V>)
+
+    fun distributedQuery(predicate: Predicate<K, V>): Collection<V>
+
+}

@@ -16,39 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.utils
+package app.simplecloud.simplecloud.distibution.hazelcast
+
+import com.hazelcast.map.listener.EntryAddedListener
+import com.hazelcast.map.listener.EntryRemovedListener
+import com.hazelcast.map.listener.EntryUpdatedListener
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 21.03.2021
- * Time: 12:57
+ * Date: 20.04.22
+ * Time: 18:42
  * @author Frederick Baier
+ *
  */
-class Address(
-    val host: String,
-    val port: Int
-) {
-
-    constructor() : this("127.0.0.1", -1)
-
-    fun asIpString(): String {
-        return "${host}:${port}"
-    }
-
-    override fun toString(): String {
-        return "Address(${asIpString()})"
-    }
-
-    companion object {
-        fun fromIpString(string: String): Address {
-            val array = string.split(":")
-            if (array.size != 2) {
-                throw IllegalArgumentException(
-                    "Wrong Address format. Expected format: 'host:port' (e.g. 55.55.55.55:1630) but was $string"
-                )
-            }
-            return Address(array[0], array[1].toInt())
-        }
-    }
-
+interface HazelCastEntryListener<K, V> : EntryAddedListener<K, V>, EntryUpdatedListener<K, V>, EntryRemovedListener<K, V> {
 }

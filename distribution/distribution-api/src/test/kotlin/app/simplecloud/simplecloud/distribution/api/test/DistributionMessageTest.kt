@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.distribution.api.test
 
-import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.distribution.api.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals

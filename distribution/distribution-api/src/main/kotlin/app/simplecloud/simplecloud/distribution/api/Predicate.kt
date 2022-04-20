@@ -18,33 +18,14 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
-import java.util.*
+/**
+ * Date: 20.04.22
+ * Time: 18:27
+ * @author Frederick Baier
+ *
+ */
+fun interface Predicate<K, V> : java.io.Serializable {
 
-class TestClientDistributionImpl(
-    private val address: Address
-) : AbstractTestDistribution() {
-
-    private val selfComponent = ClientComponentImpl(UUID.randomUUID())
-
-    private val virtualCluster = VirtualNetwork.connectClient(this, this.address.port)
-
-    override val messageManager: TestMessageManager = TestMessageManager(this.selfComponent, this.virtualCluster)
-
-    override fun getSelfComponent(): NetworkComponent {
-        return this.selfComponent
-    }
-
-    override fun getConnectedClients(): List<ClientComponent> {
-        return emptyList()
-    }
-
-    override fun getVirtualCluster(): VirtualCluster {
-        return this.virtualCluster
-    }
-
-    override fun shutdown() {
-
-    }
+    fun apply(entry: Pair<K, V>): Boolean
 
 }

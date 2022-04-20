@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import app.simplecloud.simplecloud.api.utils.Address
 
 class TestDistributionFactoryImpl : DistributionFactory {
 

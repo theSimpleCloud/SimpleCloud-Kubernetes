@@ -76,7 +76,7 @@ class VirtualCluster(
         if (this.cacheNameToCache.containsKey(name)) {
             return this.cacheNameToCache[name] as Cache<K, V>
         }
-        val cache = TestCacheImpl<K, V>()
+        val cache = TestCacheImpl<K, V>(name)
         this.cacheNameToCache[name] = cache
         return cache
     }

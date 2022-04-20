@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.distibution.hazelcast
 
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.ClientComponent
 import app.simplecloud.simplecloud.distribution.api.NetworkComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl

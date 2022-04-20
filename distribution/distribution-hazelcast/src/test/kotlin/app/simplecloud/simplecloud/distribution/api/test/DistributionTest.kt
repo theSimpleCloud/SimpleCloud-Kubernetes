@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.distribution.api.test
 
-import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
+import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import org.junit.jupiter.api.*

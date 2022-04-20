@@ -18,33 +18,9 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
-import java.util.*
+interface EntryListener<K, V> {
 
-class TestClientDistributionImpl(
-    private val address: Address
-) : AbstractTestDistribution() {
+    fun entryUpdated(entry: Pair<K, V>)
 
-    private val selfComponent = ClientComponentImpl(UUID.randomUUID())
-
-    private val virtualCluster = VirtualNetwork.connectClient(this, this.address.port)
-
-    override val messageManager: TestMessageManager = TestMessageManager(this.selfComponent, this.virtualCluster)
-
-    override fun getSelfComponent(): NetworkComponent {
-        return this.selfComponent
-    }
-
-    override fun getConnectedClients(): List<ClientComponent> {
-        return emptyList()
-    }
-
-    override fun getVirtualCluster(): VirtualCluster {
-        return this.virtualCluster
-    }
-
-    override fun shutdown() {
-
-    }
-
+    fun entryRemoved(entry: Pair<K, V>)
 }

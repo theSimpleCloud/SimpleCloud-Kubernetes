@@ -19,10 +19,23 @@
 package app.simplecloud.simplecloud.distribution.api
 
 import com.google.common.collect.Maps
+import java.util.concurrent.CopyOnWriteArrayList
 
-class TestCacheImpl<K, V> : Cache<K, V> {
+class TestCacheImpl<K, V>(
+    private val name: String
+) : Cache<K, V> {
 
     private val map = Maps.newConcurrentMap<K, V>()
+
+    private val entryListeners = CopyOnWriteArrayList<EntryListener<K, V>>()
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun first(): Map.Entry<K, V> {
+        return this.map.entries.first()
+    }
 
     override val size: Int
         get() = this.map.size
@@ -55,7 +68,9 @@ class TestCacheImpl<K, V> : Cache<K, V> {
     }
 
     override fun put(key: K, value: V): V? {
-        return this.map.put(key, value)
+        val result = this.map.put(key, value)
+        this.entryListeners.forEach { it.entryUpdated(key to value) }
+        return result
     }
 
     override fun putAll(from: Map<out K, V>) {
@@ -63,7 +78,18 @@ class TestCacheImpl<K, V> : Cache<K, V> {
     }
 
     override fun remove(key: K): V? {
-        return this.map.remove(key)
+        val result = this.map.remove(key)
+        if (result != null)
+            this.entryListeners.forEach { it.entryRemoved(key to result) }
+        return result
+    }
+
+    override fun addEntryListener(entryListener: EntryListener<K, V>) {
+        this.entryListeners.add(entryListener)
+    }
+
+    override fun distributedQuery(predicate: Predicate<K, V>): Collection<V> {
+        return this.entries.filter { predicate.apply(it.key to it.value) }.map { it.value }
     }
 
 }

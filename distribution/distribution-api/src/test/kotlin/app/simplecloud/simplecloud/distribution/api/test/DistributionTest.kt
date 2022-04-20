@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.distribution.api.test
 
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.distribution.api.TestDistributionFactoryImpl
 import app.simplecloud.simplecloud.distribution.api.VirtualNetwork
