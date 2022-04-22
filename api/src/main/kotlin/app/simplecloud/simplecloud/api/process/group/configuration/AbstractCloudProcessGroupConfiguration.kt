@@ -37,4 +37,4 @@ abstract class AbstractCloudProcessGroupConfiguration(
     val startPriority: Int,
     val joinPermission: String?,
     val type: ProcessGroupType
-)
+) : java.io.Serializable

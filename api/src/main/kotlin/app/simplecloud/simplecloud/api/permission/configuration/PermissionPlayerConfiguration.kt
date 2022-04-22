@@ -29,7 +29,7 @@ import java.util.*
 class PermissionPlayerConfiguration(
     val uniqueId: UUID,
     val permissions: List<PermissionConfiguration>
-) {
+) : java.io.Serializable {
 
     private constructor() : this(UUID.randomUUID(), emptyList())
 

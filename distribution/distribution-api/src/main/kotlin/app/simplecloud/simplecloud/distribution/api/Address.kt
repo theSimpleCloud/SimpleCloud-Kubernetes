@@ -27,7 +27,7 @@ package app.simplecloud.simplecloud.distribution.api
 class Address(
     val host: String,
     val port: Int
-) {
+) : java.io.Serializable {
 
     constructor() : this("127.0.0.1", -1)
 

@@ -33,7 +33,7 @@ class PlayerWebConfig(
      * Whether the user has access to the dashboard
      */
     val hasAccess: Boolean
-) {
+) : java.io.Serializable {
 
     private constructor() : this("", false)
 

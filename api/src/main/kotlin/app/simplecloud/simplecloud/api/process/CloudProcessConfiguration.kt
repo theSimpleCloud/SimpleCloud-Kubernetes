@@ -42,7 +42,7 @@ data class CloudProcessConfiguration(
     val processGroupType: ProcessGroupType,
     val imageName: String,
     val distributionId: UUID?
-) {
+) : java.io.Serializable {
 
     fun getProcessName(): String {
         return this.groupName + "-" + this.processNumber

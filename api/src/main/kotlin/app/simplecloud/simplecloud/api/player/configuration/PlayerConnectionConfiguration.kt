@@ -33,7 +33,7 @@ class PlayerConnectionConfiguration(
     val name: String,
     val address: Address,
     val onlineMode: Boolean,
-) {
+) : java.io.Serializable {
 
     constructor() : this(
         UUID.randomUUID(),

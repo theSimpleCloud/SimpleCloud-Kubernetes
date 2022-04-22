@@ -82,7 +82,7 @@ class ProcessUpdateRequestImpl(
     override fun submit(): CompletableFuture<Unit> = CloudScope.future {
         val configuration = CloudProcessConfiguration(
             process.getGroupName(),
-            process.getDistributionComponent().getDistributionId(),
+            process.getUniqueId(),
             process.getProcessNumber(),
             processState,
             visible,

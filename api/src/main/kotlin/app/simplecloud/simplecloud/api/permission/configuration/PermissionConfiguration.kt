@@ -30,7 +30,7 @@ class PermissionConfiguration(
     val expiresAtTimestamp: Long,
     //empty string means no group set
     val targetProcessGroup: String?
-) {
+) : java.io.Serializable {
 
     private constructor() : this("", false, 0L, null)
 

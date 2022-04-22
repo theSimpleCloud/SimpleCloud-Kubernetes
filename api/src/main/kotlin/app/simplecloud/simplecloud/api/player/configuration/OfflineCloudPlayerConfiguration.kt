@@ -38,4 +38,4 @@ open class OfflineCloudPlayerConfiguration(
     val lastPlayerConnection: PlayerConnectionConfiguration,
     val webConfig: PlayerWebConfig,
     val permissionPlayerConfiguration: PermissionPlayerConfiguration
-)
+) : java.io.Serializable

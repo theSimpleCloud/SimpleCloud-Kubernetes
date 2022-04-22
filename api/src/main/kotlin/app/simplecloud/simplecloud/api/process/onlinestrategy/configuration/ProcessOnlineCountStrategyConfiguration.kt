@@ -29,7 +29,7 @@ class ProcessOnlineCountStrategyConfiguration(
     val className: String,
     val targetGroupNames: Set<String>,
     val data: Map<String, String>
-) {
+) : java.io.Serializable {
 
     private constructor() : this("", "", emptySet(), emptyMap())
 
