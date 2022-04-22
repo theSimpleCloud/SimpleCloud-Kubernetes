@@ -28,7 +28,6 @@ tasks.withType<com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar> {
         exclude { dependency ->
             val dependenciesToCompile = listOf(
                 "kotlin",
-                "ignite",
                 "jackson",
                 "javax",
                 "app.simplecloud",

@@ -45,7 +45,7 @@ class ProxyControllerImpl @Inject constructor(
     private val processGroupService: CloudProcessGroupService,
     private val playerFactory: CloudPlayerFactory,
     private val onlineCountUpdater: OnlineCountUpdater,
-    private val igniteCloudPlayerRepository: DistributedCloudPlayerRepository,
+    private val distributedRepository: DistributedCloudPlayerRepository,
 ) : ProxyController {
 
     override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
@@ -66,7 +66,7 @@ class ProxyControllerImpl @Inject constructor(
         PlayerDisconnectRequestHandler(
             request,
             this.onlineCountUpdater,
-            this.igniteCloudPlayerRepository
+            this.distributedRepository
         ).handler()
     }
 

@@ -52,7 +52,7 @@ spec:
 apiVersion: v1
 kind: Service
 metadata:
-  name: ignite
+  name: distribution
 spec:
   selector:
     app: simplecloud

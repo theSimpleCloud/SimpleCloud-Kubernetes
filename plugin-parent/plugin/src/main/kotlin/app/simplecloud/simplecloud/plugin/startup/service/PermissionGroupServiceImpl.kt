@@ -38,12 +38,12 @@ import com.google.inject.Singleton
  */
 @Singleton
 class PermissionGroupServiceImpl @Inject constructor(
-    private val igniteRepository: DistributedPermissionGroupRepository,
+    private val distributedRepository: DistributedPermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
-) : AbstractPermissionGroupService(igniteRepository, groupFactory, permissionFactory) {
+) : AbstractPermissionGroupService(distributedRepository, groupFactory, permissionFactory) {
 
 
     private val deleteMessageChannel = internalMessageChannelProvider.getInternalDeletePermissionGroupChannel()

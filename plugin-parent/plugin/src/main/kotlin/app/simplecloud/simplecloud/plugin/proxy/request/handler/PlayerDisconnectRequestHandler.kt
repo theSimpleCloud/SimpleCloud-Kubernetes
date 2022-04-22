@@ -27,10 +27,10 @@ import kotlinx.coroutines.launch
 class PlayerDisconnectRequestHandler(
     private val request: PlayerDisconnectRequest,
     private val onlineCountUpdater: OnlineCountUpdater,
-    private val igniteCloudPlayerRepository: DistributedCloudPlayerRepository
+    private val distributedRepository: DistributedCloudPlayerRepository
 ) {
     fun handler() {
-        this.igniteCloudPlayerRepository.remove(request.connection.uniqueId)
+        this.distributedRepository.remove(request.connection.uniqueId)
         CloudScope.launch {
             onlineCountUpdater.updateSelfOnlineCount()
         }

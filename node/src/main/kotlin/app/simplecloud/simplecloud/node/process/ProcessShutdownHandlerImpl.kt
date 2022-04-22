@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager
 class ProcessShutdownHandlerImpl @Inject constructor(
     @Assisted private val process: CloudProcess,
     private val containerFactory: Container.Factory,
-    private val igniteCloudProcessRepository: DistributedCloudProcessRepository
+    private val distributedCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler {
 
     override suspend fun shutdownProcess() {
@@ -56,7 +56,7 @@ class ProcessShutdownHandlerImpl @Inject constructor(
     }
 
     private fun deleteProcessInCluster() {
-        this.igniteCloudProcessRepository.remove(this.process.getName())
+        this.distributedCloudProcessRepository.remove(this.process.getName())
     }
 
     companion object {

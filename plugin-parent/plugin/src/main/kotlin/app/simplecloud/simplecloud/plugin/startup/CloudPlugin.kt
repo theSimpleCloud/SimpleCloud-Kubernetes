@@ -53,7 +53,7 @@ class CloudPlugin(
     }
 
     private fun startDistribution(): Distribution {
-        val nodeAddress = Address.fromIpString("ignite:1670")
+        val nodeAddress = Address.fromIpString("distribution:1670")
         return this.distributionFactory.createClient(nodeAddress)
     }
 

@@ -51,7 +51,7 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     private val injector: Injector,
-    private val igniteRepository: DistributedOnlineCountStrategyRepository,
+    private val distributedRepository: DistributedOnlineCountStrategyRepository,
     private val mongoRepository: MongoOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory
 ) : InternalNodeProcessOnlineCountStrategyService {
@@ -65,19 +65,19 @@ class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     }
 
     override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
-        val configuration = igniteRepository.find(name).await()
+        val configuration = distributedRepository.find(name).await()
         return@future factory.create(configuration)
     }
 
     override fun findAll(): CompletableFuture<List<ProcessesOnlineCountStrategy>> = CloudScope.future {
-        val configurations = igniteRepository.findAll().await()
+        val configurations = distributedRepository.findAll().await()
         return@future configurations.map { factory.create(it) }
     }
 
     override fun findByProcessGroupName(
         name: String
     ): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
-        val foundStrategies = igniteRepository.findByTargetProcessGroup(name).await()
+        val foundStrategies = distributedRepository.findByTargetProcessGroup(name).await()
         if (foundStrategies.isEmpty()) return@future DefaultProcessesOnlineCountStrategy
         return@future factory.create(foundStrategies.first())
     }
@@ -101,13 +101,13 @@ class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     }
 
     override suspend fun updateStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration) {
-        this.igniteRepository.save(configuration.name, configuration).await()
+        this.distributedRepository.save(configuration.name, configuration).await()
         saveToDatabase(configuration)
         checkProcessOnlineCount()
     }
 
     override suspend fun deleteStrategyInternal(strategy: ProcessesOnlineCountStrategy) {
-        this.igniteRepository.remove(strategy.getName())
+        this.distributedRepository.remove(strategy.getName())
         deleteStrategyFromDatabase(strategy)
         checkProcessOnlineCount()
     }

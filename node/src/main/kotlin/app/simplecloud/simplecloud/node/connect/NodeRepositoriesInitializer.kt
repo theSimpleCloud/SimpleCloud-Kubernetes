@@ -37,7 +37,7 @@ class NodeRepositoriesInitializer @Inject constructor(
 ) {
 
     fun initializeRepositories() {
-        logger.info("Initializing Ignite Repositories")
+        logger.info("Initializing Distributed Repositories")
         initGroups()
         initPermissionGroups()
         initOnlineCountStrategies()

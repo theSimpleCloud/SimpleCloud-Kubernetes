@@ -126,15 +126,15 @@ class DistributedQueryHandlerImpl @Inject constructor(
     }
 
     private fun handleResponse(transferObject: DistributionDataTransferObject) {
-        val igniteQuery = getIgniteQueryByMessageId(transferObject.messageId) ?: return
+        val distributedQuery = getDistributedQueryByMessageId(transferObject.messageId) ?: return
         if (transferObject.message.isSuccess) {
-            igniteQuery.future.complete(transferObject.message.getOrThrow())
+            distributedQuery.future.complete(transferObject.message.getOrThrow())
         } else {
-            igniteQuery.future.completeExceptionally(transferObject.message.exceptionOrNull())
+            distributedQuery.future.completeExceptionally(transferObject.message.exceptionOrNull())
         }
     }
 
-    private fun getIgniteQueryByMessageId(messageId: UUID): DistributedQuery? {
+    private fun getDistributedQueryByMessageId(messageId: UUID): DistributedQuery? {
         return this.queries.firstOrNull { it.queryId == messageId }
     }
 

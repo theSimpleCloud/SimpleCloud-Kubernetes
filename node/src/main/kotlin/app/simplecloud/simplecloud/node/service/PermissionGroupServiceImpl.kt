@@ -38,13 +38,13 @@ import com.google.inject.Singleton
 @Singleton
 class PermissionGroupServiceImpl @Inject constructor(
     private val mongoRepository: MongoPermissionGroupRepository,
-    private val igniteRepository: DistributedPermissionGroupRepository,
+    private val distributedRepository: DistributedPermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
-) : AbstractPermissionGroupService(igniteRepository, groupFactory, permissionFactory) {
+) : AbstractPermissionGroupService(distributedRepository, groupFactory, permissionFactory) {
 
     override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
-        this.igniteRepository.save(configuration.name, configuration).await()
+        this.distributedRepository.save(configuration.name, configuration).await()
         saveToDatabase(configuration)
     }
 
@@ -54,7 +54,7 @@ class PermissionGroupServiceImpl @Inject constructor(
     }
 
     override suspend fun deleteGroupInternal(group: PermissionGroup) {
-        this.igniteRepository.remove(group.getName())
+        this.distributedRepository.remove(group.getName())
         deleteGroupFromDatabase(group)
     }
 
