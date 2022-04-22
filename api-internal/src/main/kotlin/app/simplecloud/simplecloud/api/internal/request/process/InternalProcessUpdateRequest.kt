@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.internal.request.process
 
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
-import java.util.*
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 
 /**
  * Date: 05.01.22
@@ -34,9 +34,9 @@ import java.util.*
 interface InternalProcessUpdateRequest : ProcessUpdateRequest {
 
     /**
-     * Sets the ignite id of the process to update
+     * Sets the distribution component of the process to update
      */
-    fun setIgniteId(id: UUID): InternalProcessUpdateRequest
+    fun setDistributionComponent(distributionComponent: DistributionComponent): InternalProcessUpdateRequest
 
     /**
      * Sets the state of the process to update

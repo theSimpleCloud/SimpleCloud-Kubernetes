@@ -18,14 +18,14 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import app.simplecloud.simplecloud.api.impl.service.DefaultNodeService
+import app.simplecloud.simplecloud.distribution.api.Distribution
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
 @Singleton
 class NodeServiceImpl @Inject constructor(
-    igniteRepository: IgniteNodeRepository
+    distribution: Distribution
 ) : DefaultNodeService(
-    igniteRepository
+    distribution
 )

@@ -59,7 +59,7 @@ class VirtualCluster(
         return this.servers.map { it.port }
     }
 
-    fun sendMessage(sender: NetworkComponent, message: Any) {
+    fun sendMessage(sender: DistributionComponent, message: Any) {
         this.getAllDistributions().forEach { it.messageManager.onReceive(message, sender) }
     }
 
@@ -67,7 +67,7 @@ class VirtualCluster(
         return this.servers.union(this.clients)
     }
 
-    fun sendMessage(sender: NetworkComponent, message: Any, receiver: NetworkComponent) {
+    fun sendMessage(sender: DistributionComponent, message: Any, receiver: DistributionComponent) {
         val receiverDistribution = getAllDistributions().firstOrNull { it.getSelfComponent() == receiver }
         receiverDistribution?.messageManager?.onReceive(message, sender)
     }

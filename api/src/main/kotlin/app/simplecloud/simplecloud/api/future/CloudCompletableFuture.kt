@@ -59,7 +59,7 @@ class CloudCompletableFuture<T> : CompletableFuture<T>() {
         return appendExceptionally(future)
     }
 
-    override fun <U : Any?> thenApplyAsync(fn: Function<in T, out U>, executor: Executor): CloudCompletableFuture<U> {
+    override fun <U : Any?> thenApplyAsync(fn: Function<in T?, out U>, executor: Executor): CloudCompletableFuture<U> {
         val future = super.thenApplyAsync(fn, executor)
         return appendExceptionally(future)
     }
@@ -332,11 +332,11 @@ class CloudCompletableFuture<T> : CompletableFuture<T>() {
             return asyncRunStage(ASYNC_POOL, function)
         }
 
-        fun <U> supplyAsync(supplier: Supplier<U?>): CloudCompletableFuture<U?> {
+        fun <U> supplyAsync(supplier: Supplier<U>): CloudCompletableFuture<U> {
             return asyncSupplyStage(ASYNC_POOL, supplier)
         }
 
-        fun <U> supplyAsync(function: () -> U?): CloudCompletableFuture<U?> {
+        fun <U> supplyAsync(function: () -> U): CloudCompletableFuture<U> {
             return asyncSupplyStage(ASYNC_POOL, function)
         }
 

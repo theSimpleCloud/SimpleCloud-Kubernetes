@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.distibution.hazelcast
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.ClientComponent
-import app.simplecloud.simplecloud.distribution.api.NetworkComponent
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
 import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.config.Config
@@ -50,7 +50,7 @@ class HazelCastServerDistribution(
         return this.hazelCast
     }
 
-    override fun getSelfComponent(): NetworkComponent {
+    override fun getSelfComponent(): DistributionComponent {
         return this.selfComponent
     }
 

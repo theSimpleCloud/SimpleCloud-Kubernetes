@@ -18,11 +18,12 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.impl.node.NodeImpl
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.service.NodeService
-import java.util.*
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -32,22 +33,27 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 open class DefaultNodeService(
-    private val igniteRepository: IgniteNodeRepository
+    private val distribution: Distribution
 ) : NodeService {
 
     override fun findAll(): CompletableFuture<List<Node>> {
-        val completableFuture = this.igniteRepository.findAll()
-        return completableFuture.thenApply { list -> list.map { NodeImpl(it) } }
+        return CloudCompletableFuture.supplyAsync {
+            this.distribution.getServers().map { NodeImpl(it) }
+        }
     }
 
-    override fun findByUniqueId(uniqueId: UUID): CompletableFuture<Node> {
-        val completableFuture = this.igniteRepository.find(uniqueId)
-        return completableFuture.thenApply { NodeImpl(it) }
+    override fun findByDistributionComponent(component: DistributionComponent): CompletableFuture<Node> {
+        return CloudCompletableFuture.supplyAsync {
+            val registeredComponent = this.distribution.getServers().first { it == component }
+            return@supplyAsync NodeImpl(registeredComponent)
+        }
     }
 
     override fun findFirst(): CompletableFuture<Node> {
-        val future = this.igniteRepository.findFirst()
-        return future.thenApply { NodeImpl(it) }
+        return CloudCompletableFuture.supplyAsync {
+            val component = this.distribution.getServers().first()
+            return@supplyAsync NodeImpl(component)
+        }
     }
 
 }

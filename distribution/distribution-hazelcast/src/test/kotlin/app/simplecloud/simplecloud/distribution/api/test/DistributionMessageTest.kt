@@ -59,7 +59,7 @@ class DistributionMessageTest {
         var messageReceived = false
         messageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: NetworkComponent) {
+            override fun messageReceived(message: Any, sender: DistributionComponent) {
                 messageReceived = true
             }
 
@@ -77,7 +77,7 @@ class DistributionMessageTest {
         var received = 0
         clientMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: NetworkComponent) {
+            override fun messageReceived(message: Any, sender: DistributionComponent) {
                 received++
             }
 
@@ -85,7 +85,7 @@ class DistributionMessageTest {
         val serverMessageManager = server!!.getMessageManager()
         serverMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: NetworkComponent) {
+            override fun messageReceived(message: Any, sender: DistributionComponent) {
                 received++
             }
 
@@ -103,7 +103,7 @@ class DistributionMessageTest {
         var received = 0
         clientMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: NetworkComponent) {
+            override fun messageReceived(message: Any, sender: DistributionComponent) {
                 received++
             }
 
@@ -111,7 +111,7 @@ class DistributionMessageTest {
         val serverMessageManager = server!!.getMessageManager()
         serverMessageManager.setMessageListener(object : MessageListener {
 
-            override fun messageReceived(message: Any, sender: NetworkComponent) {
+            override fun messageReceived(message: Any, sender: DistributionComponent) {
                 received++
             }
 

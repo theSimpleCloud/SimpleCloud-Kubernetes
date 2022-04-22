@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.impl.player
 
 import app.simplecloud.simplecloud.api.player.PlayerConnection
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import java.util.*
 
 /**

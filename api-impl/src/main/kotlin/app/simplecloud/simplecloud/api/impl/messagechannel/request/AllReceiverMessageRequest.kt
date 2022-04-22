@@ -19,14 +19,14 @@
 package app.simplecloud.simplecloud.api.impl.messagechannel.request
 
 import app.simplecloud.simplecloud.api.future.unitFuture
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
 import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
 import java.util.concurrent.CompletableFuture
 
 class AllReceiverMessageRequest(
     private val topic: String,
     private val message: Any,
-    private val queryHandler: IgniteQueryHandler
+    private val queryHandler: DistributedQueryHandler
 ) : MessageRequest<Unit> {
 
     override fun submit(): CompletableFuture<Unit> {

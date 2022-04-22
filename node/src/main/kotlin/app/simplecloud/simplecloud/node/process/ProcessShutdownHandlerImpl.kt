@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
@@ -37,7 +37,7 @@ import org.apache.logging.log4j.LogManager
 class ProcessShutdownHandlerImpl @Inject constructor(
     @Assisted private val process: CloudProcess,
     private val containerFactory: Container.Factory,
-    private val igniteCloudProcessRepository: IgniteCloudProcessRepository
+    private val igniteCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler {
 
     override suspend fun shutdownProcess() {

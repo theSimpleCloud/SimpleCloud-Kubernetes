@@ -18,5 +18,6 @@
 
 
 dependencies {
+    api(project(":distribution:distribution-api"))
     api("net.kyori:adventure-api:4.10.1")
 }

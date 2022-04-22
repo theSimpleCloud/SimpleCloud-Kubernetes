@@ -19,15 +19,10 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteNodeRepository
-import app.simplecloud.simplecloud.api.impl.util.ClusterKey
-import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
-import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
-import app.simplecloud.simplecloud.node.connect.clusterkey.ClusterKeyEntity
-import app.simplecloud.simplecloud.node.repository.mongo.MongoSingleObjectRepository
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
@@ -36,8 +31,6 @@ import app.simplecloud.simplecloud.restserver.base.RestServer
 import com.google.inject.Injector
 import dev.morphia.Datastore
 import kotlinx.coroutines.runBlocking
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 import javax.inject.Inject
@@ -45,36 +38,24 @@ import javax.inject.Inject
 class NodeClusterConnect @Inject constructor(
     private val injector: Injector,
     private val datastore: Datastore,
+    private val distributionFactory: DistributionFactory
 ) {
 
-    private val nodeBindAddress = Address.fromIpString("127.0.0.1:1670")
+    private val nodeBindPort = 1670
 
     fun connect(){
         logger.info("Connecting to cluster...")
-        val clusterKey = loadClusterKey()
-        val ignite = startIgnite(clusterKey)
-        val finalInjector = createFinalInjector(ignite, clusterKey)
+        val distribution = startDistribution()
+        val finalInjector = createFinalInjector(distribution)
         startRestServer(finalInjector)
         registerMessageChannels(finalInjector)
-        writeSelfNodeInRepository(finalInjector, ignite)
-        checkForFirstNodeInCluster(finalInjector, ignite)
+        checkForFirstNodeInCluster(finalInjector, distribution)
         checkOnlineProcesses(finalInjector)
     }
 
     private fun registerMessageChannels(injector: Injector){
         val messageChannelsInitializer = injector.getInstance(MessageChannelsInitializer::class.java)
         messageChannelsInitializer.initializeMessageChannels()
-    }
-
-    private fun writeSelfNodeInRepository(injector: Injector, ignite: Ignite) {
-        logger.info("Writing Self-Node into Cluster-Cache")
-        SelfNodeWriter(
-            injector.getInstance(IgniteNodeRepository::class.java),
-            NodeConfiguration(
-                this.nodeBindAddress,
-                ignite.cluster().localNode().id(),
-            )
-        ).writeSelfNode()
     }
 
     private fun checkOnlineProcesses(injector: Injector) {
@@ -85,8 +66,8 @@ class NodeClusterConnect @Inject constructor(
         }
     }
 
-    private fun checkForFirstNodeInCluster(injector: Injector, ignite: Ignite) {
-        if (ignite.cluster().nodes().size == 1) {
+    private fun checkForFirstNodeInCluster(injector: Injector, distribution: Distribution) {
+        if (distribution.getServers().size == 1) {
             val nodeRepositoriesInitializer = injector.getInstance(NodeRepositoriesInitializer::class.java)
             nodeRepositoriesInitializer.initializeRepositories()
         }
@@ -96,9 +77,9 @@ class NodeClusterConnect @Inject constructor(
         return injector.getInstance(RestServerStartTask::class.java).run()
     }
 
-    private fun createFinalInjector(ignite: Ignite, clusterKey: ClusterKey): Injector {
+    private fun createFinalInjector(distribution: Distribution): Injector {
         val cloudAPIBinderModule = CloudAPIBinderModule(
-            ignite,
+            distribution,
             NodeServiceImpl::class.java,
             CloudProcessServiceImpl::class.java,
             CloudProcessGroupServiceImpl::class.java,
@@ -107,28 +88,14 @@ class NodeClusterConnect @Inject constructor(
         )
         return injector.createChildInjector(
             NodeBinderModule(),
-            cloudAPIBinderModule,
-            SingleInstanceBinderModule(ClusterKey::class.java, clusterKey)
+            cloudAPIBinderModule
         )
     }
 
-    private fun startIgnite(clusterKey: ClusterKey): Ignite {
+    private fun startDistribution(): Distribution {
         val addresses = getOtherNodesAddressesToConnectTo()
         logger.info("Connecting to {}", addresses)
-        val securityCredentials = SecurityCredentials(clusterKey.login, clusterKey.password)
-        val igniteBuilder = IgniteBuilder(this.nodeBindAddress, false, securityCredentials)
-            .withAddressesToConnectTo(*addresses.toTypedArray())
-        return igniteBuilder.start()
-    }
-
-    private fun loadClusterKey(): ClusterKey {
-        val clusterKeyRepo = MongoSingleObjectRepository(
-            this.datastore,
-            ClusterKeyEntity::class.java,
-            ClusterKeyEntity.KEY
-        )
-        val clusterKeyEntity = clusterKeyRepo.loadObject().join()
-        return ClusterKey(clusterKeyEntity.login, clusterKeyEntity.password)
+        return this.distributionFactory.createServer(this.nodeBindPort, addresses)
     }
 
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {

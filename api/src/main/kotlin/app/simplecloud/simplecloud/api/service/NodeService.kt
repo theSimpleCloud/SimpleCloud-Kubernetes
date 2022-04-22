@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.service
 
 import app.simplecloud.simplecloud.api.node.Node
-import java.util.*
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -36,9 +36,9 @@ interface NodeService : Service {
     fun findAll(): CompletableFuture<List<Node>>
 
     /**
-     * Returns the node found by the specified [uniqueId]
+     * Returns the node found by the specified [component]
      */
-    fun findByUniqueId(uniqueId: UUID): CompletableFuture<Node>
+    fun findByDistributionComponent(component: DistributionComponent): CompletableFuture<Node>
 
     /**
      * Returns the first node found

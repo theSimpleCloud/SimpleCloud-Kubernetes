@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.distibution.hazelcast
 
-import app.simplecloud.simplecloud.distribution.api.NetworkComponent
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 
 /**
  * Date: 18.04.22
@@ -27,6 +27,6 @@ import app.simplecloud.simplecloud.distribution.api.NetworkComponent
  *
  */
 data class HazelCastPacket(
-    val sender: NetworkComponent,
+    val sender: DistributionComponent,
     val message: Any
 ) : java.io.Serializable

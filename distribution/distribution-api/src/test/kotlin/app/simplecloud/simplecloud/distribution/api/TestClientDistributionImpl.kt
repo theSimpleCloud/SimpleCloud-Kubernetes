@@ -31,7 +31,7 @@ class TestClientDistributionImpl(
 
     override val messageManager: TestMessageManager = TestMessageManager(this.selfComponent, this.virtualCluster)
 
-    override fun getSelfComponent(): NetworkComponent {
+    override fun getSelfComponent(): DistributionComponent {
         return this.selfComponent
     }
 

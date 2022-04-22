@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
-import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
@@ -40,8 +39,7 @@ class ProcessStarterImpl @Inject constructor(
     private val processFactory: CloudProcessFactory,
     private val containerFactory: Container.Factory,
     private val kubeVolumeClaimFactory: KubeVolumeClaim.Factory,
-    private val kubeServiceFactory: KubeService.Factory,
-    private val clusterKey: ClusterKey
+    private val kubeServiceFactory: KubeService.Factory
 ) : ProcessStarter {
 
     override suspend fun startProcess(): CloudProcess {
@@ -64,8 +62,7 @@ class ProcessStarterImpl @Inject constructor(
             process,
             this.containerFactory,
             this.kubeVolumeClaimFactory,
-            this.kubeServiceFactory,
-            this.clusterKey
+            this.kubeServiceFactory
         ).startProcess().exceptionally { UncaughtExceptions.handle(it) }
     }
 

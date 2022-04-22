@@ -37,7 +37,7 @@ import java.util.concurrent.ExecutionException
  * Creates a not nullable future
  */
 fun <T> CompletableFuture<T?>.nonNull(exception: Exception = CompletedWithNullException()): CompletableFuture<T> {
-    return this.thenApply { it ?: throw exception }
+    return this.thenApply { it }
 }
 
 /**

@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.service
 
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupDeleteRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
@@ -37,17 +37,17 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  */
 abstract class AbstractCloudProcessGroupService(
-    private val igniteRepository: IgniteCloudProcessGroupRepository,
+    private val distributedRepository: DistributedCloudProcessGroupRepository,
     private val processGroupFactory: CloudProcessGroupFactory
 ) : InternalCloudProcessGroupService {
 
     override fun findByName(name: String): CompletableFuture<CloudProcessGroup> {
-        val completableFuture = this.igniteRepository.find(name)
+        val completableFuture = this.distributedRepository.find(name)
         return completableFuture.thenApply { this.processGroupFactory.create(it) }
     }
 
     override fun findAll(): CompletableFuture<List<CloudProcessGroup>> {
-        val completableFuture = this.igniteRepository.findAll()
+        val completableFuture = this.distributedRepository.findAll()
         return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it) } }
     }
 

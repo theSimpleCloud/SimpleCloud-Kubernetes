@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.plugin.proxy
 
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
@@ -45,7 +45,7 @@ class ProxyControllerImpl @Inject constructor(
     private val processGroupService: CloudProcessGroupService,
     private val playerFactory: CloudPlayerFactory,
     private val onlineCountUpdater: OnlineCountUpdater,
-    private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository,
+    private val igniteCloudPlayerRepository: DistributedCloudPlayerRepository,
 ) : ProxyController {
 
     override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {

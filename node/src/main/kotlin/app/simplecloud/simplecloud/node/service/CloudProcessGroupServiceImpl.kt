@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.service
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
@@ -32,21 +32,21 @@ import com.google.inject.Singleton
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
     processGroupFactory: CloudProcessGroupFactory,
-    private val igniteRepository: IgniteCloudProcessGroupRepository,
+    private val distributedRepository: DistributedCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
     private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
 ) : AbstractCloudProcessGroupService(
-    igniteRepository, processGroupFactory
+    distributedRepository, processGroupFactory
 ) {
 
     override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
-        this.igniteRepository.save(group.getName(), group.toConfiguration()).await()
+        this.distributedRepository.save(group.getName(), group.toConfiguration()).await()
         this.nodeProcessOnlineStrategyService.checkProcessOnlineCount()
         saveToDatabase(group)
     }
 
     override suspend fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.igniteRepository.remove(group.getName())
+        this.distributedRepository.remove(group.getName())
         deleteGroupFromDatabase(group)
     }
 

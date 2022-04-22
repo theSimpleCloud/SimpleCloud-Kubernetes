@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.node.service
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
@@ -35,12 +35,12 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: CloudProcessFactory,
-    igniteRepository: IgniteCloudProcessRepository,
+    distributedRepository: DistributedCloudProcessRepository,
     private val processStarterFactory: ProcessStarter.Factory,
     private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
     private val containerFactory: Container.Factory
 ) : AbstractCloudProcessService(
-    processFactory, igniteRepository
+    processFactory, distributedRepository
 ) {
     override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
         return InternalProcessStartHandler(configuration, this, this.processStarterFactory)

@@ -20,5 +20,5 @@
 dependencies {
     api(project(":api"))
     api(project(":api-internal"))
-    implementation("org.apache.ignite:ignite-core:2.12.0")
+    api(project(":distribution:distribution-api"))
 }

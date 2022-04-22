@@ -89,7 +89,7 @@ class TestCacheImpl<K, V>(
     }
 
     override fun distributedQuery(predicate: Predicate<K, V>): Collection<V> {
-        return this.entries.filter { predicate.apply(it.key to it.value) }.map { it.value }
+        return this.entries.filter { predicate.apply(it.key, it.value) }.map { it.value }
     }
 
 }

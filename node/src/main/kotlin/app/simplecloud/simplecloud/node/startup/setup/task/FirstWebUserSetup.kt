@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfig
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
 import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody

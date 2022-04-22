@@ -18,20 +18,20 @@
 
 package app.simplecloud.simplecloud.distibution.hazelcast
 
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.MessageListener
 import app.simplecloud.simplecloud.distribution.api.MessageManager
-import app.simplecloud.simplecloud.distribution.api.NetworkComponent
 import com.hazelcast.core.HazelcastInstance
 import com.hazelcast.topic.ITopic
 
 class HazelCastMessageManager(
-    private val selfComponent: NetworkComponent,
+    private val selfComponent: DistributionComponent,
     private val hazelCast: HazelcastInstance
 ) : MessageManager {
 
     @Volatile
     private var messageListener: MessageListener = object : MessageListener {
-        override fun messageReceived(message: Any, sender: NetworkComponent) {
+        override fun messageReceived(message: Any, sender: DistributionComponent) {
         }
     }
 
@@ -45,8 +45,8 @@ class HazelCastMessageManager(
             .publish(HazelCastPacket(this.selfComponent, any))
     }
 
-    override fun sendMessage(any: Any, receiver: NetworkComponent) {
-        this.hazelCast.getTopic<HazelCastPacket>(receiver.getUniqueId().toString())
+    override fun sendMessage(any: Any, receiver: DistributionComponent) {
+        this.hazelCast.getTopic<HazelCastPacket>(receiver.getDistributionId().toString())
             .publish(HazelCastPacket(this.selfComponent, any))
     }
 
@@ -55,7 +55,7 @@ class HazelCastMessageManager(
     }
 
     private fun createAddressedMessageListener() {
-        val topic = this.hazelCast.getTopic<HazelCastPacket>(this.selfComponent.getUniqueId().toString())
+        val topic = this.hazelCast.getTopic<HazelCastPacket>(this.selfComponent.getDistributionId().toString())
         addListenerToTopic(topic)
     }
 

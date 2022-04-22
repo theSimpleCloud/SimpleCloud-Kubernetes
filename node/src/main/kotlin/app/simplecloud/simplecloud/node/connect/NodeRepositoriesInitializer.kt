@@ -18,9 +18,9 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
-import app.simplecloud.simplecloud.node.repository.ignite.IgniteOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
 import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.MongoOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.permission.MongoPermissionGroupRepository
@@ -28,11 +28,11 @@ import com.google.inject.Inject
 import org.apache.logging.log4j.LogManager
 
 class NodeRepositoriesInitializer @Inject constructor(
-    private val igniteGroupRepository: IgniteCloudProcessGroupRepository,
+    private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
     private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
-    private val ignitePermissionGroupRepository: IgnitePermissionGroupRepository,
+    private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,
     private val mongoPermissionGroupRepository: MongoPermissionGroupRepository,
-    private val igniteOnlineCountStrategyRepository: IgniteOnlineCountStrategyRepository,
+    private val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
     private val mongoOnlineCountStrategyRepository: MongoOnlineCountStrategyRepository
 ) {
 
@@ -48,7 +48,7 @@ class NodeRepositoriesInitializer @Inject constructor(
         logger.info("Found OnlineCountStrategies: {}", entities.map { it.name })
         val configurations = entities.map { it.toConfiguration() }
         for (config in configurations) {
-            this.igniteOnlineCountStrategyRepository.save(config.name, config).join()
+            this.distributedOnlineCountStrategyRepository.save(config.name, config).join()
         }
     }
 
@@ -57,7 +57,7 @@ class NodeRepositoriesInitializer @Inject constructor(
         logger.info("Found PermissionGroups: {}", groups.map { it.name })
         val configurations = groups.map { it.toConfiguration() }
         for (config in configurations) {
-            this.ignitePermissionGroupRepository.save(config.name, config).join()
+            this.distributedPermissionGroupRepository.save(config.name, config).join()
         }
     }
 
@@ -66,7 +66,7 @@ class NodeRepositoriesInitializer @Inject constructor(
         logger.info("Found Groups: {}", groups.map { it.name })
         val groupConfigurations = groups.map { it.toConfiguration() }
         for (config in groupConfigurations) {
-            this.igniteGroupRepository.save(config.name, config).join()
+            this.distributedGroupRepository.save(config.name, config).join()
         }
     }
 

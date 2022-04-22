@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.distribution.api
 
 interface MessageListener {
 
-    fun messageReceived(message: Any, sender: NetworkComponent)
+    fun messageReceived(message: Any, sender: DistributionComponent)
 
 
 }

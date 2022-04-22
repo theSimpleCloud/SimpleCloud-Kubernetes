@@ -103,7 +103,7 @@ class HazelCastCache<K, V>(
     }
 
     override fun distributedQuery(predicate: Predicate<K, V>): Collection<V> {
-        return this.hazelMap.values { predicate.apply(it.key to it.value) }
+        return this.hazelMap.values { predicate.apply(it.key, it.value) }
     }
 
 }

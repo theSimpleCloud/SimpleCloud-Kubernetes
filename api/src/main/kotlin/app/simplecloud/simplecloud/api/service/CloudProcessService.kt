@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequ
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -61,9 +62,9 @@ interface CloudProcessService : Service {
     fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess>
 
     /**
-     * Returns the process found by the specified [igniteId]
+     * Returns the process found by the specified [component]
      */
-    fun findByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess>
+    fun findByDistributionComponent(component: DistributionComponent): CompletableFuture<CloudProcess>
 
     /**
      * Creates a request to start a process

@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
 import app.simplecloud.simplecloud.plugin.proxy.request.PlayerDisconnectRequest
 import kotlinx.coroutines.launch
@@ -27,7 +27,7 @@ import kotlinx.coroutines.launch
 class PlayerDisconnectRequestHandler(
     private val request: PlayerDisconnectRequest,
     private val onlineCountUpdater: OnlineCountUpdater,
-    private val igniteCloudPlayerRepository: IgniteCloudPlayerRepository
+    private val igniteCloudPlayerRepository: DistributedCloudPlayerRepository
 ) {
     fun handler() {
         this.igniteCloudPlayerRepository.remove(request.connection.uniqueId)

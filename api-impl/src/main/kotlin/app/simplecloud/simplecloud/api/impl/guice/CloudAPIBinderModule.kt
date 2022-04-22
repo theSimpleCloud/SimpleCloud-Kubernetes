@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.impl.guice
 
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandlerImpl
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionImpl
@@ -50,9 +50,9 @@ import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.service.*
+import app.simplecloud.simplecloud.distribution.api.Distribution
 import com.google.inject.AbstractModule
 import com.google.inject.assistedinject.FactoryModuleBuilder
-import org.apache.ignite.Ignite
 
 /**
  * Created by IntelliJ IDEA.
@@ -61,7 +61,7 @@ import org.apache.ignite.Ignite
  * @author Frederick Baier
  */
 class CloudAPIBinderModule(
-    private val igniteInstance: Ignite,
+    private val distribution: Distribution,
     private val nodeServiceClass: Class<out NodeService>,
     private val cloudProcessServiceClass: Class<out InternalCloudProcessService>,
     private val cloudProcessGroupServiceClass: Class<out InternalCloudProcessGroupService>,
@@ -70,7 +70,7 @@ class CloudAPIBinderModule(
 ) : AbstractModule() {
 
     override fun configure() {
-        bind(Ignite::class.java).toInstance(igniteInstance)
+        bind(Distribution::class.java).toInstance(distribution)
 
         install(
             FactoryModuleBuilder()
@@ -118,7 +118,7 @@ class CloudAPIBinderModule(
         bind(CloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
         bind(InternalCloudProcessGroupService::class.java).to(this.cloudProcessGroupServiceClass)
 
-        bind(IgniteQueryHandler::class.java).to(IgniteQueryHandlerImpl::class.java)
+        bind(DistributedQueryHandler::class.java).to(DistributedQueryHandlerImpl::class.java)
         bind(MessageChannelManager::class.java).to(MessageChannelManagerImpl::class.java)
         bind(InternalMessageChannelProvider::class.java).to(InternalMessageChannelProviderImpl::class.java)
 

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.messagechannel.request
 
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
 import app.simplecloud.simplecloud.api.messagechannel.MessageRequest
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import java.util.concurrent.CompletableFuture
@@ -33,7 +33,7 @@ class SingleReceiverMessageRequest<R : Any>(
     private val topic: String,
     private val message: Any,
     private val receiver: NetworkComponent,
-    private val queryHandler: IgniteQueryHandler
+    private val queryHandler: DistributedQueryHandler
 ) : MessageRequest<R> {
 
     override fun submit(): CompletableFuture<R> {

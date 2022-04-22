@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import com.google.inject.Inject
@@ -33,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 @Singleton
 class MessageChannelManagerImpl @Inject constructor(
-    private val queryHandler: IgniteQueryHandler
+    private val queryHandler: DistributedQueryHandler
 ) : MessageChannelManager {
 
     private val registeredMessageChannels = CopyOnWriteArrayList<MessageChannel<*, *>>()

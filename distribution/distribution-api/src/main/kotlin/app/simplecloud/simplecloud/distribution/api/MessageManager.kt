@@ -26,7 +26,7 @@ interface MessageManager {
 
     fun sendMessage(any: Any)
 
-    fun sendMessage(any: Any, receiver: NetworkComponent)
+    fun sendMessage(any: Any, receiver: DistributionComponent)
 
     fun setMessageListener(messageListener: MessageListener)
 

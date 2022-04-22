@@ -39,7 +39,7 @@ class TestServerDistributionImpl(
         this.servers.add(this.selfComponent)
     }
 
-    override fun getSelfComponent(): NetworkComponent {
+    override fun getSelfComponent(): DistributionComponent {
         return this.selfComponent
     }
 
@@ -55,7 +55,7 @@ class TestServerDistributionImpl(
 
     }
 
-    override fun onComponentJoin(component: NetworkComponent) {
+    override fun onComponentJoin(component: DistributionComponent) {
         super.onComponentJoin(component)
         if (component is ClientComponent)
             this.connectedClients.add(component)

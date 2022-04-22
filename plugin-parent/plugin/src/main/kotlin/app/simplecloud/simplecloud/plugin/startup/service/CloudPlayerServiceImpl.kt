@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
@@ -36,9 +36,9 @@ import java.util.concurrent.CompletableFuture
  */
 @Singleton
 class CloudPlayerServiceImpl @Inject constructor(
-    private val igniteRepository: IgniteCloudPlayerRepository,
+    private val distributedRepository: DistributedCloudPlayerRepository,
     playerFactory: CloudPlayerFactory
-) : AbstractCloudPlayerService(igniteRepository, playerFactory) {
+) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         TODO("Not yet implemented")

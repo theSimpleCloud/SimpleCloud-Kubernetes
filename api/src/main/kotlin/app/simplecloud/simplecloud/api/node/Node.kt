@@ -18,8 +18,6 @@
 
 package app.simplecloud.simplecloud.api.node
 
-import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
 
@@ -34,15 +32,5 @@ import app.simplecloud.simplecloud.api.utils.NetworkComponent
  *
  */
 interface Node : NetworkComponent, Identifiable<String> {
-
-    /**
-     * Returns the address of the node
-     */
-    fun getAddress(): Address
-
-    /**
-     * Returns the configuration of this node
-     */
-    fun toConfiguration(): NodeConfiguration
 
 }

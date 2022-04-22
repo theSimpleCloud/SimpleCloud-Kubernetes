@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.api.player
 
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.api.utils.Nameable
+import app.simplecloud.simplecloud.distribution.api.Address
 import java.util.*
 
 /**

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.player.configuration
 
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import java.util.*
 
 /**

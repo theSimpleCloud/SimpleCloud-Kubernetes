@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
@@ -38,11 +38,11 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class CloudProcessServiceImpl @Inject constructor(
     processFactory: CloudProcessFactory,
-    igniteRepository: IgniteCloudProcessRepository,
+    distributedRepository: DistributedCloudProcessRepository,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
 ) : AbstractCloudProcessService(
-    processFactory, igniteRepository
+    processFactory, distributedRepository
 ) {
 
     private val startProcessMessageChannel = internalMessageChannelProvider.getInternalStartProcessChannel()

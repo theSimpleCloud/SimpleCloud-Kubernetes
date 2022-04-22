@@ -189,7 +189,7 @@ class DistributionCacheTest {
         serverCache.put("a3", 3)
         serverCache.put("b", 4)
         serverCache.put("b1", 5)
-        val values = serverCache.distributedQuery { it.first.contains("a") }
+        val values = serverCache.distributedQuery { key, value -> key.contains("a") }
         Assertions.assertEquals(hashSetOf(1, 2, 3), values.toHashSet())
     }
 
@@ -202,7 +202,7 @@ class DistributionCacheTest {
         serverCache.put("a3", 3)
         serverCache.put("b", 4)
         serverCache.put("b1", 5)
-        val values = serverCache.distributedQuery { it.first.contains("b") }
+        val values = serverCache.distributedQuery { key, value -> key.contains("b") }
         Assertions.assertEquals(hashSetOf(4, 5), values.toHashSet())
     }
 
@@ -217,7 +217,7 @@ class DistributionCacheTest {
         serverCache.put("a3", 3)
         serverCache.put("b", 4)
         serverCache.put("b1", 5)
-        val values = clientCache.distributedQuery { it.first.contains("a") }
+        val values = clientCache.distributedQuery { key, value -> key.contains("a") }
         Assertions.assertEquals(hashSetOf(1, 2, 3), values.toHashSet())
     }
 

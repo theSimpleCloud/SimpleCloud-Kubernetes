@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
+import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.plugin.proxy.ProxyBinderModule
 import app.simplecloud.simplecloud.plugin.proxy.ProxyProcessRegisterer
 import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
@@ -30,7 +31,7 @@ import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
-    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule(this)))
+    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule(this)), HazelcastDistributionFactory())
     private val injector = cloudPlugin.injector
 
     override fun onLoad() {
@@ -48,7 +49,7 @@ class CloudBungeePlugin : Plugin() {
 
         val proxyProcessRegisterer = this.injector.getInstance(ProxyProcessRegisterer::class.java)
         proxyProcessRegisterer.registerExistingProcesses()
-        proxyProcessRegisterer.registerIgniteListener()
+        proxyProcessRegisterer.registerEntryListener()
 
         proxyServer.pluginManager.registerListener(this, this.injector.getInstance(BungeeListener::class.java))
     }

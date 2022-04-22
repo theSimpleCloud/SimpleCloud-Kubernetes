@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
@@ -31,12 +31,12 @@ import com.google.inject.Singleton
 
 @Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
-    igniteRepository: IgniteCloudProcessGroupRepository,
+    distributedRepository: DistributedCloudProcessGroupRepository,
     processGroupFactory: CloudProcessGroupFactory,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
 ) : AbstractCloudProcessGroupService(
-    igniteRepository, processGroupFactory
+    distributedRepository, processGroupFactory
 ) {
 
     private val deleteMessageChannel = internalMessageChannelProvider.getInternalDeleteGroupChannel()

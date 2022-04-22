@@ -25,17 +25,14 @@ import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
-import app.simplecloud.simplecloud.api.utils.Address
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
+import app.simplecloud.simplecloud.distribution.api.Address
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
 interface CloudProcess : NetworkComponent, Identifiable<String> {
 
-    /**
-     * Returns the unique id of the process
-     */
     fun getUniqueId(): UUID
 
     /**

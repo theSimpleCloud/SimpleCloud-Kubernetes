@@ -27,11 +27,12 @@ import java.util.*
  * @author Frederick Baier
  *
  */
-class ClientComponentImpl(
+data class ClientComponentImpl(
     private val uniqueId: UUID
 ) : ClientComponent {
 
-    override fun getUniqueId(): UUID {
+    override fun getDistributionId(): UUID {
         return this.uniqueId
     }
+
 }

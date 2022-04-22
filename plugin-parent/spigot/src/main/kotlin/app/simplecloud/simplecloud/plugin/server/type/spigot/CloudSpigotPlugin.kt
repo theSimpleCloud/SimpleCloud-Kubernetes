@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.server.type.spigot
 
+import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.plugin.server.type.spigot.guice.SpigotBinderModule
 import app.simplecloud.simplecloud.plugin.server.type.spigot.guice.SpigotListener
 import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
@@ -31,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 class CloudSpigotPlugin : JavaPlugin() {
 
-    private val cloudPlugin = CloudPlugin(SpigotBinderModule(this.server))
+    private val cloudPlugin = CloudPlugin(SpigotBinderModule(this.server), HazelcastDistributionFactory())
     private val injector = cloudPlugin.injector
 
     override fun onEnable() {

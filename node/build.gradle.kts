@@ -29,10 +29,10 @@ dependencies {
     implementation(project(":api-impl"))
     implementation(project(":api-internal"))
     implementation(project(":kubernetes"))
-    implementation(project(":distribution"))
+    implementation(project(":distribution:distribution-hazelcast"))
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.1")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.1")
+    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
+    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
 
 }
 

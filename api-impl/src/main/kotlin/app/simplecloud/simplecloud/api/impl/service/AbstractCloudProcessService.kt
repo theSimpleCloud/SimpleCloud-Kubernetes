@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.api.impl.service
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.toFutureList
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessExecuteCommandRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
@@ -34,6 +34,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequ
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -45,18 +46,18 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractCloudProcessService(
     protected val processFactory: CloudProcessFactory,
-    protected val igniteRepository: IgniteCloudProcessRepository
+    protected val distributedRepository: DistributedCloudProcessRepository
 ) : InternalCloudProcessService {
 
     override fun findAll(): CompletableFuture<List<CloudProcess>> {
-        val allProcessConfigurations = this.igniteRepository.findAll()
+        val allProcessConfigurations = this.distributedRepository.findAll()
         return allProcessConfigurations.thenApply { configuration ->
             configuration.map { this.processFactory.create(it) }
         }
     }
 
     override fun findByName(name: String): CompletableFuture<CloudProcess> {
-        val completableFuture = this.igniteRepository.find(name)
+        val completableFuture = this.distributedRepository.find(name)
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
@@ -70,22 +71,22 @@ abstract class AbstractCloudProcessService(
     }
 
     override fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
-        val processesFuture = this.igniteRepository.findProcessesByGroupName(groupName)
+        val processesFuture = this.distributedRepository.findProcessesByGroupName(groupName)
         return processesFuture.thenApply { list -> list.map { this.processFactory.create(it) } }
     }
 
     override fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
-        val completableFuture = this.igniteRepository.findProcessByUniqueId(uniqueId)
+        val completableFuture = this.distributedRepository.findProcessByUniqueId(uniqueId)
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
-    override fun findByIgniteId(igniteId: UUID): CompletableFuture<CloudProcess> {
-        val completableFuture = this.igniteRepository.findProcessByIgniteId(igniteId)
+    override fun findByDistributionComponent(component: DistributionComponent): CompletableFuture<CloudProcess> {
+        val completableFuture = this.distributedRepository.findProcessByDistributionId(component.getDistributionId())
         return completableFuture.thenApply { this.processFactory.create(it) }
     }
 
     override suspend fun updateProcessInternal(configuration: CloudProcessConfiguration) {
-        this.igniteRepository.save(configuration.getProcessName(), configuration).await()
+        this.distributedRepository.save(configuration.getProcessName(), configuration).await()
     }
 
     override fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest {

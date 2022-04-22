@@ -40,7 +40,7 @@ open class DefaultMongoRepository<I : Any, T : Any>(
     override fun findAll(): CompletableFuture<List<T>> {
         return CloudCompletableFuture.supplyAsync {
             this.datastore.find(entityClass).toList()
-        }.nonNull()
+        }
     }
 
     override fun find(identifier: I): CompletableFuture<T> {
@@ -68,7 +68,7 @@ open class DefaultMongoRepository<I : Any, T : Any>(
     override fun count(): CompletableFuture<Long> {
         return CloudCompletableFuture.supplyAsync {
             this.datastore.find(this.entityClass).count()
-        }.nonNull()
+        }
     }
 
     private fun createIdentifierQuery(identifier: I): Query<T> {

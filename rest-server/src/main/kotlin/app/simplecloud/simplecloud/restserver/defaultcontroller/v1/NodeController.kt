@@ -18,10 +18,8 @@
 
 package app.simplecloud.simplecloud.restserver.defaultcontroller.v1
 
-import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.restserver.annotation.RequestMapping
-import app.simplecloud.simplecloud.restserver.annotation.RequestPathParam
 import app.simplecloud.simplecloud.restserver.annotation.RestController
 import app.simplecloud.simplecloud.restserver.base.route.RequestType
 import app.simplecloud.simplecloud.restserver.controller.Controller
@@ -40,15 +38,9 @@ class NodeController @Inject constructor(
 ) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.node.get")
-    fun handleGetAll(): List<NodeConfiguration> {
+    fun handleGetAll(): List<UUID> {
         val processes = this.nodeService.findAll().join()
-        return processes.map { it.toConfiguration() }
-    }
-
-    @RequestMapping(RequestType.GET, "{uuid}", "web.cloud.node.get")
-    fun handleGetOne(@RequestPathParam("uuid") uuid: String): NodeConfiguration {
-        val process = this.nodeService.findByUniqueId(UUID.fromString(uuid)).join()
-        return process.toConfiguration()
+        return processes.map { it.getDistributionComponent().getDistributionId() }
     }
 
 }

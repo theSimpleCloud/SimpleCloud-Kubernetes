@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.future.flatten
 import app.simplecloud.simplecloud.api.future.isCompletedNormally
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.player.OfflineCloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
@@ -44,11 +44,11 @@ import java.util.concurrent.CompletableFuture
  */
 @Singleton
 class CloudPlayerServiceImpl @Inject constructor(
-    igniteRepository: IgniteCloudPlayerRepository,
+    distributedRepository: DistributedCloudPlayerRepository,
     playerFactory: CloudPlayerFactory,
     private val mongoCloudPlayerRepository: MongoCloudPlayerRepository,
     private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory
-) : AbstractCloudPlayerService(igniteRepository, playerFactory) {
+) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         val onlinePlayerFuture = findOnlinePlayerByName(name)

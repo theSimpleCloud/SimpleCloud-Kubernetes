@@ -19,9 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.node
 
 import app.simplecloud.simplecloud.api.node.Node
-import app.simplecloud.simplecloud.api.node.configuration.NodeConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
-import java.util.*
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,27 +28,20 @@ import java.util.*
  * @author Frederick Baier
  */
 class NodeImpl(
-    private val configuration: NodeConfiguration
+    private val distributionComponent: DistributionComponent
 ) : Node {
 
-    override fun getIgniteId(): UUID {
-        return this.configuration.igniteId
-    }
-
-    override fun getAddress(): Address {
-        return this.configuration.address
-    }
-
     override fun getName(): String {
-        return "Node-" + this.configuration.igniteId.toString()
+        return "Node-" + this.distributionComponent.getDistributionId()
+    }
+
+    override fun getDistributionComponent(): DistributionComponent {
+        return this.distributionComponent
     }
 
     override fun getIdentifier(): String {
         return this.getName()
     }
 
-    override fun toConfiguration(): NodeConfiguration {
-        return this.configuration
-    }
 
 }

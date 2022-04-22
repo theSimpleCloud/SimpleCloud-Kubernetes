@@ -30,7 +30,9 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
+import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import java.util.*
@@ -128,8 +130,10 @@ class CloudProcessImpl @Inject constructor(
         return this.configuration
     }
 
-    override fun getIgniteId(): UUID {
-        return this.configuration.igniteId ?: throw NullPointerException("Ignite id not set")
+    override fun getDistributionComponent(): DistributionComponent {
+        val distributionId = this.configuration.distributionId
+            ?: throw IllegalStateException("Process must be running")
+        return ClientComponentImpl(distributionId)
     }
 
     override fun creatExecuteCommandRequest(command: String): ProcessExecuteCommandRequest {

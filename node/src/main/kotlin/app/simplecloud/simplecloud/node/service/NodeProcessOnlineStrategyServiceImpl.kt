@@ -32,7 +32,7 @@ import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCount
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
-import app.simplecloud.simplecloud.node.repository.ignite.IgniteOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.MongoOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.OnlineCountStrategyEntity
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
@@ -51,7 +51,7 @@ import java.util.concurrent.CompletableFuture
 @Singleton
 class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     private val injector: Injector,
-    private val igniteRepository: IgniteOnlineCountStrategyRepository,
+    private val igniteRepository: DistributedOnlineCountStrategyRepository,
     private val mongoRepository: MongoOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory
 ) : InternalNodeProcessOnlineCountStrategyService {

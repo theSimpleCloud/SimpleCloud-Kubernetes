@@ -18,10 +18,11 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.impl.repository.ignite.message.CacheAction
-import app.simplecloud.simplecloud.api.impl.repository.ignite.message.IgniteCacheUpdateMessaging
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.distribution.api.EntryListener
 import com.google.inject.Inject
 
 /**
@@ -33,7 +34,7 @@ import com.google.inject.Inject
 class ProxyProcessRegisterer @Inject constructor(
     private val cloudProcessService: CloudProcessService,
     private val proxyServerRegistry: ProxyServerRegistry,
-    private val cacheUpdateMessaging: IgniteCacheUpdateMessaging,
+    private val processRepository: DistributedCloudProcessRepository,
 ) {
 
     fun registerExistingProcesses() {
@@ -41,22 +42,18 @@ class ProxyProcessRegisterer @Inject constructor(
         completableFuture.thenAccept { list -> list.forEach { registerProcess(it) } }
     }
 
-    fun registerIgniteListener() {
-        this.cacheUpdateMessaging.registerListener(
-            "cloud-processes",
-            object : IgniteCacheUpdateMessaging.Listener<String> {
-                override fun messageReceived(action: CacheAction, key: String) {
-                    handleUpdateMessage(action, key)
-                }
+    fun registerEntryListener() {
+        val entryListener = object : EntryListener<String, CloudProcessConfiguration> {
+            override fun entryUpdated(entry: Pair<String, CloudProcessConfiguration>) {
+                registerProcessByName(entry.first)
             }
-        )
-    }
 
-    private fun handleUpdateMessage(cacheAction: CacheAction, processName: String) {
-        when (cacheAction) {
-            CacheAction.UPDATE -> registerProcessByName(processName)
-            CacheAction.DELETE -> this.proxyServerRegistry.unregisterServer(processName)
+            override fun entryRemoved(entry: Pair<String, CloudProcessConfiguration>) {
+                this@ProxyProcessRegisterer.proxyServerRegistry.unregisterServer(entry.first)
+            }
+
         }
+        this.processRepository.addEntryListener(entryListener)
     }
 
     private fun registerProcessByName(processName: String) {

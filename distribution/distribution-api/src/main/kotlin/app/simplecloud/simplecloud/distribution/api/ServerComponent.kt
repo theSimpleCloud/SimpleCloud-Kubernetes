@@ -25,5 +25,5 @@ package app.simplecloud.simplecloud.distribution.api
  *
  * Represents a
  */
-interface ServerComponent : NetworkComponent {
+interface ServerComponent : DistributionComponent {
 }

@@ -31,7 +31,7 @@ interface Distribution {
      * [ClientComponent] if this is a client
      * [ServerComponent] if this is a server
      */
-    fun getSelfComponent(): NetworkComponent
+    fun getSelfComponent(): DistributionComponent
 
     /**
      * Returns all servers currently connected to the cluster

@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.impl.service
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgniteCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
@@ -34,25 +34,25 @@ import java.util.concurrent.CompletableFuture
  *
  */
 abstract class AbstractCloudPlayerService(
-    private val igniteRepository: IgniteCloudPlayerRepository,
+    private val distributedRepository: DistributedCloudPlayerRepository,
     private val playerFactory: CloudPlayerFactory
 ) : InternalCloudPlayerService {
 
     override fun findOnlinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer> {
-        return this.igniteRepository.find(uniqueId).thenApply { this.playerFactory.create(it) }
+        return this.distributedRepository.find(uniqueId).thenApply { this.playerFactory.create(it) }
     }
 
     override fun findOnlinePlayerByName(name: String): CompletableFuture<CloudPlayer> {
-        return this.igniteRepository.findByName(name).thenApply { this.playerFactory.create(it) }
+        return this.distributedRepository.findByName(name).thenApply { this.playerFactory.create(it) }
     }
 
     override fun findOnlinePlayers(): CompletableFuture<List<CloudPlayer>> {
-        val future = this.igniteRepository.findAll()
+        val future = this.distributedRepository.findAll()
         return future.thenApply { list -> list.map { this.playerFactory.create(it) } }
     }
 
     override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {
-        this.igniteRepository.save(configuration.uniqueId, configuration).await()
+        this.distributedRepository.save(configuration.uniqueId, configuration).await()
     }
 
 }

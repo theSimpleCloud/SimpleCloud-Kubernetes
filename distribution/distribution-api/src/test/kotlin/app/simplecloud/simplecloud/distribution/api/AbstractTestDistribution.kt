@@ -44,7 +44,7 @@ abstract class AbstractTestDistribution : Distribution {
         return getVirtualCluster().getOrCreateCache(name)
     }
 
-    open fun onComponentJoin(component: NetworkComponent) {
+    open fun onComponentJoin(component: DistributionComponent) {
         if (component is ServerComponent) {
             if (!this.servers.contains(component))
                 this.servers.add(component)

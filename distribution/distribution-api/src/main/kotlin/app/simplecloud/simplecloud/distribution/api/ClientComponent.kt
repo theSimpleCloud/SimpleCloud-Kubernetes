@@ -24,5 +24,5 @@ package app.simplecloud.simplecloud.distribution.api
  * @author Frederick Baier
  *
  */
-interface ClientComponent : NetworkComponent {
+interface ClientComponent : DistributionComponent {
 }

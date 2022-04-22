@@ -27,11 +27,12 @@ import java.util.*
  * @author Frederick Baier
  *
  */
-class ServerComponentImpl(
+data class ServerComponentImpl(
     private val uniqueId: UUID
 ) : ServerComponent {
 
-    override fun getUniqueId(): UUID {
+    override fun getDistributionId(): UUID {
         return this.uniqueId
     }
+
 }

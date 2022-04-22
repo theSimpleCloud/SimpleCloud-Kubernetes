@@ -25,7 +25,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessServ
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState
-import java.util.*
+import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -40,7 +40,7 @@ class ProcessUpdateRequestImpl(
 ) : InternalProcessUpdateRequest {
 
     @Volatile
-    private var igniteId: UUID? = getIgniteIdIfSet()
+    private var distributionComponent: DistributionComponent? = getDistributionComponentIfSet()
     @Volatile
     private var maxPlayers: Int = this.process.getMaxPlayers()
     @Volatile
@@ -54,8 +54,8 @@ class ProcessUpdateRequestImpl(
         return this.process
     }
 
-    override fun setIgniteId(id: UUID): InternalProcessUpdateRequest {
-        this.igniteId = id
+    override fun setDistributionComponent(distributionComponent: DistributionComponent): InternalProcessUpdateRequest {
+        this.distributionComponent = distributionComponent
         return this
     }
 
@@ -82,7 +82,7 @@ class ProcessUpdateRequestImpl(
     override fun submit(): CompletableFuture<Unit> = CloudScope.future {
         val configuration = CloudProcessConfiguration(
             process.getGroupName(),
-            process.getUniqueId(),
+            process.getDistributionComponent().getDistributionId(),
             process.getProcessNumber(),
             processState,
             visible,
@@ -93,13 +93,13 @@ class ProcessUpdateRequestImpl(
             process.isStatic(),
             process.getProcessType(),
             process.getImage().getName(),
-            igniteId
+            distributionComponent?.getDistributionId()
         )
         internalService.updateProcessInternal(configuration)
     }
 
-    private fun getIgniteIdIfSet(): UUID? {
-        return runCatching { this.process.getIgniteId() }.getOrNull()
+    private fun getDistributionComponentIfSet(): DistributionComponent? {
+        return runCatching { this.process.getDistributionComponent() }.getOrNull()
     }
 
 }

@@ -26,6 +26,6 @@ package app.simplecloud.simplecloud.distribution.api
  */
 fun interface Predicate<K, V> : java.io.Serializable {
 
-    fun apply(entry: Pair<K, V>): Boolean
+    fun apply(key: K, value: V): Boolean
 
 }

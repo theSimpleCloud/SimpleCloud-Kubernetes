@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.task.mongo.codec
 
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import org.bson.BsonReader
 import org.bson.BsonWriter
 import org.bson.codecs.Codec

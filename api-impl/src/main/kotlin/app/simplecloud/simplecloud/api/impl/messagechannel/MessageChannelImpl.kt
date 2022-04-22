@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
-import app.simplecloud.simplecloud.api.impl.ignite.IgniteQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.AllReceiverMessageRequest
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.MultipleReceiverMessageRequest
 import app.simplecloud.simplecloud.api.impl.messagechannel.request.SingleReceiverMessageRequest
@@ -36,7 +36,7 @@ import java.util.concurrent.CompletableFuture
  */
 class MessageChannelImpl<T : Any, R : Any>(
     private val name: String,
-    private val queryHandler: IgniteQueryHandler
+    private val queryHandler: DistributedQueryHandler
 ) : MessageChannel<T, R> {
 
     @Volatile

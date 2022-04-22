@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.repository.ignite.IgnitePermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
@@ -38,7 +38,7 @@ import com.google.inject.Singleton
  */
 @Singleton
 class PermissionGroupServiceImpl @Inject constructor(
-    private val igniteRepository: IgnitePermissionGroupRepository,
+    private val igniteRepository: DistributedPermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
     internalMessageChannelProvider: InternalMessageChannelProvider,

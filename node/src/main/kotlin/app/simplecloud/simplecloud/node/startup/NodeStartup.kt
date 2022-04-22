@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup
 
+import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.task.NodePreparer
 import com.google.inject.Injector
@@ -52,6 +53,7 @@ class NodeStartup(
         val task = NodeClusterConnect(
             injector,
             injector.getInstance(Datastore::class.java),
+            HazelcastDistributionFactory()
         )
         task.connect()
     }

@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.api.future.unitFuture
-import app.simplecloud.simplecloud.api.impl.util.ClusterKey
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.container.Container
@@ -35,8 +34,7 @@ class KubernetesProcessStarter(
     private val process: CloudProcess,
     private val containerFactory: Container.Factory,
     private val volumeFactory: KubeVolumeClaim.Factory,
-    private val serviceFactory: KubeService.Factory,
-    private val clusterKey: ClusterKey,
+    private val serviceFactory: KubeService.Factory
 ) {
 
     private val processLabel = Label("cloud-process", this.process.getName())
@@ -69,13 +67,12 @@ class KubernetesProcessStarter(
         //val volume = createVolumeClaim()
 
         val processUniqueIdEnvironment = createProcessIdEnvironmentVariable()
-        val clusterKeyEnvironment = createClusterKeyEnvironmentVariable()
         return ContainerSpec()
             .withContainerPort(25565)
             .withMaxMemory(this.process.getMaxMemory())
             .withLabels(this.processLabel, this.groupLabel)
             //.withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
-            .withEnvironmentVariables(clusterKeyEnvironment, processUniqueIdEnvironment)
+            .withEnvironmentVariables(processUniqueIdEnvironment)
             .withImage(this.process.getImage().getName())
     }
 
@@ -83,13 +80,6 @@ class KubernetesProcessStarter(
 
         return this.containerFactory.create(
             this.process.getName()
-        )
-    }
-
-    private fun createClusterKeyEnvironmentVariable(): ContainerSpec.EnvironmentVariable {
-        return ContainerSpec.EnvironmentVariable(
-            "CLUSTER_KEY",
-            this.clusterKey.login + ":" + this.clusterKey.password
         )
     }
 

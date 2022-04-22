@@ -19,27 +19,26 @@
 package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
-import app.simplecloud.simplecloud.api.impl.util.ClusterKey
-import app.simplecloud.simplecloud.api.utils.Address
-import app.simplecloud.simplecloud.ignite.bootstrap.IgniteBuilder
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.plugin.startup.service.*
 import com.google.inject.AbstractModule
 import com.google.inject.Guice
 import com.google.inject.Injector
-import org.apache.ignite.Ignite
-import org.apache.ignite.plugin.security.SecurityCredentials
 
 class CloudPlugin(
-    private val guiceModule: AbstractModule
+    private val guiceModule: AbstractModule,
+    private val distributionFactory: DistributionFactory
 ) {
 
     val injector: Injector
 
     init {
-        val ignite = startIgnite()
+        val distribution = startDistribution()
         val intermediateInjector = Guice.createInjector(
             CloudAPIBinderModule(
-                ignite,
+                distribution,
                 NodeServiceImpl::class.java,
                 CloudProcessServiceImpl::class.java,
                 CloudProcessGroupServiceImpl::class.java,
@@ -50,25 +49,12 @@ class CloudPlugin(
         this.injector = intermediateInjector.createChildInjector(
             this.guiceModule
         )
-        this.injector.getInstance(SelfIgniteProcessUpdater::class.java).updateProcessInIgniteBlocking()
+        this.injector.getInstance(SelfDistributedProcessUpdater::class.java).updateProcessBlocking()
     }
 
-    private fun startIgnite(): Ignite {
-        val clusterKey = getClusterKey()
+    private fun startDistribution(): Distribution {
         val nodeAddress = Address.fromIpString("ignite:1670")
-        val selfAddress = Address.fromIpString("127.0.0.1:1670")
-        val igniteBuilder = IgniteBuilder(
-            selfAddress,
-            true,
-            SecurityCredentials(clusterKey.login, clusterKey.password)
-        )
-        igniteBuilder.withAddressesToConnectTo(nodeAddress)
-        return igniteBuilder.start()
-    }
-
-    private fun getClusterKey(): ClusterKey {
-        val clusterKeyArray = System.getenv("CLUSTER_KEY").split(":")
-        return ClusterKey(clusterKeyArray[0], clusterKeyArray[1])
+        return this.distributionFactory.createClient(nodeAddress)
     }
 
 }

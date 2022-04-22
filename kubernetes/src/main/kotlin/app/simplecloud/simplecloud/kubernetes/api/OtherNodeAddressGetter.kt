@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.kubernetes.api
 
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import com.google.inject.Inject
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.openapi.models.V1Pod

@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.utils.Address
+import app.simplecloud.simplecloud.distribution.api.Address
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
 import java.util.*

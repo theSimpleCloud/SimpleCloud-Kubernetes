@@ -36,13 +36,13 @@ interface CloudProcessRepository : Repository<String, CloudProcessConfiguration>
     fun findProcessByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcessConfiguration>
 
     /**
-     * Returns the process found by the specified [igniteId]
+     * Returns the process found by the specified [distributionId]
      */
-    fun findProcessByIgniteId(igniteId: UUID): CompletableFuture<CloudProcessConfiguration>
+    fun findProcessByDistributionId(distributionId: UUID): CompletableFuture<CloudProcessConfiguration>
 
     /**
      * Returns all processes found by the specified [groupName]
      */
-    fun findProcessesByGroupName(groupName: String): CompletableFuture<List<CloudProcessConfiguration>>
+    fun findProcessesByGroupName(groupName: String): CompletableFuture<Collection<CloudProcessConfiguration>>
 
 }
