@@ -40,6 +40,11 @@ class HazelCastServerDistribution(
     private fun createHazelCastInstance(): HazelcastInstance {
         val config = Config()
         config.networkConfig.port = this.bindPort
+        config.networkConfig.join.awsConfig.isEnabled = false
+        config.networkConfig.join.kubernetesConfig.isEnabled = false
+        config.networkConfig.join.azureConfig.isEnabled = false
+
+        config.networkConfig.join.tcpIpConfig.isEnabled = true
         for (address in connectAddresses) {
             config.networkConfig.join.tcpIpConfig.addMember(address.asIpString())
         }

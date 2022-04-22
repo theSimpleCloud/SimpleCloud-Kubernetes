@@ -38,9 +38,14 @@ class HazelCastClientDistribution(
 
     private fun createHazelCastInstance(): HazelcastInstance {
         val config = ClientConfig()
+        config.classLoader = this::class.java.classLoader
         config.networkConfig.addAddress(connectAddress.asIpString())
         config.connectionStrategyConfig.reconnectMode = ClientConnectionStrategyConfig.ReconnectMode.OFF
         config.connectionStrategyConfig.connectionRetryConfig.clusterConnectTimeoutMillis = 1
+        config.networkConfig.kubernetesConfig.isEnabled = false
+        config.networkConfig.azureConfig.isEnabled = false
+        config.networkConfig.awsConfig.isEnabled = false
+        config.networkConfig.cloudConfig.isEnabled = false
         val hazelcastClient = try {
             HazelcastClient.newHazelcastClient(config)
         } catch (e: IllegalStateException) {
