@@ -19,11 +19,12 @@
 package app.simplecloud.simplecloud.node.startup.task
 
 import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
+import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
-import app.simplecloud.simplecloud.node.repository.mongo.MongoSingleObjectRepository
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
-import app.simplecloud.simplecloud.node.startup.task.mongo.MongoClientSafeStarter
-import app.simplecloud.simplecloud.node.startup.token.TokenSecretEntity
+import app.simplecloud.simplecloud.node.startup.task.mongo.DatabaseRepositoriesModule
+import app.simplecloud.simplecloud.node.startup.task.mongo.DatabaseSafeStarter
 import app.simplecloud.simplecloud.restserver.auth.AuthServiceProvider
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.base.RestServer
@@ -33,7 +34,6 @@ import app.simplecloud.simplecloud.restserver.base.service.NoAuthService
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
 import com.google.inject.Guice
 import com.google.inject.Injector
-import dev.morphia.Datastore
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -43,19 +43,19 @@ import org.apache.logging.log4j.LogManager
  * @author Frederick Baier
  */
 class NodePreparer(
-    private val startArguments: NodeStartArgumentParserMain
+    private val startArguments: NodeStartArgumentParserMain,
+    private val databaseFactory: DatabaseFactory
 ) {
 
     private val restServer = RestServerAPI.createRestServer(NoAuthService(), 8008)
     private val restSetupManager = RestSetupManager(this.restServer)
 
+    private val jwtTokenHandler = initJwtTokenHandler()
     private val injector = createInjector()
+    private val databaseRepositories = initDatabaseRepositories()
 
     fun prepare(): Injector {
         logger.info("Starting Node...")
-        val datastore = checkForMongoConnectionStringAndStartClient()
-        val jwtTokenHandler = initJwtTokenHandler(datastore)
-        val injector = createSubInjectorWithDatastoreAndTokenHandler(datastore, jwtTokenHandler)
         checkForAnyWebAccount(injector)
         setupEnd()
         logger.info("Node Startup completed")
@@ -66,14 +66,9 @@ class NodePreparer(
         injector.getInstance(FirstAccountCheck::class.java).checkForAccount()
     }
 
-    private fun initJwtTokenHandler(datastore: Datastore): JwtTokenHandler {
-        val tokenSecretRepo = MongoSingleObjectRepository(
-            datastore,
-            TokenSecretEntity::class.java,
-            TokenSecretEntity.KEY
-        )
-        val entity = tokenSecretRepo.loadObject().join()
-        return JwtTokenHandler(entity.secret)
+    private fun initJwtTokenHandler(): JwtTokenHandler {
+        //TODO: Load from Kube Secret
+        return JwtTokenHandler("entity.secret")
     }
 
     private fun setupEnd() {
@@ -82,10 +77,12 @@ class NodePreparer(
 
     private fun createInjector(): Injector {
         return Guice.createInjector(
+            DatabaseRepositoriesModule(this.databaseRepositories),
             KubernetesBinderModule(),
             SingleInstanceBinderModule(RestServer::class.java, this.restServer),
             SingleInstanceBinderModule(RestSetupManager::class.java, this.restSetupManager),
-            SingleInstanceBinderModule(AuthServiceProvider::class.java, object: AuthServiceProvider {
+            SingleInstanceBinderModule(JwtTokenHandler::class.java, this.jwtTokenHandler),
+            SingleInstanceBinderModule(AuthServiceProvider::class.java, object : AuthServiceProvider {
                 override fun getAuthService(): AuthService {
                     return restServer.getAuthService()
                 }
@@ -93,15 +90,8 @@ class NodePreparer(
         )
     }
 
-    private fun createSubInjectorWithDatastoreAndTokenHandler(datastore: Datastore, tokenHandler: JwtTokenHandler): Injector {
-        return this.injector.createChildInjector(
-            SingleInstanceBinderModule(Datastore::class.java, datastore),
-            SingleInstanceBinderModule(JwtTokenHandler::class.java, tokenHandler)
-        )
-    }
-
-    private fun checkForMongoConnectionStringAndStartClient(): Datastore {
-        return this.injector.getInstance(MongoClientSafeStarter::class.java).startMongoClient()
+    private fun initDatabaseRepositories(): DatabaseRepositories {
+        return this.injector.getInstance(DatabaseSafeStarter::class.java).connectToDatabase()
     }
 
     companion object {

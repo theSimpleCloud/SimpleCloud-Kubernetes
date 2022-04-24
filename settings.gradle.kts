@@ -41,3 +41,12 @@ include("distribution:distribution-api")
 findProject(":distribution:distribution-api")?.name = "distribution-api"
 include("distribution:distribution-hazelcast")
 findProject(":distribution:distribution-hazelcast")?.name = "distribution-hazelcast"
+include("database")
+include("database:database-api")
+findProject(":database:database-api")?.name = "database-api"
+include("database:database-memory")
+findProject(":database:database-memory")?.name = "untitled"
+include("database:database-inmemory")
+findProject(":database:database-inmemory")?.name = "database-inmemory"
+include("database:database-mongo")
+findProject(":database:database-mongo")?.name = "database-mongo"

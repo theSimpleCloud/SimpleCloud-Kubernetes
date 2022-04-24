@@ -30,6 +30,9 @@ import java.util.concurrent.CompletableFuture
  */
 interface CloudPlayerRepository : Repository<UUID, CloudPlayerConfiguration> {
 
+    /**
+     * Returns the [CloudPlayerConfiguration] found by the specified [name]
+     */
     fun findByName(name: String): CompletableFuture<CloudPlayerConfiguration>
 
 }

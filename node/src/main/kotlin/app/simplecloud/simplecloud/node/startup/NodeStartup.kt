@@ -18,11 +18,11 @@
 
 package app.simplecloud.simplecloud.node.startup
 
-import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
+import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.task.NodePreparer
 import com.google.inject.Injector
-import dev.morphia.Datastore
 import org.apache.logging.log4j.LogManager
 
 
@@ -33,11 +33,13 @@ import org.apache.logging.log4j.LogManager
  * @author Frederick Baier
  */
 class NodeStartup(
-    private val startArguments: NodeStartArgumentParserMain
+    private val startArguments: NodeStartArgumentParserMain,
+    private val databaseFactory: DatabaseFactory,
+    private val distributionFactory: DistributionFactory,
 ) {
 
     fun start() {
-        val injector = NodePreparer(this.startArguments).prepare()
+        val injector = NodePreparer(this.startArguments, this.databaseFactory).prepare()
         executeClusterConnect(injector)
     }
 
@@ -50,12 +52,10 @@ class NodeStartup(
     }
 
     private fun executeClusterConnect0(injector: Injector) {
-        val task = NodeClusterConnect(
+        NodeClusterConnect(
             injector,
-            injector.getInstance(Datastore::class.java),
-            HazelcastDistributionFactory()
-        )
-        task.connect()
+            this.distributionFactory
+        ).connect()
     }
 
     companion object {

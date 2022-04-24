@@ -26,13 +26,12 @@ import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import org.apache.logging.log4j.LogManager
 
 class CloudPlayerLoginHandler(
     private val playerFactory: CloudPlayerFactory,
-    private val mongoPlayerRepository: MongoCloudPlayerRepository,
+    private val databasePlayerRepository: DatabaseOfflineCloudPlayerRepository,
     private val configuration: PlayerConnectionConfiguration,
     private val proxyName: String
 ) {
@@ -47,8 +46,7 @@ class CloudPlayerLoginHandler(
 
     private fun savePlayerToDatabase(player: CloudPlayer) {
         val configuration = player.toConfiguration()
-        val playerEntity = CloudPlayerEntity.fromConfiguration(configuration)
-        this.mongoPlayerRepository.save(playerEntity.uniqueId, playerEntity)
+        this.databasePlayerRepository.save(configuration.uniqueId, configuration)
     }
 
     private suspend fun createPlayer(): CloudPlayer {
@@ -102,8 +100,7 @@ class CloudPlayerLoginHandler(
     }
 
     private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
-        val cloudPlayerEntity = this.mongoPlayerRepository.find(this.configuration.uniqueId).await()
-        return cloudPlayerEntity.toConfiguration()
+        return this.databasePlayerRepository.find(this.configuration.uniqueId).await()
     }
 
     companion object {

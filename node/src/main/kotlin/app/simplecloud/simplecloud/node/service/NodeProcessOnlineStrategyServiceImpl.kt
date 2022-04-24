@@ -31,10 +31,9 @@ import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.Proc
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
+import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.MongoOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.OnlineCountStrategyEntity
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import com.google.inject.Inject
 import com.google.inject.Injector
@@ -52,7 +51,7 @@ import java.util.concurrent.CompletableFuture
 class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     private val injector: Injector,
     private val distributedRepository: DistributedOnlineCountStrategyRepository,
-    private val mongoRepository: MongoOnlineCountStrategyRepository,
+    private val databaseRepository: DatabaseOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory
 ) : InternalNodeProcessOnlineCountStrategyService {
 
@@ -113,12 +112,11 @@ class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     }
 
     private fun deleteStrategyFromDatabase(strategy: ProcessesOnlineCountStrategy) {
-        this.mongoRepository.remove(strategy.getName())
+        this.databaseRepository.remove(strategy.getName())
     }
 
     private fun saveToDatabase(configuration: ProcessOnlineCountStrategyConfiguration) {
-        val entity = OnlineCountStrategyEntity.fromConfiguration(configuration)
-        this.mongoRepository.save(configuration.name, entity)
+        this.databaseRepository.save(configuration.name, configuration)
     }
 
     object DefaultProcessesOnlineCountStrategy : ProcessesOnlineCountStrategy {

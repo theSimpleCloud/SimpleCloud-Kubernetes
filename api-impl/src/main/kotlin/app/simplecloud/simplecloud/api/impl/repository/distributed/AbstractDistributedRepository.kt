@@ -60,14 +60,14 @@ abstract class AbstractDistributedRepository<I : Any, T : Any>(
         }
     }
 
-    protected fun executeQuery(predicate: Predicate<I, T>): CompletableFuture<Collection<T>> {
+    fun executeQueryAndFindFirst(predicate: Predicate<I, T>): CompletableFuture<T> {
+        return executeQuery(predicate).thenApply { it.first() }
+    }
+
+    fun executeQuery(predicate: Predicate<I, T>): CompletableFuture<Collection<T>> {
         return CloudCompletableFuture.supplyAsync {
             return@supplyAsync cache.distributedQuery(predicate)
         }
-    }
-
-    protected fun executeQueryAndFindFirst(predicate: Predicate<I, T>): CompletableFuture<T> {
-        return executeQuery(predicate).thenApply { it.first() }
     }
 
     override fun remove(identifier: I) {

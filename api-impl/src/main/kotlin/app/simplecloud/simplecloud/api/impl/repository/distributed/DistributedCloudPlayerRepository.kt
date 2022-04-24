@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.distributed
 
-import app.simplecloud.simplecloud.api.impl.distribution.predicate.CloudPlayerCompareNamePredicate
+import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudPlayerCompareNamePredicate
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudPlayerRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
@@ -41,6 +41,5 @@ class DistributedCloudPlayerRepository @Inject constructor(
     override fun findByName(name: String): CompletableFuture<CloudPlayerConfiguration> {
         return executeQueryAndFindFirst(CloudPlayerCompareNamePredicate(name))
     }
-
 
 }

@@ -29,7 +29,6 @@ import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import app.simplecloud.simplecloud.restserver.base.RestServer
 import com.google.inject.Injector
-import dev.morphia.Datastore
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
@@ -37,7 +36,6 @@ import javax.inject.Inject
 
 class NodeClusterConnect @Inject constructor(
     private val injector: Injector,
-    private val datastore: Datastore,
     private val distributionFactory: DistributionFactory
 ) {
 

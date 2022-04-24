@@ -24,8 +24,7 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCl
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.node.repository.mongo.group.CombinedProcessGroupEntity
-import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
+import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -33,7 +32,7 @@ import com.google.inject.Singleton
 class CloudProcessGroupServiceImpl @Inject constructor(
     processGroupFactory: CloudProcessGroupFactory,
     private val distributedRepository: DistributedCloudProcessGroupRepository,
-    private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
+    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
     private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
 ) : AbstractCloudProcessGroupService(
     distributedRepository, processGroupFactory
@@ -51,12 +50,11 @@ class CloudProcessGroupServiceImpl @Inject constructor(
     }
 
     private fun deleteGroupFromDatabase(group: CloudProcessGroup) {
-        this.mongoCloudProcessGroupRepository.remove(group.getName())
+        this.databaseCloudProcessGroupRepository.remove(group.getName())
     }
 
     private fun saveToDatabase(group: CloudProcessGroup) {
-        val combinedProcessGroupEntity = CombinedProcessGroupEntity.fromGroupConfiguration(group.toConfiguration())
-        this.mongoCloudProcessGroupRepository.save(group.getName(), combinedProcessGroupEntity)
+        this.databaseCloudProcessGroupRepository.save(group.getName(), group.toConfiguration())
     }
 
 

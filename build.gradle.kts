@@ -48,7 +48,6 @@ subprojects {
 
 
     val coroutinesVersion by extra("1.6.0")
-    val morphiaVersion by extra("2.2.1")
     val guiceVersion by extra("5.1.0")
     val jacksonVersion by extra("2.13.2")
 
@@ -59,7 +58,6 @@ subprojects {
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
-        implementation("dev.morphia.morphia:morphia-core:${morphiaVersion}")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
 
         //implementation("io.github.slimjar:slimjar:1.2.4")

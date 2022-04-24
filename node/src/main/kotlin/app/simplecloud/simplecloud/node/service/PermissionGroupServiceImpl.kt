@@ -24,8 +24,7 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupServi
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.node.repository.mongo.permission.MongoPermissionGroupRepository
-import app.simplecloud.simplecloud.node.repository.mongo.permission.PermissionGroupEntity
+import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 
@@ -37,7 +36,7 @@ import com.google.inject.Singleton
  */
 @Singleton
 class PermissionGroupServiceImpl @Inject constructor(
-    private val mongoRepository: MongoPermissionGroupRepository,
+    private val databaseRepository: DatabasePermissionGroupRepository,
     private val distributedRepository: DistributedPermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
@@ -49,8 +48,7 @@ class PermissionGroupServiceImpl @Inject constructor(
     }
 
     private fun saveToDatabase(configuration: PermissionGroupConfiguration) {
-        val groupEntity = PermissionGroupEntity.fromConfiguration(configuration)
-        this.mongoRepository.save(groupEntity.name, groupEntity)
+        this.databaseRepository.save(configuration.name, configuration)
     }
 
     override suspend fun deleteGroupInternal(group: PermissionGroup) {
@@ -59,7 +57,7 @@ class PermissionGroupServiceImpl @Inject constructor(
     }
 
     private fun deleteGroupFromDatabase(group: PermissionGroup) {
-        this.mongoRepository.remove(group.getName())
+        this.databaseRepository.remove(group.getName())
     }
 
 }

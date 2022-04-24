@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.node.startup
 
+import app.simplecloud.simplecloud.database.mongo.factory.MongoDatabaseFactory
+import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Address
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.convert
@@ -47,7 +49,7 @@ class NodeStartArgumentParserMain : CliktCommand() {
 
 
     override fun run() {
-        NodeStartup(this).start()
+        NodeStartup(this, MongoDatabaseFactory(), HazelcastDistributionFactory()).start()
     }
 
 }

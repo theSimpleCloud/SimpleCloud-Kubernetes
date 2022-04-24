@@ -29,8 +29,7 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
+import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import java.util.*
@@ -46,7 +45,7 @@ import java.util.concurrent.CompletableFuture
 class CloudPlayerServiceImpl @Inject constructor(
     distributedRepository: DistributedCloudPlayerRepository,
     playerFactory: CloudPlayerFactory,
-    private val mongoCloudPlayerRepository: MongoCloudPlayerRepository,
+    private val databaseCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
     private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
@@ -62,7 +61,7 @@ class CloudPlayerServiceImpl @Inject constructor(
         if (completedOnlinePlayerFuture.isCompletedNormally) {
             return CloudCompletableFuture.completedFuture(completedOnlinePlayerFuture.get())
         }
-        val playerEntityFuture = this.mongoCloudPlayerRepository.findByName(name)
+        val playerEntityFuture = this.databaseCloudPlayerRepository.findByName(name)
         return playerEntityFuture.thenApply { convertPlayerEntityToOfflineCloudPlayer(it) }
     }
 
@@ -79,17 +78,16 @@ class CloudPlayerServiceImpl @Inject constructor(
         if (completedOnlinePlayerFuture.isCompletedNormally) {
             return CloudCompletableFuture.completedFuture(completedOnlinePlayerFuture.get())
         }
-        val playerEntityFuture = this.mongoCloudPlayerRepository.find(uniqueId)
+        val playerEntityFuture = this.databaseCloudPlayerRepository.find(uniqueId)
         return playerEntityFuture.thenApply { convertPlayerEntityToOfflineCloudPlayer(it) }
     }
 
-    override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration){
-        val playerEntity = CloudPlayerEntity.fromConfiguration(configuration)
-        this.mongoCloudPlayerRepository.save(configuration.uniqueId, playerEntity).await()
+    override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
+        this.databaseCloudPlayerRepository.save(configuration.uniqueId, configuration).await()
     }
 
-    private fun convertPlayerEntityToOfflineCloudPlayer(entity: CloudPlayerEntity): OfflineCloudPlayer {
-        return this.offlineCloudPlayerFactory.create(entity.toConfiguration())
+    private fun convertPlayerEntityToOfflineCloudPlayer(configuration: OfflineCloudPlayerConfiguration): OfflineCloudPlayer {
+        return this.offlineCloudPlayerFactory.create(configuration)
     }
 
 }

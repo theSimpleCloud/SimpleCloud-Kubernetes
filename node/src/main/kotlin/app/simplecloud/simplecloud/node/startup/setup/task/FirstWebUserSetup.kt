@@ -21,10 +21,10 @@ package app.simplecloud.simplecloud.node.startup.setup.task
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
+import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
+import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.distribution.api.Address
-import app.simplecloud.simplecloud.node.repository.mongo.player.CloudPlayerEntity
-import app.simplecloud.simplecloud.node.repository.mongo.player.MongoCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
@@ -43,7 +43,7 @@ import java.util.concurrent.TimeUnit
  */
 class FirstWebUserSetup(
     private val restSetupManager: RestSetupManager,
-    private val playerRepository: MongoCloudPlayerRepository,
+    private val playerRepository: DatabaseOfflineCloudPlayerRepository,
     private val jwtTokenHandler: JwtTokenHandler
 ) {
 
@@ -68,15 +68,15 @@ class FirstWebUserSetup(
     }
 
     private fun saveResponseToMongoDatabase(response: FirstUserSetupResponseBody) {
-        val entity = createPlayerEntityFromResponseBody(response)
-        this.playerRepository.save(response.uniqueId, entity).exceptionally { it.printStackTrace() }
+        val configuration = createPlayerConfigFromResponseBody(response)
+        this.playerRepository.save(response.uniqueId, configuration).exceptionally { it.printStackTrace() }
     }
 
-    private fun createPlayerEntityFromResponseBody(response: FirstUserSetupResponseBody): CloudPlayerEntity {
+    private fun createPlayerConfigFromResponseBody(response: FirstUserSetupResponseBody): OfflineCloudPlayerConfiguration {
         val passwordHash = Hashing.sha512().hashString(response.password, StandardCharsets.UTF_8).toString()
-        return CloudPlayerEntity(
-            response.uniqueId,
+        return OfflineCloudPlayerConfiguration(
             response.playerName,
+            response.uniqueId,
             System.currentTimeMillis(),
             System.currentTimeMillis(),
             0L,

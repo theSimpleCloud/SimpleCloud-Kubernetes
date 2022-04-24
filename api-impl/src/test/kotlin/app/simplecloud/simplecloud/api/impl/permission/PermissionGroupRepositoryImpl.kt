@@ -18,9 +18,9 @@
 
 package app.simplecloud.simplecloud.api.impl.permission
 
-import app.simplecloud.simplecloud.api.impl.util.TestHashMapRepository
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
+import app.simplecloud.simplecloud.database.memory.InMemoryRepository
 import com.google.inject.Singleton
 
 /**
@@ -30,5 +30,5 @@ import com.google.inject.Singleton
  *
  */
 @Singleton
-class PermissionGroupRepositoryImpl : TestHashMapRepository<String, PermissionGroupConfiguration>(),
+class PermissionGroupRepositoryImpl : InMemoryRepository<String, PermissionGroupConfiguration>(),
     PermissionGroupRepository

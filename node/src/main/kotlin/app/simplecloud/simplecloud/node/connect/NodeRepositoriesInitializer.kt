@@ -20,20 +20,20 @@ package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
+import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.node.repository.mongo.group.MongoCloudProcessGroupRepository
-import app.simplecloud.simplecloud.node.repository.mongo.onlinecountstrategy.MongoOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.node.repository.mongo.permission.MongoPermissionGroupRepository
 import com.google.inject.Inject
 import org.apache.logging.log4j.LogManager
 
 class NodeRepositoriesInitializer @Inject constructor(
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
-    private val mongoCloudProcessGroupRepository: MongoCloudProcessGroupRepository,
+    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
     private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,
-    private val mongoPermissionGroupRepository: MongoPermissionGroupRepository,
+    private val databasePermissionGroupRepository: DatabasePermissionGroupRepository,
     private val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
-    private val mongoOnlineCountStrategyRepository: MongoOnlineCountStrategyRepository
+    private val databaseOnlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository
 ) {
 
     fun initializeRepositories() {
@@ -44,28 +44,25 @@ class NodeRepositoriesInitializer @Inject constructor(
     }
 
     private fun initOnlineCountStrategies() {
-        val entities = this.mongoOnlineCountStrategyRepository.findAll().join()
-        logger.info("Found OnlineCountStrategies: {}", entities.map { it.name })
-        val configurations = entities.map { it.toConfiguration() }
+        val configurations = this.databaseOnlineCountStrategyRepository.findAll().join()
+        logger.info("Found OnlineCountStrategies: {}", configurations.map { it.name })
         for (config in configurations) {
             this.distributedOnlineCountStrategyRepository.save(config.name, config).join()
         }
     }
 
     private fun initPermissionGroups() {
-        val groups = this.mongoPermissionGroupRepository.findAll().join()
-        logger.info("Found PermissionGroups: {}", groups.map { it.name })
-        val configurations = groups.map { it.toConfiguration() }
+        val configurations = this.databasePermissionGroupRepository.findAll().join()
+        logger.info("Found PermissionGroups: {}", configurations.map { it.name })
         for (config in configurations) {
             this.distributedPermissionGroupRepository.save(config.name, config).join()
         }
     }
 
     private fun initGroups() {
-        val groups = this.mongoCloudProcessGroupRepository.findAll().join()
-        logger.info("Found Groups: {}", groups.map { it.name })
-        val groupConfigurations = groups.map { it.toConfiguration() }
-        for (config in groupConfigurations) {
+        val configurations = this.databaseCloudProcessGroupRepository.findAll().join()
+        logger.info("Found Groups: {}", configurations.map { it.name })
+        for (config in configurations) {
             this.distributedGroupRepository.save(config.name, config).join()
         }
     }

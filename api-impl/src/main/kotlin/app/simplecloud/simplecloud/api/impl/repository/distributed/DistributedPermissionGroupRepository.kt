@@ -35,5 +35,4 @@ class DistributedPermissionGroupRepository @Inject constructor(
     private val distribution: Distribution
 ) : AbstractDistributedRepository<String, PermissionGroupConfiguration>(
     distribution.getOrCreateCache("cloud-permission-groups")
-), PermissionGroupRepository {
-}
+), PermissionGroupRepository
