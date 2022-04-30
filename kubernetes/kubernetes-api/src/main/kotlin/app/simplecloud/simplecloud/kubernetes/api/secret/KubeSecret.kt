@@ -16,7 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.secret
+
+interface KubeSecret {
+
+    fun getName(): String
+
+    fun getStringValueOf(key: String): String
+
 }

@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.node.startup
 import app.simplecloud.simplecloud.database.mongo.factory.MongoDatabaseFactory
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.kubernetes.impl.KubeImplAPI
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
@@ -49,7 +50,7 @@ class NodeStartArgumentParserMain : CliktCommand() {
 
 
     override fun run() {
-        NodeStartup(this, MongoDatabaseFactory(), HazelcastDistributionFactory()).start()
+        NodeStartup(this, MongoDatabaseFactory(), HazelcastDistributionFactory(), KubeImplAPI()).start()
     }
 
 }

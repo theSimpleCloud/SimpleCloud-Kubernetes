@@ -16,7 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.impl.pod
+
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
+import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
+import io.kubernetes.client.openapi.apis.CoreV1Api
+
+/**
+ * Date: 28.04.22
+ * Time: 18:03
+ * @author Frederick Baier
+ *
+ */
+class KubePodServiceImpl(
+    private val api: CoreV1Api
+) : KubePodService {
+
+    override fun getPod(name: String): KubePod {
+        return KubePodImpl(name, this.api)
+    }
+
+    override fun createPod(name: String, podSpec: PodSpec): KubePod {
+        val pod = KubePodImpl(name, this.api)
+        pod.start(podSpec)
+        return pod
+    }
 }

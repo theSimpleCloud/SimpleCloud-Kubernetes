@@ -23,7 +23,7 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCl
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
-import app.simplecloud.simplecloud.kubernetes.api.container.Container
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import com.google.inject.Inject
 import com.google.inject.assistedinject.Assisted
 import org.apache.logging.log4j.LogManager
@@ -36,14 +36,14 @@ import org.apache.logging.log4j.LogManager
  */
 class ProcessShutdownHandlerImpl @Inject constructor(
     @Assisted private val process: CloudProcess,
-    private val containerFactory: Container.Factory,
+    private val podService: KubePodService,
     private val distributedCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler {
 
     override suspend fun shutdownProcess() {
         logger.info("Stopping Process {}", this.process.getName())
         updateStateToClosed()
-        val container = this.containerFactory.create(this.process.getName().lowercase())
+        val container = podService.getPod(this.process.getName().lowercase())
         container.shutdown()
         deleteProcessInCluster()
     }

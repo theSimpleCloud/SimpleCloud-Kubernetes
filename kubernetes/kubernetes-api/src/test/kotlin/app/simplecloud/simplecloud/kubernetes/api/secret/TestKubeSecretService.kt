@@ -16,7 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.secret
+
+import java.util.concurrent.CopyOnWriteArrayList
+
+class TestKubeSecretService : KubeSecretService {
+
+    private val secrets = CopyOnWriteArrayList<KubeSecret>()
+
+    override fun createSecret(name: String, secretSpec: SecretSpec): KubeSecret {
+        checkAlreadyExist(name.lowercase())
+        val secret = TestKubeSecret(name.lowercase(), secretSpec)
+        this.secrets.add(secret)
+        return secret
+    }
+
+    private fun checkAlreadyExist(name: String) {
+        if (this.secrets.any { it.getName() == name }) {
+            throw KubeSecretService.SecretAlreadyExistException()
+        }
+    }
+
+    override fun getSecret(name: String): KubeSecret {
+        return this.secrets.first { it.getName() == name.lowercase() }
+    }
+
 }

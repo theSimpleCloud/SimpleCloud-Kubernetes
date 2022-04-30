@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.startup
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.task.NodePreparer
 import com.google.inject.Injector
@@ -36,10 +37,11 @@ class NodeStartup(
     private val startArguments: NodeStartArgumentParserMain,
     private val databaseFactory: DatabaseFactory,
     private val distributionFactory: DistributionFactory,
+    private val kubeAPI: KubeAPI
 ) {
 
     fun start() {
-        val injector = NodePreparer(this.startArguments, this.databaseFactory).prepare()
+        val injector = NodePreparer(this.startArguments, this.databaseFactory, this.kubeAPI).prepare()
         executeClusterConnect(injector)
     }
 

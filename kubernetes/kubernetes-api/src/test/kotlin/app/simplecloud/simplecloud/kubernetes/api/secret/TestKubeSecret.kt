@@ -16,7 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.secret
+
+class TestKubeSecret(
+    private val name: String,
+    private val secretSpec: SecretSpec
+) : KubeSecret {
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun getStringValueOf(key: String): String {
+        val bytes = this.secretSpec.data[key] ?: throw NoSuchElementException()
+        return String(bytes, Charsets.UTF_8)
+    }
+
 }

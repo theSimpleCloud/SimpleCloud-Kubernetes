@@ -23,9 +23,7 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.kubernetes.api.container.Container
-import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
-import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.task.CloudProcessCreator
 import app.simplecloud.simplecloud.node.task.KubernetesProcessStarter
 import app.simplecloud.simplecloud.node.util.UncaughtExceptions
@@ -37,9 +35,7 @@ class ProcessStarterImpl @Inject constructor(
     private val processService: CloudProcessService,
     private val groupService: CloudProcessGroupService,
     private val processFactory: CloudProcessFactory,
-    private val containerFactory: Container.Factory,
-    private val kubeVolumeClaimFactory: KubeVolumeClaim.Factory,
-    private val kubeServiceFactory: KubeService.Factory
+    private val kubeAPI: KubeAPI
 ) : ProcessStarter {
 
     override suspend fun startProcess(): CloudProcess {
@@ -60,9 +56,7 @@ class ProcessStarterImpl @Inject constructor(
     private fun startProcess(process: CloudProcess) {
         KubernetesProcessStarter(
             process,
-            this.containerFactory,
-            this.kubeVolumeClaimFactory,
-            this.kubeServiceFactory
+            this.kubeAPI
         ).startProcess().exceptionally { UncaughtExceptions.handle(it) }
     }
 

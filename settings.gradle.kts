@@ -50,3 +50,7 @@ include("database:database-inmemory")
 findProject(":database:database-inmemory")?.name = "database-inmemory"
 include("database:database-mongo")
 findProject(":database:database-mongo")?.name = "database-mongo"
+include("kubernetes:kubernetes-api")
+findProject(":kubernetes:kubernetes-api")?.name = "kubernetes-api"
+include("kubernetes:kubernetes-impl")
+findProject(":kubernetes:kubernetes-impl")?.name = "kubernetes-impl"

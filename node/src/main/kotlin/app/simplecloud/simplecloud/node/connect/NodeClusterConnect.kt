@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
-import app.simplecloud.simplecloud.kubernetes.api.OtherNodeAddressGetter
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
 import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
@@ -32,16 +31,15 @@ import com.google.inject.Injector
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
-import javax.inject.Inject
 
-class NodeClusterConnect @Inject constructor(
+class NodeClusterConnect constructor(
     private val injector: Injector,
     private val distributionFactory: DistributionFactory
 ) {
 
     private val nodeBindPort = 1670
 
-    fun connect(){
+    fun connect() {
         logger.info("Connecting to cluster...")
         val distribution = startDistribution()
         val finalInjector = createFinalInjector(distribution)
@@ -97,8 +95,8 @@ class NodeClusterConnect @Inject constructor(
     }
 
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {
-        val otherNodeAddressGetter = this.injector.getInstance(OtherNodeAddressGetter::class.java)
-        return otherNodeAddressGetter.getOtherNodeAddresses()
+        //TODO get other adddresses
+        return emptyList()
     }
 
     companion object {

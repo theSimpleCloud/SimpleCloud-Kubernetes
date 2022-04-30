@@ -28,7 +28,7 @@ dependencies {
     api(project(":api"))
     implementation(project(":api-impl"))
     implementation(project(":api-internal"))
-    implementation(project(":kubernetes"))
+    implementation(project(":kubernetes:kubernetes-impl"))
     implementation(project(":distribution:distribution-hazelcast"))
     implementation(project(":database:database-mongo"))
 

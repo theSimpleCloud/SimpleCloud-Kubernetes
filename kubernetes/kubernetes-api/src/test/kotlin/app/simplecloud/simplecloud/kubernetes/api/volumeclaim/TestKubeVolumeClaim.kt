@@ -16,7 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.volumeclaim
+
+import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
+
+class TestKubeVolumeClaim(
+    private val name: String,
+    private val volumeSpec: KubeVolumeSpec,
+    private val service: TestKubeVolumeClaimService
+) : KubeVolumeClaim {
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun delete() {
+        this.service.delete(this)
+    }
+
 }

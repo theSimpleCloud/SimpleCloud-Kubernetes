@@ -16,7 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.service
+
+import app.simplecloud.simplecloud.kubernetes.api.Label
+
+class TestKubeService(
+    private val name: String,
+    private val serviceSpec: ServiceSpec
+) : KubeService {
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun getContainerPort(): Int {
+        return this.serviceSpec.containerPort
+    }
+
+    override fun getClusterPort(): Int {
+        return this.serviceSpec.clusterPort
+    }
+
+    override fun getLabels(): List<Label> {
+        return this.serviceSpec.labels
+    }
+
+    override fun delete() {
+
+    }
+
 }

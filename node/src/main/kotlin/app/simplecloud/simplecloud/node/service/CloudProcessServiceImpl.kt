@@ -26,7 +26,7 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.kubernetes.api.container.Container
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.node.process.*
 import com.google.inject.Inject
 import com.google.inject.Singleton
@@ -38,7 +38,7 @@ class CloudProcessServiceImpl @Inject constructor(
     distributedRepository: DistributedCloudProcessRepository,
     private val processStarterFactory: ProcessStarter.Factory,
     private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
-    private val containerFactory: Container.Factory
+    private val podService: KubePodService
 ) : AbstractCloudProcessService(
     processFactory, distributedRepository
 ) {
@@ -53,10 +53,10 @@ class CloudProcessServiceImpl @Inject constructor(
     }
 
     override suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration) {
-        return InternalProcessCommandExecutor(configuration, this.containerFactory).executeCommand()
+        return InternalProcessCommandExecutor(configuration, this.podService).executeCommand()
     }
 
     override fun getLogs(process: CloudProcess): CompletableFuture<List<String>> = CloudScope.future {
-        return@future containerFactory.create(process.getName()).getLogs()
+        return@future podService.getPod(process.getName()).getLogs()
     }
 }

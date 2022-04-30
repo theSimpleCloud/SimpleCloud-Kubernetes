@@ -21,10 +21,11 @@ package app.simplecloud.simplecloud.node.startup.task
 import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.kubernetes.impl.KubernetesBinderModule
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.node.startup.NodeStartArgumentParserMain
-import app.simplecloud.simplecloud.node.startup.task.mongo.DatabaseRepositoriesModule
-import app.simplecloud.simplecloud.node.startup.task.mongo.DatabaseSafeStarter
+import app.simplecloud.simplecloud.node.startup.task.database.DatabaseRepositoriesModule
+import app.simplecloud.simplecloud.node.startup.task.database.DatabaseSafeStarter
 import app.simplecloud.simplecloud.restserver.auth.AuthServiceProvider
 import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.base.RestServer
@@ -34,6 +35,7 @@ import app.simplecloud.simplecloud.restserver.base.service.NoAuthService
 import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
 import com.google.inject.Guice
 import com.google.inject.Injector
+import org.apache.commons.lang3.RandomStringUtils
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -44,31 +46,51 @@ import org.apache.logging.log4j.LogManager
  */
 class NodePreparer(
     private val startArguments: NodeStartArgumentParserMain,
-    private val databaseFactory: DatabaseFactory
+    private val databaseFactory: DatabaseFactory,
+    private val kubeApi: KubeAPI
 ) {
 
     private val restServer = RestServerAPI.createRestServer(NoAuthService(), 8008)
     private val restSetupManager = RestSetupManager(this.restServer)
 
     private val jwtTokenHandler = initJwtTokenHandler()
-    private val injector = createInjector()
     private val databaseRepositories = initDatabaseRepositories()
+    private val injector = createInjector()
 
     fun prepare(): Injector {
         logger.info("Starting Node...")
-        checkForAnyWebAccount(injector)
+        checkForAnyWebAccount()
         setupEnd()
         logger.info("Node Startup completed")
         return injector
     }
 
-    private fun checkForAnyWebAccount(injector: Injector) {
-        injector.getInstance(FirstAccountCheck::class.java).checkForAccount()
+    private fun checkForAnyWebAccount() {
+        FirstAccountCheck(
+            this.databaseRepositories.offlineCloudPlayerRepository,
+            this.jwtTokenHandler,
+            this.restSetupManager
+        ).checkForAccount()
     }
 
     private fun initJwtTokenHandler(): JwtTokenHandler {
-        //TODO: Load from Kube Secret
-        return JwtTokenHandler("entity.secret")
+        return JwtTokenHandler(loadJwtSecret())
+    }
+
+    private fun loadJwtSecret(): String {
+        val secretService = this.kubeApi.getSecretService()
+        return try {
+            secretService.getSecret("jwt").getStringValueOf("jwt")
+        } catch (e: NoSuchElementException) {
+            createJwtSecret()
+        }
+    }
+
+    private fun createJwtSecret(): String {
+        val secretService = this.kubeApi.getSecretService()
+        val secretString = RandomStringUtils.randomAlphanumeric(32)
+        secretService.createSecret("jwt", SecretSpec().withData("jwt", secretString))
+        return secretString
     }
 
     private fun setupEnd() {
@@ -78,7 +100,7 @@ class NodePreparer(
     private fun createInjector(): Injector {
         return Guice.createInjector(
             DatabaseRepositoriesModule(this.databaseRepositories),
-            KubernetesBinderModule(),
+            KubeBinderModule(this.kubeApi),
             SingleInstanceBinderModule(RestServer::class.java, this.restServer),
             SingleInstanceBinderModule(RestSetupManager::class.java, this.restSetupManager),
             SingleInstanceBinderModule(JwtTokenHandler::class.java, this.jwtTokenHandler),
@@ -91,7 +113,8 @@ class NodePreparer(
     }
 
     private fun initDatabaseRepositories(): DatabaseRepositories {
-        return this.injector.getInstance(DatabaseSafeStarter::class.java).connectToDatabase()
+        return DatabaseSafeStarter(this.restSetupManager, this.kubeApi.getSecretService(), this.databaseFactory)
+            .connectToDatabase()
     }
 
     companion object {

@@ -16,7 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.service
+
+import app.simplecloud.simplecloud.kubernetes.api.Label
+
+interface KubeService {
+
+    fun getName(): String
+
+    fun getContainerPort(): Int
+
+    fun getClusterPort(): Int
+
+    /**
+     * Returns the labels of this service
+     */
+    fun getLabels(): List<Label>
+
+    fun delete()
+
 }

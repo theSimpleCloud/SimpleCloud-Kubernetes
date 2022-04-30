@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
-import app.simplecloud.simplecloud.kubernetes.api.container.Container
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 
 /**
  * Date: 01.04.22
@@ -29,11 +29,11 @@ import app.simplecloud.simplecloud.kubernetes.api.container.Container
  */
 class InternalProcessCommandExecutor(
     private val configuration: ProcessExecuteCommandConfiguration,
-    private val containerFactory: Container.Factory
+    private val podService: KubePodService
 ) {
 
     fun executeCommand() {
-        val container = this.containerFactory.create(this.configuration.processName)
-        container.execute(this.configuration.command)
+        val pod = this.podService.getPod(this.configuration.processName)
+        pod.execute(this.configuration.command)
     }
 }

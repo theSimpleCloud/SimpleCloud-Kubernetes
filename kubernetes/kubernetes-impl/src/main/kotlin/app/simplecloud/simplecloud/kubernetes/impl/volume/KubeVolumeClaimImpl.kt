@@ -16,7 +16,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.impl.volume
+
+import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import io.kubernetes.client.openapi.apis.CoreV1Api
+
+/**
+ * Date: 30.04.22
+ * Time: 13:26
+ * @author Frederick Baier
+ *
+ */
+class KubeVolumeClaimImpl(
+    private val name: String,
+    private val api: CoreV1Api
+) : KubeVolumeClaim {
+
+    private val claim = this.api.readNamespacedPersistentVolumeClaim(this.name, "default", null)
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun delete() {
+        this.api.deleteNamespacedPersistentVolumeClaim(
+            this.name,
+            "default",
+            null,
+            null,
+            null,
+            null,
+            null,
+            null
+        )
+    }
 }

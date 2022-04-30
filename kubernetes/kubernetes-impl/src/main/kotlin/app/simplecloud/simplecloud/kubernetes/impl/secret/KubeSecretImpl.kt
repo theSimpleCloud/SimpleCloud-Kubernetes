@@ -16,7 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.impl.secret
+
+import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
+import io.kubernetes.client.openapi.apis.CoreV1Api
+import java.nio.charset.StandardCharsets
+
+/**
+ * Date: 29.04.22
+ * Time: 23:57
+ * @author Frederick Baier
+ *
+ */
+class KubeSecretImpl(
+    name: String,
+    private val api: CoreV1Api
+) : KubeSecret {
+
+
+    private val name: String = name.lowercase()
+
+    private val secret = api.readNamespacedSecret(this.name, "default", null)
+
+    override fun getName(): String {
+        return this.name
+    }
+
+    override fun getStringValueOf(key: String): String {
+        val bytes = secret.data?.get(key)!!
+        return String(bytes, StandardCharsets.UTF_8)
+    }
 }

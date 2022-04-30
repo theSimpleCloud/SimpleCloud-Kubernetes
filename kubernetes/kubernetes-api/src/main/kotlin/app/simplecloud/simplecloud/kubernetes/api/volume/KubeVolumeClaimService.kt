@@ -16,7 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation("commons-io:commons-io:2.11.0")
-    implementation(project(":api"))
+package app.simplecloud.simplecloud.kubernetes.api.volume
+
+interface KubeVolumeClaimService {
+
+
+    fun getAllClaims(): List<KubeVolumeClaim>
+
+    fun createVolumeClaim(name: String, volumeSpec: KubeVolumeSpec): KubeVolumeClaim
+
+    fun getClaim(name: String): KubeVolumeClaim
+
+    class VolumeClaimAlreadyExistException : Exception()
+
 }
