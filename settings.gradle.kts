@@ -44,8 +44,6 @@ findProject(":distribution:distribution-hazelcast")?.name = "distribution-hazelc
 include("database")
 include("database:database-api")
 findProject(":database:database-api")?.name = "database-api"
-include("database:database-memory")
-findProject(":database:database-memory")?.name = "untitled"
 include("database:database-inmemory")
 findProject(":database:database-inmemory")?.name = "database-inmemory"
 include("database:database-mongo")
