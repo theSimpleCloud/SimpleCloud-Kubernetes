@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.test
+package app.simplecloud.simplecloud.kubernetest.test
 
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
-import app.simplecloud.simplecloud.kubernetes.api.volumeclaim.TestKubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetest.test.volumeclaim.TestKubeVolumeClaimService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

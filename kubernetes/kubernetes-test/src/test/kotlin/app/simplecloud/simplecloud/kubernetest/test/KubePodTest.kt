@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.test
+package app.simplecloud.simplecloud.kubernetest.test
 
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
-import app.simplecloud.simplecloud.kubernetes.api.pod.TestKubePodService
+import app.simplecloud.simplecloud.kubernetest.test.pod.TestKubePodService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 

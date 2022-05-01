@@ -54,3 +54,5 @@ include("kubernetes:kubernetes-api")
 findProject(":kubernetes:kubernetes-api")?.name = "kubernetes-api"
 include("kubernetes:kubernetes-impl")
 findProject(":kubernetes:kubernetes-impl")?.name = "kubernetes-impl"
+include("kubernetes:kubernetes-test")
+findProject(":kubernetes:kubernetes-test")?.name = "kubernetes-test"
