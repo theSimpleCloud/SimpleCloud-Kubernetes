@@ -22,8 +22,10 @@ import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
-import app.simplecloud.simplecloud.node.startup.task.NodePreparer
-import com.google.inject.Injector
+import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
+import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
+import app.simplecloud.simplecloud.restserver.base.RestServer
+import app.simplecloud.simplecloud.restserver.setup.RestSetupManagerImpl
 import org.apache.logging.log4j.LogManager
 
 
@@ -37,26 +39,30 @@ class NodeStartup(
     private val startArguments: NodeStartArgumentParserMain,
     private val databaseFactory: DatabaseFactory,
     private val distributionFactory: DistributionFactory,
-    private val kubeAPI: KubeAPI
+    private val kubeAPI: KubeAPI,
+    private val restServer: RestServer
 ) {
 
     fun start() {
-        val injector = NodePreparer(this.startArguments, this.databaseFactory, this.kubeAPI).prepare()
-        executeClusterConnect(injector)
+        val preparedNode =
+            NodePreparer(this.databaseFactory, this.kubeAPI, RestSetupManagerImpl(this.restServer)).prepare()
+        executeClusterConnect(preparedNode)
     }
 
-    private fun executeClusterConnect(injector: Injector) {
+    private fun executeClusterConnect(preparedNode: PreparedNode) {
         try {
-            executeClusterConnect0(injector)
+            executeClusterConnect0(preparedNode)
         } catch (e: Exception) {
             logger.error("An error occurred while connecting to cluster", e)
         }
     }
 
-    private fun executeClusterConnect0(injector: Injector) {
+    private fun executeClusterConnect0(preparedNode: PreparedNode) {
         NodeClusterConnect(
-            injector,
-            this.distributionFactory
+            this.distributionFactory,
+            this.kubeAPI,
+            preparedNode.repositories,
+            preparedNode.jwtTokenHandler
         ).connect()
     }
 
