@@ -16,32 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.restserver.setup
+package app.simplecloud.simplecloud.node.startup.prepare
 
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
+import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 
 /**
  * Date: 01.05.22
- * Time: 11:18
+ * Time: 08:21
  * @author Frederick Baier
  *
  */
-interface RestSetupManager {
-
-    /**
-     * Sets the next setup adn returns a future that completes with the result of the setup
-     */
-    fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T>
-
-    /**
-     * Sets the token for the first user
-     */
-    fun setEndToken(token: String)
-
-    /**
-     * Gets called when all setups were completed
-     */
-    fun onEndOfAllSetups()
-
-}
+data class PreparedNode(
+    val repositories: DatabaseRepositories,
+    val jwtTokenHandler: JwtTokenHandler,
+)

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.task
+package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.restserver.auth.RestAuthServiceImpl

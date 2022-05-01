@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.task.database
+package app.simplecloud.simplecloud.node.startup.prepare.database
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories

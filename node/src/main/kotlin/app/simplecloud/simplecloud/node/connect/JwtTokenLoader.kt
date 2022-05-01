@@ -16,32 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.restserver.setup
+package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
+import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
+import org.apache.commons.lang3.RandomStringUtils
 
 /**
  * Date: 01.05.22
- * Time: 11:18
+ * Time: 08:18
  * @author Frederick Baier
  *
  */
-interface RestSetupManager {
+class JwtTokenLoader(
+    private val kubeSecretService: KubeSecretService
+) {
 
-    /**
-     * Sets the next setup adn returns a future that completes with the result of the setup
-     */
-    fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T>
+    fun loadJwtToken(): String {
+        return try {
+            this.kubeSecretService.getSecret("jwt").getStringValueOf("jwt")
+        } catch (e: NoSuchElementException) {
+            createJwtSecret()
+        }
+    }
 
-    /**
-     * Sets the token for the first user
-     */
-    fun setEndToken(token: String)
-
-    /**
-     * Gets called when all setups were completed
-     */
-    fun onEndOfAllSetups()
+    private fun createJwtSecret(): String {
+        val secretService = this.kubeSecretService
+        val secretString = RandomStringUtils.randomAlphanumeric(32)
+        secretService.createSecret("jwt", SecretSpec().withData("jwt", secretString))
+        return secretString
+    }
 
 }

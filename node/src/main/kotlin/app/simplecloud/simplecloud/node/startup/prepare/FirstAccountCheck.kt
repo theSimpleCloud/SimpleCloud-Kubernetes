@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.task
+package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetup

@@ -22,6 +22,8 @@ import app.simplecloud.simplecloud.database.mongo.factory.MongoDatabaseFactory
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.kubernetes.impl.KubeImplAPI
+import app.simplecloud.simplecloud.restserver.base.RestServerAPI
+import app.simplecloud.simplecloud.restserver.base.service.NoAuthService
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.convert
 import com.github.ajalt.clikt.parameters.options.default
@@ -50,7 +52,8 @@ class NodeStartArgumentParserMain : CliktCommand() {
 
 
     override fun run() {
-        NodeStartup(this, MongoDatabaseFactory(), HazelcastDistributionFactory(), KubeImplAPI()).start()
+        val restServer = RestServerAPI.createRestServer(NoAuthService(), 8008)
+        NodeStartup(this, MongoDatabaseFactory(), HazelcastDistributionFactory(), KubeImplAPI(), restServer).start()
     }
 
 }

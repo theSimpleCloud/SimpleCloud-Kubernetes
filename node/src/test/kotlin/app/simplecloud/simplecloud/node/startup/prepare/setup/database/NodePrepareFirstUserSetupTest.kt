@@ -1,0 +1,88 @@
+/*
+ * SimpleCloud is a software for administrating a minecraft server network.
+ * Copyright (C) 2022 Frederick Baier & Philipp Eistrach
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as
+ * published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package app.simplecloud.simplecloud.node.startup.prepare.setup.database
+
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
+import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.node.startup.prepare.AbstractNodePrepareTest
+import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
+import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.setup.type.Setup
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import java.util.*
+import java.util.concurrent.CompletableFuture
+
+/**
+ * Date: 01.05.22
+ * Time: 11:26
+ * @author Frederick Baier
+ *
+ */
+class NodePrepareFirstUserSetupTest : AbstractNodePrepareTest() {
+
+
+    private val kubeAPI = KubeTestAPI()
+    private val databaseFactory = InMemoryRepositorySafeDatabaseFactory()
+
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+    }
+
+    @Test
+    internal fun databaseSetupTest() {
+        givenNodeWithDatabaseAndFirstUserSetupAutoComplete()
+        prepareNode()
+        assertFirstUserCreated()
+    }
+
+    private fun assertFirstUserCreated() {
+        val offlinePlayerRepository = this.databaseFactory.offlineCloudPlayerRepository
+        Assertions.assertEquals(1, offlinePlayerRepository.count().join())
+    }
+
+    private fun givenNodeWithDatabaseAndFirstUserSetupAutoComplete() {
+        this.kubeAPI.getSecretService().createSecret("database", SecretSpec().withData("database", "localhost"))
+        given(this.databaseFactory, this.kubeAPI, DatabaseRestSetupManager())
+    }
+
+
+    class DatabaseRestSetupManager : RestSetupManager {
+
+        override fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T> {
+            return CloudCompletableFuture.completedFuture(
+                FirstUserSetupResponseBody(UUID.randomUUID(), "Wetterbericht", "123")
+            ) as CompletableFuture<T>
+        }
+
+        override fun setEndToken(token: String) {
+
+        }
+
+        override fun onEndOfAllSetups() {
+
+        }
+
+    }
+
+}

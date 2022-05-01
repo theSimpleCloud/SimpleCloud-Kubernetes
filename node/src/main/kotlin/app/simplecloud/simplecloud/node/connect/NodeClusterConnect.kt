@@ -19,22 +19,31 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
+import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
-import app.simplecloud.simplecloud.node.startup.task.RestServerStartTask
+import app.simplecloud.simplecloud.node.startup.prepare.KubeBinderModule
+import app.simplecloud.simplecloud.node.startup.prepare.RestServerStartTask
+import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseRepositoriesModule
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
+import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
 import app.simplecloud.simplecloud.restserver.base.RestServer
+import com.google.inject.Guice
 import com.google.inject.Injector
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
 class NodeClusterConnect constructor(
-    private val injector: Injector,
-    private val distributionFactory: DistributionFactory
+    private val distributionFactory: DistributionFactory,
+    private val kubeAPI: KubeAPI,
+    private val databaseRepositories: DatabaseRepositories,
+    private val jwtTokenHandler: JwtTokenHandler
 ) {
 
     private val nodeBindPort = 1670
@@ -42,7 +51,7 @@ class NodeClusterConnect constructor(
     fun connect() {
         logger.info("Connecting to cluster...")
         val distribution = startDistribution()
-        val finalInjector = createFinalInjector(distribution)
+        val finalInjector = createInjector(distribution)
         startRestServer(finalInjector)
         registerMessageChannels(finalInjector)
         checkForFirstNodeInCluster(finalInjector, distribution)
@@ -73,7 +82,7 @@ class NodeClusterConnect constructor(
         return injector.getInstance(RestServerStartTask::class.java).run()
     }
 
-    private fun createFinalInjector(distribution: Distribution): Injector {
+    private fun createInjector(distribution: Distribution): Injector {
         val cloudAPIBinderModule = CloudAPIBinderModule(
             distribution,
             NodeServiceImpl::class.java,
@@ -82,7 +91,10 @@ class NodeClusterConnect constructor(
             CloudPlayerServiceImpl::class.java,
             PermissionGroupServiceImpl::class.java
         )
-        return injector.createChildInjector(
+        return Guice.createInjector(
+            SingleInstanceBinderModule(JwtTokenHandler::class.java, this.jwtTokenHandler),
+            KubeBinderModule(this.kubeAPI),
+            DatabaseRepositoriesModule(this.databaseRepositories),
             NodeBinderModule(),
             cloudAPIBinderModule
         )
