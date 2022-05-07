@@ -16,6 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth.token
+
+/**
+ * Date: 03.05.22
+ * Time: 19:12
+ * @author Frederick Baier
+ *
+ */
+interface TokenHandlerFactory {
+
+    fun create(secret: String): TokenHandler
 
 }

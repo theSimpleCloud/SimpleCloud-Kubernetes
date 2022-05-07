@@ -16,6 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api
+
+import app.simplecloud.simplecloud.restserver.api.auth.AuthService
+import app.simplecloud.simplecloud.restserver.api.route.Route
+import app.simplecloud.simplecloud.restserver.api.route.RouteBuilder
+
+/**
+ * Date: 12.03.22
+ * Time: 22:36
+ * @author Frederick Baier
+ *
+ */
+interface RestServer {
+
+    //auth, user, controller, annotations, logic for change auth,
+    //add routes / remove dynamically
+
+    fun setAuthService(authService: AuthService)
+
+    fun getAuthService(): AuthService
+
+    fun registerRoute(route: Route)
+
+    fun unregisterRoute(route: Route)
+
+    fun stop()
+
+    fun newRouteBuilder(): RouteBuilder
 
 }

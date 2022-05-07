@@ -16,6 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.route
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 23.06.2021
+ * Time: 09:14
+ * @author Frederick Baier
+ */
+enum class RequestType {
+
+    GET,
+
+    PUT,
+
+    POST,
+
+    DELETE
 
 }

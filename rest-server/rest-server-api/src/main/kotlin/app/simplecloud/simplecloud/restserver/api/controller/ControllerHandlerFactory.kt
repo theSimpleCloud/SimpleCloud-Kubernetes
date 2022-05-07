@@ -16,6 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.controller
+
+import app.simplecloud.simplecloud.restserver.api.RestServer
+
+/**
+ * Date: 04.05.22
+ * Time: 21:05
+ * @author Frederick Baier
+ *
+ */
+interface ControllerHandlerFactory {
+
+    fun create(restServer: RestServer): ControllerHandler
 
 }

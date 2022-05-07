@@ -16,6 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api
+
+
+/**
+ * Date: 14.03.22
+ * Time: 09:59
+ * @author Frederick Baier
+ *
+ */
+interface ParameterType {
+
+    fun resolveValue(request: Request): Any?
 
 }

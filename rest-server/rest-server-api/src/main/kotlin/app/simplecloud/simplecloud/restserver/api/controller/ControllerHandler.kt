@@ -16,6 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.controller
+
+import app.simplecloud.simplecloud.restserver.api.RestServer
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 23.06.2021
+ * Time: 09:40
+ * @author Frederick Baier
+ */
+interface ControllerHandler {
+
+    fun getRestServer(): RestServer
+
+    fun registerController(controller: Controller)
+
+    fun unregisterController(controller: Controller)
 
 }

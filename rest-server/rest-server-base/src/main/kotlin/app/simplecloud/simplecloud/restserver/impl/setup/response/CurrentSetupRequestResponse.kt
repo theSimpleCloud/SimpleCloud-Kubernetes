@@ -16,6 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.setup.response
 
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 09/08/2021
+ * Time: 22:22
+ * @author Frederick Baier
+ */
+open class CurrentSetupRequestResponse(currentSetup: Setup<*>) {
+    val nextSetup = currentSetup.setupName
+    val content = currentSetup.additionalContent
 }

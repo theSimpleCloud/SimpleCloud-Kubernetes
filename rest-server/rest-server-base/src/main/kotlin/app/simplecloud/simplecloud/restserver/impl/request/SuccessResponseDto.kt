@@ -16,6 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.request
 
-}
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 27.06.2021
+ * Time: 18:25
+ * @author Frederick Baier
+ */
+class SuccessResponseDto(val result: Any)

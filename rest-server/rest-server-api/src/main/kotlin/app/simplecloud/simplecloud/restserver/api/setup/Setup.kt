@@ -16,6 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.setup
 
-}
+import kotlin.reflect.KClass
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 07/08/2021
+ * Time: 18:23
+ * @author Frederick Baier
+ */
+open class Setup<T : Any>(
+    val setupName: String,
+    val additionalContent: Any,
+    val responseClass: KClass<T>
+)

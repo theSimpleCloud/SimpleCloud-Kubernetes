@@ -16,6 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.base
+
+import app.simplecloud.simplecloud.restserver.api.RestServer
+import app.simplecloud.simplecloud.restserver.api.auth.AuthService
+import app.simplecloud.simplecloud.restserver.base.impl.RestServerBase
+
+/**
+ * Date: 14.03.22
+ * Time: 13:01
+ * @author Frederick Baier
+ *
+ */
+object RestServerFactory {
+
+    fun createRestServer(authService: AuthService, port: Int): RestServer {
+        return RestServerBase(authService, port)
+    }
+
 
 }

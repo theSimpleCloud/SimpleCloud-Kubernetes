@@ -16,6 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth.token
+
+import app.simplecloud.simplecloud.restserver.api.auth.Headers
+import java.util.*
+
+/**
+ * Date: 03.05.22
+ * Time: 19:02
+ * @author Frederick Baier
+ *
+ */
+interface TokenHandler {
+
+    fun makeToken(data: TokenData, expireDate: Date): String
+
+    fun verifyToken(headers: Headers): TokenData
+
+    class TokenData(
+        val tokenMode: TokenMode,
+        val playerUniqueId: UUID
+    )
+
+    enum class TokenMode {
+        PLAYER, API
+    }
 
 }

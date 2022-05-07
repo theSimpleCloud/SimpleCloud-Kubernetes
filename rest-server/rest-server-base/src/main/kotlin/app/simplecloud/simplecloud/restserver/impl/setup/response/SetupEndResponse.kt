@@ -16,6 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.setup.response
 
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 09/08/2021
+ * Time: 22:22
+ * @author Frederick Baier
+ */
+open class SetupEndResponse(token: String) {
+    val nextSetup = "end"
+    val token = token
 }

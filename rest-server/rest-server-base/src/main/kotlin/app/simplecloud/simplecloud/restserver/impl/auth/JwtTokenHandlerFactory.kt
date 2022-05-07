@@ -16,6 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.auth
 
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
+
+/**
+ * Date: 03.05.22
+ * Time: 19:13
+ * @author Frederick Baier
+ *
+ */
+class JwtTokenHandlerFactory : TokenHandlerFactory {
+    override fun create(secret: String): TokenHandler {
+        return JwtTokenHandler(secret)
+    }
 }

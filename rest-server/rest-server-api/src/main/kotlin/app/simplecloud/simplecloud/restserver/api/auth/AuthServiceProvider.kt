@@ -16,6 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth
+
+/**
+ * Date: 18.03.22
+ * Time: 21:30
+ * @author Frederick Baier
+ *
+ */
+interface AuthServiceProvider {
+
+    fun getAuthService(): AuthService
 
 }

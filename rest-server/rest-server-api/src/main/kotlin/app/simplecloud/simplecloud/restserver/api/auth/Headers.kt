@@ -16,6 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth
+
+/**
+ * Date: 03.05.22
+ * Time: 11:13
+ * @author Frederick Baier
+ *
+ */
+interface Headers {
+
+    fun hasHeader(name: String): Boolean
+
+    /**
+     * Returns the header
+     * @throws NoSuchElementException if the header cannot be found
+     */
+    fun getHeader(name: String): String
 
 }

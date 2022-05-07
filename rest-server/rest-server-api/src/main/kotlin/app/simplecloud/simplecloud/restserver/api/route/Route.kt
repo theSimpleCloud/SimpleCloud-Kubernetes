@@ -16,6 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.route
+
+import app.simplecloud.simplecloud.restserver.api.Request
+
+/**
+ * Date: 14.03.22
+ * Time: 11:15
+ * @author Frederick Baier
+ *
+ */
+interface Route {
+
+    fun getRequestType(): RequestType
+
+    fun getPath(): String
+
+    /**
+     * Returns the permission or an empty string if no permission was set
+     */
+    fun getPermission(): String
+
+    fun hasPermission(): Boolean {
+        return getPermission().isNotEmpty()
+    }
+
+    fun handleRequest(request: Request): Any?
 
 }

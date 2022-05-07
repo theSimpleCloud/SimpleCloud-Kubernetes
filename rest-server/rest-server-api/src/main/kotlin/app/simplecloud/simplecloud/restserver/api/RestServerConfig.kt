@@ -16,6 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api
 
-}
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
+import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFactory
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+
+/**
+ * Date: 03.05.22
+ * Time: 19:11
+ * @author Frederick Baier
+ *
+ */
+class RestServerConfig(
+    val restServer: RestServer,
+    val tokenHandlerFactory: TokenHandlerFactory,
+    val controllerHandlerFactory: ControllerHandlerFactory,
+    val setupManager: RestSetupManager
+)

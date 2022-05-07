@@ -16,6 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.route
+
+import app.simplecloud.simplecloud.restserver.api.ParameterType
+import app.simplecloud.simplecloud.restserver.api.vmethod.VirtualMethod
+
+/**
+ * Date: 14.03.22
+ * Time: 09:58
+ * @author Frederick Baier
+ *
+ */
+interface RouteMethodBuilder {
+
+    fun setVirtualMethod(virtualMethod: VirtualMethod): RouteMethodBuilder
+
+    fun addParameter(parameterType: ParameterType): RouteMethodBuilder
+
+    fun build(): RouteMethod
+
+
 
 }

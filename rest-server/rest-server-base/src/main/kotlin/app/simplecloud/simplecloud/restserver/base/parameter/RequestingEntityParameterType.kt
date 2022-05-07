@@ -16,6 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.base.parameter
 
+import app.simplecloud.simplecloud.restserver.api.ParameterType
+import app.simplecloud.simplecloud.restserver.api.Request
+
+/**
+ * Date: 14.03.22
+ * Time: 09:59
+ * @author Frederick Baier
+ *
+ */
+class RequestingEntityParameterType : ParameterType {
+
+    override fun resolveValue(request: Request): Any? {
+        return request.getRequestingEntity()
+    }
 }

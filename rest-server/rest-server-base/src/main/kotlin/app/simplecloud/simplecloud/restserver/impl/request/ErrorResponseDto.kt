@@ -16,6 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.request
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 24.06.2021
+ * Time: 15:23
+ * @author Frederick Baier
+ */
+data class ErrorResponseDto(
+    val errorClass: String,
+    val error: String
+) {
+
+    companion object {
+        fun fromException(ex: Throwable): ErrorResponseDto {
+            return ErrorResponseDto(ex::class.java.name, ex.message ?: "")
+        }
+    }
 
 }

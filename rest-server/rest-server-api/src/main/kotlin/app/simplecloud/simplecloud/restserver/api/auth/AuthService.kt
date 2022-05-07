@@ -16,6 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth
+
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 23.06.2021
+ * Time: 14:50
+ * @author Frederick Baier
+ */
+interface AuthService {
+
+    /**
+     * Returns the jwt token for the specified credentials
+     */
+    suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String
+
+    /**
+     * Returns the user from the specified [headers]
+     */
+    suspend fun getRequestEntityFromHeader(headers: Headers): PermissionEntity
 
 }

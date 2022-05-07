@@ -16,6 +16,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.vmethod
+
+import java.lang.reflect.Method
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 05/08/2021
+ * Time: 13:19
+ * @author Frederick Baier
+ *
+ */
+@FunctionalInterface
+interface VirtualMethod {
+
+    /**
+     * @param args the arguments of the method
+     */
+    fun invoke(vararg args: Any?): Any?
+
+
+    companion object {
+        fun fromRealMethod(method: Method, invokeObj: Any): VirtualMethod {
+            return object: VirtualMethod {
+
+                override fun invoke(vararg args: Any?): Any? {
+                    return method.invoke(invokeObj, *args)
+                }
+
+            }
+        }
+    }
 
 }

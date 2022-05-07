@@ -16,6 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.base.route
 
+import app.simplecloud.simplecloud.restserver.api.ParameterType
+import app.simplecloud.simplecloud.restserver.api.route.RouteMethod
+import app.simplecloud.simplecloud.restserver.api.vmethod.VirtualMethod
+
+/**
+ * Date: 14.03.22
+ * Time: 13:13
+ * @author Frederick Baier
+ *
+ */
+class RouteMethodImpl(
+    private val virtualMethod: VirtualMethod,
+    private val parameters: List<ParameterType>
+) : RouteMethod {
+    override fun getVirtualMethod(): VirtualMethod {
+        return this.virtualMethod
+    }
+
+    override fun getParameters(): List<ParameterType> {
+        return this.parameters
+    }
 }

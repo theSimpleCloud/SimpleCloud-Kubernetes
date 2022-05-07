@@ -16,6 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.setup
+
+import java.util.concurrent.CompletableFuture
+
+/**
+ * Date: 01.05.22
+ * Time: 11:18
+ * @author Frederick Baier
+ *
+ */
+interface RestSetupManager {
+
+    /**
+     * Sets the next setup adn returns a future that completes with the result of the setup
+     */
+    fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T>
+
+    /**
+     * Sets the token for the first user
+     */
+    fun setEndToken(token: String)
+
+    /**
+     * Gets called when all setups were completed
+     */
+    fun onEndOfAllSetups()
 
 }

@@ -16,6 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 23.06.2021
+ * Time: 14:50
+ * @author Frederick Baier
+ */
+data class UsernameAndPasswordCredentials(
+    val username: String,
+    val password: String
+) {
+
+    private constructor(): this("", "")
 
 }

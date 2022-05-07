@@ -16,6 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.annotation.exclude
 
-}
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 25.06.2021
+ * Time: 12:19
+ * @author Frederick Baier
+ */
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.FIELD)
+annotation class WebExcludeIncoming()

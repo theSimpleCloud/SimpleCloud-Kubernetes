@@ -16,6 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.auth
 
+import app.simplecloud.simplecloud.api.permission.EmptyPermissionEntity
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
+
+/**
+ * Date: 14.03.22
+ * Time: 13:04
+ * @author Frederick Baier
+ *
+ */
+class NoAuthService : AuthService {
+
+    override suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
+        throw UnsupportedOperationException("Authentication is currently not supported")
+    }
+
+    override suspend fun getRequestEntityFromHeader(headers: Headers): PermissionEntity {
+        return EmptyPermissionEntity
+    }
 }

@@ -16,6 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.api.controller.annotation
 
-}
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 23.06.2021
+ * Time: 09:10
+ * @author Frederick Baier
+ */
+@Retention(AnnotationRetention.RUNTIME)
+@Target(AnnotationTarget.CLASS)
+annotation class RestController(
+    val version: Int,
+    val topic: String,
+    val additionalPath: String = ""
+)

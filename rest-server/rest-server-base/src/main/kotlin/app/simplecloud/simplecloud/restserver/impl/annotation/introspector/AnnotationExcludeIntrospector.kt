@@ -16,6 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.restserver.impl.annotation.introspector
+
+import com.fasterxml.jackson.databind.introspect.Annotated
+import com.fasterxml.jackson.databind.introspect.JacksonAnnotationIntrospector
+
+/**
+ * Created by IntelliJ IDEA.
+ * Date: 25.06.2021
+ * Time: 12:22
+ * @author Frederick Baier
+ */
+class AnnotationExcludeIntrospector(
+    vararg excludeAnnotations: Class<out Annotation>
+): JacksonAnnotationIntrospector() {
+
+    private val excludeAnnotations = excludeAnnotations.toList()
+
+    override fun _isIgnorable(a: Annotated): Boolean {
+        return hasAnnyCustomAnnotation(a) || super._isIgnorable(a)
+    }
+
+    private fun hasAnnyCustomAnnotation(a: Annotated): Boolean {
+        return excludeAnnotations.any { a.hasAnnotation(it) }
+    }
+
 
 }
