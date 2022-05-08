@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 
 interface ProcessStarter {
 
@@ -27,7 +28,7 @@ interface ProcessStarter {
 
     interface Factory {
 
-        fun create(configuration: ProcessStartConfiguration): ProcessStarter
+        fun create(configuration: ProcessStartConfiguration, processService: CloudProcessService): ProcessStarter
 
     }
 

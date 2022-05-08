@@ -45,12 +45,12 @@ abstract class AbstractPermissionGroupService(
 
     override fun findByName(name: String): CompletableFuture<PermissionGroup> {
         val completableFuture = this.repository.find(name)
-        return completableFuture.thenApply { this.groupFactory.create(it) }
+        return completableFuture.thenApply { this.groupFactory.create(it, this) }
     }
 
     override fun findAll(): CompletableFuture<List<PermissionGroup>> {
         val completableFuture = this.repository.findAll()
-        return completableFuture.thenApply { list -> list.map { this.groupFactory.create(it) } }
+        return completableFuture.thenApply { list -> list.map { this.groupFactory.create(it, this) } }
     }
 
     override fun createCreateRequest(configuration: PermissionGroupConfiguration): PermissionGroupCreateRequest {
@@ -66,7 +66,7 @@ abstract class AbstractPermissionGroupService(
     }
 
     override suspend fun createGroupInternal(configuration: PermissionGroupConfiguration): PermissionGroup {
-        val permissionGroup = this.groupFactory.create(configuration)
+        val permissionGroup = this.groupFactory.create(configuration, this)
         updateGroupInternal(configuration)
         return permissionGroup
     }

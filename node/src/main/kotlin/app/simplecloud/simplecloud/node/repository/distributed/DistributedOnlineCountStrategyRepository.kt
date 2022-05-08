@@ -22,8 +22,6 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.AbstractDistr
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.node.repository.distributed.predicate.OnlineCountCompareTargetGroupPredicate
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -33,8 +31,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-@Singleton
-class DistributedOnlineCountStrategyRepository @Inject constructor(
+class DistributedOnlineCountStrategyRepository(
     distribution: Distribution
 ) : AbstractDistributedRepository<String, ProcessOnlineCountStrategyConfiguration>(
     distribution.getOrCreateCache("cloud-online-strategy")

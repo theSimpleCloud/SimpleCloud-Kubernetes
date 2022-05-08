@@ -19,13 +19,12 @@
 package app.simplecloud.simplecloud.api.impl.permission
 
 import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
+import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.request.permission.PermissionGroupUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
-import com.google.inject.Guice
-import com.google.inject.Injector
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -40,16 +39,19 @@ import java.util.concurrent.CompletionException
  */
 class PermissionGroupUpdateRequestTest {
 
-    private lateinit var injector: Injector
     private lateinit var permissionGroupService: InternalPermissionGroupService
     private lateinit var permissionGroupRepository: PermissionGroupRepository
 
 
     @BeforeEach
     fun beforeEach() {
-        this.injector = Guice.createInjector(BinderModule())
-        this.permissionGroupService = this.injector.getInstance(InternalPermissionGroupService::class.java)
-        this.permissionGroupRepository = this.injector.getInstance(PermissionGroupRepository::class.java)
+        this.permissionGroupRepository = PermissionGroupRepositoryImpl()
+        val permissionFactory = PermissionFactoryImpl()
+        this.permissionGroupService = PermissionGroupServiceImpl(
+            this.permissionGroupRepository,
+            PermissionGroupFactoryImpl(permissionFactory),
+            permissionFactory
+        )
     }
 
     @Test

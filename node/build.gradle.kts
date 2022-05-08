@@ -22,9 +22,8 @@ dependencies {
     implementation("org.apache.commons:commons-lang3:3.12.0")
 
 
-    implementation(project(":rest-server"))
-    implementation(project(":module-loader"))
-    implementation(project(":application-loader"))
+    implementation(project(":rest-server:rest-server-api"))
+    implementation(project(":rest-server:rest-server-base"))
     api(project(":api"))
     implementation(project(":api-impl"))
     implementation(project(":api-internal"))

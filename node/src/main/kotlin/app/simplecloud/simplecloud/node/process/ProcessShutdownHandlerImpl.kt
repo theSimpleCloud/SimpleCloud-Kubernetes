@@ -24,8 +24,6 @@ import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessU
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -34,8 +32,8 @@ import org.apache.logging.log4j.LogManager
  * @author Frederick Baier
  *
  */
-class ProcessShutdownHandlerImpl @Inject constructor(
-    @Assisted private val process: CloudProcess,
+class ProcessShutdownHandlerImpl(
+    private val process: CloudProcess,
     private val podService: KubePodService,
     private val distributedCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler {

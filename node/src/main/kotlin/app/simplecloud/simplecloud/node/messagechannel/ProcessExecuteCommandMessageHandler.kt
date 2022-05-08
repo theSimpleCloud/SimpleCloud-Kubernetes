@@ -24,10 +24,9 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteComm
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
-class ProcessExecuteCommandMessageHandler @Inject constructor(
+class ProcessExecuteCommandMessageHandler(
     private val internalService: InternalCloudProcessService
 ) : MessageHandler<ProcessExecuteCommandConfiguration, Unit> {
 

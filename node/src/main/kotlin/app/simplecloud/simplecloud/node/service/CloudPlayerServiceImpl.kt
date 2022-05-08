@@ -22,16 +22,16 @@ import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.flatten
 import app.simplecloud.simplecloud.api.future.isCompletedNormally
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.player.OfflineCloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import app.simplecloud.simplecloud.node.messagechannel.CloudPlayerLoginHandler
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -41,10 +41,9 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-@Singleton
-class CloudPlayerServiceImpl @Inject constructor(
+class CloudPlayerServiceImpl(
     distributedRepository: DistributedCloudPlayerRepository,
-    playerFactory: CloudPlayerFactory,
+    private val playerFactory: CloudPlayerFactory,
     private val databaseCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
     private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
@@ -86,8 +85,18 @@ class CloudPlayerServiceImpl @Inject constructor(
         this.databaseCloudPlayerRepository.save(configuration.uniqueId, configuration).await()
     }
 
+    override suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer {
+        val playerConfiguration = CloudPlayerLoginHandler(
+            configuration,
+            this.playerFactory,
+            this.databaseCloudPlayerRepository,
+            this
+        ).handleLogin()
+        return this.playerFactory.create(playerConfiguration, this)
+    }
+
     private fun convertPlayerEntityToOfflineCloudPlayer(configuration: OfflineCloudPlayerConfiguration): OfflineCloudPlayer {
-        return this.offlineCloudPlayerFactory.create(configuration)
+        return this.offlineCloudPlayerFactory.create(configuration, this)
     }
 
 }

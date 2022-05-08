@@ -21,12 +21,9 @@ package app.simplecloud.simplecloud.api.impl.process.group
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -38,7 +35,6 @@ import java.util.concurrent.CompletableFuture
 */
 abstract class AbstractCloudProcessGroup constructor(
     private val configuration: AbstractCloudProcessGroupConfiguration,
-    private val processService: CloudProcessService,
     private val processGroupService: InternalCloudProcessGroupService,
 ) : CloudProcessGroup {
 
@@ -79,10 +75,6 @@ abstract class AbstractCloudProcessGroup constructor(
 
     override fun getStartPriority(): Int {
         return this.configuration.startPriority
-    }
-
-    override fun getProcesses(): CompletableFuture<List<CloudProcess>> {
-        return this.processService.findByGroup(this)
     }
 
     override fun getName(): String {

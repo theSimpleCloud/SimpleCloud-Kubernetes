@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.api.impl.process.factory
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,6 +30,6 @@ import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
  */
 interface CloudProcessFactory {
 
-    fun create(configuration: CloudProcessConfiguration): CloudProcess
+    fun create(configuration: CloudProcessConfiguration, processService: CloudProcessService): CloudProcess
 
 }

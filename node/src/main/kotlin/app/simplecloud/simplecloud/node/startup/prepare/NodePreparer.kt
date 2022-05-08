@@ -22,10 +22,11 @@ import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerReposi
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.node.connect.JwtTokenLoader
+import app.simplecloud.simplecloud.node.connect.RestTokenLoader
 import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseSafeStarter
-import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -37,13 +38,15 @@ import org.apache.logging.log4j.LogManager
 class NodePreparer(
     private val databaseFactory: DatabaseFactory,
     private val kubeApi: KubeAPI,
-    private val restSetupManager: RestSetupManager
+    private val restSetupManager: RestSetupManager,
+    private val tokenHandlerFactory: TokenHandlerFactory
 ) {
 
     fun prepare(): PreparedNode {
         logger.info("Starting Node...")
         val databaseRepositories = initDatabaseRepositories()
-        val jwtTokenHandler = JwtTokenHandler(JwtTokenLoader(this.kubeApi.getSecretService()).loadJwtToken())
+        val restToken = RestTokenLoader(this.kubeApi.getSecretService()).loadRestToken()
+        val jwtTokenHandler = this.tokenHandlerFactory.create(restToken)
         checkForAnyWebAccount(databaseRepositories.offlineCloudPlayerRepository, jwtTokenHandler)
         setupEnd()
         logger.info("Node Startup completed")
@@ -52,11 +55,11 @@ class NodePreparer(
 
     private fun checkForAnyWebAccount(
         offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-        jwtTokenHandler: JwtTokenHandler
+        tokenHandler: TokenHandler
     ) {
         FirstAccountCheck(
             offlineCloudPlayerRepository,
-            jwtTokenHandler,
+            tokenHandler,
             this.restSetupManager
         ).checkForAccount()
     }

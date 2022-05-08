@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
@@ -25,11 +26,8 @@ import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
 /**
  * Date: 01.04.22
@@ -37,12 +35,11 @@ import com.google.inject.Singleton
  * @author Frederick Baier
  *
  */
-@Singleton
-class InternalMessageChannelProviderImpl @Inject constructor(
+class InternalMessageChannelProviderImpl(
     private val messageChannelManager: MessageChannelManager
 ) : InternalMessageChannelProvider {
 
-    override fun getInternalPlayerLoginChannel(): MessageChannel<PlayerConnectionConfiguration, CloudPlayerConfiguration> {
+    override fun getInternalPlayerLoginChannel(): MessageChannel<PlayerLoginConfiguration, CloudPlayerConfiguration> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_player_login")
     }
 

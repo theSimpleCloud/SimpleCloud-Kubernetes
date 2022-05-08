@@ -23,8 +23,6 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionPlayer
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.PermissionGroupService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 import java.util.*
 
 /**
@@ -33,8 +31,8 @@ import java.util.*
  * @author Frederick Baier
  *
  */
-class PermissionPlayerImpl @Inject constructor(
-    @Assisted private val configuration: PermissionPlayerConfiguration,
+class PermissionPlayerImpl constructor(
+    private val configuration: PermissionPlayerConfiguration,
     private val permissionGroupService: PermissionGroupService,
     factory: Permission.Factory
 ) : PermissionEntityImpl(

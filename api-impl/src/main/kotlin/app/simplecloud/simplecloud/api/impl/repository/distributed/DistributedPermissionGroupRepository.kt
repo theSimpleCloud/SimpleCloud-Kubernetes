@@ -21,8 +21,6 @@ package app.simplecloud.simplecloud.api.impl.repository.distributed
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
 /**
  * Date: 20.03.22
@@ -30,8 +28,7 @@ import com.google.inject.Singleton
  * @author Frederick Baier
  *
  */
-@Singleton
-class DistributedPermissionGroupRepository @Inject constructor(
+class DistributedPermissionGroupRepository(
     private val distribution: Distribution
 ) : AbstractDistributedRepository<String, PermissionGroupConfiguration>(
     distribution.getOrCreateCache("cloud-permission-groups")

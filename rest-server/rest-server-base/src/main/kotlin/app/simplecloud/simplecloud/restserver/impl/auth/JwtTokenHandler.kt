@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.restserver.impl.auth
 
 import app.simplecloud.simplecloud.restserver.api.auth.Headers
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
-import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
+import app.simplecloud.simplecloud.restserver.api.exception.UnauthorizedException
 import com.auth0.jwt.JWT
 import com.auth0.jwt.JWTVerifier
 import com.auth0.jwt.algorithms.Algorithm

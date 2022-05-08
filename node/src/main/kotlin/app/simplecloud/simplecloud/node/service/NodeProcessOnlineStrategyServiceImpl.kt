@@ -34,11 +34,6 @@ import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCount
 import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
-import com.google.inject.Inject
-import com.google.inject.Injector
-import com.google.inject.Singleton
-import kotlinx.coroutines.launch
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -47,21 +42,11 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-@Singleton
-class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
-    private val injector: Injector,
+class NodeProcessOnlineStrategyServiceImpl(
     private val distributedRepository: DistributedOnlineCountStrategyRepository,
     private val databaseRepository: DatabaseOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory
 ) : InternalNodeProcessOnlineCountStrategyService {
-
-    private val onlineProcessesChecker by lazy { this.injector.getInstance(NodeOnlineProcessesChecker::class.java) }
-
-    override fun checkProcessOnlineCount() {
-        CloudScope.launch {
-            onlineProcessesChecker.checkOnlineCount()
-        }
-    }
 
     override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
         val configuration = distributedRepository.find(name).await()
@@ -102,13 +87,13 @@ class NodeProcessOnlineStrategyServiceImpl @Inject constructor(
     override suspend fun updateStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration) {
         this.distributedRepository.save(configuration.name, configuration).await()
         saveToDatabase(configuration)
-        checkProcessOnlineCount()
+        //checkProcessOnlineCount() TODO
     }
 
     override suspend fun deleteStrategyInternal(strategy: ProcessesOnlineCountStrategy) {
         this.distributedRepository.remove(strategy.getName())
         deleteStrategyFromDatabase(strategy)
-        checkProcessOnlineCount()
+        //checkProcessOnlineCount() TODO
     }
 
     private fun deleteStrategyFromDatabase(strategy: ProcessesOnlineCountStrategy) {

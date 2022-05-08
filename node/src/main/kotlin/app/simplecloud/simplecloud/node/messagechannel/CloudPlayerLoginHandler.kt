@@ -19,29 +19,48 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import org.apache.logging.log4j.LogManager
 
 class CloudPlayerLoginHandler(
+    private val configuration: PlayerLoginConfiguration,
     private val playerFactory: CloudPlayerFactory,
     private val databasePlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    private val configuration: PlayerConnectionConfiguration,
-    private val proxyName: String
+    private val playerService: InternalCloudPlayerService
 ) {
 
     suspend fun handleLogin(): CloudPlayerConfiguration {
-        logger.info("Player {} is logging in on {}", this.configuration.name, this.proxyName)
+        logger.info(
+            "Player {} is logging in on {}",
+            this.configuration.connectionConfiguration.name,
+            this.configuration.proxyName
+        )
+        checkPlayerAlreadyConnected()
         val player = createPlayer()
         savePlayerToDatabase(player)
         player.createUpdateRequest().submit().await()
         return player.toConfiguration()
+    }
+
+    private suspend fun checkPlayerAlreadyConnected() {
+        if (doesPlayerAlreadyExist()) {
+            throw PlayerAlreadyRegisteredException(this.configuration)
+        }
+    }
+
+
+    private suspend fun doesPlayerAlreadyExist(): Boolean {
+        return runCatching {
+            this.playerService.findOnlinePlayerByUniqueId(this.configuration.connectionConfiguration.uniqueId).await()
+        }.isSuccess
     }
 
     private fun savePlayerToDatabase(player: CloudPlayer) {
@@ -59,49 +78,55 @@ class CloudPlayerLoginHandler(
     }
 
     private fun createNewCloudPlayer(): CloudPlayer {
+        val connectionConfiguration = this.configuration.connectionConfiguration
         val cloudPlayerConfiguration = CloudPlayerConfiguration(
-            this.configuration.name,
-            this.configuration.uniqueId,
+            connectionConfiguration.name,
+            connectionConfiguration.uniqueId,
             System.currentTimeMillis(),
             System.currentTimeMillis(),
             0,
-            this.configuration,
-            this.configuration.name,
+            connectionConfiguration,
+            connectionConfiguration.name,
             PlayerWebConfig("", false),
             PermissionPlayerConfiguration(
-                this.configuration.uniqueId,
+                connectionConfiguration.uniqueId,
                 emptyList()
             ),
             null,
-            this.proxyName
+            this.configuration.proxyName
         )
-        return this.playerFactory.create(cloudPlayerConfiguration)
+        return this.playerFactory.create(cloudPlayerConfiguration, this.playerService)
     }
 
     private fun createPlayerFromConfiguration(loadedPlayerConfiguration: OfflineCloudPlayerConfiguration): CloudPlayer {
         val cloudPlayerConfiguration = createCloudPlayerConfiguration(loadedPlayerConfiguration)
-        return this.playerFactory.create(cloudPlayerConfiguration)
+        return this.playerFactory.create(cloudPlayerConfiguration, this.playerService)
     }
 
     private fun createCloudPlayerConfiguration(loadedPlayerConfiguration: OfflineCloudPlayerConfiguration): CloudPlayerConfiguration {
+        val connectionConfiguration = this.configuration.connectionConfiguration
         return CloudPlayerConfiguration(
-            this.configuration.name,
-            this.configuration.uniqueId,
+            connectionConfiguration.name,
+            connectionConfiguration.uniqueId,
             loadedPlayerConfiguration.firstLogin,
             System.currentTimeMillis(),
             loadedPlayerConfiguration.onlineTime,
-            this.configuration,
+            connectionConfiguration,
             loadedPlayerConfiguration.displayName,
             loadedPlayerConfiguration.webConfig,
             loadedPlayerConfiguration.permissionPlayerConfiguration,
             null,
-            proxyName
+            this.configuration.proxyName
         )
     }
 
     private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
-        return this.databasePlayerRepository.find(this.configuration.uniqueId).await()
+        return this.databasePlayerRepository.find(this.configuration.connectionConfiguration.uniqueId).await()
     }
+
+    class PlayerAlreadyRegisteredException(
+        configuration: PlayerLoginConfiguration
+    ) : Exception("Player ${configuration.connectionConfiguration.name} (${configuration.connectionConfiguration.uniqueId}) is already registered")
 
     companion object {
         private val logger = LogManager.getLogger(CloudPlayerLoginHandler::class.java)

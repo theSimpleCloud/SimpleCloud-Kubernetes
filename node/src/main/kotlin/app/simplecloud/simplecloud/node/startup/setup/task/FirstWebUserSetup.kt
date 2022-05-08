@@ -26,9 +26,9 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
-import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
 import com.google.common.hash.Hashing
 import org.apache.logging.log4j.LogManager
 import java.nio.charset.StandardCharsets
@@ -44,7 +44,7 @@ import java.util.concurrent.TimeUnit
 class FirstWebUserSetup(
     private val restSetupManager: RestSetupManager,
     private val playerRepository: DatabaseOfflineCloudPlayerRepository,
-    private val jwtTokenHandler: JwtTokenHandler
+    private val tokenHandler: TokenHandler
 ) {
 
     fun executeSetup() {
@@ -56,8 +56,8 @@ class FirstWebUserSetup(
 
     private fun setEndToken(responseBody: FirstUserSetupResponseBody) {
         val expireDate = Date(System.currentTimeMillis() + TimeUnit.DAYS.toMillis(1))
-        val token = this.jwtTokenHandler.makeToken(
-            JwtTokenHandler.TokenData(JwtTokenHandler.TokenMode.PLAYER, responseBody.uniqueId),
+        val token = this.tokenHandler.makeToken(
+            TokenHandler.TokenData(TokenHandler.TokenMode.PLAYER, responseBody.uniqueId),
             expireDate
         )
         this.restSetupManager.setEndToken(token)

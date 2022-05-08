@@ -30,7 +30,6 @@ include("node")
 include("plugin-parent")
 include("content-server")
 include("process-prepare")
-include("rest-server-base")
 include("plugin-parent:bungeecord")
 findProject(":plugin-parent:bungeecord")?.name = "bungeecord"
 include("plugin-parent:plugin")
@@ -54,3 +53,7 @@ include("kubernetes:kubernetes-impl")
 findProject(":kubernetes:kubernetes-impl")?.name = "kubernetes-impl"
 include("kubernetes:kubernetes-test")
 findProject(":kubernetes:kubernetes-test")?.name = "kubernetes-test"
+include("rest-server:rest-server-base")
+findProject(":rest-server:rest-server-base")?.name = "rest-server-base"
+include("rest-server:rest-server-api")
+findProject(":rest-server:rest-server-api")?.name = "rest-server-api"

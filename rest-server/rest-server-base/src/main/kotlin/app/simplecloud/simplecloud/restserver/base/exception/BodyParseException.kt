@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.restserver.base.exception
 
+import app.simplecloud.simplecloud.restserver.api.exception.HttpException
+
 
 /**
  * Date: 14.03.22

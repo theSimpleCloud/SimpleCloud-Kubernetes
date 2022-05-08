@@ -18,12 +18,12 @@
 
 package app.simplecloud.simplecloud.api.internal.messagechannel
 
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 
@@ -35,7 +35,7 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
  */
 interface InternalMessageChannelProvider {
 
-    fun getInternalPlayerLoginChannel(): MessageChannel<PlayerConnectionConfiguration, CloudPlayerConfiguration>
+    fun getInternalPlayerLoginChannel(): MessageChannel<PlayerLoginConfiguration, CloudPlayerConfiguration>
 
     fun getInternalStartProcessChannel(): MessageChannel<ProcessStartConfiguration, CloudProcessConfiguration>
 

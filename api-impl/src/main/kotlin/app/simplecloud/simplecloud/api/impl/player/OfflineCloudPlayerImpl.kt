@@ -28,8 +28,6 @@ import app.simplecloud.simplecloud.api.player.PlayerConnection
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.request.player.OfflineCloudPlayerUpdateRequest
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -39,12 +37,12 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-open class OfflineCloudPlayerImpl @Inject constructor(
-    @Assisted private val configuration: OfflineCloudPlayerConfiguration,
+open class OfflineCloudPlayerImpl constructor(
+    private val configuration: OfflineCloudPlayerConfiguration,
     private val cloudPlayerService: InternalCloudPlayerService,
     private val permissionFactory: Permission.Factory,
     permissionPlayerFactory: PermissionPlayer.Factory
-): OfflineCloudPlayer {
+) : OfflineCloudPlayer {
 
     private val permissionPlayer = permissionPlayerFactory.create(this.configuration.permissionPlayerConfiguration)
 

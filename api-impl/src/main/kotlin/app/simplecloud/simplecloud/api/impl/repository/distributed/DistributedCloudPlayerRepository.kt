@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.Clo
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudPlayerRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -32,7 +31,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-class DistributedCloudPlayerRepository @Inject constructor(
+class DistributedCloudPlayerRepository(
     private val distribution: Distribution,
 ) : AbstractDistributedRepository<UUID, CloudPlayerConfiguration>(
     distribution.getOrCreateCache("cloud-players")

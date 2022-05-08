@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.service
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
@@ -39,16 +39,16 @@ abstract class AbstractCloudPlayerService(
 ) : InternalCloudPlayerService {
 
     override fun findOnlinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer> {
-        return this.distributedRepository.find(uniqueId).thenApply { this.playerFactory.create(it) }
+        return this.distributedRepository.find(uniqueId).thenApply { this.playerFactory.create(it, this) }
     }
 
     override fun findOnlinePlayerByName(name: String): CompletableFuture<CloudPlayer> {
-        return this.distributedRepository.findByName(name).thenApply { this.playerFactory.create(it) }
+        return this.distributedRepository.findByName(name).thenApply { this.playerFactory.create(it, this) }
     }
 
     override fun findOnlinePlayers(): CompletableFuture<List<CloudPlayer>> {
         val future = this.distributedRepository.findAll()
-        return future.thenApply { list -> list.map { this.playerFactory.create(it) } }
+        return future.thenApply { list -> list.map { this.playerFactory.create(it, this) } }
     }
 
     override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {

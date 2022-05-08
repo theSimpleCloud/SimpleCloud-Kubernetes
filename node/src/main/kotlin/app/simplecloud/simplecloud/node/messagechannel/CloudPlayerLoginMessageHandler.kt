@@ -20,26 +20,22 @@ package app.simplecloud.simplecloud.node.messagechannel
 
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
-class CloudPlayerLoginMessageHandler @Inject constructor(
-    private val playerFactory: CloudPlayerFactory,
-    private val databasePlayerRepository: DatabaseOfflineCloudPlayerRepository
-) : MessageHandler<PlayerConnectionConfiguration, CloudPlayerConfiguration> {
+class CloudPlayerLoginMessageHandler(
+    private val playerService: InternalCloudPlayerService
+) : MessageHandler<PlayerLoginConfiguration, CloudPlayerConfiguration> {
 
     override fun handleMessage(
-        message: PlayerConnectionConfiguration,
+        message: PlayerLoginConfiguration,
         sender: NetworkComponent
     ): CompletableFuture<CloudPlayerConfiguration> = CloudScope.future {
-        return@future CloudPlayerLoginHandler(playerFactory, databasePlayerRepository, message, sender.getName())
-            .handleLogin()
+        return@future playerService.loginPlayer(message).toConfiguration()
     }
 
 

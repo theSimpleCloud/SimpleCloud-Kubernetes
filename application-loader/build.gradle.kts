@@ -16,8 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+val guiceVersion by extra("5.1.0")
+
 dependencies {
     api("com.fasterxml.jackson.core:jackson-core:2.12.2")
     api("com.fasterxml.jackson.core:jackson-annotations:2.12.2")
     api("com.fasterxml.jackson.core:jackson-databind:2.12.2")
+    implementation("com.google.inject:guice:${guiceVersion}")
+    implementation("com.google.inject.extensions:guice-assistedinject:${guiceVersion}")
 }

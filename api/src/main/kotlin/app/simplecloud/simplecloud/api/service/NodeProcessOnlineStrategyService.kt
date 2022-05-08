@@ -34,11 +34,6 @@ import java.util.concurrent.CompletableFuture
 interface NodeProcessOnlineStrategyService {
 
     /**
-     * Starts and stops processes by comparing the current number of online processes to the desired one
-     */
-    fun checkProcessOnlineCount()
-
-    /**
      * Returns the strategy found by the specified [name]
      */
     fun findByName(name: String): CompletableFuture<ProcessesOnlineCountStrategy>

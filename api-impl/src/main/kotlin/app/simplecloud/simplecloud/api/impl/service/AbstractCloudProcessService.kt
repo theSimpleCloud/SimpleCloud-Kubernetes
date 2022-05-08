@@ -52,13 +52,13 @@ abstract class AbstractCloudProcessService(
     override fun findAll(): CompletableFuture<List<CloudProcess>> {
         val allProcessConfigurations = this.distributedRepository.findAll()
         return allProcessConfigurations.thenApply { configuration ->
-            configuration.map { this.processFactory.create(it) }
+            configuration.map { this.processFactory.create(it, this) }
         }
     }
 
     override fun findByName(name: String): CompletableFuture<CloudProcess> {
         val completableFuture = this.distributedRepository.find(name)
-        return completableFuture.thenApply { this.processFactory.create(it) }
+        return completableFuture.thenApply { this.processFactory.create(it, this) }
     }
 
     override fun findByNames(vararg names: String): CompletableFuture<List<CloudProcess>> {
@@ -72,17 +72,17 @@ abstract class AbstractCloudProcessService(
 
     override fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
         val processesFuture = this.distributedRepository.findProcessesByGroupName(groupName)
-        return processesFuture.thenApply { list -> list.map { this.processFactory.create(it) } }
+        return processesFuture.thenApply { list -> list.map { this.processFactory.create(it, this) } }
     }
 
     override fun findByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
         val completableFuture = this.distributedRepository.findProcessByUniqueId(uniqueId)
-        return completableFuture.thenApply { this.processFactory.create(it) }
+        return completableFuture.thenApply { this.processFactory.create(it, this) }
     }
 
     override fun findByDistributionComponent(component: DistributionComponent): CompletableFuture<CloudProcess> {
         val completableFuture = this.distributedRepository.findProcessByDistributionId(component.getDistributionId())
-        return completableFuture.thenApply { this.processFactory.create(it) }
+        return completableFuture.thenApply { this.processFactory.create(it, this) }
     }
 
     override suspend fun updateProcessInternal(configuration: CloudProcessConfiguration) {

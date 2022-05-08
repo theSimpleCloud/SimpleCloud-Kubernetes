@@ -24,20 +24,17 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import java.util.*
 
 class CloudProcessCreator(
     private val startConfiguration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
-    private val groupService: CloudProcessGroupService,
     private val factory: CloudProcessFactory
 ) {
 
     suspend fun createProcess(): CloudProcess {
         val processNumber = getProcessNumber()
-        val group = this.groupService.findByName(this.startConfiguration.groupName).await()
         return this.factory.create(
             CloudProcessConfiguration(
                 startConfiguration.groupName,
@@ -49,11 +46,12 @@ class CloudProcessCreator(
                 0,
                 startConfiguration.maxPlayers,
                 0,
-                group.isStatic(),
-                group.getProcessGroupType(),
+                startConfiguration.isStatic,
+                startConfiguration.groupType,
                 startConfiguration.imageName,
                 null
-            )
+            ),
+            processService
         )
     }
 

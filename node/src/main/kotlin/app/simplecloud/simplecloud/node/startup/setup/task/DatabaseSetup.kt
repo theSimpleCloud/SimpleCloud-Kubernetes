@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.node.startup.setup.task
 
 import app.simplecloud.simplecloud.node.startup.setup.body.DatabaseSetupResponseBody
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
 import org.apache.logging.log4j.LogManager
 
 /**

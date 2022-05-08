@@ -23,8 +23,6 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.service.PermissionGroupService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 
 /**
  * Date: 19.03.22
@@ -32,8 +30,8 @@ import com.google.inject.assistedinject.Assisted
  * @author Frederick Baier
  *
  */
-class PermissionGroupImpl @Inject constructor(
-    @Assisted private val configuration: PermissionGroupConfiguration,
+class PermissionGroupImpl constructor(
+    private val configuration: PermissionGroupConfiguration,
     factory: Permission.Factory,
     permissionGroupService: PermissionGroupService
 ) : PermissionEntityImpl(

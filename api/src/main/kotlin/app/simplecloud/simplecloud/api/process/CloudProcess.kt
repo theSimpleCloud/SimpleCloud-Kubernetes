@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.api.process
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
@@ -39,11 +38,6 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
      * Returns the group name of this process
      */
     fun getGroupName(): String
-
-    /**
-     * Returns the group of the process
-     */
-    fun getGroup(): CompletableFuture<CloudProcessGroup>
 
     /**
      * Returns the process number

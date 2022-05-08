@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.api.internal.service
 
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
@@ -33,5 +35,7 @@ interface InternalCloudPlayerService : CloudPlayerService {
     suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration)
 
     suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration)
+
+    suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer
 
 }

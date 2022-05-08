@@ -26,7 +26,7 @@ import java.util.concurrent.CompletableFuture
  * Created by IntelliJ IDEA.
  * Date: 03.04.2021
  * Time: 17:55
- * @author Frederick Baier
+ * @author Frederick Baier^
  */
 interface NodeService : Service {
 

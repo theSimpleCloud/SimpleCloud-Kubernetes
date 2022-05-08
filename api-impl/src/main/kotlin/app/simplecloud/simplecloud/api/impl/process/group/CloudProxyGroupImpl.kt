@@ -25,9 +25,6 @@ import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,13 +32,11 @@ import com.google.inject.assistedinject.Assisted
  * Time: 11:23
  * @author Frederick Baier
  */
-class CloudProxyGroupImpl @Inject constructor(
-    @Assisted private val configuration: CloudProxyProcessGroupConfiguration,
-    private val processService: CloudProcessService,
+class CloudProxyGroupImpl(
+    private val configuration: CloudProxyProcessGroupConfiguration,
     private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    processService,
     processGroupService
 ), CloudProxyGroup {
 

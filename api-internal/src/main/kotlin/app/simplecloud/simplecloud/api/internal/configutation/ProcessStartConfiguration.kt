@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.api.internal.configutation
 
+import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 04.04.2021
@@ -29,7 +31,9 @@ data class ProcessStartConfiguration(
     val processNumber: Int,
     val imageName: String,
     val maxMemory: Int,
-    val maxPlayers: Int
+    val maxPlayers: Int,
+    val isStatic: Boolean,
+    val groupType: ProcessGroupType
 ) {
 
     fun isProcessNumberSet(): Boolean {

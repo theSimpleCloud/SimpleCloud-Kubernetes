@@ -18,34 +18,30 @@
 
 package app.simplecloud.simplecloud.api
 
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
+import app.simplecloud.simplecloud.api.permission.Permission
+import app.simplecloud.simplecloud.api.service.*
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 28.03.2021
- * Time: 10:31
+ * Date: 07.05.22
+ * Time: 11:12
  * @author Frederick Baier
+ *
  */
-abstract class CloudAPI {
+interface CloudAPI {
 
-    init {
-        instance = this
-    }
+    fun getProcessGroupService(): CloudProcessGroupService
 
+    fun getProcessService(): CloudProcessService
 
-    abstract fun getProcessGroupService(): CloudProcessGroupService
+    fun getCloudPlayerService(): CloudPlayerService
 
-    abstract fun getProcessService(): CloudProcessService
+    fun getPermissionGroupService(): PermissionGroupService
 
-    abstract fun getNodeService(): NodeService
+    fun getNodeService(): NodeService
 
+    fun getMessageChannelManager(): MessageChannelManager
 
-    companion object {
-        @JvmStatic
-        lateinit var instance: CloudAPI
-            private set
-    }
+    fun getPermissionFactory(): Permission.Factory
 
 }

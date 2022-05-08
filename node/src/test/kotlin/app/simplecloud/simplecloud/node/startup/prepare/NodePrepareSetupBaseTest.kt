@@ -20,8 +20,8 @@ package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
 import org.junit.jupiter.api.Assertions
 import java.util.concurrent.CompletableFuture
 

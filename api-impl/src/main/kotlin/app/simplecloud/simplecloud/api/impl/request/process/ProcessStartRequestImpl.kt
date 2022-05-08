@@ -86,7 +86,9 @@ class ProcessStartRequestImpl(
             processNumber,
             image.getName(),
             maxMemory,
-            maxPlayers
+            maxPlayers,
+            processGroup.isStatic(),
+            processGroup.getProcessGroupType()
         )
         return@future internalService.startNewProcessInternal(startConfiguration)
     }

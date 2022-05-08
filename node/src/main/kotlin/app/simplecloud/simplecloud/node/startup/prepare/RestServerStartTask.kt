@@ -18,14 +18,11 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
-import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
-import app.simplecloud.simplecloud.restserver.auth.RestAuthServiceImpl
-import app.simplecloud.simplecloud.restserver.base.RestServer
-import app.simplecloud.simplecloud.restserver.controller.ControllerHandlerImpl
-import app.simplecloud.simplecloud.restserver.defaultcontroller.v1.*
-import com.google.inject.Inject
-import com.google.inject.Injector
-import java.util.concurrent.CompletableFuture
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
+import app.simplecloud.simplecloud.restserver.api.RestServer
+import app.simplecloud.simplecloud.restserver.api.auth.AuthService
+import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,31 +30,52 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:22
  * @author Frederick Baier
  */
-class RestServerStartTask @Inject constructor(
-    private val authService: RestAuthServiceImpl,
+class RestServerStartTask(
+    private val cloudAPI: NodeCloudAPI,
+    private val controllerHandlerFactory: ControllerHandlerFactory,
     private val restServer: RestServer,
-    private val injector: Injector
+    private val authService: AuthService
 ) {
 
-    private val controllerHandler = ControllerHandlerImpl(this.restServer, this.injector)
+    private val controllerHandler = this.controllerHandlerFactory.create(restServer)
 
     init {
         this.restServer.setAuthService(authService)
     }
 
-    fun run(): CompletableFuture<RestServer> {
+    fun run() {
         registerController()
-        return CloudCompletableFuture.completedFuture(restServer)
     }
 
     private fun registerController() {
-        this.controllerHandler.registerController(LoginController::class.java)
-        this.controllerHandler.registerController(ProcessGroupController::class.java)
-        this.controllerHandler.registerController(ProcessController::class.java)
-        this.controllerHandler.registerController(NodeController::class.java)
-        this.controllerHandler.registerController(PermissionGroupController::class.java)
-        this.controllerHandler.registerController(PlayerController::class.java)
-        this.controllerHandler.registerController(OnlineStrategyController::class.java)
+        this.controllerHandler.registerController(LoginController(this.authService))
+
+        this.controllerHandler.registerController(ProcessGroupController(this.cloudAPI.getProcessGroupService()))
+
+        this.controllerHandler.registerController(
+            ProcessController(
+                this.cloudAPI.getProcessService(),
+                this.cloudAPI.getProcessGroupService()
+            )
+        )
+
+        this.controllerHandler.registerController(NodeController(this.cloudAPI.getNodeService()))
+
+        this.controllerHandler.registerController(
+            PermissionGroupController(
+                this.cloudAPI.getPermissionGroupService(),
+                this.cloudAPI.getPermissionFactory()
+            )
+        )
+
+        this.controllerHandler.registerController(
+            PlayerController(
+                this.cloudAPI.getCloudPlayerService(),
+                this.cloudAPI.getPermissionFactory()
+            )
+        )
+
+        this.controllerHandler.registerController(OnlineStrategyController(this.cloudAPI.getOnlineStrategyService()))
     }
 
 

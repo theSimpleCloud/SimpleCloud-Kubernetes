@@ -28,9 +28,6 @@ import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.MessageListener
-import com.google.inject.Inject
-import com.google.inject.Injector
-import com.google.inject.Singleton
 import java.util.*
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
@@ -41,18 +38,17 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Time: 18:30
  * @author Frederick Baier
  */
-@Singleton
-class DistributedQueryHandlerImpl @Inject constructor(
+class DistributedQueryHandlerImpl constructor(
     private val messageChannelManager: MessageChannelManager,
-    private val injector: Injector,
+    private val nodeService: NodeService,
+    private val processService: CloudProcessService,
     private val distribution: Distribution
 ) : DistributedQueryHandler {
 
     private val messageManager = this.distribution.getMessageManager()
     private val queries = CopyOnWriteArrayList<DistributedQuery>()
 
-    private lateinit var nodeService: NodeService
-    private lateinit var processService: CloudProcessService
+
 
     init {
         startListening()
@@ -139,27 +135,12 @@ class DistributedQueryHandlerImpl @Inject constructor(
     }
 
     private fun getNetworkComponentByDistributionComponent(sender: DistributionComponent): CompletableFuture<out NetworkComponent> {
-        checkServicesInitialized()
         val nodeFuture: CompletableFuture<out NetworkComponent> = this.nodeService.findByDistributionComponent(sender)
         val processFuture: CompletableFuture<out NetworkComponent> =
             this.processService.findByDistributionComponent(sender)
         val futureList = listOf(nodeFuture, processFuture).toFutureList()
         return futureList.thenApply { it.first() }
             .exceptionally { throw NoSuchElementException("Could not find NetworkComponent by sender: $sender") }
-    }
-
-    private fun checkServicesInitialized() {
-        if (!areServicesInitialized())
-            initializeServices()
-    }
-
-    private fun areServicesInitialized(): Boolean {
-        return this::nodeService.isInitialized && this::processService.isInitialized
-    }
-
-    private fun initializeServices() {
-        this.nodeService = this.injector.getInstance(NodeService::class.java)
-        this.processService = this.injector.getInstance(CloudProcessService::class.java)
     }
 
 

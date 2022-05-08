@@ -24,8 +24,7 @@ import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
-import app.simplecloud.simplecloud.restserver.base.RestServer
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManagerImpl
+import app.simplecloud.simplecloud.restserver.api.RestServerConfig
 import org.apache.logging.log4j.LogManager
 
 
@@ -40,12 +39,17 @@ class NodeStartup(
     private val databaseFactory: DatabaseFactory,
     private val distributionFactory: DistributionFactory,
     private val kubeAPI: KubeAPI,
-    private val restServer: RestServer
+    private val restServerConfig: RestServerConfig
 ) {
 
     fun start() {
-        val preparedNode =
-            NodePreparer(this.databaseFactory, this.kubeAPI, RestSetupManagerImpl(this.restServer)).prepare()
+        val nodePreparer = NodePreparer(
+            this.databaseFactory,
+            this.kubeAPI,
+            this.restServerConfig.setupManager,
+            this.restServerConfig.tokenHandlerFactory
+        )
+        val preparedNode = nodePreparer.prepare()
         executeClusterConnect(preparedNode)
     }
 
@@ -62,7 +66,8 @@ class NodeStartup(
             this.distributionFactory,
             this.kubeAPI,
             preparedNode.repositories,
-            preparedNode.jwtTokenHandler
+            restServerConfig,
+            preparedNode.tokenHandler
         ).connect()
     }
 

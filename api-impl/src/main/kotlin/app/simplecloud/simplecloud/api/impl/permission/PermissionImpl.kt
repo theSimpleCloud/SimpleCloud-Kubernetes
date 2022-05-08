@@ -20,12 +20,10 @@ package app.simplecloud.simplecloud.api.impl.permission
 
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 
 
-class PermissionImpl @Inject constructor(
-    @Assisted private val configuration: PermissionConfiguration
+class PermissionImpl constructor(
+    private val configuration: PermissionConfiguration
 ) : Permission {
 
     private val rawString = this.configuration.permissionString.lowercase()

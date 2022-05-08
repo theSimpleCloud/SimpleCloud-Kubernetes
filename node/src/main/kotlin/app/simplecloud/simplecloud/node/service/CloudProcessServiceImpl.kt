@@ -28,12 +28,9 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.node.process.*
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import java.util.concurrent.CompletableFuture
 
-@Singleton
-class CloudProcessServiceImpl @Inject constructor(
+class CloudProcessServiceImpl(
     processFactory: CloudProcessFactory,
     distributedRepository: DistributedCloudProcessRepository,
     private val processStarterFactory: ProcessStarter.Factory,

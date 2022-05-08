@@ -19,13 +19,11 @@
 package app.simplecloud.simplecloud.api.process.group
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.Nameable
-import java.util.concurrent.CompletableFuture
 
 
 interface CloudProcessGroup : Nameable, Identifiable<String> {
@@ -49,8 +47,6 @@ interface CloudProcessGroup : Nameable, Identifiable<String> {
     fun isStateUpdatingEnabled(): Boolean
 
     fun getStartPriority(): Int
-
-    fun getProcesses(): CompletableFuture<List<CloudProcess>>
 
     fun toConfiguration(): AbstractCloudProcessGroupConfiguration
 

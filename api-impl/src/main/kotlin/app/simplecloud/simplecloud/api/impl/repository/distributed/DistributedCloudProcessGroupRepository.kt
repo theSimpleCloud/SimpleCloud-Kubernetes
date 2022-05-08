@@ -21,8 +21,6 @@ package app.simplecloud.simplecloud.api.impl.repository.distributed
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessGroupRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,8 +28,7 @@ import com.google.inject.Singleton
  * Time: 13:42
  * @author Frederick Baier
  */
-@Singleton
-class DistributedCloudProcessGroupRepository @Inject constructor(
+class DistributedCloudProcessGroupRepository(
     private val distribution: Distribution,
 ) : AbstractDistributedRepository<String, AbstractCloudProcessGroupConfiguration>(
     distribution.getOrCreateCache("cloud-process-groups")

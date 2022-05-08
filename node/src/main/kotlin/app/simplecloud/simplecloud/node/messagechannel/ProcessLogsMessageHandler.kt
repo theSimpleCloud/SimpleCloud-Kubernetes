@@ -24,10 +24,9 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
-class ProcessLogsMessageHandler @Inject constructor(
+class ProcessLogsMessageHandler(
     private val service: CloudProcessService
 ) : MessageHandler<String, List<String>> {
 
@@ -38,8 +37,6 @@ class ProcessLogsMessageHandler @Inject constructor(
         val process = service.findByName(message).await()
         return@future process.getLogs().await()
     }
-
-
 
 
 }

@@ -20,9 +20,8 @@ package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.node.startup.setup.task.FirstWebUserSetup
-import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import com.google.inject.Inject
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 
 /**
  * Date: 22.03.22
@@ -30,9 +29,9 @@ import com.google.inject.Inject
  * @author Frederick Baier
  *
  */
-class FirstAccountCheck @Inject constructor(
+class FirstAccountCheck(
     private val cloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    private val tokenHandler: JwtTokenHandler,
+    private val tokenHandler: TokenHandler,
     private val restSetupManager: RestSetupManager
 ) {
 

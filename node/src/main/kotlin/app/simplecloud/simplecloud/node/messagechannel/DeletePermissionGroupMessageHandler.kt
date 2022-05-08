@@ -24,10 +24,9 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.service.PermissionGroupService
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
-class DeletePermissionGroupMessageHandler @Inject constructor(
+class DeletePermissionGroupMessageHandler(
     private val groupService: PermissionGroupService,
 ) : MessageHandler<String, Unit> {
 

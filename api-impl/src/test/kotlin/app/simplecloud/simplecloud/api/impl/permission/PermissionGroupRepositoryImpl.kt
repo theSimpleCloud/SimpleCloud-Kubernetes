@@ -21,7 +21,6 @@ package app.simplecloud.simplecloud.api.impl.permission
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
 import app.simplecloud.simplecloud.database.memory.InMemoryRepository
-import com.google.inject.Singleton
 
 /**
  * Date: 23.03.22
@@ -29,6 +28,5 @@ import com.google.inject.Singleton
  * @author Frederick Baier
  *
  */
-@Singleton
 class PermissionGroupRepositoryImpl : InMemoryRepository<String, PermissionGroupConfiguration>(),
     PermissionGroupRepository

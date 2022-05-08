@@ -21,10 +21,10 @@ package app.simplecloud.simplecloud.restserver.base.impl
 import app.simplecloud.rest.Context
 import app.simplecloud.simplecloud.api.future.exception.FutureOriginException
 import app.simplecloud.simplecloud.restserver.api.Request
+import app.simplecloud.simplecloud.restserver.api.exception.HttpException
+import app.simplecloud.simplecloud.restserver.api.exception.UnauthorizedException
 import app.simplecloud.simplecloud.restserver.api.route.Route
-import app.simplecloud.simplecloud.restserver.base.exception.HttpException
 import app.simplecloud.simplecloud.restserver.base.exception.MissingPermissionException
-import app.simplecloud.simplecloud.restserver.base.exception.UnauthorizedException
 import java.lang.reflect.InvocationTargetException
 import java.util.concurrent.CompletionException
 

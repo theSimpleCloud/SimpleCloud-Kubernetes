@@ -25,9 +25,6 @@ import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
-import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,19 +32,18 @@ import com.google.inject.assistedinject.Assisted
  * Time: 22:17
  * @author Frederick Baier
  */
-class CloudServerGroupImpl @Inject constructor(
-    @Assisted private val configuration: CloudServerProcessGroupConfiguration,
-    private val processService: CloudProcessService,
+class CloudServerGroupImpl(
+    private val configuration: CloudServerProcessGroupConfiguration,
     private val processGroupService: InternalCloudProcessGroupService,
 ) : AbstractCloudProcessGroup(
     configuration,
-    processService,
     processGroupService
 ), CloudServerGroup {
 
     override fun getProcessGroupType(): ProcessGroupType {
         return ProcessGroupType.SERVER
     }
+
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
         return this.configuration
     }

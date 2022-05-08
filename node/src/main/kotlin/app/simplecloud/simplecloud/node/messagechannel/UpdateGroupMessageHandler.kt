@@ -24,10 +24,9 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGrou
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
-class UpdateGroupMessageHandler @Inject constructor(
+class UpdateGroupMessageHandler(
     private val groupService: InternalCloudProcessGroupService
 ) : MessageHandler<AbstractCloudProcessGroupConfiguration, Unit> {
 

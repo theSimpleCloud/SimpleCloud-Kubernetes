@@ -29,7 +29,7 @@ class InternalProcessStartHandler(
     private val processStarterFactory: ProcessStarter.Factory
 ) {
 
-    private val processStarter = this.processStarterFactory.create(this.configuration)
+    private val processStarter = this.processStarterFactory.create(this.configuration, this.processService)
 
     suspend fun startProcess(): CloudProcess {
         val process = this.processStarter.startProcess()

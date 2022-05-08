@@ -44,7 +44,7 @@ class ProcessOnlineCountHandler(
 
     private suspend fun stopServices(count: Int) {
         if (count < 1) return
-        val processes = this.group.getProcesses().await()
+        val processes = this.processService.findByGroup(group).await()
         val stoppableServices = processes.filter { it.getState() == ProcessState.ONLINE && it.isVisible() }
         stoppableServices.take(count).forEach { it.createShutdownRequest().submit() }
     }
@@ -61,7 +61,7 @@ class ProcessOnlineCountHandler(
     }
 
     private suspend fun calculateActualOnlineCount(): Int {
-        val processes = this.group.getProcesses().await()
+        val processes = this.processService.findByGroup(group).await()
         return processes.count { isProcessAvailableJoinableOrBefore(it) }
     }
 

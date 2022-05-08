@@ -24,8 +24,6 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.Clo
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -35,8 +33,7 @@ import java.util.concurrent.CompletableFuture
  * Time: 10:57
  * @author Frederick Baier
  */
-@Singleton
-class DistributedCloudProcessRepository @Inject constructor(
+class DistributedCloudProcessRepository(
     private val distribution: Distribution
 ) : AbstractDistributedRepository<String, CloudProcessConfiguration>(
     distribution.getOrCreateCache("cloud-processes")

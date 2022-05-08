@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupDeleteRequestImpl
@@ -38,17 +38,17 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractCloudProcessGroupService(
     private val distributedRepository: DistributedCloudProcessGroupRepository,
-    private val processGroupFactory: CloudProcessGroupFactory
+    private val processGroupFactory: UniversalCloudProcessGroupFactory
 ) : InternalCloudProcessGroupService {
 
     override fun findByName(name: String): CompletableFuture<CloudProcessGroup> {
         val completableFuture = this.distributedRepository.find(name)
-        return completableFuture.thenApply { this.processGroupFactory.create(it) }
+        return completableFuture.thenApply { this.processGroupFactory.create(it, this) }
     }
 
     override fun findAll(): CompletableFuture<List<CloudProcessGroup>> {
         val completableFuture = this.distributedRepository.findAll()
-        return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it) } }
+        return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it, this) } }
     }
 
     override fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest {
@@ -65,14 +65,14 @@ abstract class AbstractCloudProcessGroupService(
     }
 
     override suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration) {
-        val group = this.processGroupFactory.create(configuration)
+        val group = this.processGroupFactory.create(configuration, this)
         updateGroupInternal0(group)
     }
 
     abstract suspend fun updateGroupInternal0(group: CloudProcessGroup)
 
     override suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
-        val group = this.processGroupFactory.create(configuration)
+        val group = this.processGroupFactory.create(configuration, this)
         updateGroupInternal0(group)
         return group
     }

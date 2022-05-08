@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.permission
 
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
 
 /**
  * Date: 19.03.22
@@ -45,7 +46,7 @@ interface PermissionGroup : PermissionEntity {
 
     interface Factory {
 
-        fun create(configuration: PermissionGroupConfiguration): PermissionGroup
+        fun create(configuration: PermissionGroupConfiguration, groupService: PermissionGroupService): PermissionGroup
 
     }
 

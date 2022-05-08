@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 
 /**
  * Date: 01.05.22
@@ -29,5 +29,5 @@ import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
  */
 data class PreparedNode(
     val repositories: DatabaseRepositories,
-    val jwtTokenHandler: JwtTokenHandler,
+    val tokenHandler: TokenHandler,
 )

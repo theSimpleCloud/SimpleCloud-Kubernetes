@@ -19,29 +19,25 @@
 package app.simplecloud.simplecloud.api.internal
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
+import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 19:57
+ * Date: 07.05.22
+ * Time: 11:17
  * @author Frederick Baier
+ *
  */
-abstract class InternalCloudAPI : CloudAPI() {
+interface InternalCloudAPI : CloudAPI {
 
-    init {
-        instance = this
-    }
+    override fun getProcessGroupService(): InternalCloudProcessGroupService
 
-    abstract override fun getProcessService(): InternalCloudProcessService
+    override fun getProcessService(): InternalCloudProcessService
 
-    abstract override fun getProcessGroupService(): InternalCloudProcessGroupService
+    override fun getCloudPlayerService(): InternalCloudPlayerService
 
-    companion object {
-        @JvmStatic
-        lateinit var instance: InternalCloudAPI
-            private set
-    }
+    override fun getPermissionGroupService(): InternalPermissionGroupService
 
 }

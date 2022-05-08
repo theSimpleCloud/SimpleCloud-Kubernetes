@@ -22,12 +22,9 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import org.apache.logging.log4j.LogManager
 
-@Singleton
-class NodeOnlineProcessesChecker @Inject constructor(
+class NodeOnlineProcessesChecker(
     private val groupService: CloudProcessGroupService,
     private val processService: CloudProcessService,
     private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService

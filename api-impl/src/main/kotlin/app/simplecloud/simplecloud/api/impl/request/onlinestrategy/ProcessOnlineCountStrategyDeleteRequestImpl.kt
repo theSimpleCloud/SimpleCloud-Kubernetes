@@ -23,7 +23,6 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -32,7 +31,7 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-class ProcessOnlineCountStrategyDeleteRequestImpl @Inject constructor(
+class ProcessOnlineCountStrategyDeleteRequestImpl(
     private val strategy: ProcessesOnlineCountStrategy,
     private val internalService: InternalNodeProcessOnlineCountStrategyService
 ) : ProcessOnlineCountStrategyDeleteRequest {

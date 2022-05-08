@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.restserver.base.exception
 
+import app.simplecloud.simplecloud.restserver.api.exception.HttpException
+
 
 /**
  * Created by IntelliJ IDEA.

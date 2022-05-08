@@ -18,11 +18,12 @@
 
 package app.simplecloud.simplecloud.api.impl.messagechannel
 
-import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandler
+import app.simplecloud.simplecloud.api.impl.distribution.DistributedQueryHandlerImpl
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.distribution.api.Distribution
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -31,10 +32,14 @@ import java.util.concurrent.CopyOnWriteArrayList
  * Time: 10:47
  * @author Frederick Baier
  */
-@Singleton
-class MessageChannelManagerImpl @Inject constructor(
-    private val queryHandler: DistributedQueryHandler
+class MessageChannelManagerImpl(
+    private val nodeService: NodeService,
+    private val processService: CloudProcessService,
+    private val distribution: Distribution
 ) : MessageChannelManager {
+
+    private val queryHandler =
+        DistributedQueryHandlerImpl(this, this.nodeService, this.processService, this.distribution)
 
     private val registeredMessageChannels = CopyOnWriteArrayList<MessageChannel<*, *>>()
 

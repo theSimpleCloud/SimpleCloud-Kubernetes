@@ -30,8 +30,6 @@ import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.request.player.CloudPlayerUpdateRequest
 import app.simplecloud.simplecloud.api.request.player.PlayerConnectRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 import net.kyori.adventure.audience.MessageType
 import net.kyori.adventure.bossbar.BossBar
 import net.kyori.adventure.identity.Identity
@@ -48,8 +46,8 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-class CloudPlayerImpl @Inject constructor(
-    @Assisted private val configuration: CloudPlayerConfiguration,
+class CloudPlayerImpl constructor(
+    private val configuration: CloudPlayerConfiguration,
     private val cloudPlayerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
     private val permissionFactory: Permission.Factory,

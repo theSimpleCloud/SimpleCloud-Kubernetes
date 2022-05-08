@@ -21,19 +21,15 @@ package app.simplecloud.simplecloud.node.process
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactory
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.task.CloudProcessCreator
 import app.simplecloud.simplecloud.node.task.KubernetesProcessStarter
 import app.simplecloud.simplecloud.node.util.UncaughtExceptions
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 
-class ProcessStarterImpl @Inject constructor(
-    @Assisted private val configuration: ProcessStartConfiguration,
+class ProcessStarterImpl(
+    private val configuration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
-    private val groupService: CloudProcessGroupService,
     private val processFactory: CloudProcessFactory,
     private val kubeAPI: KubeAPI
 ) : ProcessStarter {
@@ -48,7 +44,6 @@ class ProcessStarterImpl @Inject constructor(
         return CloudProcessCreator(
             configuration,
             this.processService,
-            this.groupService,
             this.processFactory
         ).createProcess()
     }

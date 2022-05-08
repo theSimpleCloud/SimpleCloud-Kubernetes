@@ -22,19 +22,15 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
-import com.google.inject.Inject
-import com.google.inject.assistedinject.Assisted
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,18 +40,13 @@ import java.util.concurrent.CompletableFuture
  * Time: 09:14
  * @author Frederick Baier
  */
-class CloudProcessImpl @Inject constructor(
-    @Assisted private val configuration: CloudProcessConfiguration,
-    private val processService: CloudProcessService,
-    private val processGroupService: CloudProcessGroupService
+class CloudProcessImpl constructor(
+    private val configuration: CloudProcessConfiguration,
+    private val processService: CloudProcessService
 ) : CloudProcess {
 
     override fun getGroupName(): String {
         return this.configuration.groupName
-    }
-
-    override fun getGroup(): CompletableFuture<CloudProcessGroup> {
-        return this.processGroupService.findByName(getGroupName())
     }
 
     override fun getProcessNumber(): Int {

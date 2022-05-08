@@ -24,7 +24,6 @@ import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlin
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
-import com.google.inject.Inject
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArraySet
 
@@ -34,7 +33,7 @@ import java.util.concurrent.CopyOnWriteArraySet
  * @author Frederick Baier
  *
  */
-class ProcessOnlineCountStrategyUpdateRequestImpl @Inject constructor(
+class ProcessOnlineCountStrategyUpdateRequestImpl(
     private val strategy: ProcessesOnlineCountStrategy,
     private val internalService: InternalNodeProcessOnlineCountStrategyService
 ) : ProcessOnlineCountStrategyUpdateRequest {

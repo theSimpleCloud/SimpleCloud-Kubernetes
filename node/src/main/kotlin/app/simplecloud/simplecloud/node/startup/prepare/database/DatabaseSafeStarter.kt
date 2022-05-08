@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.node.startup.setup.task.DatabaseSetup
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 import org.apache.logging.log4j.LogManager
 
 /**

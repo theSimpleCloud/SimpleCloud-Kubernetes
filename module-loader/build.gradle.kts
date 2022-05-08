@@ -16,6 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+val guiceVersion by extra("5.1.0")
+
 dependencies {
-    implementation(project(":application-loader"))
+    api(project(":application-loader"))
+
+    implementation("com.google.inject:guice:${guiceVersion}")
+    implementation("com.google.inject.extensions:guice-assistedinject:${guiceVersion}")
 }

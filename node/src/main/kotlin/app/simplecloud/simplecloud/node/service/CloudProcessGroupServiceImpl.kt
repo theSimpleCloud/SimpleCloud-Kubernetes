@@ -19,28 +19,22 @@
 package app.simplecloud.simplecloud.node.service
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
-@Singleton
-class CloudProcessGroupServiceImpl @Inject constructor(
-    processGroupFactory: CloudProcessGroupFactory,
+class CloudProcessGroupServiceImpl(
+    processGroupFactory: UniversalCloudProcessGroupFactory,
     private val distributedRepository: DistributedCloudProcessGroupRepository,
-    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
-    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
+    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository
 ) : AbstractCloudProcessGroupService(
     distributedRepository, processGroupFactory
 ) {
 
     override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
         this.distributedRepository.save(group.getName(), group.toConfiguration()).await()
-        this.nodeProcessOnlineStrategyService.checkProcessOnlineCount()
         saveToDatabase(group)
     }
 

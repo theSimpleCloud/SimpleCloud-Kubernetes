@@ -24,8 +24,8 @@ import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.startup.prepare.AbstractNodePrepareTest
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
-import app.simplecloud.simplecloud.restserver.setup.RestSetupManager
-import app.simplecloud.simplecloud.restserver.setup.type.Setup
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

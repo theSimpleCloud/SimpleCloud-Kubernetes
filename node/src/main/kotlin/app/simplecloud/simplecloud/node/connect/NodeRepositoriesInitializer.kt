@@ -24,10 +24,9 @@ import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupReposit
 import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
-import com.google.inject.Inject
 import org.apache.logging.log4j.LogManager
 
-class NodeRepositoriesInitializer @Inject constructor(
+class NodeRepositoriesInitializer(
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
     private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
     private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,

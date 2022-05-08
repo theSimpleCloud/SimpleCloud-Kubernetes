@@ -18,32 +18,46 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
-import app.simplecloud.simplecloud.api.impl.util.SingleInstanceBinderModule
+import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
+import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
+import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudLobbyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProxyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudServerGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
+import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
+import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
+import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.service.*
-import app.simplecloud.simplecloud.node.startup.guice.NodeBinderModule
-import app.simplecloud.simplecloud.node.startup.prepare.KubeBinderModule
 import app.simplecloud.simplecloud.node.startup.prepare.RestServerStartTask
-import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseRepositoriesModule
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
-import app.simplecloud.simplecloud.restserver.auth.JwtTokenHandler
-import app.simplecloud.simplecloud.restserver.base.RestServer
-import com.google.inject.Guice
-import com.google.inject.Injector
+import app.simplecloud.simplecloud.restserver.api.RestServerConfig
+import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
-class NodeClusterConnect constructor(
+class NodeClusterConnect(
     private val distributionFactory: DistributionFactory,
     private val kubeAPI: KubeAPI,
     private val databaseRepositories: DatabaseRepositories,
-    private val jwtTokenHandler: JwtTokenHandler
+    private val restServerConfig: RestServerConfig,
+    private val tokenHandler: TokenHandler
 ) {
 
     private val nodeBindPort = 1670
@@ -51,52 +65,129 @@ class NodeClusterConnect constructor(
     fun connect() {
         logger.info("Connecting to cluster...")
         val distribution = startDistribution()
-        val finalInjector = createInjector(distribution)
-        startRestServer(finalInjector)
-        registerMessageChannels(finalInjector)
-        checkForFirstNodeInCluster(finalInjector, distribution)
-        checkOnlineProcesses(finalInjector)
+        val distributedRepositories = initializeDistributedRepositories(distribution)
+        val nodeCloudAPI = initializeServices(distribution, distributedRepositories)
+        startRestServer(nodeCloudAPI)
+        registerMessageChannels(nodeCloudAPI)
+        checkForFirstNodeInCluster(distribution, distributedRepositories)
+        checkOnlineProcesses(nodeCloudAPI)
     }
 
-    private fun registerMessageChannels(injector: Injector){
-        val messageChannelsInitializer = injector.getInstance(MessageChannelsInitializer::class.java)
-        messageChannelsInitializer.initializeMessageChannels()
+    private fun initializeDistributedRepositories(distribution: Distribution): DistributedRepositories {
+        return DistributedRepositories(
+            DistributedCloudPlayerRepository(distribution),
+            DistributedCloudProcessGroupRepository(distribution),
+            DistributedCloudProcessRepository(distribution),
+            DistributedPermissionGroupRepository(distribution),
+            DistributedOnlineCountStrategyRepository(distribution)
+        )
     }
 
-    private fun checkOnlineProcesses(injector: Injector) {
+    private fun registerMessageChannels(nodeCloudAPI: NodeCloudAPI) {
+        MessageChannelsInitializer(
+            nodeCloudAPI,
+            InternalMessageChannelProviderImpl(nodeCloudAPI.getMessageChannelManager())
+        ).initializeMessageChannels()
+    }
+
+    private fun checkOnlineProcesses(nodeCloudAPI: NodeCloudAPI) {
         logger.info("Checking for online tasks")
-        val nodeOnlineProcessesChecker = injector.getInstance(NodeOnlineProcessesChecker::class.java)
+        val nodeOnlineProcessesChecker = NodeOnlineProcessesChecker(
+            nodeCloudAPI.getProcessGroupService(),
+            nodeCloudAPI.getProcessService(),
+            nodeCloudAPI.getOnlineStrategyService()
+        )
         runBlocking {
             nodeOnlineProcessesChecker.checkOnlineCount()
         }
     }
 
-    private fun checkForFirstNodeInCluster(injector: Injector, distribution: Distribution) {
+    private fun checkForFirstNodeInCluster(
+        distribution: Distribution,
+        distributedRepositories: DistributedRepositories
+    ) {
         if (distribution.getServers().size == 1) {
-            val nodeRepositoriesInitializer = injector.getInstance(NodeRepositoriesInitializer::class.java)
+            val nodeRepositoriesInitializer = NodeRepositoriesInitializer(
+                distributedRepositories.cloudProcessGroupRepository,
+                this.databaseRepositories.cloudProcessGroupRepository,
+                distributedRepositories.permissionGroupRepository,
+                this.databaseRepositories.permissionGroupRepository,
+                distributedRepositories.distributedOnlineCountStrategyRepository,
+                this.databaseRepositories.onlineCountStrategyRepository
+            )
             nodeRepositoriesInitializer.initializeRepositories()
         }
     }
 
-    private fun startRestServer(injector: Injector): CompletableFuture<RestServer> {
-        return injector.getInstance(RestServerStartTask::class.java).run()
+    private fun startRestServer(nodeCloudAPI: NodeCloudAPI) {
+        val authService = RestAuthServiceImpl(nodeCloudAPI.getCloudPlayerService(), this.tokenHandler)
+        return RestServerStartTask(
+            nodeCloudAPI,
+            this.restServerConfig.controllerHandlerFactory,
+            this.restServerConfig.restServer,
+            authService
+        ).run()
     }
 
-    private fun createInjector(distribution: Distribution): Injector {
-        val cloudAPIBinderModule = CloudAPIBinderModule(
-            distribution,
-            NodeServiceImpl::class.java,
-            CloudProcessServiceImpl::class.java,
-            CloudProcessGroupServiceImpl::class.java,
-            CloudPlayerServiceImpl::class.java,
-            PermissionGroupServiceImpl::class.java
+    private fun initializeServices(
+        distribution: Distribution,
+        distributedRepositories: DistributedRepositories
+    ): NodeCloudAPI {
+        val nodeService = NodeServiceImpl(distribution)
+        val universalGroupFactory = UniversalCloudProcessGroupFactory(
+            CloudLobbyGroupFactoryImpl(),
+            CloudProxyGroupFactoryImpl(),
+            CloudServerGroupFactoryImpl()
         )
-        return Guice.createInjector(
-            SingleInstanceBinderModule(JwtTokenHandler::class.java, this.jwtTokenHandler),
-            KubeBinderModule(this.kubeAPI),
-            DatabaseRepositoriesModule(this.databaseRepositories),
-            NodeBinderModule(),
-            cloudAPIBinderModule
+        val nodeProcessOnlineStrategyService = NodeProcessOnlineStrategyServiceImpl(
+            distributedRepositories.distributedOnlineCountStrategyRepository,
+            databaseRepositories.onlineCountStrategyRepository,
+            UniversalProcessOnlineCountStrategyFactory()
+        )
+        val cloudProcessGroupService = CloudProcessGroupServiceImpl(
+            universalGroupFactory,
+            distributedRepositories.cloudProcessGroupRepository,
+            databaseRepositories.cloudProcessGroupRepository
+        )
+
+        val processFactory = CloudProcessFactoryImpl()
+        val cloudProcessService = CloudProcessServiceImpl(
+            processFactory,
+            distributedRepositories.cloudProcessRepository,
+            ProcessStarterFactoryImpl(processFactory, this.kubeAPI),
+            ProcessShutdownHandlerFactoryImpl(
+                this.kubeAPI.getPodService(),
+                distributedRepositories.cloudProcessRepository
+            ),
+            this.kubeAPI.getPodService()
+        )
+
+        val permissionFactory = PermissionFactoryImpl()
+        val permissionGroupFactory = PermissionGroupFactoryImpl(permissionFactory)
+        val permissionGroupService = PermissionGroupServiceImpl(
+            this.databaseRepositories.permissionGroupRepository,
+            distributedRepositories.permissionGroupRepository,
+            permissionGroupFactory,
+            permissionFactory
+        )
+
+        val permissionPlayerFactory = PermissionPlayerFactoryImpl(permissionGroupService, permissionFactory)
+        val cloudPlayerService = CloudPlayerServiceImpl(
+            distributedRepositories.cloudPlayerRepository,
+            CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory),
+            this.databaseRepositories.offlineCloudPlayerRepository,
+            OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory)
+        )
+        val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
+        return NodeCloudAPI(
+            cloudProcessGroupService,
+            cloudProcessService,
+            cloudPlayerService,
+            permissionGroupService,
+            nodeService,
+            permissionFactory,
+            messageChannelManager,
+            nodeProcessOnlineStrategyService
         )
     }
 
@@ -107,7 +198,7 @@ class NodeClusterConnect constructor(
     }
 
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {
-        //TODO get other adddresses
+        //TODO get other addresses
         return emptyList()
     }
 

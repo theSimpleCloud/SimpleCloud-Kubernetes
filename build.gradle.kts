@@ -48,19 +48,15 @@ subprojects {
 
 
     val coroutinesVersion by extra("1.6.0")
-    val guiceVersion by extra("5.1.0")
     val jacksonVersion by extra("2.13.2")
 
     dependencies {
         implementation(kotlin("stdlib"))
-        implementation("com.google.inject:guice:${guiceVersion}")
-        implementation("com.google.inject.extensions:guice-assistedinject:${guiceVersion}")
         testImplementation(platform("org.junit:junit-bom:5.7.2"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
-
-        //implementation("io.github.slimjar:slimjar:1.2.4")
+        implementation("com.google.guava:guava:31.1-jre")
     }
 
     tasks.test {

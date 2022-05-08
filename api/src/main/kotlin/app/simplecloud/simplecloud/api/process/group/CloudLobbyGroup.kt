@@ -18,8 +18,6 @@
 
 package app.simplecloud.simplecloud.api.process.group
 
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-
 /**
  * Created by IntelliJ IDEA.
  * Date: 05.04.2021
@@ -29,11 +27,5 @@ import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyPro
 interface CloudLobbyGroup : CloudServerGroup {
 
     fun getLobbyPriority(): Int
-
-    interface Factory {
-
-        fun create(configuration: CloudLobbyProcessGroupConfiguration): CloudLobbyGroup
-
-    }
 
 }

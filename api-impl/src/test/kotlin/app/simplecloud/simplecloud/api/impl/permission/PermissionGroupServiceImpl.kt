@@ -25,8 +25,6 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.PermissionGroupRepository
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
 /**
  * Date: 23.03.22
@@ -34,8 +32,7 @@ import com.google.inject.Singleton
  * @author Frederick Baier
  *
  */
-@Singleton
-class PermissionGroupServiceImpl @Inject constructor(
+class PermissionGroupServiceImpl(
     private val repository: PermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory
