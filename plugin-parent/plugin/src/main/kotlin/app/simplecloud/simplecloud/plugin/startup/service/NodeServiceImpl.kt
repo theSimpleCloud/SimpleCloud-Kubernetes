@@ -20,11 +20,8 @@ package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.impl.service.DefaultNodeService
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
-@Singleton
-class NodeServiceImpl @Inject constructor(
+class NodeServiceImpl(
     distribution: Distribution
 ) : DefaultNodeService(
     distribution

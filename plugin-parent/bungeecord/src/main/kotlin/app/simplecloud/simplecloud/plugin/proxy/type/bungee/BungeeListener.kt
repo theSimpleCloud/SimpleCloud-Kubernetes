@@ -19,13 +19,13 @@
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
 import app.simplecloud.simplecloud.api.future.CloudScope
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.request.PlayerDisconnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
-import com.google.inject.Inject
 import kotlinx.coroutines.launch
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
@@ -43,7 +43,8 @@ import java.net.InetSocketAddress
  * @author Frederick Baier
  *
  */
-class BungeeListener @Inject constructor(
+class BungeeListener(
+    private val proxyName: String,
     private val proxyController: ProxyController,
     private val plugin: Plugin,
     private val proxyServer: ProxyServer
@@ -54,9 +55,10 @@ class BungeeListener @Inject constructor(
         if (event.isCancelled) return
         val connection = event.connection
         val configuration = createConnectionConfiguration(connection)
+        val loginConfiguration = PlayerLoginConfiguration(configuration, this.proxyName)
         event.registerIntent(this.plugin)
         CloudScope.launch {
-            proxyController.handleLogin(configuration)
+            proxyController.handleLogin(loginConfiguration)
             event.completeIntent(plugin)
         }
     }

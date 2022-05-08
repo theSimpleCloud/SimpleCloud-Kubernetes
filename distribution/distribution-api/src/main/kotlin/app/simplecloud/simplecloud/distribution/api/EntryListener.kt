@@ -20,6 +20,8 @@ package app.simplecloud.simplecloud.distribution.api
 
 interface EntryListener<K, V> {
 
+    fun entryAdded(entry: Pair<K, V>)
+
     fun entryUpdated(entry: Pair<K, V>)
 
     fun entryRemoved(entry: Pair<K, V>)

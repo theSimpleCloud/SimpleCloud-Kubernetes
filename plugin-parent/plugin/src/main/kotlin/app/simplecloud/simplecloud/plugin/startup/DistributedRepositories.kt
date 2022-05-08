@@ -16,25 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.server.type.spigot
+package app.simplecloud.simplecloud.plugin.startup
 
-import app.simplecloud.simplecloud.plugin.proxy.AbstractOnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
-import org.bukkit.Server
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+
 
 /**
- * Date: 23.01.22
- * Time: 19:13
+ * Date: 07.05.22
+ * Time: 08:34
  * @author Frederick Baier
  *
  */
-class SpigotOnlineCountUpdater(
-    private val server: Server,
-    private val selfProcessProvider: SelfProcessProvider
-) : AbstractOnlineCountUpdater(selfProcessProvider) {
-
-    override fun getSelfOnlineCount(): Int {
-        return this.server.onlinePlayers.size
-    }
-
-}
+data class DistributedRepositories(
+    val cloudPlayerRepository: DistributedCloudPlayerRepository,
+    val cloudProcessGroupRepository: DistributedCloudProcessGroupRepository,
+    val cloudProcessRepository: DistributedCloudProcessRepository,
+    val permissionGroupRepository: DistributedPermissionGroupRepository
+)

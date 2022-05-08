@@ -19,20 +19,17 @@
 package app.simplecloud.simplecloud.plugin.startup.service
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.NodeService
-import com.google.inject.Inject
-import com.google.inject.Singleton
 
-@Singleton
-class CloudProcessGroupServiceImpl @Inject constructor(
+class CloudProcessGroupServiceImpl(
     distributedRepository: DistributedCloudProcessGroupRepository,
-    processGroupFactory: CloudProcessGroupFactory,
+    processGroupFactory: UniversalCloudProcessGroupFactory,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val nodeService: NodeService
 ) : AbstractCloudProcessGroupService(

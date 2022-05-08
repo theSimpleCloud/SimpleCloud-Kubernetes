@@ -27,6 +27,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupS
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.eventapi.EventManager
 
 /**
  * Date: 07.05.22
@@ -35,14 +36,20 @@ import app.simplecloud.simplecloud.api.service.NodeService
  *
  */
 open class CloudAPIImpl(
+    private val localNetworkComponentName: String,
     private val processGroupService: InternalCloudProcessGroupService,
     private val processService: InternalCloudProcessService,
     private val playerService: InternalCloudPlayerService,
     private val permissionGroupService: InternalPermissionGroupService,
     private val nodeService: NodeService,
     private val messageChannelManager: MessageChannelManager,
+    private val eventManager: EventManager,
     private val permissionFactory: Permission.Factory
 ) : AbstractCloudAPI(), InternalCloudAPI {
+
+    override fun getLocalNetworkComponentName(): String {
+        return this.localNetworkComponentName
+    }
 
     override fun getProcessGroupService(): InternalCloudProcessGroupService {
         return this.processGroupService
@@ -66,6 +73,10 @@ open class CloudAPIImpl(
 
     override fun getMessageChannelManager(): MessageChannelManager {
         return this.messageChannelManager
+    }
+
+    override fun getEventManager(): EventManager {
+        return this.eventManager
     }
 
     override fun getPermissionFactory(): Permission.Factory {

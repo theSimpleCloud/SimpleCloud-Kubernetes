@@ -18,38 +18,108 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
-import app.simplecloud.simplecloud.api.impl.guice.CloudAPIBinderModule
+import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
+import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
+import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
+import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudLobbyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProxyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudServerGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
+import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.plugin.startup.service.*
-import com.google.inject.AbstractModule
-import com.google.inject.Guice
-import com.google.inject.Injector
 
 class CloudPlugin(
-    private val guiceModule: AbstractModule,
     private val distributionFactory: DistributionFactory
 ) {
 
-    val injector: Injector
+    private val distribution = startDistribution()
+    private val distributedRepositories = initializeDistributedRepositories(distribution)
+    val pluginCloudAPI = initializeServices(distribution, distributedRepositories)
 
     init {
-        val distribution = startDistribution()
-        val intermediateInjector = Guice.createInjector(
-            CloudAPIBinderModule(
-                distribution,
-                NodeServiceImpl::class.java,
-                CloudProcessServiceImpl::class.java,
-                CloudProcessGroupServiceImpl::class.java,
-                CloudPlayerServiceImpl::class.java,
-                PermissionGroupServiceImpl::class.java
-            )
+        SelfDistributedProcessUpdater(distribution, SelfProcessProvider(pluginCloudAPI.getProcessService()))
+            .updateProcessBlocking()
+    }
+
+    private fun initializeServices(
+        distribution: Distribution,
+        distributedRepositories: DistributedRepositories
+    ): PluginCloudAPI {
+        val eventManager = DefaultEventManager()
+        val nodeService = NodeServiceImpl(distribution)
+        val processFactory = CloudProcessFactoryImpl()
+        val cloudProcessService = CloudProcessServiceImpl(
+            processFactory,
+            distributedRepositories.cloudProcessRepository,
+            eventManager,
+            nodeService
         )
-        this.injector = intermediateInjector.createChildInjector(
-            this.guiceModule
+        val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
+        val internalMessageChannelProvider = InternalMessageChannelProviderImpl(messageChannelManager)
+        cloudProcessService.initializeMessageChannels(internalMessageChannelProvider)
+
+        val universalGroupFactory = UniversalCloudProcessGroupFactory(
+            CloudLobbyGroupFactoryImpl(),
+            CloudProxyGroupFactoryImpl(),
+            CloudServerGroupFactoryImpl()
         )
-        this.injector.getInstance(SelfDistributedProcessUpdater::class.java).updateProcessBlocking()
+        val cloudProcessGroupService = CloudProcessGroupServiceImpl(
+            distributedRepositories.cloudProcessGroupRepository,
+            universalGroupFactory,
+            internalMessageChannelProvider,
+            nodeService
+        )
+
+
+        val permissionFactory = PermissionFactoryImpl()
+        val permissionGroupFactory = PermissionGroupFactoryImpl(permissionFactory)
+        val permissionGroupService = PermissionGroupServiceImpl(
+            distributedRepositories.permissionGroupRepository,
+            permissionGroupFactory,
+            permissionFactory,
+            internalMessageChannelProvider,
+            nodeService
+        )
+
+        val permissionPlayerFactory = PermissionPlayerFactoryImpl(permissionGroupService, permissionFactory)
+        val cloudPlayerService = CloudPlayerServiceImpl(
+            distributedRepositories.cloudPlayerRepository,
+            nodeService,
+            internalMessageChannelProvider,
+            CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
+        )
+        val selfComponent = cloudProcessService.findByDistributionComponent(distribution.getSelfComponent()).join()
+        return PluginCloudAPI(
+            selfComponent.getName(),
+            cloudProcessGroupService,
+            cloudProcessService,
+            cloudPlayerService,
+            permissionGroupService,
+            nodeService,
+            messageChannelManager,
+            eventManager,
+            permissionFactory,
+        )
+    }
+
+    private fun initializeDistributedRepositories(distribution: Distribution): DistributedRepositories {
+        return DistributedRepositories(
+            DistributedCloudPlayerRepository(distribution),
+            DistributedCloudProcessGroupRepository(distribution),
+            DistributedCloudProcessRepository(distribution),
+            DistributedPermissionGroupRepository(distribution)
+        )
     }
 
     private fun startDistribution(): Distribution {

@@ -87,6 +87,11 @@ class DistributionCacheTest {
         val serverCache = server!!.getOrCreateCache<String, String>("one")
         var hasFired = false
         val entryListener = object : EntryListener<String, String> {
+
+            override fun entryAdded(entry: Pair<String, String>) {
+
+            }
+
             override fun entryUpdated(entry: Pair<String, String>) {
                 hasFired = true
             }
@@ -105,8 +110,12 @@ class DistributionCacheTest {
         val serverCache = server!!.getOrCreateCache<String, String>("one")
         var hasFired = false
         val entryListener = object : EntryListener<String, String> {
-            override fun entryUpdated(entry: Pair<String, String>) {
+
+            override fun entryAdded(entry: Pair<String, String>) {
                 hasFired = true
+            }
+
+            override fun entryUpdated(entry: Pair<String, String>) {
             }
 
             override fun entryRemoved(entry: Pair<String, String>) {
@@ -124,6 +133,11 @@ class DistributionCacheTest {
         val serverCache = server!!.getOrCreateCache<String, String>("one")
         var hasFired = false
         val entryListener = object : EntryListener<String, String> {
+
+            override fun entryAdded(entry: Pair<String, String>) {
+
+            }
+
             override fun entryUpdated(entry: Pair<String, String>) {
             }
 
@@ -142,6 +156,11 @@ class DistributionCacheTest {
         val serverCache = server!!.getOrCreateCache<String, String>("one")
         var hasFired = false
         val entryListener = object : EntryListener<String, String> {
+
+            override fun entryAdded(entry: Pair<String, String>) {
+
+            }
+
             override fun entryUpdated(entry: Pair<String, String>) {
             }
 
@@ -163,8 +182,12 @@ class DistributionCacheTest {
         val clientCache = client!!.getOrCreateCache<String, String>("one")
         var hasFired = false
         val entryListener = object : EntryListener<String, String> {
-            override fun entryUpdated(entry: Pair<String, String>) {
+
+            override fun entryAdded(entry: Pair<String, String>) {
                 hasFired = true
+            }
+
+            override fun entryUpdated(entry: Pair<String, String>) {
             }
 
             override fun entryRemoved(entry: Pair<String, String>) {
@@ -172,6 +195,29 @@ class DistributionCacheTest {
         }
         clientCache.addEntryListener(entryListener)
         serverCache.put("test", "value")
+        Assertions.assertTrue(hasFired)
+    }
+
+    @Test
+    fun itemSetTwice_willFireUpdate() {
+        this.server = this.factory.createServer(1630, emptyList())
+        val serverCache = server!!.getOrCreateCache<String, String>("one")
+        var hasFired = false
+        val entryListener = object : EntryListener<String, String> {
+
+            override fun entryAdded(entry: Pair<String, String>) {
+            }
+
+            override fun entryUpdated(entry: Pair<String, String>) {
+                hasFired = true
+            }
+
+            override fun entryRemoved(entry: Pair<String, String>) {
+            }
+        }
+        serverCache.addEntryListener(entryListener)
+        serverCache.put("test", "value")
+        serverCache.put("test", "value2")
         Assertions.assertTrue(hasFired)
     }
 

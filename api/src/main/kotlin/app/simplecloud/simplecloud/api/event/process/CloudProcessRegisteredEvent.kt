@@ -16,9 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package app.simplecloud.simplecloud.api.event.process
 
-dependencies {
-    api(project(":distribution:distribution-api"))
-    api("net.kyori:adventure-api:4.10.1")
-    api(project(":event-api"))
-}
+import app.simplecloud.simplecloud.api.process.CloudProcess
+
+/**
+ * Date: 08.05.22
+ * Time: 17:58
+ * @author Frederick Baier
+ *
+ */
+class CloudProcessRegisteredEvent(process: CloudProcess) : CloudProcessEvent(process)

@@ -55,4 +55,8 @@ abstract class AbstractCloudPlayerService(
         this.distributedRepository.save(configuration.uniqueId, configuration).await()
     }
 
+    override fun logoutPlayer(uniqueId: UUID) {
+        this.distributedRepository.remove(uniqueId)
+    }
+
 }

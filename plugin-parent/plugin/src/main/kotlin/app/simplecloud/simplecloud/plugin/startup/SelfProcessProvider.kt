@@ -20,13 +20,10 @@ package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
-@Singleton
-class SelfProcessProvider @Inject constructor(
+class SelfProcessProvider(
     private val processService: CloudProcessService
 ) {
 

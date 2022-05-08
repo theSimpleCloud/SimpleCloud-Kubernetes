@@ -16,10 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api
+package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
-import app.simplecloud.simplecloud.api.internal.service.*
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
+import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
@@ -27,35 +30,28 @@ import app.simplecloud.simplecloud.eventapi.EventManager
 
 /**
  * Date: 07.05.22
- * Time: 11:24
+ * Time: 21:16
  * @author Frederick Baier
  *
  */
-class NodeCloudAPI(
+class PluginCloudAPI(
     localNetworkComponentName: String,
-    processGroupService: InternalCloudProcessGroupService,
-    processService: InternalCloudProcessService,
-    playerService: InternalCloudPlayerService,
-    permissionGroupService: InternalPermissionGroupService,
+    val internalProcessGroupService: InternalCloudProcessGroupService,
+    val internalProcessService: InternalCloudProcessService,
+    val internalPlayerService: InternalCloudPlayerService,
+    val internalPermissionGroupService: InternalPermissionGroupService,
     nodeService: NodeService,
     messageChannelManager: MessageChannelManager,
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
-    private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService
 ) : CloudAPIImpl(
     localNetworkComponentName,
-    processGroupService,
-    processService,
-    playerService,
-    permissionGroupService,
+    internalProcessGroupService,
+    internalProcessService,
+    internalPlayerService,
+    internalPermissionGroupService,
     nodeService,
     messageChannelManager,
     eventManager,
     permissionFactory
-) {
-
-    fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
-        return this.onlineStrategyService
-    }
-
-}
+)

@@ -23,6 +23,7 @@ import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
+import java.util.*
 
 /**
  * Date: 11.01.22
@@ -37,5 +38,7 @@ interface InternalCloudPlayerService : CloudPlayerService {
     suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration)
 
     suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer
+
+    fun logoutPlayer(uniqueId: UUID)
 
 }

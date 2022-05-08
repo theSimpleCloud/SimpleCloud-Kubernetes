@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.impl.request.process.ProcessExecuteComman
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessShutdownRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessStartRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.process.ProcessUpdateRequestImpl
+import app.simplecloud.simplecloud.api.impl.service.listener.CloudProcessEntryListener
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
@@ -35,6 +36,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
+import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -46,8 +48,19 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractCloudProcessService(
     protected val processFactory: CloudProcessFactory,
-    protected val distributedRepository: DistributedCloudProcessRepository
+    protected val distributedRepository: DistributedCloudProcessRepository,
+    private val eventManager: EventManager
 ) : InternalCloudProcessService {
+
+    init {
+        this.distributedRepository.addEntryListener(
+            CloudProcessEntryListener(
+                this,
+                this.eventManager,
+                this.processFactory
+            )
+        )
+    }
 
     override fun findAll(): CompletableFuture<List<CloudProcess>> {
         val allProcessConfigurations = this.distributedRepository.findAll()

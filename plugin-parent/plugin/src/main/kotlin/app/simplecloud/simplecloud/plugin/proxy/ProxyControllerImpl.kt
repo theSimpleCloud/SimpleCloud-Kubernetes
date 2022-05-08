@@ -19,43 +19,30 @@
 package app.simplecloud.simplecloud.plugin.proxy
 
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
-import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
 import app.simplecloud.simplecloud.plugin.proxy.request.*
-import app.simplecloud.simplecloud.plugin.proxy.request.handler.*
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerDisconnectRequestHandler
+import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerPostLoginRequestHandler
+import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerServerConnectedRequestHandler
+import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerServerPreConnectRequestHandler
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 
-@Singleton
-class ProxyControllerImpl @Inject constructor(
-    private val internalMessageChannelProvider: InternalMessageChannelProvider,
-    private val nodeService: NodeService,
-    private val playerService: CloudPlayerService,
+class ProxyControllerImpl(
+    private val playerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
     private val processGroupService: CloudProcessGroupService,
-    private val playerFactory: CloudPlayerFactory,
-    private val onlineCountUpdater: OnlineCountUpdater,
-    private val distributedRepository: DistributedCloudPlayerRepository,
+    private val onlineCountUpdater: OnlineCountUpdater
 ) : ProxyController {
 
-    override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
-        return PlayerLoginRequestHandler(
-            request,
-            internalMessageChannelProvider,
-            nodeService,
-            playerFactory,
-            playerService
-        ).handle()
+    override suspend fun handleLogin(request: PlayerLoginConfiguration): CloudPlayer {
+        return this.playerService.loginPlayer(request)
     }
 
     override fun handlePostLogin(request: PlayerConnectionConfiguration) {
@@ -66,7 +53,7 @@ class ProxyControllerImpl @Inject constructor(
         PlayerDisconnectRequestHandler(
             request,
             this.onlineCountUpdater,
-            this.distributedRepository
+            this.playerService
         ).handler()
     }
 

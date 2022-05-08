@@ -18,15 +18,18 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.util.PlayerProcessGroupJoinChecker
 
 class PlayerLobbyFinder(
     private val player: CloudPlayer,
+    private val processService: CloudProcessService,
     private val groupService: CloudProcessGroupService
 ) {
 
@@ -35,7 +38,7 @@ class PlayerLobbyFinder(
     suspend fun findLobby(): String {
         val groups = getLobbyGroupsThePlayerIsAllowedToJoinSorted()
         for (group in groups) {
-            val processes = group.getProcesses().join()
+            val processes = this.processService.findByGroup(group).await()
             val notFullProcesses = processes.filterNot { it.isFull() }
             if (processes.isEmpty()) continue
             return notFullProcesses.first().getName()

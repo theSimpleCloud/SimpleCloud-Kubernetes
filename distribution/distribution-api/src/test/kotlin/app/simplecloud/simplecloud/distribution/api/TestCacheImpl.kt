@@ -69,7 +69,11 @@ class TestCacheImpl<K, V>(
 
     override fun put(key: K, value: V): V? {
         val result = this.map.put(key, value)
-        this.entryListeners.forEach { it.entryUpdated(key to value) }
+        if (result == null) {
+            this.entryListeners.forEach { it.entryAdded(key to value) }
+        } else {
+            this.entryListeners.forEach { it.entryUpdated(key to value) }
+        }
         return result
     }
 

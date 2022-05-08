@@ -18,12 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
-import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.distribution.api.EntryListener
-import com.google.inject.Inject
 
 /**
  * Date: 24.01.22
@@ -31,39 +26,14 @@ import com.google.inject.Inject
  * @author Frederick Baier
  *
  */
-class ProxyProcessRegisterer @Inject constructor(
+class ProxyProcessRegisterer(
     private val cloudProcessService: CloudProcessService,
-    private val proxyServerRegistry: ProxyServerRegistry,
-    private val processRepository: DistributedCloudProcessRepository,
+    private val proxyServerRegistry: ProxyServerRegistry
 ) {
 
     fun registerExistingProcesses() {
         val completableFuture = this.cloudProcessService.findAll()
-        completableFuture.thenAccept { list -> list.forEach { registerProcess(it) } }
-    }
-
-    fun registerEntryListener() {
-        val entryListener = object : EntryListener<String, CloudProcessConfiguration> {
-            override fun entryUpdated(entry: Pair<String, CloudProcessConfiguration>) {
-                registerProcessByName(entry.first)
-            }
-
-            override fun entryRemoved(entry: Pair<String, CloudProcessConfiguration>) {
-                this@ProxyProcessRegisterer.proxyServerRegistry.unregisterServer(entry.first)
-            }
-
-        }
-        this.processRepository.addEntryListener(entryListener)
-    }
-
-    private fun registerProcessByName(processName: String) {
-        val processFuture = this.cloudProcessService.findByName(processName)
-        processFuture.thenApply { registerProcess(it) }
-    }
-
-    private fun registerProcess(cloudProcess: CloudProcess) {
-        println("Proxy found process ${cloudProcess.getName()}")
-        this.proxyServerRegistry.registerProcess(cloudProcess)
+        completableFuture.thenAccept { list -> list.forEach { this.proxyServerRegistry.registerProcess(it) } }
     }
 
 }

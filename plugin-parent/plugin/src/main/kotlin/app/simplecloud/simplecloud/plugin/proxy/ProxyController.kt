@@ -18,13 +18,14 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.plugin.proxy.request.*
 
 interface ProxyController {
 
-    suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer
+    suspend fun handleLogin(request: PlayerLoginConfiguration): CloudPlayer
 
     fun handlePostLogin(request: PlayerConnectionConfiguration)
 

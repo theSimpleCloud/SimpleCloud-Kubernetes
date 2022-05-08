@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.api
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.*
+import app.simplecloud.simplecloud.eventapi.EventManager
 
 /**
  * Date: 07.05.22
@@ -29,6 +30,8 @@ import app.simplecloud.simplecloud.api.service.*
  *
  */
 interface CloudAPI {
+
+    fun getLocalNetworkComponentName(): String
 
     fun getProcessGroupService(): CloudProcessGroupService
 
@@ -41,6 +44,8 @@ interface CloudAPI {
     fun getNodeService(): NodeService
 
     fun getMessageChannelManager(): MessageChannelManager
+
+    fun getEventManager(): EventManager
 
     fun getPermissionFactory(): Permission.Factory
 

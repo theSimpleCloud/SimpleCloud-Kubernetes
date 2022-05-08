@@ -21,9 +21,8 @@ package app.simplecloud.simplecloud.plugin.startup
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import com.google.inject.Inject
 
-class SelfDistributedProcessUpdater @Inject constructor(
+class SelfDistributedProcessUpdater(
     private val distribution: Distribution,
     private val selfProcessProvider: SelfProcessProvider
 ) {

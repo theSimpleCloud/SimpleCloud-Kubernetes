@@ -19,11 +19,12 @@
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
-import app.simplecloud.simplecloud.plugin.proxy.ProxyBinderModule
+import app.simplecloud.simplecloud.eventapi.EventRegisterer
+import app.simplecloud.simplecloud.plugin.proxy.ProxyCloudListener
+import app.simplecloud.simplecloud.plugin.proxy.ProxyControllerImpl
 import app.simplecloud.simplecloud.plugin.proxy.ProxyProcessRegisterer
-import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
-import app.simplecloud.simplecloud.plugin.proxy.type.bungee.guice.BungeeBinderModule
 import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
+import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.net.InetSocketAddress
@@ -31,8 +32,9 @@ import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
-    private val cloudPlugin = CloudPlugin(ProxyBinderModule(BungeeBinderModule(this)), HazelcastDistributionFactory())
-    private val injector = cloudPlugin.injector
+    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory())
+    private val cloudAPI = cloudPlugin.pluginCloudAPI
+    private val proxyServerRegistry = BungeeProxyServerRegistry(ProxyServer.getInstance())
 
     override fun onLoad() {
         ProxyServer.getInstance().reconnectHandler = ReconnectHandlerImpl()
@@ -47,16 +49,32 @@ class CloudBungeePlugin : Plugin() {
         }
         registerFallbackService()
 
-        val proxyProcessRegisterer = this.injector.getInstance(ProxyProcessRegisterer::class.java)
+        val proxyProcessRegisterer = ProxyProcessRegisterer(this.cloudAPI.getProcessService(), this.proxyServerRegistry)
         proxyProcessRegisterer.registerExistingProcesses()
-        proxyProcessRegisterer.registerEntryListener()
 
-        proxyServer.pluginManager.registerListener(this, this.injector.getInstance(BungeeListener::class.java))
+        this.cloudAPI.getEventManager().registerListener(
+            object : EventRegisterer {},
+            ProxyCloudListener(this.proxyServerRegistry)
+        )
+
+        val proxyController = ProxyControllerImpl(
+            this.cloudAPI.internalPlayerService,
+            this.cloudAPI.getProcessService(),
+            this.cloudAPI.getProcessGroupService(),
+            BungeeOnlineCountUpdater(proxyServer, SelfProcessProvider(this.cloudAPI.getProcessService())),
+        )
+        proxyServer.pluginManager.registerListener(
+            this, BungeeListener(
+                this.cloudAPI.getLocalNetworkComponentName(),
+                proxyController,
+                this,
+                proxyServer
+            )
+        )
     }
 
     private fun registerFallbackService() {
-        val proxyServerRegistry = this.injector.getInstance(ProxyServerRegistry::class.java)
-        proxyServerRegistry.registerServer(
+        this.proxyServerRegistry.registerServer(
             "fallback",
             UUID.fromString("00000000-0000-0000-0000-000000000000"),
             InetSocketAddress("127.0.0.1", 0)

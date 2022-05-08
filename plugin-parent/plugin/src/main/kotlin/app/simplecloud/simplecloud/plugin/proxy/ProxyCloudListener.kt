@@ -16,26 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.server.type.spigot.guice
+package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.server.type.spigot.SpigotOnlineCountUpdater
-import com.google.inject.AbstractModule
-import org.bukkit.Server
+import app.simplecloud.simplecloud.api.event.process.CloudProcessRegisteredEvent
+import app.simplecloud.simplecloud.api.event.process.CloudProcessUnregisteredEvent
+import app.simplecloud.simplecloud.eventapi.CloudEventHandler
+import app.simplecloud.simplecloud.eventapi.Listener
 
 /**
- * Date: 24.01.22
- * Time: 19:04
+ * Date: 08.05.22
+ * Time: 18:46
  * @author Frederick Baier
  *
  */
-class SpigotBinderModule(
-    private val server: Server
-) : AbstractModule() {
+class ProxyCloudListener(
+    private val proxyServerRegistry: ProxyServerRegistry
+) : Listener {
 
-    override fun configure() {
-        bind(Server::class.java).toInstance(this.server)
-        bind(OnlineCountUpdater::class.java).to(SpigotOnlineCountUpdater::class.java)
+    @CloudEventHandler
+    fun onProcessRegistered(event: CloudProcessRegisteredEvent) {
+        this.proxyServerRegistry.registerProcess(event.process)
     }
+
+    @CloudEventHandler
+    fun onProcessUnregistered(event: CloudProcessUnregisteredEvent) {
+        this.proxyServerRegistry.unregisterServer(event.process.getName())
+    }
+
 
 }

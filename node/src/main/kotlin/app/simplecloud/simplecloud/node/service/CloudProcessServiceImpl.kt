@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessService
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessExecuteCommandConfiguration
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.node.process.*
 import java.util.concurrent.CompletableFuture
@@ -33,11 +34,12 @@ import java.util.concurrent.CompletableFuture
 class CloudProcessServiceImpl(
     processFactory: CloudProcessFactory,
     distributedRepository: DistributedCloudProcessRepository,
+    eventManager: EventManager,
     private val processStarterFactory: ProcessStarter.Factory,
     private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
     private val podService: KubePodService
 ) : AbstractCloudProcessService(
-    processFactory, distributedRepository
+    processFactory, distributedRepository, eventManager
 ) {
     override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
         return InternalProcessStartHandler(configuration, this, this.processStarterFactory)

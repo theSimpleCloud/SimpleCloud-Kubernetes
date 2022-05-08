@@ -21,8 +21,6 @@ package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
-import com.google.inject.Inject
-import com.google.inject.Singleton
 import net.md_5.bungee.api.ProxyServer
 import java.net.InetSocketAddress
 import java.util.*
@@ -33,8 +31,7 @@ import java.util.*
  * @author Frederick Baier
  *
  */
-@Singleton
-class BungeeProxyServerRegistry @Inject constructor(
+class BungeeProxyServerRegistry(
     private val proxyServer: ProxyServer
 ) : ProxyServerRegistry {
 

@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.server.type.spigot.guice
+package app.simplecloud.simplecloud.plugin.server.type.spigot
 
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import com.google.inject.Inject
 import kotlinx.coroutines.runBlocking
 import org.bukkit.event.EventHandler
 import org.bukkit.event.Listener
@@ -33,7 +32,7 @@ import org.bukkit.event.player.PlayerQuitEvent
  * @author Frederick Baier
  *
  */
-class SpigotListener @Inject constructor(
+class SpigotListener(
     private val onlineCountUpdater: OnlineCountUpdater
 ) : Listener {
 

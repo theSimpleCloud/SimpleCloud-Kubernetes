@@ -52,7 +52,8 @@ class PlayerServerPreConnectRequestHandler(
             return findLobbyForPlayer()
         val processConnectingTo = getProcessConnectingTo()
         checkIfRequestedServerIsJoinable(processConnectingTo)
-        checkIfPlayerAllowedToJoinRequestedGroup(processConnectingTo.getGroup().join())
+        val group = this.groupService.findByName(processConnectingTo.getGroupName()).await()
+        checkIfPlayerAllowedToJoinRequestedGroup(group)
         return ServerPreConnectResponse(request.serverNameTo)
     }
 
@@ -78,7 +79,7 @@ class PlayerServerPreConnectRequestHandler(
     }
 
     private suspend fun findLobbyForPlayer(): ServerPreConnectResponse {
-        val lobbyProcessName = PlayerLobbyFinder(this.player, this.groupService).findLobby()
+        val lobbyProcessName = PlayerLobbyFinder(this.player, this.processService, this.groupService).findLobby()
         return ServerPreConnectResponse(lobbyProcessName)
     }
 

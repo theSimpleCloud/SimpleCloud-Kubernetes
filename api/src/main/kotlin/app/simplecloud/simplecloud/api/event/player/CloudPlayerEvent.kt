@@ -16,9 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+package app.simplecloud.simplecloud.api.event.player
 
-dependencies {
-    api(project(":distribution:distribution-api"))
-    api("net.kyori:adventure-api:4.10.1")
-    api(project(":event-api"))
-}
+import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.eventapi.Event
+
+/**
+ * Date: 08.05.22
+ * Time: 12:11
+ * @author Frederick Baier
+ *
+ */
+class CloudPlayerEvent(
+    val player: CloudPlayer
+) : Event

@@ -31,47 +31,48 @@ import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.concurrent.CompletableFuture
 
-@Singleton
-class CloudProcessServiceImpl @Inject constructor(
+class CloudProcessServiceImpl(
     processFactory: CloudProcessFactory,
     distributedRepository: DistributedCloudProcessRepository,
-    internalMessageChannelProvider: InternalMessageChannelProvider,
+    eventManager: EventManager,
     private val nodeService: NodeService
 ) : AbstractCloudProcessService(
-    processFactory, distributedRepository
+    processFactory, distributedRepository, eventManager
 ) {
 
-    private val startProcessMessageChannel = internalMessageChannelProvider.getInternalStartProcessChannel()
+    private lateinit var messageChannelProvider: InternalMessageChannelProvider
 
-    private val executeCommandMessageChannel = internalMessageChannelProvider.getInternalExecuteCommandChannel()
-
-    private val logsMessageChannel = internalMessageChannelProvider.getInternalProcessLogsMessageChannel()
+    fun initializeMessageChannels(internalMessageChannelProvider: InternalMessageChannelProvider) {
+        this.messageChannelProvider = internalMessageChannelProvider
+    }
 
     override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
         val node = findRandomNode()
         val processConfiguration = sendStartRequestToNode(configuration, node)
-        return this.processFactory.create(processConfiguration)
+        return this.processFactory.create(processConfiguration, this)
     }
 
     private suspend fun sendStartRequestToNode(
         configuration: ProcessStartConfiguration,
         node: Node
     ): CloudProcessConfiguration {
-        return this.startProcessMessageChannel.createMessageRequest(configuration, node).submit().await()
+        return this.messageChannelProvider.getInternalStartProcessChannel().createMessageRequest(configuration, node)
+            .submit().await()
     }
 
     override suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration) {
         val node = findRandomNode()
-        return this.executeCommandMessageChannel.createMessageRequest(configuration, node).submit().await()
+        return this.messageChannelProvider.getInternalExecuteCommandChannel().createMessageRequest(configuration, node)
+            .submit().await()
     }
 
     override fun getLogs(process: CloudProcess): CompletableFuture<List<String>> = CloudScope.future {
         val node = findRandomNode()
-        return@future logsMessageChannel.createMessageRequest(process.getName(), node).submit().await()
+        return@future messageChannelProvider.getInternalProcessLogsMessageChannel()
+            .createMessageRequest(process.getName(), node).submit().await()
     }
 
     override suspend fun shutdownProcessInternal(process: CloudProcess) {

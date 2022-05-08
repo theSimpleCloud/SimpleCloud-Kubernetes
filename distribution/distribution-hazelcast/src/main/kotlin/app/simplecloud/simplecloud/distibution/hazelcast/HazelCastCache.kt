@@ -86,7 +86,7 @@ class HazelCastCache<K, V>(
     override fun addEntryListener(entryListener: EntryListener<K, V>) {
         val mapListener = object : HazelCastEntryListener<K, V> {
             override fun entryAdded(event: EntryEvent<K, V>) {
-                entryListener.entryUpdated(event.key to event.value)
+                entryListener.entryAdded(event.key to event.value)
             }
 
             override fun entryUpdated(event: EntryEvent<K, V>) {

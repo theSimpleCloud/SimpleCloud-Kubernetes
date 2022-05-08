@@ -18,13 +18,16 @@
 
 package app.simplecloud.simplecloud.plugin.startup.service
 
-import app.simplecloud.simplecloud.api.impl.player.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
+import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import com.google.inject.Inject
-import com.google.inject.Singleton
+import app.simplecloud.simplecloud.api.service.NodeService
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -34,11 +37,14 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-@Singleton
-class CloudPlayerServiceImpl @Inject constructor(
+class CloudPlayerServiceImpl(
     private val distributedRepository: DistributedCloudPlayerRepository,
-    playerFactory: CloudPlayerFactory
+    private val nodeService: NodeService,
+    internalMessageChannelProvider: InternalMessageChannelProvider,
+    private val playerFactory: CloudPlayerFactory
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
+
+    private val loginMessageChannel = internalMessageChannelProvider.getInternalPlayerLoginChannel()
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         TODO("Not yet implemented")
@@ -50,5 +56,11 @@ class CloudPlayerServiceImpl @Inject constructor(
 
     override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
         TODO()
+    }
+
+    override suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer {
+        val node = this.nodeService.findFirst().await()
+        val playerConfiguration = this.loginMessageChannel.createMessageRequest(configuration, node).submit().await()
+        return this.playerFactory.create(playerConfiguration, this)
     }
 }

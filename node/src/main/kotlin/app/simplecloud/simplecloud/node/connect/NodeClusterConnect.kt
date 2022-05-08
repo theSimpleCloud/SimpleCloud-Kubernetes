@@ -38,6 +38,7 @@ import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
+import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
@@ -133,6 +134,7 @@ class NodeClusterConnect(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories
     ): NodeCloudAPI {
+        val eventManager = DefaultEventManager()
         val nodeService = NodeServiceImpl(distribution)
         val universalGroupFactory = UniversalCloudProcessGroupFactory(
             CloudLobbyGroupFactoryImpl(),
@@ -154,6 +156,7 @@ class NodeClusterConnect(
         val cloudProcessService = CloudProcessServiceImpl(
             processFactory,
             distributedRepositories.cloudProcessRepository,
+            eventManager,
             ProcessStarterFactoryImpl(processFactory, this.kubeAPI),
             ProcessShutdownHandlerFactoryImpl(
                 this.kubeAPI.getPodService(),
@@ -179,15 +182,18 @@ class NodeClusterConnect(
             OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory)
         )
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
+        val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         return NodeCloudAPI(
+            selfComponent.getName(),
             cloudProcessGroupService,
             cloudProcessService,
             cloudPlayerService,
             permissionGroupService,
             nodeService,
-            permissionFactory,
             messageChannelManager,
-            nodeProcessOnlineStrategyService
+            eventManager,
+            permissionFactory,
+            nodeProcessOnlineStrategyService,
         )
     }
 
