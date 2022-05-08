@@ -19,18 +19,6 @@
 package app.simplecloud.simplecloud.eventapi
 
 /**
- * Represents an event that can be cancelled
+ * Represents a class listeners get linked to
  */
-interface ICancellableEvent : IEvent {
-
-    /**
-     * Returns whether this event was cancelled
-     */
-    fun isCancelled(): Boolean
-
-    /**
-     * Sets the cancelled state
-     */
-    fun setCancelled(cancelled: Boolean)
-
-}
+interface EventRegisterer

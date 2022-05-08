@@ -18,7 +18,11 @@
 
 package app.simplecloud.simplecloud.eventapi
 
-/**
- * The base class of all events
- */
-interface IEvent
+interface EventExecutor {
+
+    /**
+     * Executes the specified event.
+     */
+    fun execute(event: Event)
+
+}

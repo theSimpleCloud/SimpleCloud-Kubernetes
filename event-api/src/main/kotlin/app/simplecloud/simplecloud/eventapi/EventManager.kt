@@ -18,11 +18,42 @@
 
 package app.simplecloud.simplecloud.eventapi
 
-interface IEventExecutor {
+
+interface EventManager {
 
     /**
-     * Executes the specified event.
+     * Registers a listener
      */
-    fun execute(event: IEvent)
+    fun registerListener(eventRegisterer: EventRegisterer, listener: Listener)
+
+    /**
+     * Registers an event
+     */
+    fun registerEvent(
+        eventRegisterer: EventRegisterer,
+        eventClass: Class<out Event>,
+        listener: Listener,
+        eventExecutor: EventExecutor
+    )
+
+    /**
+     * Unregisters the all [EventExecutor]s associated with the specified [listener]
+     */
+    fun unregisterListener(listener: Listener)
+
+    /**
+     * Calls the specified [event] so it will be handed to the executors registered
+     */
+    fun call(event: Event)
+
+    /**
+     * Unregisters all [Listener]s associated with the specified [EventRegisterer]
+     */
+    fun unregisterAllListenersByRegisterer(registerer: EventRegisterer)
+
+    /**
+     * Unregisters all listeners
+     */
+    fun unregisterAll()
 
 }

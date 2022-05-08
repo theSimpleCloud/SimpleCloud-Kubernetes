@@ -23,34 +23,39 @@ import com.google.common.collect.Maps
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
 
-class DefaultEventManager : IEventManager {
+class DefaultEventManager : EventManager {
 
-    private val listeners = Maps.newConcurrentMap<Class<out IEvent>, MutableList<RegisteredEventHandler>>()
+    private val listeners = Maps.newConcurrentMap<Class<out Event>, MutableList<RegisteredEventHandler>>()
 
-    override fun registerListener(registerer: IEventRegisterer, listener: IListener) {
+    override fun registerListener(registerer: EventRegisterer, listener: Listener) {
         for (method in getValidMethods(listener::class.java)) {
-            val eventClass = method.parameterTypes[0] as Class<out IEvent>
+            val eventClass = method.parameterTypes[0] as Class<out Event>
             addRegisteredEvent(RegisteredEventHandler.fromEventMethod(registerer, eventClass, listener, method))
         }
     }
 
-    override fun registerEvent(registerer: IEventRegisterer, eventClass: Class<out IEvent>, listener: IListener, eventExecutor: IEventExecutor) {
+    override fun registerEvent(
+        registerer: EventRegisterer,
+        eventClass: Class<out Event>,
+        listener: Listener,
+        eventExecutor: EventExecutor
+    ) {
         addRegisteredEvent(RegisteredEventHandler(registerer, eventClass, listener, eventExecutor))
     }
 
-    override fun unregisterListener(listener: IListener) {
+    override fun unregisterListener(listener: Listener) {
         val allRegisteredEventHandlers = this.listeners.values.flatten()
         val handlersToUnregister = allRegisteredEventHandlers.filter { it.listener === listener }
         handlersToUnregister.forEach { removeRegisteredEvent(it) }
     }
 
-    override fun call(event: IEvent) {
+    override fun call(event: Event) {
         this.listeners[event::class.java]?.forEach { registeredEvent ->
             registeredEvent.eventExecutor.execute(event)
         }
     }
 
-    override fun unregisterAllListenersByRegisterer(registerer: IEventRegisterer) {
+    override fun unregisterAllListenersByRegisterer(registerer: EventRegisterer) {
         listeners.values.forEach { list -> list.removeIf { it.registerer == registerer } }
     }
 
@@ -59,9 +64,13 @@ class DefaultEventManager : IEventManager {
     }
 
 
-    private fun getValidMethods(listenerClass: Class<out IListener>): List<Method> {
+    private fun getValidMethods(listenerClass: Class<out Listener>): List<Method> {
         val methods = listenerClass.declaredMethods
-            .filter { it.isAnnotationPresent(CloudEventHandler::class.java) && it.parameterTypes.size == 1 && IEvent::class.java.isAssignableFrom(it.parameterTypes[0]) }
+            .filter {
+                it.isAnnotationPresent(CloudEventHandler::class.java) && it.parameterTypes.size == 1 && Event::class.java.isAssignableFrom(
+                    it.parameterTypes[0]
+                )
+            }
         methods.forEach { it.isAccessible = true }
         return methods
     }
@@ -77,14 +86,24 @@ class DefaultEventManager : IEventManager {
     }
 
 
-    data class RegisteredEventHandler(val registerer: IEventRegisterer, val eventClass: Class<out IEvent>, val listener: IListener, val eventExecutor: IEventExecutor) {
+    data class RegisteredEventHandler(
+        val registerer: EventRegisterer,
+        val eventClass: Class<out Event>,
+        val listener: Listener,
+        val eventExecutor: EventExecutor
+    ) {
 
         companion object {
 
-            fun fromEventMethod(registerer: IEventRegisterer, eventClass: Class<out IEvent>, listener: IListener, method: Method): RegisteredEventHandler {
-                return RegisteredEventHandler(registerer, eventClass, listener, object : IEventExecutor {
+            fun fromEventMethod(
+                registerer: EventRegisterer,
+                eventClass: Class<out Event>,
+                listener: Listener,
+                method: Method
+            ): RegisteredEventHandler {
+                return RegisteredEventHandler(registerer, eventClass, listener, object : EventExecutor {
 
-                    override fun execute(event: IEvent) {
+                    override fun execute(event: Event) {
                         if (!eventClass.isAssignableFrom(event.javaClass))
                             return
                         try {

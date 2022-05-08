@@ -19,6 +19,6 @@
 package app.simplecloud.simplecloud.eventapi
 
 /**
- * Represents a class that handles [IEvent]s
+ * Represents a class that handles [Event]s
  */
-interface IListener
+interface Listener

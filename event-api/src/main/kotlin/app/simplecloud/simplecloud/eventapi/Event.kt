@@ -19,6 +19,6 @@
 package app.simplecloud.simplecloud.eventapi
 
 /**
- * Represents a class listeners get linked to
+ * The base class of all events
  */
-interface IEventRegisterer
+interface Event

@@ -18,8 +18,9 @@
 
 package app.simplecloud.simplecloud.eventapi.exception
 
-import app.simplecloud.simplecloud.eventapi.IEvent
+import app.simplecloud.simplecloud.eventapi.Event
 
 
-class EventException(causeEvent: IEvent, cause: Throwable) : Exception("An error occurred while attempting to handle event ${causeEvent::class.java.name}", cause) {
+class EventException(causeEvent: Event, cause: Throwable) :
+    Exception("An error occurred while attempting to handle event ${causeEvent::class.java.name}", cause) {
 }
