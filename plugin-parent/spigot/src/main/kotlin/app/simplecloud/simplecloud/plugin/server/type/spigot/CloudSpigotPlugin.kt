@@ -37,7 +37,7 @@ class CloudSpigotPlugin : JavaPlugin() {
     override fun onEnable() {
         val onlineCountUpdater = SpigotOnlineCountUpdater(
             this.server,
-            SelfProcessProvider(this.cloudAPI.getProcessService())
+            SelfProcessProvider(this.cloudPlugin.selfProcessId, this.cloudAPI.getProcessService())
         )
         server.pluginManager.registerEvents(SpigotListener(onlineCountUpdater), this)
     }

@@ -29,4 +29,4 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 data class PlayerLoginConfiguration(
     val connectionConfiguration: PlayerConnectionConfiguration,
     val proxyName: String,
-)
+) : java.io.Serializable

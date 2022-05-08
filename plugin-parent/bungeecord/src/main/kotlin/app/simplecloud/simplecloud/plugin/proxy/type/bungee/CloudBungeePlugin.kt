@@ -61,7 +61,10 @@ class CloudBungeePlugin : Plugin() {
             this.cloudAPI.internalPlayerService,
             this.cloudAPI.getProcessService(),
             this.cloudAPI.getProcessGroupService(),
-            BungeeOnlineCountUpdater(proxyServer, SelfProcessProvider(this.cloudAPI.getProcessService())),
+            BungeeOnlineCountUpdater(
+                proxyServer,
+                SelfProcessProvider(this.cloudPlugin.selfProcessId, this.cloudAPI.getProcessService())
+            ),
         )
         proxyServer.pluginManager.registerListener(
             this, BungeeListener(

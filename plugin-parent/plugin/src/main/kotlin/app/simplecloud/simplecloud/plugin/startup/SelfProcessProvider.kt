@@ -24,10 +24,9 @@ import java.util.*
 import java.util.concurrent.CompletableFuture
 
 class SelfProcessProvider(
+    private val internalProcessId: UUID,
     private val processService: CloudProcessService
 ) {
-
-    private val internalProcessId = UUID.fromString(System.getenv("SIMPLECLOUD_PROCESS_ID"))
 
     fun getSelfProcess(): CompletableFuture<CloudProcess> {
         return this.processService.findByUniqueId(this.internalProcessId)

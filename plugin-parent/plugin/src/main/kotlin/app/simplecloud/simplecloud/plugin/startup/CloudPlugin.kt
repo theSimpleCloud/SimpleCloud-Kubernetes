@@ -38,18 +38,23 @@ import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.plugin.startup.service.*
+import java.util.*
 
 class CloudPlugin(
     private val distributionFactory: DistributionFactory
 ) {
 
+    val selfProcessId = UUID.fromString(System.getenv("SIMPLECLOUD_PROCESS_ID"))
     private val distribution = startDistribution()
     private val distributedRepositories = initializeDistributedRepositories(distribution)
     val pluginCloudAPI = initializeServices(distribution, distributedRepositories)
 
+
     init {
-        SelfDistributedProcessUpdater(distribution, SelfProcessProvider(pluginCloudAPI.getProcessService()))
-            .updateProcessBlocking()
+        SelfDistributedProcessUpdater(
+            distribution,
+            SelfProcessProvider(selfProcessId, pluginCloudAPI.getProcessService())
+        ).updateProcessBlocking()
     }
 
     private fun initializeServices(
@@ -99,7 +104,11 @@ class CloudPlugin(
             internalMessageChannelProvider,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
         )
-        val selfComponent = cloudProcessService.findByDistributionComponent(distribution.getSelfComponent()).join()
+        println("distribution self id " + distribution.getSelfComponent().getDistributionId())
+        println(
+            "All Processes: " + distributedRepositories.cloudProcessRepository.findAll().join()
+                .map { it.getProcessName() + " " + it.distributionId })
+        val selfComponent = cloudProcessService.findByUniqueId(this.selfProcessId).join()
         return PluginCloudAPI(
             selfComponent.getName(),
             cloudProcessGroupService,
