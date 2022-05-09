@@ -18,18 +18,12 @@
 
 dependencies {
     implementation(kotlin("stdlib"))
-    implementation("com.github.ajalt:clikt:2.8.0")
     implementation("org.apache.commons:commons-lang3:3.12.0")
 
 
+    api(project(":api-impl"))
     implementation(project(":rest-server:rest-server-api"))
-    implementation(project(":rest-server:rest-server-base"))
-    api(project(":api"))
-    implementation(project(":api-impl"))
-    implementation(project(":api-internal"))
-    implementation(project(":kubernetes:kubernetes-impl"))
-    implementation(project(":distribution:distribution-hazelcast"))
-    implementation(project(":database:database-mongo"))
+    implementation(project(":kubernetes:kubernetes-api"))
 
     implementation("org.apache.logging.log4j:log4j-core:2.17.2")
     implementation("org.apache.logging.log4j:log4j-api:2.17.2")
@@ -37,10 +31,4 @@ dependencies {
     testImplementation(project(":database:database-inmemory"))
     testApi(project(":kubernetes:kubernetes-test"))
 
-}
-
-tasks.withType<Jar> {
-    manifest {
-        attributes["Main-Class"] = "app.simplecloud.simplecloud.node.startup.NodeMainKt"
-    }
 }

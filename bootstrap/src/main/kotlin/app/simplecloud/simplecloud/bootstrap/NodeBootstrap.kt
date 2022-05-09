@@ -16,37 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup
+package app.simplecloud.simplecloud.bootstrap
+
+import app.simplecloud.simplecloud.node.startup.NodeStartup
+import org.apache.logging.log4j.LogManager
+
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 10:10
+ * Date: 20/07/2021
+ * Time: 11:56
  * @author Frederick Baier
  */
-enum class WebinterfaceMode {
 
-    /**
-     * This mode will install and start the webinterface directly on the machine using yarn.
-     * Yarn will be installed if needed.
-     */
-    YARN,
+private val logger = LogManager.getLogger(NodeStartup::class.java)
 
-    /**
-     * This mode will install and start the webinterface directly on the machine using npm.
-     * NPM will be installed if needed.
-     */
-    NPM,
-
-    /**
-     * This mode will install and start the webinterface in a docker container.
-     * Docker will be installed if needed.
-     */
-    DOCKER,
-
-    /**
-     * This mode will prevent the webinterface from starting.
-     */
-    NONE
-
+fun main(args: Array<String>) {
+    logger.info("Starting SimpleCloud")
+    NodeArgumentsParser().main(args)
 }

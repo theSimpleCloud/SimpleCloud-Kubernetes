@@ -31,7 +31,7 @@ import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
-import app.simplecloud.simplecloud.node.messagechannel.CloudPlayerLoginHandler
+import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
 import java.util.*
 import java.util.concurrent.CompletableFuture
 

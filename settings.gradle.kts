@@ -57,3 +57,4 @@ include("rest-server:rest-server-base")
 findProject(":rest-server:rest-server-base")?.name = "rest-server-base"
 include("rest-server:rest-server-api")
 findProject(":rest-server:rest-server-api")?.name = "rest-server-api"
+include("bootstrap")

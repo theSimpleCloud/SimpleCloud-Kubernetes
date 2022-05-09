@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.messagechannel
+package app.simplecloud.simplecloud.node.player
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory

@@ -35,7 +35,6 @@ import org.apache.logging.log4j.LogManager
  * @author Frederick Baier
  */
 class NodeStartup(
-    private val startArguments: NodeStartArgumentParserMain,
     private val databaseFactory: DatabaseFactory,
     private val distributionFactory: DistributionFactory,
     private val kubeAPI: KubeAPI,
