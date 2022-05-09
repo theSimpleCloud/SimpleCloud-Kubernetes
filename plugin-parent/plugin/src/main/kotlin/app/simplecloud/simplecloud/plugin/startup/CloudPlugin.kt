@@ -104,10 +104,6 @@ class CloudPlugin(
             internalMessageChannelProvider,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
         )
-        println("distribution self id " + distribution.getSelfComponent().getDistributionId())
-        println(
-            "All Processes: " + distributedRepositories.cloudProcessRepository.findAll().join()
-                .map { it.getProcessName() + " " + it.distributionId })
         val selfComponent = cloudProcessService.findByUniqueId(this.selfProcessId).join()
         return PluginCloudAPI(
             selfComponent.getName(),
