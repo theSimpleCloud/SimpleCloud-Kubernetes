@@ -96,7 +96,21 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     }
 
     override fun submit(): CompletableFuture<Unit> = CloudScope.future {
+        checkMemory()
+        checkMaxPlayers()
         submit0(image)
+    }
+
+    private fun checkMaxPlayers() {
+        if (this.maxPlayers < -1) {
+            throw IllegalArgumentException("Max Players cannot be lower than -1")
+        }
+    }
+
+    private fun checkMemory() {
+        if (this.maxMemory < 256) {
+            throw IllegalArgumentException("Memory cannot be lower than 256")
+        }
     }
 
     abstract suspend fun submit0(image: Image?)

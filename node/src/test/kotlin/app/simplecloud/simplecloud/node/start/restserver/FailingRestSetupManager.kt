@@ -16,21 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+package app.simplecloud.simplecloud.node.start.restserver
 
+import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
+import app.simplecloud.simplecloud.restserver.api.setup.Setup
+import java.util.concurrent.CompletableFuture
 
-    api(project(":api-impl"))
-    implementation(project(":rest-server:rest-server-api"))
-    implementation(project(":kubernetes:kubernetes-api"))
+/**
+ * Date: 11.05.22
+ * Time: 10:08
+ * @author Frederick Baier
+ *
+ */
+class FailingRestSetupManager : RestSetupManager {
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
+    override fun <T : Any> setNextSetup(setup: Setup<T>): CompletableFuture<T> {
+        throw RuntimeException("This method should not be invoked. Setup: ${setup.setupName}")
+    }
 
-    testImplementation(project(":database:database-inmemory"))
-    testApi(project(":kubernetes:kubernetes-test"))
-    testApi(project(":distribution:distribution-test"))
-    testApi(project(":rest-server:rest-server-base"))
+    override fun setEndToken(token: String) {
 
+    }
+
+    override fun onEndOfAllSetups() {
+
+    }
 }

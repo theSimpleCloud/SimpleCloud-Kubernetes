@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.node.startup
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
@@ -41,7 +42,7 @@ class NodeStartup(
     private val restServerConfig: RestServerConfig
 ) {
 
-    fun start() {
+    fun start(): NodeCloudAPI {
         val nodePreparer = NodePreparer(
             this.databaseFactory,
             this.kubeAPI,
@@ -49,19 +50,19 @@ class NodeStartup(
             this.restServerConfig.tokenHandlerFactory
         )
         val preparedNode = nodePreparer.prepare()
-        executeClusterConnect(preparedNode)
+        return executeClusterConnect(preparedNode)
     }
 
-    private fun executeClusterConnect(preparedNode: PreparedNode) {
+    private fun executeClusterConnect(preparedNode: PreparedNode): NodeCloudAPI {
         try {
-            executeClusterConnect0(preparedNode)
+            return executeClusterConnect0(preparedNode)
         } catch (e: Exception) {
-            logger.error("An error occurred while connecting to cluster", e)
+            throw RuntimeException("An error occurred while connecting to cluster", e)
         }
     }
 
-    private fun executeClusterConnect0(preparedNode: PreparedNode) {
-        NodeClusterConnect(
+    private fun executeClusterConnect0(preparedNode: PreparedNode): NodeCloudAPI {
+        return NodeClusterConnect(
             this.distributionFactory,
             this.kubeAPI,
             preparedNode.repositories,

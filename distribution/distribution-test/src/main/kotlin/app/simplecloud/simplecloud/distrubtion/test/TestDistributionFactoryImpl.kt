@@ -16,21 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+package app.simplecloud.simplecloud.distrubtion.test
+
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 
 
-    api(project(":api-impl"))
-    implementation(project(":rest-server:rest-server-api"))
-    implementation(project(":kubernetes:kubernetes-api"))
+class TestDistributionFactoryImpl : DistributionFactory {
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
+    override fun createServer(port: Int, addresses: List<Address>): Distribution {
+        return TestServerDistributionImpl(port, addresses)
+    }
 
-    testImplementation(project(":database:database-inmemory"))
-    testApi(project(":kubernetes:kubernetes-test"))
-    testApi(project(":distribution:distribution-test"))
-    testApi(project(":rest-server:rest-server-base"))
+    override fun createClient(address: Address): Distribution {
+        return TestClientDistributionImpl(address)
+    }
+
 
 }

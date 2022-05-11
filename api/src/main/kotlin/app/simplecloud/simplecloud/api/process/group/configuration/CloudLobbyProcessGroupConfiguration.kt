@@ -63,4 +63,23 @@ class CloudLobbyProcessGroupConfiguration(
         1
     )
 
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+        if (!super.equals(other)) return false
+
+        other as CloudLobbyProcessGroupConfiguration
+
+        if (lobbyPriority != other.lobbyPriority) return false
+
+        return true
+    }
+
+    override fun hashCode(): Int {
+        var result = super.hashCode()
+        result = 31 * result + lobbyPriority
+        return result
+    }
+
+
 }

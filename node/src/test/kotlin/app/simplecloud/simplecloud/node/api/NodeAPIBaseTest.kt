@@ -16,21 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+package app.simplecloud.simplecloud.node.api
 
+import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
+import app.simplecloud.simplecloud.node.start.NodeStartTestTemplate
 
-    api(project(":api-impl"))
-    implementation(project(":rest-server:rest-server-api"))
-    implementation(project(":kubernetes:kubernetes-api"))
+/**
+ * Date: 11.05.22
+ * Time: 17:33
+ * @author Frederick Baier
+ *
+ */
+open class NodeAPIBaseTest {
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
+    private val nodeStartTestTemplate = NodeStartTestTemplate()
 
-    testImplementation(project(":database:database-inmemory"))
-    testApi(project(":kubernetes:kubernetes-test"))
-    testApi(project(":distribution:distribution-test"))
-    testApi(project(":rest-server:rest-server-base"))
+    protected lateinit var cloudAPI: CloudAPI
+
+    open fun setUp() {
+        this.nodeStartTestTemplate.setUp()
+        this.nodeStartTestTemplate.givenKubeAPIWithDatabaseConnection()
+        this.nodeStartTestTemplate.given(DatabaseFactoryProvider().withFirstUser().get())
+        this.cloudAPI = this.nodeStartTestTemplate.startNode()
+    }
 
 }

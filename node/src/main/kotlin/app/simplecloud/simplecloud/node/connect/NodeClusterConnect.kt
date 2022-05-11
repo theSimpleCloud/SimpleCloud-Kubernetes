@@ -63,7 +63,7 @@ class NodeClusterConnect(
 
     private val nodeBindPort = 1670
 
-    fun connect() {
+    fun connect(): NodeCloudAPI {
         logger.info("Connecting to cluster...")
         val distribution = startDistribution()
         val distributedRepositories = initializeDistributedRepositories(distribution)
@@ -72,6 +72,7 @@ class NodeClusterConnect(
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories)
         checkOnlineProcesses(nodeCloudAPI)
+        return nodeCloudAPI
     }
 
     private fun initializeDistributedRepositories(distribution: Distribution): DistributedRepositories {

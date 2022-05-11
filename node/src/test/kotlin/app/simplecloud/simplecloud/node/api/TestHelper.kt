@@ -16,21 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
-    implementation(kotlin("stdlib"))
-    implementation("org.apache.commons:commons-lang3:3.12.0")
+package app.simplecloud.simplecloud.node.api
 
+import org.opentest4j.AssertionFailedError
 
-    api(project(":api-impl"))
-    implementation(project(":rest-server:rest-server-api"))
-    implementation(project(":kubernetes:kubernetes-api"))
+/**
+ * Date: 11.05.22
+ * Time: 17:41
+ * @author Frederick Baier
+ *
+ */
 
-    implementation("org.apache.logging.log4j:log4j-core:2.17.2")
-    implementation("org.apache.logging.log4j:log4j-api:2.17.2")
-
-    testImplementation(project(":database:database-inmemory"))
-    testApi(project(":kubernetes:kubernetes-test"))
-    testApi(project(":distribution:distribution-test"))
-    testApi(project(":rest-server:rest-server-base"))
-
+fun <T> assertContains(list: List<T>, element: T) {
+    if (!list.contains(element))
+        throw AssertionFailedError("Expected element in list: $element")
 }

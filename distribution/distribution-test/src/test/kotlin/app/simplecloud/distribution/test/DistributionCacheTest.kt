@@ -16,14 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api.test
+package app.simplecloud.distribution.test
 
-import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.distribution.api.EntryListener
-import org.junit.jupiter.api.*
+import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Date: 09.04.22
@@ -31,8 +35,8 @@ import org.junit.jupiter.api.*
  * @author Frederick Baier
  *
  */
-@Disabled
 class DistributionCacheTest {
+
     private lateinit var factory: DistributionFactory
 
     private var server: Distribution? = null
@@ -40,13 +44,14 @@ class DistributionCacheTest {
 
     @BeforeEach
     fun setUp() {
-        this.factory = HazelcastDistributionFactory()
+        this.factory = TestDistributionFactoryImpl()
     }
 
     @AfterEach
     fun tearDown() {
         server?.shutdown()
         client?.shutdown()
+        VirtualNetwork.reset()
     }
 
     @Test
@@ -124,7 +129,6 @@ class DistributionCacheTest {
         }
         serverCache.addEntryListener(entryListener)
         serverCache.put("test", "value")
-        Thread.sleep(300)
         Assertions.assertTrue(hasFired)
     }
 
@@ -172,7 +176,6 @@ class DistributionCacheTest {
         serverCache.addEntryListener(entryListener)
         serverCache.put("test", "value")
         serverCache.remove("test")
-        Thread.sleep(300)
         Assertions.assertTrue(hasFired)
     }
 
@@ -197,7 +200,6 @@ class DistributionCacheTest {
         }
         clientCache.addEntryListener(entryListener)
         serverCache.put("test", "value")
-        Thread.sleep(300)
         Assertions.assertTrue(hasFired)
     }
 
@@ -221,7 +223,6 @@ class DistributionCacheTest {
         serverCache.addEntryListener(entryListener)
         serverCache.put("test", "value")
         serverCache.put("test", "value2")
-        Thread.sleep(300)
         Assertions.assertTrue(hasFired)
     }
 

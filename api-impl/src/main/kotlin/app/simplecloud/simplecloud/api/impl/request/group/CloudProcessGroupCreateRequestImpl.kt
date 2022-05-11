@@ -39,10 +39,28 @@ class CloudProcessGroupCreateRequestImpl(
 ) : CloudProcessGroupCreateRequest {
 
     override fun submit(): CompletableFuture<CloudProcessGroup> = CloudScope.future {
+        checkGroupName()
+        checkMaxMemory()
+        checkMaxPlayers()
+        return@future internalService.createGroupInternal(configuration)
+    }
+
+    private fun checkMaxMemory() {
+        if (this.configuration.maxMemory < 256) {
+            throw IllegalArgumentException("Memory cannot be lower than 256")
+        }
+    }
+
+    private fun checkMaxPlayers() {
+        if (this.configuration.maxPlayers < -1) {
+            throw IllegalArgumentException("Max Players cannot be lower than -1")
+        }
+    }
+
+    private suspend fun checkGroupName() {
         if (doesGroupExist(configuration.name)) {
             throw IllegalArgumentException("Group already exists")
         }
-        return@future internalService.createGroupInternal(configuration)
     }
 
     private suspend fun doesGroupExist(groupName: String): Boolean {
