@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import app.simplecloud.simplecloud.node.start.NodeStartTestTemplate
 
@@ -32,6 +33,8 @@ open class NodeAPIBaseTest {
 
     private val nodeStartTestTemplate = NodeStartTestTemplate()
 
+    protected lateinit var kubeAPI: KubeAPI
+
     protected lateinit var cloudAPI: CloudAPI
 
     open fun setUp() {
@@ -39,6 +42,7 @@ open class NodeAPIBaseTest {
         this.nodeStartTestTemplate.givenKubeAPIWithDatabaseConnection()
         this.nodeStartTestTemplate.given(DatabaseFactoryProvider().withFirstUser().get())
         this.cloudAPI = this.nodeStartTestTemplate.startNode()
+        this.kubeAPI = nodeStartTestTemplate.kubeAPI
     }
 
 }

@@ -56,11 +56,13 @@ class ProcessStartRequestImpl(
     }
 
     override fun setMaxPlayers(maxPlayers: Int): ProcessStartRequest {
+        require(maxPlayers >= -1) { "Max Players must be greater than -2" }
         this.maxPlayers = maxPlayers
         return this
     }
 
     override fun setMaxMemory(memory: Int): ProcessStartRequest {
+        require(memory >= 256) { "Max Memory must be 256 or higher" }
         this.maxMemory = memory
         return this
     }

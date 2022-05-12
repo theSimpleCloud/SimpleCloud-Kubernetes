@@ -18,10 +18,10 @@
 
 package app.simplecloud.simplecloud.node.process
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import java.util.concurrent.CompletableFuture
 
 class InternalProcessStartHandler(
     private val configuration: ProcessStartConfiguration,
@@ -37,8 +37,8 @@ class InternalProcessStartHandler(
         return process
     }
 
-    private fun updateProcessToCluster(process: CloudProcess): CompletableFuture<Unit> {
-        return this.processService.createUpdateRequest(process).submit()
+    private suspend fun updateProcessToCluster(process: CloudProcess) {
+        return this.processService.createUpdateRequest(process).submit().await()
     }
 
 }

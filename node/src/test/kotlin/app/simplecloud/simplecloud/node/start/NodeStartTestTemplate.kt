@@ -44,7 +44,8 @@ class NodeStartTestTemplate {
 
     private lateinit var restServerConfig: RestServerConfig
 
-    private var kubeAPI: KubeAPI = KubeTestAPI()
+    var kubeAPI: KubeAPI = KubeTestAPI()
+        private set
     private var databaseFactory: DatabaseFactory = InMemoryRepositorySafeDatabaseFactory()
 
 
