@@ -57,8 +57,9 @@ open class InMemoryRepository<I : Any, T : Any> : Repository<I, T> {
         return unitFuture()
     }
 
-    override fun remove(identifier: I) {
+    override fun remove(identifier: I): CompletableFuture<Unit> {
         this.map.remove(identifier)
+        return unitFuture()
     }
 
     override fun count(): CompletableFuture<Long> {

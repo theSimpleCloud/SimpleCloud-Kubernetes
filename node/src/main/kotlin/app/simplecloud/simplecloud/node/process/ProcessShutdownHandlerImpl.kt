@@ -53,8 +53,8 @@ class ProcessShutdownHandlerImpl(
         updateRequest.submit().await()
     }
 
-    private fun deleteProcessInCluster() {
-        this.distributedCloudProcessRepository.remove(this.process.getName())
+    private suspend fun deleteProcessInCluster() {
+        this.distributedCloudProcessRepository.remove(this.process.getName()).await()
     }
 
     companion object {

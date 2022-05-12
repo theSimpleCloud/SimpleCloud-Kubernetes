@@ -57,8 +57,8 @@ class MongoDatabaseOnlineCountStrategyRepositoryAdapter(
         return this.mongoRepository.save(identifier, OnlineCountStrategyEntity.fromConfiguration(value))
     }
 
-    override fun remove(identifier: String) {
-        this.mongoRepository.remove(identifier)
+    override fun remove(identifier: String): CompletableFuture<Unit> {
+        return this.mongoRepository.remove(identifier)
     }
 
     override fun count(): CompletableFuture<Long> {

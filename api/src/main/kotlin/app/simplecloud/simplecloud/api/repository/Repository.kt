@@ -60,7 +60,7 @@ interface Repository<I : Any, T : Any> {
     /**
      * Removes the value found by the specified [identifier]
      */
-    fun remove(identifier: I)
+    fun remove(identifier: I): CompletableFuture<Unit>
 
     /**
      * Checks whether the specified [identifier] exists

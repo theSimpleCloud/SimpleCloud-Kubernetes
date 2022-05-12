@@ -59,8 +59,8 @@ class DefaultMongoRepository<I : Any, T : Any>(
         }
     }
 
-    override fun remove(identifier: I) {
-        CloudCompletableFuture.supplyAsync {
+    override fun remove(identifier: I): CompletableFuture<Unit> {
+        return CloudCompletableFuture.supplyAsync {
             createIdentifierQuery(identifier).delete()
         }
     }

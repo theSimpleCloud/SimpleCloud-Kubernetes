@@ -57,8 +57,8 @@ class MongoDatabasePermissionGroupRepositoryAdapter(
         return this.mongoRepository.save(identifier, PermissionGroupEntity.fromConfiguration(value))
     }
 
-    override fun remove(identifier: String) {
-        this.mongoRepository.remove(identifier)
+    override fun remove(identifier: String): CompletableFuture<Unit> {
+        return this.mongoRepository.remove(identifier)
     }
 
     override fun count(): CompletableFuture<Long> {

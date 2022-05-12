@@ -67,8 +67,8 @@ class MongoDatabaseOfflineCloudPlayerRepositoryAdapter(
         return this.mongoRepository.save(identifier, CloudPlayerEntity.fromConfiguration(value))
     }
 
-    override fun remove(identifier: UUID) {
-        this.mongoRepository.remove(identifier)
+    override fun remove(identifier: UUID): CompletableFuture<Unit> {
+        return this.mongoRepository.remove(identifier)
     }
 
     override fun count(): CompletableFuture<Long> {
