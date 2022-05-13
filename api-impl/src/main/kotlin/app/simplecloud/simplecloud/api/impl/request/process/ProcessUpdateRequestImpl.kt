@@ -65,6 +65,7 @@ class ProcessUpdateRequestImpl(
     }
 
     override fun setMaxPlayers(maxPlayers: Int): InternalProcessUpdateRequest {
+        require(maxPlayers >= -1) { "Max Players must be greater than -2" }
         this.maxPlayers = maxPlayers
         return this
     }

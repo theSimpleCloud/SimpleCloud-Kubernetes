@@ -19,20 +19,19 @@
 package app.simplecloud.simplecloud.kubernetest.test.pod
 
 import app.simplecloud.simplecloud.kubernetes.api.Label
-import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import java.util.concurrent.CopyOnWriteArrayList
 
 class TestKubePodService : KubePodService {
 
-    private val pods = CopyOnWriteArrayList<KubePod>()
+    private val pods = CopyOnWriteArrayList<TestKubePod>()
 
-    override fun getPod(name: String): KubePod {
+    override fun getPod(name: String): TestKubePod {
         return this.pods.first { it.getName() == name.lowercase() }
     }
 
-    override fun createPod(name: String, podSpec: PodSpec): KubePod {
+    override fun createPod(name: String, podSpec: PodSpec): TestKubePod {
         val kubePod = TestKubePod(name.lowercase(), this)
         kubePod.start(podSpec)
         this.pods.add(kubePod)
@@ -43,7 +42,7 @@ class TestKubePodService : KubePodService {
         this.pods.remove(kubePod)
     }
 
-    fun findPodsByLabel(label: Label): List<KubePod> {
+    fun findPodsByLabel(label: Label): List<TestKubePod> {
         return this.pods.filter { it.getLabels().contains(label) }
     }
 

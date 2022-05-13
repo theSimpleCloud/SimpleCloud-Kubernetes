@@ -16,33 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api
+package app.simplecloud.simplecloud.node.api.process
 
-import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
-import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
-import app.simplecloud.simplecloud.node.start.NodeStartTestTemplate
+import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.node.api.assertContains
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
- * Date: 11.05.22
- * Time: 17:33
+ * Date: 12.05.22
+ * Time: 19:54
  * @author Frederick Baier
  *
  */
-open class NodeAPIBaseTest {
+class NodeAPIProcessExecuteCommandTest : NodeAPIProcessTest() {
 
-    private val nodeStartTestTemplate = NodeStartTestTemplate()
+    private lateinit var process: CloudProcess
 
-    protected lateinit var kubeAPI: KubeTestAPI
-
-    protected lateinit var cloudAPI: CloudAPI
-
-    open fun setUp() {
-        this.nodeStartTestTemplate.setUp()
-        this.nodeStartTestTemplate.givenKubeAPIWithDatabaseConnection()
-        this.nodeStartTestTemplate.given(DatabaseFactoryProvider().withFirstUser().get())
-        this.cloudAPI = this.nodeStartTestTemplate.startNode()
-        this.kubeAPI = nodeStartTestTemplate.kubeAPI
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        this.process = this.processService.createStartRequest(this.defaultGroup).submit().join()
     }
+
+    @Test
+    fun commandExecuteTest() {
+        this.processService.createExecuteCommandRequest(process, "mycommand").submit().join()
+        val podByProcess = this.kubeAPI.getPodService().getPod(process.getName())
+        assertContains(podByProcess.getExecutedCommands(), "mycommand")
+    }
+
 
 }

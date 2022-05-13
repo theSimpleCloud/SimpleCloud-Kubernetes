@@ -21,11 +21,14 @@ package app.simplecloud.simplecloud.kubernetest.test.pod
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
+import java.util.concurrent.CopyOnWriteArrayList
 
 class TestKubePod(
     private val name: String,
     private val kubeService: TestKubePodService
 ) : KubePod {
+
+    private val executedCommands = CopyOnWriteArrayList<String>()
 
     @Volatile
     private var podSpec: PodSpec? = null
@@ -37,7 +40,7 @@ class TestKubePod(
     }
 
     override fun execute(command: String) {
-        TODO("Not yet implemented")
+        this.executedCommands.add(command)
     }
 
     override fun start(podSpec: PodSpec) {
@@ -64,6 +67,10 @@ class TestKubePod(
 
     override fun getLabels(): List<Label> {
         return this.podSpec?.labels ?: emptyList()
+    }
+
+    fun getExecutedCommands(): List<String> {
+        return this.executedCommands
     }
 
 }

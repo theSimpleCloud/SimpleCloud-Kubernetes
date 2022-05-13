@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
-import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.start.restserver.FailingRestSetupManager
@@ -44,7 +43,7 @@ class NodeStartTestTemplate {
 
     private lateinit var restServerConfig: RestServerConfig
 
-    var kubeAPI: KubeAPI = KubeTestAPI()
+    var kubeAPI = KubeTestAPI()
         private set
     private var databaseFactory: DatabaseFactory = InMemoryRepositorySafeDatabaseFactory()
 
@@ -64,7 +63,7 @@ class NodeStartTestTemplate {
         this.databaseFactory = databaseFactory
     }
 
-    fun given(kubeAPI: KubeAPI, databaseFactory: DatabaseFactory) {
+    fun given(kubeAPI: KubeTestAPI, databaseFactory: DatabaseFactory) {
         this.kubeAPI = kubeAPI
         this.databaseFactory = databaseFactory
     }
