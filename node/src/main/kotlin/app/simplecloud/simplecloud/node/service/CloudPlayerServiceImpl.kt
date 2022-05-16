@@ -30,6 +30,8 @@ import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfigu
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
 import java.util.*
@@ -45,7 +47,9 @@ class CloudPlayerServiceImpl(
     distributedRepository: DistributedCloudPlayerRepository,
     private val playerFactory: CloudPlayerFactory,
     private val databaseCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory
+    private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory,
+    private val cloudProcessService: CloudProcessService,
+    private val cloudProcessGroupService: CloudProcessGroupService,
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
@@ -90,7 +94,9 @@ class CloudPlayerServiceImpl(
             configuration,
             this.playerFactory,
             this.databaseCloudPlayerRepository,
-            this
+            this,
+            this.cloudProcessService,
+            this.cloudProcessGroupService
         ).handleLogin()
         return this.playerFactory.create(playerConfiguration, this)
     }

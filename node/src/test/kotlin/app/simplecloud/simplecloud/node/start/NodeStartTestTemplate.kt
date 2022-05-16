@@ -18,12 +18,12 @@
 
 package app.simplecloud.simplecloud.node.start
 
-import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.start.restserver.FailingRestSetupManager
 import app.simplecloud.simplecloud.node.start.restserver.TestRestServer
 import app.simplecloud.simplecloud.node.start.restserver.TestTokenHandlerFactory
@@ -78,7 +78,7 @@ class NodeStartTestTemplate {
         )
     }
 
-    fun startNode(): CloudAPI {
+    fun startNode(): NodeCloudAPI {
         return NodeStartup(
             this.databaseFactory,
             TestDistributionFactoryImpl(),

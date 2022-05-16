@@ -27,6 +27,8 @@ import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import org.apache.logging.log4j.LogManager
 
@@ -34,10 +36,13 @@ class CloudPlayerLoginHandler(
     private val configuration: PlayerLoginConfiguration,
     private val playerFactory: CloudPlayerFactory,
     private val databasePlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    private val playerService: InternalCloudPlayerService
+    private val playerService: InternalCloudPlayerService,
+    private val processService: CloudProcessService,
+    private val groupService: CloudProcessGroupService
 ) {
 
     suspend fun handleLogin(): CloudPlayerConfiguration {
+        checkProxyConnectingToExists()
         logger.info(
             "Player {} is logging in on {}",
             this.configuration.connectionConfiguration.name,
@@ -46,8 +51,22 @@ class CloudPlayerLoginHandler(
         checkPlayerAlreadyConnected()
         val player = createPlayer()
         savePlayerToDatabase(player)
+        checkJoinPermission(player)
         player.createUpdateRequest().submit().await()
         return player.toConfiguration()
+    }
+
+    private suspend fun checkJoinPermission(player: CloudPlayer) {
+        val proxyProcess = this.processService.findByName(configuration.proxyName).await()
+        CloudPlayerLoginJoinPermissionChecker(player, proxyProcess, this.groupService).check()
+    }
+
+    private suspend fun checkProxyConnectingToExists() {
+        try {
+            this.processService.findByName(configuration.proxyName).await()
+        } catch (e: NoSuchElementException) {
+            throw UnknownProxyProcessException(configuration.proxyName)
+        }
     }
 
     private suspend fun checkPlayerAlreadyConnected() {
@@ -123,6 +142,8 @@ class CloudPlayerLoginHandler(
     private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
         return this.databasePlayerRepository.find(this.configuration.connectionConfiguration.uniqueId).await()
     }
+
+    class UnknownProxyProcessException(name: String) : Exception("Unknown Proxy: $name")
 
     class PlayerAlreadyRegisteredException(
         configuration: PlayerLoginConfiguration

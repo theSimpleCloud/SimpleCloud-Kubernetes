@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.api
 
-import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import app.simplecloud.simplecloud.node.start.NodeStartTestTemplate
@@ -35,12 +35,15 @@ open class NodeAPIBaseTest {
 
     protected lateinit var kubeAPI: KubeTestAPI
 
-    protected lateinit var cloudAPI: CloudAPI
+    protected lateinit var cloudAPI: NodeCloudAPI
+
+    protected var databaseFactory = InMemoryRepositorySafeDatabaseFactory()
 
     open fun setUp() {
         this.nodeStartTestTemplate.setUp()
         this.nodeStartTestTemplate.givenKubeAPIWithDatabaseConnection()
-        this.nodeStartTestTemplate.given(DatabaseFactoryProvider().withFirstUser().get())
+        this.databaseFactory = DatabaseFactoryProvider().withFirstUser().get()
+        this.nodeStartTestTemplate.given(this.databaseFactory)
         this.cloudAPI = this.nodeStartTestTemplate.startNode()
         this.kubeAPI = nodeStartTestTemplate.kubeAPI
     }

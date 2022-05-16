@@ -180,7 +180,9 @@ class NodeClusterConnect(
             distributedRepositories.cloudPlayerRepository,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory),
             this.databaseRepositories.offlineCloudPlayerRepository,
-            OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory)
+            OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory),
+            cloudProcessService,
+            cloudProcessGroupService
         )
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
