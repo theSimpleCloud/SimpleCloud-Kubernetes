@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture
  *
  */
 class CloudPlayerServiceImpl(
-    private val distributedRepository: DistributedCloudPlayerRepository,
+    distributedRepository: DistributedCloudPlayerRepository,
     private val nodeService: NodeService,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val playerFactory: CloudPlayerFactory
@@ -56,6 +56,10 @@ class CloudPlayerServiceImpl(
 
     override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
         TODO()
+    }
+
+    override suspend fun logoutPlayer(uniqueId: UUID) {
+        TODO("Not yet implemented")
     }
 
     override suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer {

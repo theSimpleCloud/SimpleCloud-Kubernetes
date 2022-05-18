@@ -34,7 +34,7 @@ import java.util.concurrent.CompletableFuture
  *
  */
 abstract class AbstractCloudPlayerService(
-    private val distributedRepository: DistributedCloudPlayerRepository,
+    protected val distributedRepository: DistributedCloudPlayerRepository,
     private val playerFactory: CloudPlayerFactory
 ) : InternalCloudPlayerService {
 
@@ -53,10 +53,6 @@ abstract class AbstractCloudPlayerService(
 
     override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {
         this.distributedRepository.save(configuration.uniqueId, configuration).await()
-    }
-
-    override fun logoutPlayer(uniqueId: UUID) {
-        this.distributedRepository.remove(uniqueId)
     }
 
 }

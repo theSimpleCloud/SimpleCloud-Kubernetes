@@ -16,29 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.internal.service
+package app.simplecloud.simplecloud.node.player
 
-import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.api.service.CloudPlayerService
-import java.util.*
+import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 
 /**
- * Date: 11.01.22
- * Time: 19:33
+ * Date: 16.05.22
+ * Time: 18:24
  * @author Frederick Baier
  *
  */
-interface InternalCloudPlayerService : CloudPlayerService {
+class CloudPlayerLogoutHandler(
+    private val onlinePlayer: CloudPlayer,
+    private val distributedRepository: DistributedCloudPlayerRepository,
+    private val databaseOfflineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository
+) {
 
-    suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration)
-
-    suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration)
-
-    suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer
-
-    suspend fun logoutPlayer(uniqueId: UUID)
+    suspend fun handleLogout() {
+        val offlineCloudPlayerConfiguration = this.onlinePlayer.toOfflinePlayer().toConfiguration()
+        this.databaseOfflineCloudPlayerRepository.save(this.onlinePlayer.getUniqueId(), offlineCloudPlayerConfiguration)
+        this.distributedRepository.remove(this.onlinePlayer.getUniqueId()).await()
+    }
 
 }

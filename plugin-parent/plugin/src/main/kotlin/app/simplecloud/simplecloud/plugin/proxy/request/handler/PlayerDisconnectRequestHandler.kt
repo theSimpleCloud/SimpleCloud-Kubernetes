@@ -30,8 +30,8 @@ class PlayerDisconnectRequestHandler(
     private val playerService: InternalCloudPlayerService
 ) {
     fun handler() {
-        playerService.logoutPlayer(request.connection.uniqueId)
         CloudScope.launch {
+            playerService.logoutPlayer(request.connection.uniqueId)
             onlineCountUpdater.updateSelfOnlineCount()
         }
     }

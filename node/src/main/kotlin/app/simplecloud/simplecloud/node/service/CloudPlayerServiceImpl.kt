@@ -34,6 +34,7 @@ import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
+import app.simplecloud.simplecloud.node.player.CloudPlayerLogoutHandler
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -100,6 +101,16 @@ class CloudPlayerServiceImpl(
         ).handleLogin()
         return this.playerFactory.create(playerConfiguration, this)
     }
+
+    override suspend fun logoutPlayer(uniqueId: UUID) {
+        val onlinePlayer = findOnlinePlayerByUniqueId(uniqueId).await()
+        CloudPlayerLogoutHandler(
+            onlinePlayer,
+            this.distributedRepository,
+            this.databaseCloudPlayerRepository
+        ).handleLogout()
+    }
+
 
     private fun convertPlayerEntityToOfflineCloudPlayer(configuration: OfflineCloudPlayerConfiguration): OfflineCloudPlayer {
         return this.offlineCloudPlayerFactory.create(configuration, this)
