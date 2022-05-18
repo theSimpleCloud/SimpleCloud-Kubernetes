@@ -158,6 +158,15 @@ class NodeAPIProcessStartTest : NodeAPIProcessTest() {
     }
 
     @Test
+    fun startProcessAndStopAndStartAgain_willNotThrow() {
+        val process = processService.createStartRequest(defaultGroup)
+            .submit().join()
+        process.createShutdownRequest().submit().join()
+        processService.createStartRequest(defaultGroup)
+            .submit().join()
+    }
+
+    @Test
     fun startProcessKubernetesTest() {
         val process = processService.createStartRequest(defaultGroup)
             .submit().join()

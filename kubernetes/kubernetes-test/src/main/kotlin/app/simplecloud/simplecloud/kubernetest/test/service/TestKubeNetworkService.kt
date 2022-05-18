@@ -38,7 +38,7 @@ class TestKubeNetworkService(
 
     override fun createService(name: String, serviceSpec: ServiceSpec): KubeService {
         checkAlreadyExist(name.lowercase())
-        val kubeService = TestKubeService(name.lowercase(), serviceSpec)
+        val kubeService = TestKubeService(name.lowercase(), serviceSpec, this)
         this.services.add(kubeService)
         return kubeService
     }
@@ -119,6 +119,10 @@ class TestKubeNetworkService(
     private fun checkAlreadyExist(name: String) {
         if (this.services.any { it.getName() == name })
             throw KubeNetworkService.ServiceAlreadyExistException()
+    }
+
+    internal fun delete(kubeService: KubeService) {
+        this.services.remove(kubeService)
     }
 
     data class PodBind(

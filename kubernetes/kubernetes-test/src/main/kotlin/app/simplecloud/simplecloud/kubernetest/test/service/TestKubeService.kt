@@ -24,7 +24,8 @@ import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 
 class TestKubeService(
     private val name: String,
-    private val serviceSpec: ServiceSpec
+    private val serviceSpec: ServiceSpec,
+    private val kubeNetworkService: TestKubeNetworkService
 ) : KubeService {
 
     override fun getName(): String {
@@ -44,7 +45,7 @@ class TestKubeService(
     }
 
     override fun delete() {
-
+        kubeNetworkService.delete(this)
     }
 
 }
