@@ -110,6 +110,16 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
     }
 
     @Test
+    fun afterLogin_playerWillBeInCache() {
+        givenProxyGroup("Proxy", 20, false, null)
+        givenProcesses("Proxy", 1)
+        executeLoginOnProxy1WithDefaultPlayer()
+        runBlocking {
+            cloudPlayerService.findOnlinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await()
+        }
+    }
+
+    @Test
     fun afterFirstLogin_playerWillBeSavedInDatabase() {
         givenProxyGroup("Proxy", 20, false, null)
         givenProcesses("Proxy", 1)
@@ -120,7 +130,7 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
     private fun assertDefaultPlayerInDatabase() {
         val repository = this.databaseFactory.offlineCloudPlayerRepository
         runBlocking {
-            repository.find(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await()
+            Assertions.assertTrue(repository.doesExist(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await())
         }
     }
 
