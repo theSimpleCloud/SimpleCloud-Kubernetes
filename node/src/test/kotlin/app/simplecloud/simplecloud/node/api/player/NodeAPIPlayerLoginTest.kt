@@ -127,6 +127,18 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
         assertDefaultPlayerInDatabase()
     }
 
+    @Test
+    fun executeLoginTwice_willFail() {
+        givenProxyGroup("Proxy", 20, false, null)
+        givenProcesses("Proxy", 1)
+        executeLoginOnProxy1WithDefaultPlayer()
+
+        Assertions.assertThrows(CloudPlayerLoginHandler.PlayerAlreadyRegisteredException::class.java) {
+            executeLoginOnProxy1WithDefaultPlayer()
+        }
+
+    }
+
     private fun assertDefaultPlayerInDatabase() {
         val repository = this.databaseFactory.offlineCloudPlayerRepository
         runBlocking {
