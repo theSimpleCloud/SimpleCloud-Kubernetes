@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.api.impl
 
-import app.simplecloud.simplecloud.api.AbstractCloudAPI
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
@@ -45,7 +44,7 @@ open class CloudAPIImpl(
     private val messageChannelManager: MessageChannelManager,
     private val eventManager: EventManager,
     private val permissionFactory: Permission.Factory
-) : AbstractCloudAPI(), InternalCloudAPI {
+) : InternalCloudAPI {
 
     override fun getLocalNetworkComponentName(): String {
         return this.localNetworkComponentName
