@@ -16,6 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.node
 
+import org.opentest4j.AssertionFailedError
+
+/**
+ * Date: 11.05.22
+ * Time: 17:41
+ * @author Frederick Baier
+ *
+ */
+
+fun <T> assertContains(list: List<T>, element: T) {
+    if (!list.contains(element))
+        throw AssertionFailedError("Expected element in list: $element")
 }

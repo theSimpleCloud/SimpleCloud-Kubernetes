@@ -16,6 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.api.impl.env
 
+/**
+ * Date: 21.05.22
+ * Time: 21:30
+ * @author Frederick Baier
+ *
+ */
+class RealEnvironmentVariables : EnvironmentVariables {
+    override fun get(name: String): String {
+        return System.getenv(name)
+    }
 }

@@ -1,6 +1,6 @@
 dependencies {
     implementation(project(":api"))
-    api(project(":node"))
+    api(project(":node:node-impl"))
     implementation(project(":rest-server:rest-server-base"))
     implementation(project(":distribution:distribution-hazelcast"))
     implementation("com.github.ajalt:clikt:2.8.0")

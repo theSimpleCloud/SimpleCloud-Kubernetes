@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
@@ -41,10 +42,11 @@ import app.simplecloud.simplecloud.plugin.startup.service.*
 import java.util.*
 
 class CloudPlugin(
-    private val distributionFactory: DistributionFactory
+    private val distributionFactory: DistributionFactory,
+    private val environmentVariables: EnvironmentVariables
 ) {
 
-    val selfProcessId = UUID.fromString(System.getenv("SIMPLECLOUD_PROCESS_ID"))
+    val selfProcessId = UUID.fromString(this.environmentVariables.get("SIMPLECLOUD_PROCESS_ID"))
     private val distribution = startDistribution()
     private val distributedRepositories = initializeDistributedRepositories(distribution)
     val pluginCloudAPI = initializeServices(distribution, distributedRepositories)

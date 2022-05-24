@@ -58,3 +58,7 @@ findProject(":rest-server:rest-server-api")?.name = "rest-server-api"
 include("bootstrap")
 include("distribution:distribution-test")
 findProject(":distribution:distribution-test")?.name = "distribution-test"
+include("node:node-impl")
+findProject(":node:node-impl")?.name = "node-impl"
+include("node:node-test")
+findProject(":node:node-test")?.name = "node-test"

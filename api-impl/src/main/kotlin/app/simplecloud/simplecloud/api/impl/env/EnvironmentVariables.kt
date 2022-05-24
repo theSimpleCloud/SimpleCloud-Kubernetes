@@ -16,6 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.api.impl.env
+
+/**
+ * Date: 21.05.22
+ * Time: 21:27
+ * @author Frederick Baier
+ *
+ */
+interface EnvironmentVariables {
+
+    /**
+     * Returns the environment variable found by the specified name or throws a [NoSuchElementException]
+     */
+    fun get(name: String): String
 
 }

@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
+import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.eventapi.EventRegisterer
 import app.simplecloud.simplecloud.plugin.proxy.ProxyCloudListener
@@ -32,7 +33,7 @@ import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
-    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory())
+    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory(), RealEnvironmentVariables())
     private val cloudAPI = cloudPlugin.pluginCloudAPI
     private val proxyServerRegistry = BungeeProxyServerRegistry(ProxyServer.getInstance())
 

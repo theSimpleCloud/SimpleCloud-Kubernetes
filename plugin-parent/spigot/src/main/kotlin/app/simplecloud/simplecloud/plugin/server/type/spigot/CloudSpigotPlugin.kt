@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.server.type.spigot
 
+import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
 import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
@@ -31,7 +32,7 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 class CloudSpigotPlugin : JavaPlugin() {
 
-    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory())
+    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory(), RealEnvironmentVariables())
     private val cloudAPI = cloudPlugin.pluginCloudAPI
 
     override fun onEnable() {

@@ -16,6 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-dependencies {
+package app.simplecloud.simplecloud.api.impl.env
 
+/**
+ * Date: 21.05.22
+ * Time: 21:31
+ * @author Frederick Baier
+ *
+ */
+class VirtualEnvironmentVariables(
+    private val map: Map<String, String>
+) : EnvironmentVariables {
+    override fun get(name: String): String {
+        return map[name]!!
+    }
 }
