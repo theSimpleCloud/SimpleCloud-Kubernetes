@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +52,7 @@ class CloudLobbyGroupImpl constructor(
         return this.configuration
     }
 
-    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest {
+    override fun createUpdateRequest(): CloudLobbyGroupUpdateRequest {
         return CloudLobbyGroupUpdateRequestImpl(this.processGroupService, this)
     }
 

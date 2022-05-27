@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.api.process.group
 
+import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 05.04.2021
@@ -27,5 +29,7 @@ package app.simplecloud.simplecloud.api.process.group
 interface CloudLobbyGroup : CloudServerGroup {
 
     fun getLobbyPriority(): Int
+
+    override fun createUpdateRequest(): CloudLobbyGroupUpdateRequest
 
 }

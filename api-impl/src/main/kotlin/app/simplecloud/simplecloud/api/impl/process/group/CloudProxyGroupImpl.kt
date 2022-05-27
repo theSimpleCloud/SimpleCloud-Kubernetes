@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -52,7 +52,7 @@ class CloudProxyGroupImpl(
         return this.configuration
     }
 
-    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest {
+    override fun createUpdateRequest(): CloudProxyGroupUpdateRequest {
         return CloudProxyGroupUpdateRequestImpl(this.processGroupService, this)
     }
 

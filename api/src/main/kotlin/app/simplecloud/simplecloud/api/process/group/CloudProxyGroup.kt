@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.api.process.group
 
+import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 05.04.2021
@@ -27,5 +29,7 @@ package app.simplecloud.simplecloud.api.process.group
 interface CloudProxyGroup : CloudProcessGroup {
 
     fun getStartPort(): Int
+
+    override fun createUpdateRequest(): CloudProxyGroupUpdateRequest
 
 }
