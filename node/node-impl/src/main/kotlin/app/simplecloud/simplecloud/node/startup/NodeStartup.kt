@@ -21,7 +21,9 @@ package app.simplecloud.simplecloud.node.startup
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.connect.NodeClusterConnect
 import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
@@ -38,6 +40,7 @@ class NodeStartup(
     private val databaseFactory: DatabaseFactory,
     private val distributionFactory: DistributionFactory,
     private val kubeAPI: KubeAPI,
+    private val selfPod: KubePod,
     private val restServerConfig: RestServerConfig
 ) {
 
@@ -61,9 +64,10 @@ class NodeStartup(
     }
 
     private fun executeClusterConnect0(preparedNode: PreparedNode): NodeCloudAPI {
-        return app.simplecloud.simplecloud.node.connect.NodeClusterConnect(
+        return NodeClusterConnect(
             this.distributionFactory,
             this.kubeAPI,
+            this.selfPod,
             preparedNode.repositories,
             restServerConfig,
             preparedNode.tokenHandler

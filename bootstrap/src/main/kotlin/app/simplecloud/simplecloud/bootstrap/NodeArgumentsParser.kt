@@ -47,6 +47,7 @@ class NodeArgumentsParser : CliktCommand() {
             MongoDatabaseFactory(),
             HazelcastDistributionFactory(),
             KubeImplAPI(),
+            NodeSelfPod(),
             RestServerConfig(
                 restServer,
                 JwtTokenHandlerFactory(),

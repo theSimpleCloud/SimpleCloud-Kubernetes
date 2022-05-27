@@ -21,6 +21,8 @@ package app.simplecloud.simplecloud.node
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.kubernetes.api.Label
+import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
@@ -79,12 +81,22 @@ class NodeStartTestTemplate {
     }
 
     fun startNode(): NodeCloudAPI {
+        val selfPod = createNodeSelfPod()
         return NodeStartup(
             this.databaseFactory,
             TestDistributionFactoryImpl(),
             this.kubeAPI,
+            selfPod,
             restServerConfig
         ).start()
     }
+
+    private fun createNodeSelfPod() =
+        this.kubeAPI.getPodService().createPod(
+            "Node",
+            PodSpec()
+                .withLabels(Label("app", "simplecloud"))
+                .withContainerPort(1670)
+        )
 
 }
