@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import app.simplecloud.simplecloud.node.NodeStartTestTemplate
@@ -33,9 +34,11 @@ open class NodeAPIBaseTest {
 
     private val nodeStartTestTemplate = NodeStartTestTemplate()
 
-    protected lateinit var kubeAPI: KubeTestAPI
+    lateinit var kubeAPI: KubeTestAPI
+        private set
 
-    protected lateinit var cloudAPI: NodeCloudAPI
+    lateinit var cloudAPI: NodeCloudAPI
+        private set
 
     protected var databaseFactory = InMemoryRepositorySafeDatabaseFactory()
 
@@ -46,6 +49,10 @@ open class NodeAPIBaseTest {
         this.nodeStartTestTemplate.given(this.databaseFactory)
         this.cloudAPI = this.nodeStartTestTemplate.startNode()
         this.kubeAPI = nodeStartTestTemplate.kubeAPI
+    }
+
+    open fun tearDown() {
+        VirtualNetwork.reset()
     }
 
 }

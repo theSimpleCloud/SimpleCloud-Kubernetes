@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -50,8 +49,8 @@ open class NodeAPIProcessTest : NodeAPIBaseTest() {
 
 
     @AfterEach
-    fun tearDown() {
-        VirtualNetwork.reset()
+    override fun tearDown() {
+        super.tearDown()
     }
 
     protected fun createLobbyGroup(name: String = "Lobby"): CloudProcessGroup {

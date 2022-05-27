@@ -25,7 +25,6 @@ import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyPro
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
@@ -53,8 +52,8 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
     }
 
     @AfterEach
-    fun tearDown() {
-        VirtualNetwork.reset()
+    override fun tearDown() {
+        super.tearDown()
     }
 
     protected fun insertPlayerWithPermissionInDatabase(permissionString: String) {
