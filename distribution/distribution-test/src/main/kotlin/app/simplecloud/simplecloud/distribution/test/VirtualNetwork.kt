@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distrubtion.test
+package app.simplecloud.simplecloud.distribution.test
 
 import java.net.BindException
 import java.net.ConnectException

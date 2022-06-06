@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
-import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec

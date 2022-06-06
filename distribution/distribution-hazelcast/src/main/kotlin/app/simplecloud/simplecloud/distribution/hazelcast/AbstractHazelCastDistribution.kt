@@ -16,42 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distrubtion.test
+package app.simplecloud.simplecloud.distribution.hazelcast
 
-import app.simplecloud.simplecloud.distribution.api.*
-import java.util.concurrent.CopyOnWriteArrayList
+import app.simplecloud.simplecloud.distribution.api.Cache
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.MessageManager
+import app.simplecloud.simplecloud.distribution.api.ServerComponent
+import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
+import com.hazelcast.core.HazelcastInstance
 
 /**
- * Date: 08.04.22
- * Time: 17:42
+ * Date: 10.04.22
+ * Time: 18:19
  * @author Frederick Baier
  *
  */
-abstract class AbstractTestDistribution : Distribution {
+abstract class AbstractHazelCastDistribution : Distribution {
 
-    protected val servers = CopyOnWriteArrayList<ServerComponent>()
-
-    abstract val messageManager: TestMessageManager
+    abstract fun getHazelCastInstance(): HazelcastInstance
 
     override fun getServers(): List<ServerComponent> {
-        return this.servers
-    }
-
-    override fun getMessageManager(): MessageManager {
-        return this.messageManager
+        return getHazelCastInstance().cluster.members.map { ServerComponentImpl(it.uuid) }
     }
 
     override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return getVirtualCluster().getOrCreateCache(name)
+        return HazelCastCache(getHazelCastInstance().getMap(name))
     }
 
-    open fun onComponentJoin(component: DistributionComponent) {
-        if (component is ServerComponent) {
-            if (!this.servers.contains(component))
-                this.servers.add(component)
-        }
+    override fun getMessageManager(): MessageManager {
+        return HazelCastMessageManager(getSelfComponent(), getHazelCastInstance())
     }
-
-    abstract fun getVirtualCluster(): VirtualCluster
 
 }

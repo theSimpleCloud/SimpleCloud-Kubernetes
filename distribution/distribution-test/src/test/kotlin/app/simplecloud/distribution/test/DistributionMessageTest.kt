@@ -22,8 +22,8 @@ import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.distribution.api.MessageListener
-import app.simplecloud.simplecloud.distrubtion.test.TestDistributionFactoryImpl
-import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
+import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.distribution.test.VirtualNetwork
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertTrue

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.start
 
-import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
+import app.simplecloud.simplecloud.distribution.test.VirtualNetwork
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import app.simplecloud.simplecloud.node.NodeStartTestTemplate
 import org.junit.jupiter.api.AfterEach

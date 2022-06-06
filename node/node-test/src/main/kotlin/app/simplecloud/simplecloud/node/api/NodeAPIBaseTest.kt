@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
-import app.simplecloud.simplecloud.distrubtion.test.VirtualNetwork
+import app.simplecloud.simplecloud.distribution.test.VirtualNetwork
 import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import app.simplecloud.simplecloud.node.NodeStartTestTemplate

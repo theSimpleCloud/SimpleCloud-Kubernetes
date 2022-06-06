@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.plugin.server.type.spigot
 
 import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
-import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
 import app.simplecloud.simplecloud.plugin.server.CloudServerPlugin
 import org.bukkit.Bukkit

@@ -16,35 +16,42 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distibution.hazelcast
+package app.simplecloud.simplecloud.distribution.test
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.distribution.api.MessageManager
-import app.simplecloud.simplecloud.distribution.api.ServerComponent
-import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
-import com.hazelcast.core.HazelcastInstance
+import app.simplecloud.simplecloud.distribution.api.*
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
- * Date: 10.04.22
- * Time: 18:19
+ * Date: 08.04.22
+ * Time: 17:42
  * @author Frederick Baier
  *
  */
-abstract class AbstractHazelCastDistribution : Distribution {
+abstract class AbstractTestDistribution : Distribution {
 
-    abstract fun getHazelCastInstance(): HazelcastInstance
+    protected val servers = CopyOnWriteArrayList<ServerComponent>()
+
+    abstract val messageManager: TestMessageManager
 
     override fun getServers(): List<ServerComponent> {
-        return getHazelCastInstance().cluster.members.map { ServerComponentImpl(it.uuid) }
-    }
-
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return HazelCastCache(getHazelCastInstance().getMap(name))
+        return this.servers
     }
 
     override fun getMessageManager(): MessageManager {
-        return HazelCastMessageManager(getSelfComponent(), getHazelCastInstance())
+        return this.messageManager
     }
+
+    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
+        return getVirtualCluster().getOrCreateCache(name)
+    }
+
+    open fun onComponentJoin(component: DistributionComponent) {
+        if (component is ServerComponent) {
+            if (!this.servers.contains(component))
+                this.servers.add(component)
+        }
+    }
+
+    abstract fun getVirtualCluster(): VirtualCluster
 
 }

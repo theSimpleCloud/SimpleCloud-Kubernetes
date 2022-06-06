@@ -16,17 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distibution.hazelcast
+package app.simplecloud.simplecloud.distribution.test
 
-import com.hazelcast.map.listener.EntryAddedListener
-import com.hazelcast.map.listener.EntryRemovedListener
-import com.hazelcast.map.listener.EntryUpdatedListener
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 
-/**
- * Date: 20.04.22
- * Time: 18:42
- * @author Frederick Baier
- *
- */
-interface HazelCastEntryListener<K, V> : EntryAddedListener<K, V>, EntryUpdatedListener<K, V>, EntryRemovedListener<K, V> {
+
+class TestDistributionFactoryImpl : DistributionFactory {
+
+    override fun createServer(port: Int, addresses: List<Address>): Distribution {
+        return TestServerDistributionImpl(port, addresses)
+    }
+
+    override fun createClient(address: Address): Distribution {
+        return TestClientDistributionImpl(address)
+    }
+
+
 }

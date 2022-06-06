@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.bootstrap
 
 import app.simplecloud.simplecloud.database.mongo.factory.MongoDatabaseFactory
-import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
+import app.simplecloud.simplecloud.distribution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.kubernetes.impl.KubeImplAPI
 import app.simplecloud.simplecloud.node.startup.NodeStartup
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
