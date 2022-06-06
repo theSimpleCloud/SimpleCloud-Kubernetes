@@ -16,25 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.server.type.spigot
+package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.plugin.proxy.AbstractOnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
-import org.bukkit.Server
+import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
 
 /**
- * Date: 23.01.22
- * Time: 19:13
+ * Date: 29.05.22
+ * Time: 19:51
  * @author Frederick Baier
  *
  */
-class SpigotOnlineCountUpdater(
-    private val server: Server,
-    private val selfProcessProvider: SelfProcessProvider
-) : AbstractOnlineCountUpdater(selfProcessProvider) {
+class TestSelfOnlineCountProvider : SelfOnlineCountProvider {
 
-    override fun getSelfOnlineCount(): Int {
-        return this.server.onlinePlayers.size
+    @Volatile
+    private var onlineCount: Int = 0
+
+    override fun getOnlineCount(): Int {
+        return this.onlineCount
+    }
+
+    fun addToOnlineCount(count: Int) {
+        this.onlineCount += count
     }
 
 }

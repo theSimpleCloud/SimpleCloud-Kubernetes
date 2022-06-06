@@ -16,25 +16,38 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.type.bungee
+package app.simplecloud.simplecloud.plugin.proxy.player
 
-import app.simplecloud.simplecloud.plugin.proxy.AbstractOnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
-import net.md_5.bungee.api.ProxyServer
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
- * Date: 23.01.22
- * Time: 19:13
+ * Date: 03.06.22
+ * Time: 18:39
  * @author Frederick Baier
  *
  */
-class BungeeOnlineCountUpdater(
-    private val proxyServer: ProxyServer,
-    private val selfProcessProvider: SelfProcessProvider
-) : AbstractOnlineCountUpdater(selfProcessProvider) {
+class ProxyPluginPlayerSwitchServerTest : ProxyPluginPlayerBaseTest() {
 
-    override fun getSelfOnlineCount(): Int {
-        return this.proxyServer.onlineCount
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        givenLobbyGroup("Lobby")
+        givenOnlineProcess("Lobby", 1)
+        givenServerGroup("BedWars")
+        givenOnlineProcess("BedWars", 1)
+        executeLoginAndConnect("Lobby-1")
+    }
+
+    @Test
+    fun test() {
+        executeConnect("BedWars-1")
+        assertPlayerCurrentServer("BedWars-1")
+    }
+
+    private fun executeLoginAndConnect(serverName: String) {
+        executePlayerLogin()
+        executeConnect(serverName)
     }
 
 }
