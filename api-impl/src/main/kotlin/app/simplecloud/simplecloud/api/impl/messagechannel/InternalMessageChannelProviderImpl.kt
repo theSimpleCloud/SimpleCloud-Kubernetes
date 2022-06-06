@@ -28,6 +28,7 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupC
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import java.util.*
 
 /**
  * Date: 01.04.22
@@ -41,6 +42,10 @@ class InternalMessageChannelProviderImpl(
 
     override fun getInternalPlayerLoginChannel(): MessageChannel<PlayerLoginConfiguration, CloudPlayerConfiguration> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_player_login")
+    }
+
+    override fun getInternalPlayerDisconnectChannel(): MessageChannel<UUID, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_player_disconnect")
     }
 
     override fun getInternalStartProcessChannel(): MessageChannel<ProcessStartConfiguration, CloudProcessConfiguration> {

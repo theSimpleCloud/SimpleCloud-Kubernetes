@@ -34,6 +34,7 @@ class MessageChannelsInitializer(
         registerGroupUpdateMessageChannel()
         registerStartProcessMessageChannel()
         registerPlayerLoginMessageChannel()
+        registerPlayerDisconnectMessageChannel()
         registerProcessExecuteCommandMessageChannel()
         registerProcessLogsMessageChannel()
     }
@@ -54,6 +55,12 @@ class MessageChannelsInitializer(
     private fun registerPlayerLoginMessageChannel() {
         val messageChannel = this.internalMessageChannelProvider.getInternalPlayerLoginChannel()
         val messageHandler = CloudPlayerLoginMessageHandler(this.cloudAPI.getCloudPlayerService())
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
+    private fun registerPlayerDisconnectMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalPlayerDisconnectChannel()
+        val messageHandler = CloudPlayerLogoutMessageHandler(this.cloudAPI.getCloudPlayerService())
         messageChannel.setMessageHandler(messageHandler)
     }
 

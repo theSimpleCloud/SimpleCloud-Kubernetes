@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupC
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import java.util.*
 
 /**
  * Date: 01.04.22
@@ -36,6 +37,8 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
 interface InternalMessageChannelProvider {
 
     fun getInternalPlayerLoginChannel(): MessageChannel<PlayerLoginConfiguration, CloudPlayerConfiguration>
+
+    fun getInternalPlayerDisconnectChannel(): MessageChannel<UUID, Unit>
 
     fun getInternalStartProcessChannel(): MessageChannel<ProcessStartConfiguration, CloudProcessConfiguration>
 
