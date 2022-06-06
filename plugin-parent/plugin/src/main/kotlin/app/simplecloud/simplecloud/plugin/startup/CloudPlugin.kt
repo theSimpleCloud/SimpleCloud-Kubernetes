@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
@@ -34,16 +35,20 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.plugin.startup.service.*
+import kotlinx.coroutines.runBlocking
 import java.util.*
 
 class CloudPlugin(
     private val distributionFactory: DistributionFactory,
-    private val environmentVariables: EnvironmentVariables
+    private val environmentVariables: EnvironmentVariables,
+    private val nodeAddress: Address
 ) {
 
     val selfProcessId = UUID.fromString(this.environmentVariables.get("SIMPLECLOUD_PROCESS_ID"))
@@ -106,7 +111,7 @@ class CloudPlugin(
             internalMessageChannelProvider,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
         )
-        val selfComponent = cloudProcessService.findByUniqueId(this.selfProcessId).join()
+        val selfComponent = findSelfProcess(cloudProcessService)
         return PluginCloudAPI(
             selfComponent.getName(),
             cloudProcessGroupService,
@@ -120,6 +125,14 @@ class CloudPlugin(
         )
     }
 
+    private fun findSelfProcess(processService: CloudProcessService): CloudProcess = runBlocking {
+        try {
+            return@runBlocking processService.findByUniqueId(this@CloudPlugin.selfProcessId).await()
+        } catch (ex: NoSuchElementException) {
+            throw CloudPluginStartException("Unable to find self process by id: ${this@CloudPlugin.selfProcessId}", ex)
+        }
+    }
+
     private fun initializeDistributedRepositories(distribution: Distribution): DistributedRepositories {
         return DistributedRepositories(
             DistributedCloudPlayerRepository(distribution),
@@ -130,8 +143,9 @@ class CloudPlugin(
     }
 
     private fun startDistribution(): Distribution {
-        val nodeAddress = Address.fromIpString("distribution:1670")
-        return this.distributionFactory.createClient(nodeAddress)
+        return this.distributionFactory.createClient(this.nodeAddress)
     }
+
+    class CloudPluginStartException(message: String, cause: Throwable) : Exception(message, cause)
 
 }

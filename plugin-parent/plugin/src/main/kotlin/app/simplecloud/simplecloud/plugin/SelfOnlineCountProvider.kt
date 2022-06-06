@@ -16,20 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy.request.handler
+package app.simplecloud.simplecloud.plugin
 
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
-import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import java.util.*
+/**
+ * Date: 29.05.22
+ * Time: 14:22
+ * @author Frederick Baier
+ *
+ */
+fun interface SelfOnlineCountProvider {
 
-class PlayerDisconnectRequestHandler(
-    private val playerUniqueId: UUID,
-    private val onlineCountUpdater: OnlineCountUpdater,
-    private val playerService: InternalCloudPlayerService
-) {
-    suspend fun handle() {
-        playerService.logoutPlayer(playerUniqueId)
-        onlineCountUpdater.updateSelfOnlineCount()
-    }
+    fun getOnlineCount(): Int
 
 }

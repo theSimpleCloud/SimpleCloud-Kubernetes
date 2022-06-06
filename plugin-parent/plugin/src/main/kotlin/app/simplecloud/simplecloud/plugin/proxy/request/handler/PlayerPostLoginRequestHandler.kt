@@ -18,10 +18,8 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
-import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import kotlinx.coroutines.launch
 
 /**
  * Date: 18.01.22
@@ -34,10 +32,8 @@ class PlayerPostLoginRequestHandler(
     private val onlineCountUpdater: OnlineCountUpdater
 ) {
 
-    fun handle() {
-        CloudScope.launch {
-            onlineCountUpdater.updateSelfOnlineCount()
-        }
+    suspend fun handle() {
+        onlineCountUpdater.updateSelfOnlineCount()
     }
 
 

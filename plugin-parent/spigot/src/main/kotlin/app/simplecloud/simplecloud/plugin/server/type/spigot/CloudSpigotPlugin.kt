@@ -20,8 +20,10 @@ package app.simplecloud.simplecloud.plugin.server.type.spigot
 
 import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
-import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
+import app.simplecloud.simplecloud.plugin.server.CloudServerPlugin
+import org.bukkit.Bukkit
 import org.bukkit.plugin.java.JavaPlugin
 
 /**
@@ -32,15 +34,16 @@ import org.bukkit.plugin.java.JavaPlugin
  */
 class CloudSpigotPlugin : JavaPlugin() {
 
-    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory(), RealEnvironmentVariables())
-    private val cloudAPI = cloudPlugin.pluginCloudAPI
+    private val cloudPlugin = CloudServerPlugin(
+        HazelcastDistributionFactory(),
+        RealEnvironmentVariables(),
+        Address.fromIpString("distribution:1670"),
+        SelfOnlineCountProvider { Bukkit.getOnlinePlayers().size }
+    )
+    private val cloudAPI = cloudPlugin.cloudAPI
 
     override fun onEnable() {
-        val onlineCountUpdater = SpigotOnlineCountUpdater(
-            this.server,
-            SelfProcessProvider(this.cloudPlugin.selfProcessId, this.cloudAPI.getProcessService())
-        )
-        server.pluginManager.registerEvents(SpigotListener(onlineCountUpdater), this)
+        server.pluginManager.registerEvents(SpigotListener(this.cloudPlugin.onlineCountUpdater), this)
     }
 
     override fun onDisable() {

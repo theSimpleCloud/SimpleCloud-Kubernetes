@@ -18,18 +18,18 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.plugin.proxy.request.*
+import java.util.*
 
 interface ProxyController {
 
-    suspend fun handleLogin(request: PlayerLoginConfiguration): CloudPlayer
+    suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer
 
-    fun handlePostLogin(request: PlayerConnectionConfiguration)
+    suspend fun handlePostLogin(request: PlayerConnectionConfiguration)
 
-    fun handleDisconnect(request: PlayerDisconnectRequest)
+    suspend fun handleDisconnect(playerUniqueId: UUID)
 
     /**
      * @throws NoLobbyServerFoundException no lobby server was found
@@ -38,17 +38,19 @@ interface ProxyController {
      * @throws IllegalProcessStateException the process is not online and therefore cannot be joined
      * @throws NoLobbyServerFoundException if no lobby server was found
      */
-    fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse
+    suspend fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse
 
-    fun handleServerConnected(request: ServerConnectedRequest)
+    suspend fun handleServerConnected(request: ServerConnectedRequest)
 
-    fun handleServerKick(request: ServerKickRequest)
+    suspend fun handleServerKick(request: ServerKickRequest)
 
     class NoPermissionToJoinGroupException() : Exception("No Permission to join group")
 
     class IllegalGroupTypeException() : Exception("Cannot connect to groups with that type")
 
-    class IllegalProcessStateException() : Exception("Cannot connect to a Proxy server")
+    class ProcessNotJoinableException() : Exception("Process not joinable")
+
+    class ProcessFullException() : Exception("Process is full")
 
     class NoSuchProcessException() : Exception("Cannot find requested process")
 

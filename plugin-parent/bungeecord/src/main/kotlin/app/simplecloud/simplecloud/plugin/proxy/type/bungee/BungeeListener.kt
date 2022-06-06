@@ -19,14 +19,13 @@
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
-import app.simplecloud.simplecloud.plugin.proxy.request.PlayerDisconnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.PendingConnection
@@ -44,7 +43,6 @@ import java.net.InetSocketAddress
  *
  */
 class BungeeListener(
-    private val proxyName: String,
     private val proxyController: ProxyController,
     private val plugin: Plugin,
     private val proxyServer: ProxyServer
@@ -55,10 +53,9 @@ class BungeeListener(
         if (event.isCancelled) return
         val connection = event.connection
         val configuration = createConnectionConfiguration(connection)
-        val loginConfiguration = PlayerLoginConfiguration(configuration, this.proxyName)
         event.registerIntent(this.plugin)
         CloudScope.launch {
-            proxyController.handleLogin(loginConfiguration)
+            proxyController.handleLogin(configuration)
             event.completeIntent(plugin)
         }
     }
@@ -68,7 +65,9 @@ class BungeeListener(
         val proxiedPlayer = event.player
         proxiedPlayer.reconnectServer = null
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
-        this.proxyController.handlePostLogin(configuration)
+        CloudScope.launch {
+            proxyController.handlePostLogin(configuration)
+        }
     }
 
     @EventHandler
@@ -78,15 +77,17 @@ class BungeeListener(
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
         val currentServerName: String? = proxiedPlayer.server?.info?.name
         try {
-            val response = this.proxyController.handleServerPreConnect(
-                ServerPreConnectRequest(
-                    configuration,
-                    currentServerName,
-                    event.target.name
+            runBlocking {
+                val response = proxyController.handleServerPreConnect(
+                    ServerPreConnectRequest(
+                        configuration,
+                        currentServerName,
+                        event.target.name
+                    )
                 )
-            )
-            val serverInfo = this.proxyServer.getServerInfo(response.targetProcessName)
-            event.target = serverInfo
+                val serverInfo = proxyServer.getServerInfo(response.targetProcessName)
+                event.target = serverInfo
+            }
         } catch (ex: ProxyController.NoLobbyServerFoundException) {
             proxiedPlayer.disconnect(*TextComponent.fromLegacyText("§cNo fallback server found"))
             event.isCancelled = true
@@ -96,8 +97,8 @@ class BungeeListener(
         } catch (ex: ProxyController.IllegalGroupTypeException) {
             proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cCannot connect to a proxy process"))
             event.isCancelled = true
-        } catch (ex: ProxyController.IllegalProcessStateException) {
-            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cProcess is not online"))
+        } catch (ex: ProxyController.ProcessNotJoinableException) {
+            proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cProcess cannot be joined at the moment"))
             event.isCancelled = true
         } catch (ex: ProxyController.NoPermissionToJoinGroupException) {
             proxiedPlayer.sendMessage(*TextComponent.fromLegacyText("§cYou don't have the permission to join this group"))
@@ -110,15 +111,17 @@ class BungeeListener(
     fun handleConnect(event: ServerConnectedEvent) {
         val proxiedPlayer = event.player
         val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
-        this.proxyController.handleServerConnected(ServerConnectedRequest(configuration, event.server.info.name))
+        runBlocking {
+            proxyController.handleServerConnected(ServerConnectedRequest(configuration, event.server.info.name))
+        }
     }
 
     @EventHandler(priority = EventPriority.HIGHEST)
     fun handleDisconnect(event: PlayerDisconnectEvent) {
         val proxiedPlayer = event.player
-        val configuration = createConnectionConfiguration(proxiedPlayer.pendingConnection)
-        val request = PlayerDisconnectRequest(configuration, proxiedPlayer.server.info.name)
-        this.proxyController.handleDisconnect(request)
+        CloudScope.launch {
+            proxyController.handleDisconnect(proxiedPlayer.uniqueId)
+        }
     }
 
     private fun createConnectionConfiguration(connection: PendingConnection): PlayerConnectionConfiguration {

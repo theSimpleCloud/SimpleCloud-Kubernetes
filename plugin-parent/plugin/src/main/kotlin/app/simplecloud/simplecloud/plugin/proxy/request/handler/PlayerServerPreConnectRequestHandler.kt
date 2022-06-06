@@ -51,9 +51,9 @@ class PlayerServerPreConnectRequestHandler(
         if (isConnectingToFallbackServer())
             return findLobbyForPlayer()
         val processConnectingTo = getProcessConnectingTo()
-        checkIfRequestedServerIsJoinable(processConnectingTo)
         val group = this.groupService.findByName(processConnectingTo.getGroupName()).await()
         checkIfPlayerAllowedToJoinRequestedGroup(group)
+        checkIfRequestedServerIsJoinable(processConnectingTo)
         return ServerPreConnectResponse(request.serverNameTo)
     }
 
@@ -65,11 +65,13 @@ class PlayerServerPreConnectRequestHandler(
         }
     }
 
-    private fun checkIfRequestedServerIsJoinable(process: CloudProcess) {
+    private suspend fun checkIfRequestedServerIsJoinable(process: CloudProcess) {
         if (process.getProcessType() == ProcessGroupType.PROXY)
             throw ProxyController.IllegalGroupTypeException()
         if (process.getState() != ProcessState.ONLINE)
-            throw ProxyController.IllegalProcessStateException()
+            throw ProxyController.ProcessNotJoinableException()
+        if (process.isFull())
+            throw ProxyController.ProcessFullException()
     }
 
     private suspend fun checkIfPlayerAllowedToJoinRequestedGroup(group: CloudProcessGroup) {

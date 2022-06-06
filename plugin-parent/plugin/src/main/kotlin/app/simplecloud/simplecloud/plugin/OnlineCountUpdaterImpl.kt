@@ -16,11 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.proxy
+package app.simplecloud.simplecloud.plugin
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
-import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
 import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
 
 /**
@@ -29,18 +28,17 @@ import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
  * @author Frederick Baier
  *
  */
-abstract class AbstractOnlineCountUpdater(
-    private val selfProcessProvider: SelfProcessProvider
+class OnlineCountUpdaterImpl(
+    private val selfProcessProvider: SelfProcessProvider,
+    private val selfOnlineCountProvider: SelfOnlineCountProvider
 ) : OnlineCountUpdater {
-
-    abstract fun getSelfOnlineCount(): Int
 
     override suspend fun updateSelfOnlineCount(addition: Int) {
         val selfProcess = this.selfProcessProvider.getSelfProcess().await()
         val updateRequest = selfProcess.createUpdateRequest()
         updateRequest as InternalProcessUpdateRequest
-        updateRequest.setOnlinePlayers(getSelfOnlineCount() + addition)
-        updateRequest.submit()
+        updateRequest.setOnlinePlayers(this.selfOnlineCountProvider.getOnlineCount() + addition)
+        updateRequest.submit().await()
     }
 
 }

@@ -20,12 +20,9 @@ package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
 import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
 import app.simplecloud.simplecloud.distibution.hazelcast.HazelcastDistributionFactory
-import app.simplecloud.simplecloud.eventapi.EventRegisterer
-import app.simplecloud.simplecloud.plugin.proxy.ProxyCloudListener
-import app.simplecloud.simplecloud.plugin.proxy.ProxyControllerImpl
-import app.simplecloud.simplecloud.plugin.proxy.ProxyProcessRegisterer
-import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
-import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
+import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
+import app.simplecloud.simplecloud.plugin.proxy.CloudProxyPlugin
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.net.InetSocketAddress
@@ -33,8 +30,14 @@ import java.util.*
 
 class CloudBungeePlugin : Plugin() {
 
-    private val cloudPlugin = CloudPlugin(HazelcastDistributionFactory(), RealEnvironmentVariables())
-    private val cloudAPI = cloudPlugin.pluginCloudAPI
+    private val proxyPlugin = CloudProxyPlugin(
+        HazelcastDistributionFactory(),
+        RealEnvironmentVariables(),
+        Address.fromIpString("distribution:1670"),
+        BungeeProxyServerRegistry(ProxyServer.getInstance()),
+        SelfOnlineCountProvider { ProxyServer.getInstance().onlineCount }
+    )
+    private val cloudAPI = proxyPlugin.cloudAPI
     private val proxyServerRegistry = BungeeProxyServerRegistry(ProxyServer.getInstance())
 
     override fun onLoad() {
@@ -50,27 +53,9 @@ class CloudBungeePlugin : Plugin() {
         }
         registerFallbackService()
 
-        val proxyProcessRegisterer = ProxyProcessRegisterer(this.cloudAPI.getProcessService(), this.proxyServerRegistry)
-        proxyProcessRegisterer.registerExistingProcesses()
-
-        this.cloudAPI.getEventManager().registerListener(
-            object : EventRegisterer {},
-            ProxyCloudListener(this.proxyServerRegistry)
-        )
-
-        val proxyController = ProxyControllerImpl(
-            this.cloudAPI.internalPlayerService,
-            this.cloudAPI.getProcessService(),
-            this.cloudAPI.getProcessGroupService(),
-            BungeeOnlineCountUpdater(
-                proxyServer,
-                SelfProcessProvider(this.cloudPlugin.selfProcessId, this.cloudAPI.getProcessService())
-            ),
-        )
         proxyServer.pluginManager.registerListener(
             this, BungeeListener(
-                this.cloudAPI.getLocalNetworkComponentName(),
-                proxyController,
+                proxyPlugin.proxyController,
                 this,
                 proxyServer
             )

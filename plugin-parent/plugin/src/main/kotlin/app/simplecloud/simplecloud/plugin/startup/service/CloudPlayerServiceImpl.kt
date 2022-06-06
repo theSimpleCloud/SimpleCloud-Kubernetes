@@ -45,6 +45,7 @@ class CloudPlayerServiceImpl(
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     private val loginMessageChannel = internalMessageChannelProvider.getInternalPlayerLoginChannel()
+    private val disconnectMessageChannel = internalMessageChannelProvider.getInternalPlayerDisconnectChannel()
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         TODO("Not yet implemented")
@@ -59,7 +60,8 @@ class CloudPlayerServiceImpl(
     }
 
     override suspend fun logoutPlayer(uniqueId: UUID) {
-        TODO("Not yet implemented")
+        val node = this.nodeService.findFirst().await()
+        this.disconnectMessageChannel.createMessageRequest(uniqueId, node).submit().await()
     }
 
     override suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer {

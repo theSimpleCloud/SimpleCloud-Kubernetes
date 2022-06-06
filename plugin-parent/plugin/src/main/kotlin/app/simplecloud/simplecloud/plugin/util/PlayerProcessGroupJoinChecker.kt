@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.plugin.util
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.permission.Permissions
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 
@@ -38,7 +39,7 @@ class PlayerProcessGroupJoinChecker(
             return doesPlayerHasMaintenancePermission()
         if (hasJoinPermission(processGroup))
             return doesPlayerHasGroupsJoinPermission()
-        return false
+        return true
     }
 
     private suspend fun doesPlayerHasGroupsJoinPermission(): Boolean {
@@ -51,7 +52,7 @@ class PlayerProcessGroupJoinChecker(
     }
 
     private suspend fun doesPlayerHasMaintenancePermission(): Boolean {
-        return this.player.hasPermission("cloud.maintenance.join").await()
+        return this.player.hasPermission(Permissions.MAINTENANCE_JOIN).await()
     }
 
 }

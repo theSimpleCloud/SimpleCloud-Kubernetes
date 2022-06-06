@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.plugin.proxy
 
-import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
@@ -26,58 +25,57 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.proxy.request.*
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerDisconnectRequestHandler
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerPostLoginRequestHandler
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerServerConnectedRequestHandler
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerServerPreConnectRequestHandler
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.runBlocking
+import java.util.*
 
 class ProxyControllerImpl(
     private val playerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
     private val processGroupService: CloudProcessGroupService,
-    private val onlineCountUpdater: OnlineCountUpdater
+    private val onlineCountUpdater: OnlineCountUpdater,
+    private val proxyName: String
 ) : ProxyController {
 
-    override suspend fun handleLogin(request: PlayerLoginConfiguration): CloudPlayer {
-        return this.playerService.loginPlayer(request)
+    override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
+        return this.playerService.loginPlayer(PlayerLoginConfiguration(request, this.proxyName))
     }
 
-    override fun handlePostLogin(request: PlayerConnectionConfiguration) {
+    override suspend fun handlePostLogin(request: PlayerConnectionConfiguration) {
         PlayerPostLoginRequestHandler(request, this.onlineCountUpdater).handle()
     }
 
-    override fun handleDisconnect(request: PlayerDisconnectRequest) {
+    override suspend fun handleDisconnect(playerUniqueId: UUID) {
         PlayerDisconnectRequestHandler(
-            request,
+            playerUniqueId,
             this.onlineCountUpdater,
             this.playerService
-        ).handler()
+        ).handle()
     }
 
-    override fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse {
-        return runBlocking {
-            return@runBlocking PlayerServerPreConnectRequestHandler(
-                request,
-                processService,
-                playerService,
-                processGroupService
-            ).handle()
-        }
+    override suspend fun handleServerPreConnect(request: ServerPreConnectRequest): ServerPreConnectResponse {
+        return PlayerServerPreConnectRequestHandler(
+            request,
+            processService,
+            playerService,
+            processGroupService
+        ).handle()
     }
 
-    override fun handleServerConnected(request: ServerConnectedRequest) {
-        CloudScope.launch {
-            PlayerServerConnectedRequestHandler(
-                request,
-                playerService
-            ).handle()
-        }
+    override suspend fun handleServerConnected(request: ServerConnectedRequest) {
+        PlayerServerConnectedRequestHandler(
+            request,
+            playerService
+        ).handle()
     }
 
-    override fun handleServerKick(request: ServerKickRequest) {
+    override suspend fun handleServerKick(request: ServerKickRequest) {
         TODO("Not yet implemented")
     }
 }
