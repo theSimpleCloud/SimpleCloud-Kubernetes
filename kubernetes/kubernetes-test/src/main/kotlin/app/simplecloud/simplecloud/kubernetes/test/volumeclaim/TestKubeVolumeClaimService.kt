@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test.volumeclaim
+package app.simplecloud.simplecloud.kubernetes.test.volumeclaim
 
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test.pod
+package app.simplecloud.simplecloud.kubernetes.test.pod
 
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod

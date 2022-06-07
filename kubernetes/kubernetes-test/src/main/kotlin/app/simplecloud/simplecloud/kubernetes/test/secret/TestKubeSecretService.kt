@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test.secret
+package app.simplecloud.simplecloud.kubernetes.test.secret
 
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService

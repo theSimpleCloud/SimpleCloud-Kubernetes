@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.prepare.setup
 
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.DatabaseFactoryProvider
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

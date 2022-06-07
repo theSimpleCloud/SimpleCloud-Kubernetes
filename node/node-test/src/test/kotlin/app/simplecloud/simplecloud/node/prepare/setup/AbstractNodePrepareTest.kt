@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.node.prepare.setup
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.restserver.api.auth.Headers
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler

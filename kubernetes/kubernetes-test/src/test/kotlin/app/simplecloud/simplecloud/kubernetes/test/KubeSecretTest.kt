@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test
+package app.simplecloud.simplecloud.kubernetes.test
 
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.kubernetest.test.secret.TestKubeSecretService
+import app.simplecloud.simplecloud.kubernetes.test.secret.TestKubeSecretService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test

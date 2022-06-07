@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test.service
+package app.simplecloud.simplecloud.kubernetes.test.service
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.kubernetes.api.Label
@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
-import app.simplecloud.simplecloud.kubernetest.test.pod.TestKubePodService
+import app.simplecloud.simplecloud.kubernetes.test.pod.TestKubePodService
 import java.net.BindException
 import java.util.concurrent.CopyOnWriteArrayList
 

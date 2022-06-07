@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.node.database
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.prepare.setup.AbstractNodePrepareTest
 import app.simplecloud.simplecloud.node.startup.setup.body.FirstUserSetupResponseBody
 import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager

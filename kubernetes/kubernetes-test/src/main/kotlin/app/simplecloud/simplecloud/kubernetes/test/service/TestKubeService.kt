@@ -16,34 +16,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test.pod
+package app.simplecloud.simplecloud.kubernetes.test.service
 
 import app.simplecloud.simplecloud.kubernetes.api.Label
-import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
-import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
-import java.util.concurrent.CopyOnWriteArrayList
+import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
+import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 
-class TestKubePodService : KubePodService {
+class TestKubeService(
+    private val name: String,
+    private val serviceSpec: ServiceSpec,
+    private val kubeNetworkService: TestKubeNetworkService
+) : KubeService {
 
-    private val pods = CopyOnWriteArrayList<TestKubePod>()
-
-    override fun getPod(name: String): TestKubePod {
-        return this.pods.first { it.getName() == name.lowercase() }
+    override fun getName(): String {
+        return this.name
     }
 
-    override fun createPod(name: String, podSpec: PodSpec): TestKubePod {
-        val kubePod = TestKubePod(name.lowercase(), this)
-        kubePod.start(podSpec)
-        this.pods.add(kubePod)
-        return kubePod
+    override fun getContainerPort(): Int {
+        return this.serviceSpec.containerPort
     }
 
-    fun delete(kubePod: TestKubePod) {
-        this.pods.remove(kubePod)
+    override fun getClusterPort(): Int {
+        return this.serviceSpec.clusterPort
     }
 
-    fun findPodsByLabel(label: Label): List<TestKubePod> {
-        return this.pods.filter { it.getLabels().contains(label) }
+    override fun getLabels(): List<Label> {
+        return this.serviceSpec.labels
+    }
+
+    override fun delete() {
+        kubeNetworkService.delete(this)
     }
 
 }

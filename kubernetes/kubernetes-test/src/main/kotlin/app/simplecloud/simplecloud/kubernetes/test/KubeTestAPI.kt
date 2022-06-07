@@ -16,16 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test
+package app.simplecloud.simplecloud.kubernetes.test
 
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
-import app.simplecloud.simplecloud.kubernetest.test.pod.TestKubePodService
-import app.simplecloud.simplecloud.kubernetest.test.secret.TestKubeSecretService
-import app.simplecloud.simplecloud.kubernetest.test.service.TestKubeNetworkService
-import app.simplecloud.simplecloud.kubernetest.test.volumeclaim.TestKubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetes.test.pod.TestKubePodService
+import app.simplecloud.simplecloud.kubernetes.test.secret.TestKubeSecretService
+import app.simplecloud.simplecloud.kubernetes.test.service.TestKubeNetworkService
+import app.simplecloud.simplecloud.kubernetes.test.volumeclaim.TestKubeVolumeClaimService
 
 /**
  * Date: 30.04.22

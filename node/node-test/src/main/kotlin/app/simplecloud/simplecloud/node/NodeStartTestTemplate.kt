@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.kubernetest.test.KubeTestAPI
+import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.start.restserver.FailingRestSetupManager
 import app.simplecloud.simplecloud.node.start.restserver.TestRestServer

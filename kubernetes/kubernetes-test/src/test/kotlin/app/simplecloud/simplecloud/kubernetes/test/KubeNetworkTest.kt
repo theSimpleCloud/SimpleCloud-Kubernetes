@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetest.test
+package app.simplecloud.simplecloud.kubernetes.test
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.kubernetes.api.Label
@@ -24,8 +24,8 @@ import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
-import app.simplecloud.simplecloud.kubernetest.test.pod.TestKubePodService
-import app.simplecloud.simplecloud.kubernetest.test.service.TestKubeNetworkService
+import app.simplecloud.simplecloud.kubernetes.test.pod.TestKubePodService
+import app.simplecloud.simplecloud.kubernetes.test.service.TestKubeNetworkService
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Assertions.assertNotEquals
 import org.junit.jupiter.api.Assertions.assertThrows
