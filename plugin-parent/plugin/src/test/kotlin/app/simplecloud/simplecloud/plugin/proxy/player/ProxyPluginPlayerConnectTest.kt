@@ -101,4 +101,31 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         assertPlayerCurrentServer("Lobby-1")
     }
 
+
+    @Test
+    fun lobbyWith1MaxPlayers_playerJoinOnFallback_willWork() {
+        givenLobbyGroup("Lobby") {
+            setMaxPlayers(1)
+        }
+        givenOnlineProcess("Lobby", 1)
+
+        executePlayerLogin()
+        executeConnect("fallback")
+
+        assertSelfProcessOnlineCount(1)
+        assertPlayerCurrentServer("Lobby-1")
+    }
+
+    @Test
+    fun givenProxy_playerConnectToProxy_willFail() {
+        givenProxyGroup("TestProxy")
+        givenOnlineProcess("TestProxy", 1)
+
+        executePlayerLogin()
+
+        Assertions.assertThrows(ProxyController.IllegalGroupTypeException::class.java) {
+            executeConnect("TestProxy-1")
+        }
+    }
+
 }

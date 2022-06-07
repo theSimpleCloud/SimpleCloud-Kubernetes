@@ -19,11 +19,13 @@
 package app.simplecloud.simplecloud.plugin
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.TestSelfOnlineCountProvider
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 
@@ -61,10 +63,33 @@ class PlayerTestHelper(
         Assertions.assertEquals(count, process.getOnlinePlayers())
     }
 
-    fun executeConnect(serviceName: String) = runBlocking {
+    fun executeConnect(processName: String) = runBlocking {
         val playerConnection = DefaultPlayerProvider.createDefaultPlayerConnectionConfiguration()
-        proxyController.handleServerPreConnect(ServerPreConnectRequest(playerConnection, null, serviceName))
-        proxyController.handleServerConnected(ServerConnectedRequest(playerConnection, serviceName))
+        val newTargetProcess = executePreConnectUntilConnectingToRealServer(processName)
+        proxyController.handleServerConnected(ServerConnectedRequest(playerConnection, newTargetProcess))
+    }
+
+    //if the current target is the fallback server this method will call [executePreConnect] again with the lobby server
+    //returns the new target
+    private suspend fun executePreConnectUntilConnectingToRealServer(processName: String): String {
+        val cloudPlayer = getDefaultCloudPlayer()
+        val preConnectResult = executePreConnect(processName, cloudPlayer.getCurrentServerName())
+        if (preConnectResult.targetProcessName != processName) {
+            executePreConnect(preConnectResult.targetProcessName, cloudPlayer.getCurrentServerName())
+        }
+        return preConnectResult.targetProcessName
+    }
+
+    private fun getDefaultCloudPlayer(): CloudPlayer {
+        return this.cloudAPI.getCloudPlayerService()
+            .findOnlinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).join()
+    }
+
+    private suspend fun executePreConnect(processName: String, fromServer: String?): ServerPreConnectResponse {
+        val playerConnection = DefaultPlayerProvider.createDefaultPlayerConnectionConfiguration()
+        return this.proxyController.handleServerPreConnect(
+            ServerPreConnectRequest(playerConnection, fromServer, processName)
+        )
     }
 
     fun assertPlayerCurrentServer(processName: String) {

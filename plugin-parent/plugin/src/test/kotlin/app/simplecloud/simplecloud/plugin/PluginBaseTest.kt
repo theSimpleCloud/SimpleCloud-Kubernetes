@@ -30,6 +30,7 @@ import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
@@ -49,6 +50,7 @@ open class PluginBaseTest {
     private lateinit var nodeAPIBaseTest: NodeAPIBaseTest
     protected lateinit var nodeCloudAPI: NodeCloudAPI
     protected lateinit var kubeAPI: KubeAPI
+    protected lateinit var databaseFactory: InMemoryRepositorySafeDatabaseFactory
 
     @BeforeEach
     internal open fun setUp() {
@@ -56,6 +58,7 @@ open class PluginBaseTest {
         this.nodeAPIBaseTest.setUp()
         this.nodeCloudAPI = this.nodeAPIBaseTest.cloudAPI
         this.kubeAPI = this.nodeAPIBaseTest.kubeAPI
+        this.databaseFactory = this.nodeAPIBaseTest.databaseFactory
         createDistributionService()
     }
 

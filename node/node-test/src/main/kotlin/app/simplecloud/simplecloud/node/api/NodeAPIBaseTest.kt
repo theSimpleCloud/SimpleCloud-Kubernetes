@@ -40,7 +40,8 @@ open class NodeAPIBaseTest {
     lateinit var cloudAPI: NodeCloudAPI
         private set
 
-    protected var databaseFactory = InMemoryRepositorySafeDatabaseFactory()
+    var databaseFactory = InMemoryRepositorySafeDatabaseFactory()
+        private set
 
     open fun setUp() {
         this.nodeStartTestTemplate.setUp()

@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.proxy.player
 
+import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.plugin.PlayerTestHelper
 import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import kotlinx.coroutines.runBlocking
@@ -42,6 +43,10 @@ open class ProxyPluginPlayerBaseTest : ProxyPluginBaseTest() {
             this.pluginCloudAPI.getLocalNetworkComponentName(),
             this.selfOnlineCountProvider
         )
+    }
+
+    protected fun insertPlayerWithPermissionInDatabase(permissionString: String) {
+        DefaultPlayerProvider.insertPlayerWithPermission(this.databaseFactory, permissionString)
     }
 
     protected fun executePlayerLogin() = runBlocking {
