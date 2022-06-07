@@ -40,7 +40,7 @@ class PlayerLobbyFinder(
         for (group in groups) {
             val processes = this.processService.findByGroup(group).await()
             val notFullProcesses = processes.filterNot { it.isFull() }
-            if (processes.isEmpty()) continue
+            if (notFullProcesses.isEmpty()) continue
             return notFullProcesses.first().getName()
         }
         throw ProxyController.NoLobbyServerFoundException()
