@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
+import org.apache.logging.log4j.LogManager
 
 /**
  * Date: 16.05.22
@@ -39,6 +40,14 @@ class CloudPlayerLogoutHandler(
         val offlineCloudPlayerConfiguration = this.onlinePlayer.toOfflinePlayer().toConfiguration()
         this.databaseOfflineCloudPlayerRepository.save(this.onlinePlayer.getUniqueId(), offlineCloudPlayerConfiguration)
         this.distributedRepository.remove(this.onlinePlayer.getUniqueId()).await()
+        logger.info(
+            "Player {} logged out",
+            this.onlinePlayer.getName()
+        )
+    }
+
+    companion object {
+        private val logger = LogManager.getLogger(CloudPlayerLogoutHandler::class.java)
     }
 
 }
