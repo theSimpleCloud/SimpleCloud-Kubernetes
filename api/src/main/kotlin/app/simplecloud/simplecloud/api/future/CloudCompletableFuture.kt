@@ -31,7 +31,7 @@ import java.util.function.Function
  */
 class CloudCompletableFuture<T> : CompletableFuture<T>() {
 
-    private val originException = FutureOriginException()
+    val originException = FutureOriginException()
 
     override fun <U : Any?> newIncompleteFuture(): CloudCompletableFuture<U> {
         return CloudCompletableFuture()

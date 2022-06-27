@@ -49,7 +49,6 @@ class DistributedQueryHandlerImpl constructor(
     private val queries = CopyOnWriteArrayList<DistributedQuery>()
 
 
-
     init {
         startListening()
     }
@@ -65,7 +64,22 @@ class DistributedQueryHandlerImpl constructor(
     }
 
     fun sendPacketToSingleReceiver(transferObject: DistributionDataTransferObject, receiver: NetworkComponent) {
+        if (isUnitMessage(transferObject)) {
+            val editedTransferObject = DistributionDataTransferObject(
+                transferObject.topic,
+                transferObject.messageId,
+                Result.success("kotlin.Unit"),
+                transferObject.isResponse
+            )
+            this.messageManager.sendMessage(editedTransferObject, receiver.getDistributionComponent())
+            return
+        }
         this.messageManager.sendMessage(transferObject, receiver.getDistributionComponent())
+    }
+
+    private fun isUnitMessage(transferObject: DistributionDataTransferObject): Boolean {
+        val message = transferObject.message
+        return message.isSuccess && message.getOrThrow() is Unit
     }
 
     override fun sendToAll(topic: String, message: Any) {
@@ -87,7 +101,10 @@ class DistributedQueryHandlerImpl constructor(
         return distributedQuery
     }
 
-    private fun <T> registerUnregisterListenerForQuery(future: CompletableFuture<T>, distributedQuery: DistributedQuery) {
+    private fun <T> registerUnregisterListenerForQuery(
+        future: CompletableFuture<T>,
+        distributedQuery: DistributedQuery
+    ) {
         future.handle { _, _ ->
             this.queries.remove(distributedQuery)
         }
@@ -104,11 +121,28 @@ class DistributedQueryHandlerImpl constructor(
     }
 
     private fun handleMessage(sender: DistributionComponent, transferObject: DistributionDataTransferObject) {
+        val editedTransferObject = editUnitTransferObject(transferObject)
         if (transferObject.isResponse) {
-            handleResponse(transferObject)
+            handleResponse(editedTransferObject)
         } else {
-            handleQuery(sender, transferObject)
+            handleQuery(sender, editedTransferObject)
         }
+    }
+
+    private fun editUnitTransferObject(transferObject: DistributionDataTransferObject): DistributionDataTransferObject {
+        val message = transferObject.message
+        if (message.isSuccess && message.getOrThrow() is String) {
+            val string = message.getOrThrow()
+            if (string == "kotlin.Unit") {
+                return DistributionDataTransferObject(
+                    transferObject.topic,
+                    transferObject.messageId,
+                    Result.success(Unit),
+                    transferObject.isResponse
+                )
+            }
+        }
+        return transferObject
     }
 
     private fun handleQuery(sender: DistributionComponent, transferObject: DistributionDataTransferObject) {
@@ -142,6 +176,5 @@ class DistributedQueryHandlerImpl constructor(
         return futureList.thenApply { it.first() }
             .exceptionally { throw NoSuchElementException("Could not find NetworkComponent by sender: $sender") }
     }
-
 
 }

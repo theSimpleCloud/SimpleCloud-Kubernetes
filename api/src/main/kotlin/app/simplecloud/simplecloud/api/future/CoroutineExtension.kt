@@ -29,6 +29,11 @@ private val threadContext = newCachedThreadPoolContext("cloud")
 private val exceptionHandler = CoroutineExceptionHandler { context, exception ->
     println("Caught exception in thread: ${Thread.currentThread().name}")
     exception.printStackTrace()
+    if (exception is app.simplecloud.simplecloud.api.future.exception.TimeoutException) {
+        val originException = exception.originException
+        println("Type was TimeoutException. Origin:")
+        originException.printStackTrace()
+    }
 }
 
 fun newCachedThreadPoolContext(name: String): ExecutorCoroutineDispatcher {

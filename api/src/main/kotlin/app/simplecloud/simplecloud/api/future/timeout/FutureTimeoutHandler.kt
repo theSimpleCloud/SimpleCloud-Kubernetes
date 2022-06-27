@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.api.future.timeout
 
+import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.exception.TimeoutException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
@@ -48,7 +49,9 @@ object FutureTimeoutHandler {
                 futureTimeouts.remove(futureTimeout)
                 val future = futureTimeout.future
                 if (!future.isDone) {
-                    future.completeExceptionally(TimeoutException())
+                    val future2 = future as CloudCompletableFuture
+                    val originException = future2.originException
+                    future2.completeExceptionally(TimeoutException(originException))
                 }
             }
         }

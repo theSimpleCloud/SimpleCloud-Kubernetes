@@ -24,4 +24,4 @@ package app.simplecloud.simplecloud.api.future.exception
  * Time: 13:08
  * @author Frederick Baier
  */
-class TimeoutException : Exception()
+class TimeoutException(val originException: FutureOriginException) : Exception()
