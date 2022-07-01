@@ -40,7 +40,6 @@ class CloudSpigotPlugin : JavaPlugin() {
         Address.fromIpString("distribution:1670"),
         SelfOnlineCountProvider { Bukkit.getOnlinePlayers().size }
     )
-    private val cloudAPI = cloudPlugin.cloudAPI
 
     override fun onEnable() {
         server.pluginManager.registerEvents(SpigotListener(this.cloudPlugin.onlineCountUpdater), this)

@@ -1,0 +1,6 @@
+{
+  "entrypoint": "app.simplecloud.simplecloud.plugin.server.type.minestom.CloudMinestomPlugin",
+  "name": "SimpleCloud-Plugin",
+  "version": "1.0.0",
+  "dependencies": []
+}
