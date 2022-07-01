@@ -19,6 +19,7 @@
 plugins {
     java
     id ("com.github.johnrengelman.shadow") version "7.0.0"
+    id("com.google.devtools.ksp") version "1.7.0-1.0.6"
     kotlin("jvm") version "1.6.21"
 }
 
@@ -30,6 +31,7 @@ allprojects {
         plugin("java")
         plugin("org.jetbrains.kotlin.jvm")
         plugin("com.github.johnrengelman.shadow")
+        plugin("com.google.devtools.ksp")
     }
 
     repositories {
@@ -39,6 +41,7 @@ allprojects {
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://oss.sonatype.org/content/repositories/central")
+        maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://jitpack.io")
     }
 
