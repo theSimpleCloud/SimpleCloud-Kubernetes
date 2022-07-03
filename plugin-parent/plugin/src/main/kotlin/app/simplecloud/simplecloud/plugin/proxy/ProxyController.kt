@@ -42,7 +42,11 @@ interface ProxyController {
 
     suspend fun handleServerConnected(request: ServerConnectedRequest)
 
-    suspend fun handleServerKick(request: ServerKickRequest)
+    /**
+     * Returns a new target the player shall be connected to or
+     * @throws NoLobbyServerFoundException if no lobby server was found
+     */
+    suspend fun handleServerKick(request: ServerKickRequest): ServerKickResponse
 
     class NoPermissionToJoinGroupException() : Exception("No Permission to join group")
 

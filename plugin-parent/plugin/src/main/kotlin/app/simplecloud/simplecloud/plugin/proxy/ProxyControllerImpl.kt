@@ -25,10 +25,7 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
-import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
+import app.simplecloud.simplecloud.plugin.proxy.request.*
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerDisconnectRequestHandler
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerPostLoginRequestHandler
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerServerConnectedRequestHandler
@@ -75,7 +72,12 @@ class ProxyControllerImpl(
         ).handle()
     }
 
-    override suspend fun handleServerKick(request: ServerKickRequest) {
-        TODO("Not yet implemented")
+    override suspend fun handleServerKick(request: ServerKickRequest): ServerKickResponse {
+        return PlayerServerKickRequestHandler(
+            request,
+            playerService,
+            processService,
+            processGroupService
+        ).handle()
     }
 }
