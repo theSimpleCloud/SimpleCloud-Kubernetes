@@ -18,7 +18,9 @@
 
 dependencies {
     api(project(":plugin-parent:bungeecord"))
+    api(project(":plugin-parent:velocity"))
     api(project(":plugin-parent:spigot"))
+    api(project(":plugin-parent:minestom"))
     api(project(":plugin-parent:plugin"))
 }
 

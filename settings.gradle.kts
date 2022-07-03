@@ -62,3 +62,7 @@ include("node:node-impl")
 findProject(":node:node-impl")?.name = "node-impl"
 include("node:node-test")
 findProject(":node:node-test")?.name = "node-test"
+include("plugin-parent:minestom")
+findProject(":plugin-parent:minestom")?.name = "minestom"
+include("plugin-parent:velocity")
+findProject(":plugin-parent:velocity")?.name = "velocity"
