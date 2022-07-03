@@ -81,7 +81,13 @@ class PlayerServerPreConnectRequestHandler(
     }
 
     private suspend fun findLobbyForPlayer(): ServerPreConnectResponse {
-        val lobbyProcessName = PlayerLobbyFinder(this.player, this.processService, this.groupService).findLobby()
+        val lobbyProcessName = PlayerLobbyFinder(
+            this.player,
+            this.processService,
+            this.groupService,
+            emptyList(),
+            emptyList()
+        ).findLobby()
         return ServerPreConnectResponse(lobbyProcessName)
     }
 

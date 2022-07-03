@@ -30,16 +30,17 @@ import app.simplecloud.simplecloud.plugin.util.PlayerProcessGroupJoinChecker
 class PlayerLobbyFinder(
     private val player: CloudPlayer,
     private val processService: CloudProcessService,
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
+    private val excludedGroups: List<String>,
+    private val excludedProcesses: List<String>,
 ) {
-
-    private val allGroups = this.groupService.findAll().join()
 
     suspend fun findLobby(): String {
         val groups = getLobbyGroupsThePlayerIsAllowedToJoinSorted()
         for (group in groups) {
             val processes = this.processService.findByGroup(group).await()
-            val notFullProcesses = processes.filterNot { it.isFull() }
+            val notExcludedProcesses = processes.filterNot { excludedProcesses.contains(it.getName()) }
+            val notFullProcesses = notExcludedProcesses.filterNot { it.isFull() }
             if (notFullProcesses.isEmpty()) continue
             return notFullProcesses.first().getName()
         }
@@ -47,16 +48,19 @@ class PlayerLobbyFinder(
     }
 
     private suspend fun getLobbyGroupsThePlayerIsAllowedToJoinSorted(): List<CloudLobbyGroup> {
-        val lobbyGroups = this.allGroups.filterIsInstance<CloudLobbyGroup>()
+        val lobbyGroups = getNotExcludedLobbyGroups()
         val notInMaintenanceGroups = lobbyGroups.filter { isPlayerAllowedToJoin(it) }
         return notInMaintenanceGroups.sortedByDescending { it.getLobbyPriority() }
+    }
+
+    private suspend fun getNotExcludedLobbyGroups(): List<CloudLobbyGroup> {
+        val allGroups = this.groupService.findAll().await().filterIsInstance<CloudLobbyGroup>()
+        return allGroups.filterNot { this.excludedGroups.contains(it.getName()) }
     }
 
     private suspend fun isPlayerAllowedToJoin(group: CloudProcessGroup): Boolean {
         return PlayerProcessGroupJoinChecker(this.player, group).isAllowedToJoin()
     }
-
-
 
 
 }

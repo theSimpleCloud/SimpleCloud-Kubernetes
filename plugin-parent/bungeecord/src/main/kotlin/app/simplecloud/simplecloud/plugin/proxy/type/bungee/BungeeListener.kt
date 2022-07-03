@@ -23,10 +23,12 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.md_5.bungee.api.ProxyServer
+import net.md_5.bungee.api.chat.BaseComponent
 import net.md_5.bungee.api.chat.TextComponent
 import net.md_5.bungee.api.connection.PendingConnection
 import net.md_5.bungee.api.event.*
@@ -89,6 +91,7 @@ class BungeeListener(
                 event.target = serverInfo
             }
         } catch (ex: ProxyController.NoLobbyServerFoundException) {
+            println("Connect: Found no Lobby-Server for player ${proxiedPlayer.name}")
             proxiedPlayer.disconnect(*TextComponent.fromLegacyText("§cNo fallback server found"))
             event.isCancelled = true
         } catch (ex: ProxyController.NoSuchProcessException) {
@@ -121,6 +124,31 @@ class BungeeListener(
         val proxiedPlayer = event.player
         CloudScope.launch {
             proxyController.handleDisconnect(proxiedPlayer.uniqueId)
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST)
+    fun handleKick(event: ServerKickEvent) {
+        val proxiedPlayer = event.player
+        val kickReasonString = getKickReasonFromComponent(event.kickReasonComponent)
+        val kickRequest = ServerKickRequest(proxiedPlayer.uniqueId, kickReasonString, event.kickedFrom.name)
+        runBlocking {
+            try {
+                val response = proxyController.handleServerKick(kickRequest)
+                event.cancelServer = proxyServer.getServerInfo(response.targetProcessName)
+                event.isCancelled = true
+            } catch (ex: ProxyController.NoLobbyServerFoundException) {
+                println("Kick: Found no Lobby-Server for player ${proxiedPlayer.name}")
+                proxiedPlayer.disconnect(*TextComponent.fromLegacyText("§cNo fallback server found"))
+            }
+        }
+    }
+
+    private fun getKickReasonFromComponent(kickReasonComponent: Array<BaseComponent>): String {
+        return if (kickReasonComponent.isEmpty()) {
+            ""
+        } else {
+            kickReasonComponent[0].toLegacyText()
         }
     }
 
