@@ -21,6 +21,8 @@ package app.simplecloud.simplecloud.node.player
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.exception.PlayerAlreadyRegisteredException
+import app.simplecloud.simplecloud.api.internal.exception.UnknownProxyProcessException
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
@@ -142,12 +144,6 @@ class CloudPlayerLoginHandler(
     private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
         return this.databasePlayerRepository.find(this.configuration.connectionConfiguration.uniqueId).await()
     }
-
-    class UnknownProxyProcessException(name: String) : Exception("Unknown Proxy: $name")
-
-    class PlayerAlreadyRegisteredException(
-        configuration: PlayerLoginConfiguration
-    ) : Exception("Player ${configuration.connectionConfiguration.name} (${configuration.connectionConfiguration.uniqueId}) is already registered")
 
     companion object {
         private val logger = LogManager.getLogger(CloudPlayerLoginHandler::class.java)

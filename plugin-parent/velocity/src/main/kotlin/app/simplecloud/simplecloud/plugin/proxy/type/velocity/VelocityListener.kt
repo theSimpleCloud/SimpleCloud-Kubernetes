@@ -5,20 +5,25 @@ import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConf
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerConnectedRequest
+import app.simplecloud.simplecloud.plugin.proxy.request.ServerKickRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
+import com.velocitypowered.api.event.Continuation
 import com.velocitypowered.api.event.PostOrder
 import com.velocitypowered.api.event.Subscribe
 import com.velocitypowered.api.event.connection.DisconnectEvent
 import com.velocitypowered.api.event.connection.LoginEvent
 import com.velocitypowered.api.event.connection.PostLoginEvent
+import com.velocitypowered.api.event.player.KickedFromServerEvent
+import com.velocitypowered.api.event.player.PlayerChooseInitialServerEvent
 import com.velocitypowered.api.event.player.ServerConnectedEvent
-import com.velocitypowered.api.event.player.ServerPostConnectEvent
 import com.velocitypowered.api.event.player.ServerPreConnectEvent
 import com.velocitypowered.api.proxy.Player
 import com.velocitypowered.api.proxy.ProxyServer
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.TextComponent
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,23 +36,30 @@ class VelocityListener(
     private val proxyServer: ProxyServer
 ) {
 
-    @Subscribe(order = PostOrder.EARLY, async = true)
-    fun handleJoin(event: LoginEvent) {
+    @Subscribe(order = PostOrder.EARLY)
+    fun handleJoin(event: LoginEvent, continuation: Continuation) {
         if (!event.result.isAllowed) return
         val player = event.player
         val configuration = createConnectionConfiguration(player)
-        CloudScope.launch {
+        val loginJob = CloudScope.launch {
             proxyController.handleLogin(configuration)
         }
+        handJobCompletionToContinuation(loginJob, continuation)
     }
 
     @Subscribe(order = PostOrder.EARLY)
-    fun handlePostLogin(event: PostLoginEvent) {
+    fun handlePostLogin(event: PostLoginEvent, continuation: Continuation) {
         val player = event.player
         val configuration = createConnectionConfiguration(player)
-        CloudScope.launch {
+        val postLoginJob = CloudScope.launch {
             proxyController.handlePostLogin(configuration)
         }
+        handJobCompletionToContinuation(postLoginJob, continuation)
+    }
+
+    @Subscribe(order = PostOrder.EARLY)
+    fun handleChooseInitialServer(event: PlayerChooseInitialServerEvent) {
+        event.setInitialServer(this.proxyServer.getServer("fallback").get())
     }
 
     @Subscribe(order = PostOrder.EARLY)
@@ -55,7 +67,7 @@ class VelocityListener(
         if (!event.result.isAllowed || !event.result.server.isPresent) return
         val player = event.player
         val configuration = createConnectionConfiguration(player)
-        val currentServerName: String? = player.currentServer?.orElseGet(null)?.serverInfo?.name
+        val currentServerName: String? = player.currentServer?.orElse(null)?.serverInfo?.name
         try {
             runBlocking {
                 val response = proxyController.handleServerPreConnect(
@@ -65,7 +77,7 @@ class VelocityListener(
                         event.result.server.get().serverInfo.name
                     )
                 )
-                val serverInfo = proxyServer.getServer(response.targetProcessName).orElseGet(null) ?: return@runBlocking
+                val serverInfo = proxyServer.getServer(response.targetProcessName).orElse(null) ?: return@runBlocking
                 event.result = ServerPreConnectEvent.ServerResult.allowed(serverInfo)
             }
         } catch (ex: ProxyController.NoLobbyServerFoundException) {
@@ -104,6 +116,40 @@ class VelocityListener(
         }
     }
 
+    @Subscribe(order = PostOrder.LAST)
+    fun handleKick(event: KickedFromServerEvent) {
+        val player = event.player
+
+        val kickReasonString: String = getKickMessage(event)
+        val kickRequest = ServerKickRequest(player.uniqueId, kickReasonString, event.server.serverInfo.name)
+        runBlocking {
+            try {
+                val response = proxyController.handleServerKick(kickRequest)
+                val serverInfo = proxyServer.getServer(response.targetProcessName).orElse(null) ?: return@runBlocking
+                event.result = KickedFromServerEvent.RedirectPlayer.create(serverInfo)
+            } catch (ex: ProxyController.NoLobbyServerFoundException) {
+                event.result =
+                    KickedFromServerEvent.DisconnectPlayer.create(Component.text("§cNo fallback server found"))
+            }
+        }
+    }
+
+    private fun getKickMessage(
+        event: KickedFromServerEvent
+    ): String {
+        val kickReasonComponent = event.serverKickReason
+        return if (!kickReasonComponent.isPresent) {
+            ""
+        } else {
+            val component = kickReasonComponent.get()
+            if (component is TextComponent) {
+                component.content()
+            } else {
+                "§cYou were kicked from the server"
+            }
+        }
+    }
+
     private fun createConnectionConfiguration(connection: Player): PlayerConnectionConfiguration {
         val socketAddress = connection.remoteAddress
         return PlayerConnectionConfiguration(
@@ -113,6 +159,13 @@ class VelocityListener(
             Address(socketAddress.hostString, socketAddress.port),
             connection.isOnlineMode
         )
+    }
+
+    private fun handJobCompletionToContinuation(job: Job, continuation: Continuation) {
+        job.invokeOnCompletion { cause ->
+            if (cause === null) continuation.resume()
+            else continuation.resumeWithException(cause)
+        }
     }
 
 }
