@@ -20,11 +20,12 @@ package app.simplecloud.simplecloud.node.api.player
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.exception.PlayerAlreadyRegisteredException
+import app.simplecloud.simplecloud.api.internal.exception.UnknownProxyProcessException
 import app.simplecloud.simplecloud.api.permission.Permissions
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
-import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginJoinPermissionChecker
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -40,7 +41,7 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
 
     @Test
     fun playerLoginOnUnregisteredGroup_willThrow() {
-        Assertions.assertThrows(CloudPlayerLoginHandler.UnknownProxyProcessException::class.java) {
+        Assertions.assertThrows(UnknownProxyProcessException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
     }
@@ -48,7 +49,7 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
     @Test
     fun playerLoginOnUnregisteredProcess_willThrow() {
         givenProxyGroup("Proxy", 20, false, null)
-        Assertions.assertThrows(CloudPlayerLoginHandler.UnknownProxyProcessException::class.java) {
+        Assertions.assertThrows(UnknownProxyProcessException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
     }
@@ -134,7 +135,7 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
         givenProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()
 
-        Assertions.assertThrows(CloudPlayerLoginHandler.PlayerAlreadyRegisteredException::class.java) {
+        Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
 
