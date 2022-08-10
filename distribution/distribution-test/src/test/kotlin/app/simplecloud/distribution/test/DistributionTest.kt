@@ -126,4 +126,12 @@ class DistributionTest {
         assertEquals(2, server2.getServers().size)
     }
 
+    @Test
+    fun serverLeaveCluster_serverWillBeGone() {
+        val server = this.factory.createServer(1630, emptyList())
+        val server2 = this.factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        server.shutdown()
+        assertEquals(1, server2.getServers().size)
+    }
+
 }

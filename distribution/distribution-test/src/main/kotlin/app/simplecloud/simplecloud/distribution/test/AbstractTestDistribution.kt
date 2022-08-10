@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.distribution.test
 
 import app.simplecloud.simplecloud.distribution.api.*
-import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Date: 08.04.22
@@ -29,12 +28,10 @@ import java.util.concurrent.CopyOnWriteArrayList
  */
 abstract class AbstractTestDistribution : Distribution {
 
-    protected val servers = CopyOnWriteArrayList<ServerComponent>()
-
     abstract val messageManager: TestMessageManager
 
     override fun getServers(): List<ServerComponent> {
-        return this.servers
+        return getVirtualCluster().getServerComponents()
     }
 
     override fun getMessageManager(): MessageManager {
@@ -46,10 +43,19 @@ abstract class AbstractTestDistribution : Distribution {
     }
 
     open fun onComponentJoin(component: DistributionComponent) {
-        if (component is ServerComponent) {
-            if (!this.servers.contains(component))
-                this.servers.add(component)
-        }
+
+    }
+
+    open fun onComponentLeave(component: DistributionComponent) {
+
+    }
+
+    override fun getScheduler(name: String): ScheduledExecutorService {
+        return getVirtualCluster().getScheduler(name)
+    }
+
+    override fun shutdown() {
+        getVirtualCluster().removeComponent(this)
     }
 
     abstract fun getVirtualCluster(): VirtualCluster

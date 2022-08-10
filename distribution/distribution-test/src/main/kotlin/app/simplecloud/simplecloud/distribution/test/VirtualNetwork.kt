@@ -55,8 +55,7 @@ object VirtualNetwork {
 
     fun connectClient(client: TestClientDistributionImpl, port: Int): VirtualCluster {
         val cluster = findVirtualClusterByPort(port) ?: throw ConnectException("No Server is running at port $port")
-        val server = cluster.getServerByPort(port)!!
-        cluster.addClient(client, server)
+        cluster.addClient(client)
         return cluster
     }
 

@@ -18,10 +18,7 @@
 
 package app.simplecloud.simplecloud.distribution.hazelcast
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.distribution.api.MessageManager
-import app.simplecloud.simplecloud.distribution.api.ServerComponent
+import app.simplecloud.simplecloud.distribution.api.*
 import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.core.HazelcastInstance
 
@@ -45,6 +42,10 @@ abstract class AbstractHazelCastDistribution : Distribution {
 
     override fun getMessageManager(): MessageManager {
         return HazelCastMessageManager(getSelfComponent(), getHazelCastInstance())
+    }
+
+    override fun getScheduler(name: String): ScheduledExecutorService {
+        TODO()
     }
 
 }

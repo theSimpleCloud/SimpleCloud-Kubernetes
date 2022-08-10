@@ -21,9 +21,9 @@ package app.simplecloud.simplecloud.distribution.test
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.ClientComponent
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
+import app.simplecloud.simplecloud.distribution.api.ServerComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import java.util.*
-import java.util.concurrent.CopyOnWriteArrayList
 
 class TestServerDistributionImpl(
     val port: Int,
@@ -32,36 +32,24 @@ class TestServerDistributionImpl(
 
     private val selfComponent = ServerComponentImpl(UUID.randomUUID())
 
-    private val connectedClients = CopyOnWriteArrayList<ClientComponent>()
-
     private val virtualCluster = VirtualNetwork.registerServer(this, addresses.map { it.port })
 
     override val messageManager: TestMessageManager = TestMessageManager(this.selfComponent, this.virtualCluster)
 
-    init {
-        this.servers.add(this.selfComponent)
-    }
-
-    override fun getSelfComponent(): DistributionComponent {
+    override fun getSelfComponent(): ServerComponent {
         return this.selfComponent
     }
 
     override fun getConnectedClients(): List<ClientComponent> {
-        return this.connectedClients
+        return this.virtualCluster.getClientComponents()
     }
 
     override fun getVirtualCluster(): VirtualCluster {
         return this.virtualCluster
     }
 
-    override fun shutdown() {
-
-    }
-
     override fun onComponentJoin(component: DistributionComponent) {
-        super.onComponentJoin(component)
-        if (component is ClientComponent)
-            this.connectedClients.add(component)
+
     }
 
 }

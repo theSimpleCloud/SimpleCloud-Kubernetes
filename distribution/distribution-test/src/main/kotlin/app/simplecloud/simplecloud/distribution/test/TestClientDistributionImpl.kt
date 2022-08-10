@@ -20,7 +20,6 @@ package app.simplecloud.simplecloud.distribution.test
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.ClientComponent
-import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
 import java.util.*
 
@@ -34,7 +33,7 @@ class TestClientDistributionImpl(
 
     override val messageManager: TestMessageManager = TestMessageManager(this.selfComponent, this.virtualCluster)
 
-    override fun getSelfComponent(): DistributionComponent {
+    override fun getSelfComponent(): ClientComponent {
         return this.selfComponent
     }
 
@@ -44,10 +43,6 @@ class TestClientDistributionImpl(
 
     override fun getVirtualCluster(): VirtualCluster {
         return this.virtualCluster
-    }
-
-    override fun shutdown() {
-
     }
 
 }

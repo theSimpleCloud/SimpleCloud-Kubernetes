@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.distribution.test
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.distribution.api.DistributionComponent
+import app.simplecloud.simplecloud.distribution.api.*
+import app.simplecloud.simplecloud.distribution.test.scheduler.TestThreadScheduledExecutorService
 import com.google.common.collect.Maps
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -38,8 +38,18 @@ class VirtualCluster(
 
     private val cacheNameToCache = Maps.newConcurrentMap<String, Cache<*, *>>()
 
+    private val nameToScheduler = Maps.newConcurrentMap<String, ScheduledExecutorService>()
+
     init {
         this.servers.add(initialServer)
+    }
+
+    fun getServerComponents(): List<ServerComponent> {
+        return this.servers.map { it.getSelfComponent() }
+    }
+
+    fun getClientComponents(): List<ClientComponent> {
+        return this.clients.map { it.getSelfComponent() }
     }
 
     fun addServer(server: TestServerDistributionImpl) {
@@ -47,10 +57,44 @@ class VirtualCluster(
         onServerJoin(server)
     }
 
-    fun addClient(client: TestClientDistributionImpl, server: TestServerDistributionImpl) {
+    fun addClient(client: TestClientDistributionImpl) {
         this.clients.add(client)
-        server.onComponentJoin(client.getSelfComponent())
-        this.servers.forEach { client.onComponentJoin(it.getSelfComponent()) }
+        this.servers.forEach {
+            client.onComponentJoin(it.getSelfComponent())
+            it.onComponentJoin(client.getSelfComponent())
+        }
+    }
+
+    fun removeComponent(component: AbstractTestDistribution) {
+        if (component is TestClientDistributionImpl) {
+            removeClient(component)
+        } else {
+            removeServer(component as TestServerDistributionImpl)
+        }
+    }
+
+    private fun removeServer(component: TestServerDistributionImpl) {
+        getAllDistributions().forEach {
+            component.onComponentLeave(it.getSelfComponent())
+            it.onComponentLeave(component.getSelfComponent())
+        }
+        this.servers.remove(component)
+        if (this.servers.isEmpty()) {
+            shutdownCluster()
+        }
+    }
+
+    private fun shutdownCluster() {
+        this.clients.forEach { it.shutdown() }
+        this.nameToScheduler.values.forEach { it.shutdown() }
+    }
+
+    private fun removeClient(component: TestClientDistributionImpl) {
+        this.servers.forEach {
+            component.onComponentLeave(it.getSelfComponent())
+            it.onComponentLeave(component.getSelfComponent())
+        }
+        this.clients.remove(component)
     }
 
     private fun onServerJoin(joiningDistribution: AbstractTestDistribution) {
@@ -85,6 +129,15 @@ class VirtualCluster(
 
     fun getServerByPort(port: Int): TestServerDistributionImpl? {
         return this.servers.firstOrNull { it.port == port }
+    }
+
+    fun getScheduler(name: String): ScheduledExecutorService {
+        if (this.nameToScheduler.containsKey(name)) {
+            return this.nameToScheduler[name]!!
+        }
+        val scheduler = TestThreadScheduledExecutorService()
+        this.nameToScheduler[name] = scheduler
+        return scheduler
     }
 
 
