@@ -19,40 +19,11 @@
 package app.simplecloud.simplecloud.distribution.api
 
 /**
- * Date: 03.04.22
- * Time: 15:25
+ * Date: 05.08.22
+ * Time: 18:22
  * @author Frederick Baier
  *
  */
-interface Distribution {
-
-    /**
-     * Returns the self component
-     * [ClientComponent] if this is a client
-     * [ServerComponent] if this is a server
-     */
-    fun getSelfComponent(): DistributionComponent
-
-    /**
-     * Returns all servers currently connected to the cluster
-     */
-    fun getServers(): List<ServerComponent>
-
-    /**
-     * Returns the clients currently connected to this server
-     * If this is not a server the list will be empty
-     */
-    fun getConnectedClients(): List<ClientComponent>
-
-    /**
-     * Creates a distributed key value store
-     */
-    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
-
-    fun getMessageManager(): MessageManager
-
-    fun getScheduler(name: String): ScheduledExecutorService
-
-    fun shutdown()
+interface ScheduledTask {
 
 }
