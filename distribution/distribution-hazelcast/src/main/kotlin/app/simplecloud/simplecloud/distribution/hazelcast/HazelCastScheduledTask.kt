@@ -16,25 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.api
+package app.simplecloud.simplecloud.distribution.hazelcast
 
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
+import app.simplecloud.simplecloud.distribution.api.ScheduledTask
+import com.hazelcast.scheduledexecutor.IScheduledFuture
 
 /**
- * Date: 05.08.22
- * Time: 09:49
+ * Date: 10.08.22
+ * Time: 09:19
  * @author Frederick Baier
  *
  */
-interface ScheduledExecutorService {
-
-    fun scheduleAtFixedRate(runnable: Runnable, initialDelay: Int, period: Int, timeUnit: TimeUnit): ScheduledTask
-
-    fun cancelTask(scheduledTask: ScheduledTask)
-
-    fun getScheduledTasks(): CompletableFuture<List<ScheduledTask>>
-
-    fun shutdown()
-
+class HazelCastScheduledTask(
+    val future: IScheduledFuture<*>,
+) : ScheduledTask {
 }

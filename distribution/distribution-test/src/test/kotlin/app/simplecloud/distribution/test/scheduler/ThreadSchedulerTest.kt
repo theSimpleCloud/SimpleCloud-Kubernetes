@@ -18,7 +18,10 @@
 
 package app.simplecloud.distribution.test.scheduler
 
+import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.distribution.test.VirtualNetwork
 import app.simplecloud.simplecloud.distribution.test.scheduler.TestThreadScheduledExecutorService
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -32,12 +35,20 @@ import java.util.concurrent.TimeUnit
  */
 class ThreadSchedulerTest {
 
-    private var scheduler: TestThreadScheduledExecutorService = TestThreadScheduledExecutorService()
+    private val distributionFactory = TestDistributionFactoryImpl()
+    private var scheduler: TestThreadScheduledExecutorService =
+        TestThreadScheduledExecutorService(this.distributionFactory.createServer(1630, emptyList()))
 
 
     @BeforeEach
     fun setUp() {
-        this.scheduler = TestThreadScheduledExecutorService()
+        val distribution = this.distributionFactory.createServer(1631, emptyList())
+        this.scheduler = TestThreadScheduledExecutorService(distribution)
+    }
+
+    @AfterEach
+    fun tearDown() {
+        VirtualNetwork.reset()
     }
 
     @Test
@@ -63,7 +74,7 @@ class ThreadSchedulerTest {
         val countingRunnable = CountingRunnable()
         val scheduledTask = scheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
         Thread.sleep(1_010)
-        scheduler.removeTask(scheduledTask)
+        scheduler.cancelTask(scheduledTask)
         Thread.sleep(1_010)
         Assertions.assertEquals(1, countingRunnable.count)
     }

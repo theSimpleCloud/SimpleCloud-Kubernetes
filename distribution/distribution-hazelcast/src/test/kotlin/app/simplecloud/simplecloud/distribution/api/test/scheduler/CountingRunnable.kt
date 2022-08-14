@@ -16,44 +16,46 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.distribution.test.scheduler
+package app.simplecloud.simplecloud.distribution.api.test.scheduler
 
+import app.simplecloud.simplecloud.distribution.api.Cache
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import java.util.concurrent.TimeUnit
 
 /**
- * Date: 05.08.22
- * Time: 09:58
+ * Date: 06.08.22
+ * Time: 09:14
  * @author Frederick Baier
  *
  */
-class FixedRateRepeatingTask(
-    val runnable: Runnable,
-    initialDelay: Int,
-    val period: Int,
-    val timeUnit: TimeUnit,
-    initialCurrentTime: Long,
-) : InternalScheduledTask {
+class CountingRunnable() : Runnable, java.io.Serializable, DistributionAware {
 
-    @Volatile
-    private var nextExecutionTimeStamp = initialCurrentTime + this.timeUnit.toMillis(initialDelay.toLong())
+    @Transient
+    private var distribution: Distribution? = null
 
-    override fun executeTask() {
-        runnable.run()
+    @Transient
+    private var cache: Cache<Int, Int>? = null
+
+    override fun run() {
+        val cache = cache!!
+        if (cache.isEmpty()) {
+            cache[0] = 1
+        }
+        cache[0] = cache[0]!! + 1
+        println("Scheduler tick " + distribution?.getSelfComponent()?.getDistributionId() + " " + cache[0])
     }
 
-    override fun recalculateNextExecutionTimeStamp(currentTime: Long) {
-        this.nextExecutionTimeStamp = currentTime + this.timeUnit.toMillis(this.period.toLong())
+    override fun setDistribution(distribution: Distribution) {
+        this.distribution = distribution
+        val cache = distribution.getOrCreateCache<Int, Int>("test")
+        this.cache = cache
     }
 
-    override fun getNextExecutionTimeStamp(): Long {
-        return this.nextExecutionTimeStamp
-    }
-
-    override fun updateDistribution(distribution: Distribution) {
-        if (runnable is DistributionAware) {
-            runnable.setDistribution(distribution)
+    fun getCount(): Int {
+        try {
+            return this.cache!![0] ?: 0
+        } catch (e: Exception) {
+            return 0
         }
     }
 

@@ -127,4 +127,13 @@ class DistributionTest {
         assertEquals(2, server2!!.getServers().size)
     }
 
+    @Test
+    fun twoServers_ShutdownSecond_FirstWillContinue() {
+        this.server = factory.createServer(1630, emptyList())
+        this.server2 = factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
+        this.server2!!.shutdown()
+        Thread.sleep(1000)
+        assertEquals(1, this.server!!.getServers().size)
+    }
+
 }

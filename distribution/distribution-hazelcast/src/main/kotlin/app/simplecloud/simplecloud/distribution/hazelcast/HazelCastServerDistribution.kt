@@ -20,16 +20,18 @@ package app.simplecloud.simplecloud.distribution.hazelcast
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.ClientComponent
+import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl
 import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.config.Config
+import com.hazelcast.config.SerializerConfig
 import com.hazelcast.core.Hazelcast
 import com.hazelcast.core.HazelcastInstance
 
 class HazelCastServerDistribution(
     private val bindPort: Int,
-    private val connectAddresses: List<Address>
+    private val connectAddresses: List<Address>,
 ) : AbstractHazelCastDistribution() {
 
     private val hazelCast: HazelcastInstance = createHazelCastInstance()
@@ -48,6 +50,11 @@ class HazelCastServerDistribution(
         for (address in connectAddresses) {
             config.networkConfig.join.tcpIpConfig.addMember(address.asIpString())
         }
+
+        val serializerConfig = SerializerConfig()
+            .setImplementation(DistributionAwareSerializer(this))
+            .setTypeClass(DistributionAware::class.java)
+        config.serializationConfig.addSerializerConfig(serializerConfig)
         return Hazelcast.newHazelcastInstance(config)
     }
 

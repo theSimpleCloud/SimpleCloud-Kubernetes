@@ -18,23 +18,17 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
-import java.util.concurrent.CompletableFuture
-import java.util.concurrent.TimeUnit
-
 /**
- * Date: 05.08.22
- * Time: 09:49
+ * Date: 14.08.22
+ * Time: 08:17
  * @author Frederick Baier
  *
+ * Used to get the distribution instance when submitting a Runnable using Distribution ExecutorServices.
+ * Before executing the Runnable the [setDistribution] method will be invoked with distribution executing the Runnable.
+ * Note that the filed the distribution gets saved in must be annotated with "transient"
  */
-interface ScheduledExecutorService {
+interface DistributionAware {
 
-    fun scheduleAtFixedRate(runnable: Runnable, initialDelay: Int, period: Int, timeUnit: TimeUnit): ScheduledTask
-
-    fun cancelTask(scheduledTask: ScheduledTask)
-
-    fun getScheduledTasks(): CompletableFuture<List<ScheduledTask>>
-
-    fun shutdown()
+    fun setDistribution(distribution: Distribution)
 
 }

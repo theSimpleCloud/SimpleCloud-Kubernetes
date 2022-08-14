@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.distribution.test.scheduler
 
 import app.simplecloud.simplecloud.distribution.api.ScheduledExecutorService
 import app.simplecloud.simplecloud.distribution.api.ScheduledTask
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArrayList
 import java.util.concurrent.TimeUnit
 
@@ -41,7 +42,7 @@ open class TestManualScheduledExecutorService(
         return testScheduledTask
     }
 
-    override fun removeTask(scheduledTask: ScheduledTask) {
+    override fun cancelTask(scheduledTask: ScheduledTask) {
         this.tasks.remove(scheduledTask)
     }
 
@@ -66,8 +67,8 @@ open class TestManualScheduledExecutorService(
         this.time.skip(amount, timeUnit)
     }
 
-    override fun getScheduledTasks(): List<ScheduledTask> {
-        return this.tasks
+    override fun getScheduledTasks(): CompletableFuture<List<ScheduledTask>> {
+        return CompletableFuture.completedFuture(this.tasks)
     }
 
 }

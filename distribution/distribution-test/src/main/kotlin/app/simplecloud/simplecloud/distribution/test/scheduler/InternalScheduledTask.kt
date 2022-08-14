@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.distribution.test.scheduler
 
+import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.ScheduledTask
 
 /**
@@ -42,5 +43,10 @@ interface InternalScheduledTask : ScheduledTask {
      * Returns the next execution timestamp
      */
     fun getNextExecutionTimeStamp(): Long
+
+    /**
+     * Updates the distribution for the executing runnable
+     */
+    fun updateDistribution(distribution: Distribution)
 
 }

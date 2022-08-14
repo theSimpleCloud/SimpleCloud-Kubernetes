@@ -45,7 +45,7 @@ abstract class AbstractHazelCastDistribution : Distribution {
     }
 
     override fun getScheduler(name: String): ScheduledExecutorService {
-        TODO()
+        return HazelCastScheduledExecutorService(name, getHazelCastInstance(), this)
     }
 
 }

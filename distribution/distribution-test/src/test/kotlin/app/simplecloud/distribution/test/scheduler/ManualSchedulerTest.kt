@@ -112,7 +112,7 @@ class ManualSchedulerTest {
         val runnable = CountingRunnable()
         val scheduledTask = scheduler.scheduleAtFixedRate(runnable, 0, 1, TimeUnit.SECONDS)
         scheduler.executeTick()
-        scheduler.removeTask(scheduledTask)
+        scheduler.cancelTask(scheduledTask)
         scheduler.skip(1, TimeUnit.SECONDS)
         scheduler.executeTick()
         Assertions.assertEquals(1, runnable.count)
@@ -121,22 +121,22 @@ class ManualSchedulerTest {
     @Test
     fun afterTaskScheduled_TaskWillBeRegistered() {
         this.scheduler.scheduleAtFixedRate(CountingRunnable(), 1, 1, TimeUnit.SECONDS)
-        Assertions.assertEquals(1, this.scheduler.getScheduledTasks().size)
+        Assertions.assertEquals(1, this.scheduler.getScheduledTasks().join().size)
     }
 
     @Test
     fun afterTaskScheduled_TaskWillBeRegistered_2() {
         this.scheduler.scheduleAtFixedRate(CountingRunnable(), 1, 1, TimeUnit.SECONDS)
         this.scheduler.scheduleAtFixedRate(CountingRunnable(), 1, 1, TimeUnit.SECONDS)
-        Assertions.assertEquals(2, this.scheduler.getScheduledTasks().size)
+        Assertions.assertEquals(2, this.scheduler.getScheduledTasks().join().size)
     }
 
     @Test
     fun registerTwoTasks_unregisterOne_OneTaskWillBeRegistered() {
         this.scheduler.scheduleAtFixedRate(CountingRunnable(), 1, 1, TimeUnit.SECONDS)
         val task = this.scheduler.scheduleAtFixedRate(CountingRunnable(), 1, 1, TimeUnit.SECONDS)
-        this.scheduler.removeTask(task)
-        Assertions.assertEquals(1, this.scheduler.getScheduledTasks().size)
+        this.scheduler.cancelTask(task)
+        Assertions.assertEquals(1, this.scheduler.getScheduledTasks().join().size)
     }
 
 }

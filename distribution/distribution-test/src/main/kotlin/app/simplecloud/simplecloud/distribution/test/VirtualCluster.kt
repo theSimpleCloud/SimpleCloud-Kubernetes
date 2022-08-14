@@ -30,7 +30,7 @@ import java.util.concurrent.CopyOnWriteArrayList
  *
  */
 class VirtualCluster(
-    initialServer: TestServerDistributionImpl
+    initialServer: TestServerDistributionImpl,
 ) {
 
     private val servers = CopyOnWriteArrayList<TestServerDistributionImpl>()
@@ -81,6 +81,17 @@ class VirtualCluster(
         this.servers.remove(component)
         if (this.servers.isEmpty()) {
             shutdownCluster()
+        } else {
+            updateSchedulerDistributions()
+        }
+    }
+
+    private fun updateSchedulerDistributions() {
+        for (scheduler in this.nameToScheduler.values) {
+            if (scheduler !is TestThreadScheduledExecutorService) {
+                return
+            }
+            scheduler.setDistribution(this.servers.first())
         }
     }
 
@@ -135,7 +146,7 @@ class VirtualCluster(
         if (this.nameToScheduler.containsKey(name)) {
             return this.nameToScheduler[name]!!
         }
-        val scheduler = TestThreadScheduledExecutorService()
+        val scheduler = TestThreadScheduledExecutorService(this.servers.first())
         this.nameToScheduler[name] = scheduler
         return scheduler
     }

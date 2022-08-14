@@ -16,28 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.distribution.test.scheduler
+package app.simplecloud.simplecloud.distribution.api.test
 
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
-import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
-import app.simplecloud.simplecloud.distribution.test.VirtualNetwork
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import java.io.Serializable
+import app.simplecloud.simplecloud.distribution.api.test.scheduler.CountingRunnable
+import app.simplecloud.simplecloud.distribution.hazelcast.HazelcastDistributionFactory
+import org.junit.jupiter.api.*
 import java.util.concurrent.TimeUnit
 
 /**
- * Date: 03.08.22
- * Time: 21:13
+ * Date: 10.08.22
+ * Time: 09:30
  * @author Frederick Baier
  *
  */
-class DistributionScheduleExecutorServiceTest {
+@Disabled
+class DistributionSchedulerTest {
 
     private lateinit var factory: DistributionFactory
 
@@ -46,14 +42,15 @@ class DistributionScheduleExecutorServiceTest {
 
     @BeforeEach
     fun setUp() {
-        this.factory = TestDistributionFactoryImpl()
+        this.factory = HazelcastDistributionFactory()
         this.server = this.factory.createServer(1630, emptyList())
         this.client = this.factory.createClient(Address("127.0.0.1", 1630))
     }
 
     @AfterEach
     fun tearDown() {
-        VirtualNetwork.reset()
+        this.server!!.shutdown()
+        this.client!!.shutdown()
     }
 
     @Test
@@ -67,14 +64,17 @@ class DistributionScheduleExecutorServiceTest {
 
     @Test
     fun taskStartedOnServer_unregisterOnClient_willBeGoneInClientAndServer() {
+        val server2 = this.factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
         val scheduler = this.server!!.getScheduler("test")
         val countingRunnable = CountingRunnable()
         scheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
-        val clientScheduler = this.client!!.getScheduler("test")
+        val clientScheduler = server2.getScheduler("test")
         val task = clientScheduler.getScheduledTasks().join()[0]
         clientScheduler.cancelTask(task)
         Assertions.assertEquals(0, clientScheduler.getScheduledTasks().join().size)
         Assertions.assertEquals(0, scheduler.getScheduledTasks().join().size)
+
+        server2.shutdown()
     }
 
     @Test
@@ -84,7 +84,8 @@ class DistributionScheduleExecutorServiceTest {
         val task = clientScheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
         this.client!!.shutdown()
         Thread.sleep(1_010)
-        Assertions.assertEquals(1, countingRunnable.count)
+        val scheduledTasks = this.server!!.getScheduler("test").getScheduledTasks().join()
+        Assertions.assertEquals(1, scheduledTasks.size)
     }
 
     @Test
@@ -94,7 +95,7 @@ class DistributionScheduleExecutorServiceTest {
         serverScheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
         serverScheduler.shutdown()
         Thread.sleep(1_010)
-        Assertions.assertEquals(0, countingRunnable.count)
+        Assertions.assertEquals(0, countingRunnable.getCount())
     }
 
     @Test
@@ -104,18 +105,22 @@ class DistributionScheduleExecutorServiceTest {
         serverScheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
         this.server!!.shutdown()
         Thread.sleep(1_010)
-        Assertions.assertEquals(0, countingRunnable.count)
+        Assertions.assertEquals(0, countingRunnable.getCount())
     }
 
     @Test
     fun oneServerShutdown_OneStillRunning_SchedulersWillNotShutdown() {
         val server2 = this.factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
-        val serverScheduler = this.server!!.getScheduler("test")
+        println(server2.getServers().map { it.getDistributionId() })
+        val serverScheduler = server2.getScheduler("test")
         val countingRunnable = CountingRunnable()
         val task = serverScheduler.scheduleAtFixedRate(countingRunnable, 1, 1, TimeUnit.SECONDS)
+        Thread.sleep(2_000)
         this.server!!.shutdown()
-        Thread.sleep(1_010)
-        Assertions.assertEquals(1, countingRunnable.count)
+        val scheduler = server2.getScheduler("test")
+        Thread.sleep(6_000) //hazelcast needs about 6 seconds to migrate
+        val size = scheduler.getScheduledTasks().join().size
+        Assertions.assertEquals(1, size)
     }
 
     @Test
@@ -127,43 +132,7 @@ class DistributionScheduleExecutorServiceTest {
         this.server!!.shutdown()
         server2.shutdown()
         Thread.sleep(1_010)
-        Assertions.assertEquals(0, countingRunnable.count)
-    }
-
-    @Test
-    fun scheduleDistributionAwareRunnable_distributionWillBeSet() {
-        val serverScheduler = this.server!!.getScheduler("test")
-        val runnable = DistributionAwareRunnable()
-        serverScheduler.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.SECONDS)
-        Assertions.assertNotNull(runnable.distribution)
-    }
-
-    @Test
-    fun scheduleDistributionAwareRunnable_() {
-        val server2 = this.factory.createServer(1631, listOf(Address("127.0.0.1", 1630)))
-        val serverScheduler = this.server!!.getScheduler("test")
-        val runnable = DistributionAwareRunnable()
-        serverScheduler.scheduleAtFixedRate(runnable, 1, 1, TimeUnit.SECONDS)
-        val prevDistribution = runnable.distribution
-        this.server!!.shutdown()
-        Assertions.assertNotEquals(prevDistribution, runnable.distribution)
-        server2.shutdown()
-    }
-
-    class DistributionAwareRunnable() : Runnable, Serializable, DistributionAware {
-
-        @Transient
-        var distribution: Distribution? = null
-            private set
-
-        override fun run() {
-
-        }
-
-        override fun setDistribution(distribution: Distribution) {
-            this.distribution = distribution
-        }
-
+        Assertions.assertEquals(0, countingRunnable.getCount())
     }
 
 }

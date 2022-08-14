@@ -18,8 +18,11 @@
 
 package app.simplecloud.simplecloud.distribution.test.scheduler
 
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.distribution.api.ScheduledExecutorService
 import app.simplecloud.simplecloud.distribution.api.ScheduledTask
+import java.util.concurrent.CompletableFuture
 import java.util.concurrent.PriorityBlockingQueue
 import java.util.concurrent.TimeUnit
 import java.util.concurrent.locks.ReentrantLock
@@ -32,7 +35,10 @@ import kotlin.concurrent.withLock
  * @author Frederick Baier
  *
  */
-class TestThreadScheduledExecutorService : ScheduledExecutorService {
+class TestThreadScheduledExecutorService(
+    @Volatile
+    private var distribution: Distribution,
+) : ScheduledExecutorService {
 
     private val time = Time()
     private val manualScheduler = TestManualScheduledExecutorService(time)
@@ -46,6 +52,17 @@ class TestThreadScheduledExecutorService : ScheduledExecutorService {
 
     init {
         this.thread = startThread()
+    }
+
+    fun setDistribution(distribution: Distribution) {
+        this.distribution = distribution
+        val scheduledTasks = getScheduledTasks().join()
+        for (scheduledTask in scheduledTasks) {
+            //update distribution
+            if (scheduledTask is InternalScheduledTask) {
+                scheduledTask.updateDistribution(distribution)
+            }
+        }
     }
 
     private fun startThread(): Thread {
@@ -102,6 +119,9 @@ class TestThreadScheduledExecutorService : ScheduledExecutorService {
         period: Int,
         timeUnit: TimeUnit,
     ): InternalScheduledTask {
+        if (runnable is DistributionAware) {
+            runnable.setDistribution(this.distribution)
+        }
         val task = this.manualScheduler.scheduleAtFixedRate(runnable, initialDelay, period, timeUnit)
         this.priorityQueue.add(task)
         this.lock.withLock {
@@ -111,8 +131,8 @@ class TestThreadScheduledExecutorService : ScheduledExecutorService {
     }
 
 
-    override fun removeTask(scheduledTask: ScheduledTask) {
-        this.manualScheduler.removeTask(scheduledTask)
+    override fun cancelTask(scheduledTask: ScheduledTask) {
+        this.manualScheduler.cancelTask(scheduledTask)
         this.priorityQueue.remove(scheduledTask)
     }
 
@@ -120,7 +140,7 @@ class TestThreadScheduledExecutorService : ScheduledExecutorService {
         this.thread.interrupt()
     }
 
-    override fun getScheduledTasks(): List<ScheduledTask> {
+    override fun getScheduledTasks(): CompletableFuture<List<ScheduledTask>> {
         return this.manualScheduler.getScheduledTasks()
     }
 
