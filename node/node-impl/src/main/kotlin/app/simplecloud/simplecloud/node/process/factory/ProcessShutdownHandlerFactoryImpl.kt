@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.node.process.factory
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
@@ -32,10 +31,9 @@ import app.simplecloud.simplecloud.node.process.ProcessShutdownHandlerImpl
  */
 class ProcessShutdownHandlerFactoryImpl(
     private val podService: KubePodService,
-    private val distributedCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler.Factory {
 
     override fun create(process: CloudProcess): ProcessShutdownHandler {
-        return ProcessShutdownHandlerImpl(process, this.podService, this.distributedCloudProcessRepository)
+        return ProcessShutdownHandlerImpl(process, this.podService)
     }
 }

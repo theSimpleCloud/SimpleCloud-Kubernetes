@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
@@ -35,7 +34,6 @@ import org.apache.logging.log4j.LogManager
 class ProcessShutdownHandlerImpl(
     private val process: CloudProcess,
     private val podService: KubePodService,
-    private val distributedCloudProcessRepository: DistributedCloudProcessRepository
 ) : ProcessShutdownHandler {
 
     override suspend fun shutdownProcess() {
@@ -43,7 +41,6 @@ class ProcessShutdownHandlerImpl(
         updateStateToClosed()
         val container = podService.getPod(this.process.getName().lowercase())
         container.shutdown()
-        deleteProcessInCluster()
     }
 
     private suspend fun updateStateToClosed() {
@@ -51,10 +48,6 @@ class ProcessShutdownHandlerImpl(
         updateRequest as InternalProcessUpdateRequest
         updateRequest.setState(ProcessState.CLOSED)
         updateRequest.submit().await()
-    }
-
-    private suspend fun deleteProcessInCluster() {
-        this.distributedCloudProcessRepository.remove(this.process.getName()).await()
     }
 
     companion object {
