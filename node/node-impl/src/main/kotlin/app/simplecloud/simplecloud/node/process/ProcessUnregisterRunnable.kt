@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
+import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.distribution.api.Distribution
@@ -56,22 +57,29 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
         val cloudAPI = this.cloudAPI ?: return
 
         CloudScope.launch {
-            compareStoppedServicesWithKubeAndUnregister(cloudAPI, kubeAPI)
+            compareProcessesWithKubeAndUnregister(cloudAPI, kubeAPI)
         }
     }
 
-    private suspend fun compareStoppedServicesWithKubeAndUnregister(cloudAPI: CloudAPI, kubeAPI: KubeAPI) {
+    private suspend fun compareProcessesWithKubeAndUnregister(cloudAPI: CloudAPI, kubeAPI: KubeAPI) {
         val processes = cloudAPI.getProcessService().findAll().await()
-        val stoppedNotUnregisteredProcesses = processes.filter { it.getState() == ProcessState.CLOSED }
-        for (process in stoppedNotUnregisteredProcesses) {
+        for (process in processes) {
             unregisterProcessIfNoLongerRunning(process, kubeAPI)
         }
     }
 
     private suspend fun unregisterProcessIfNoLongerRunning(process: CloudProcess, kubeAPI: KubeAPI) {
         if (!isProcessRunning(process, kubeAPI)) {
+            updateStateToClosed(process)
             deleteProcessInCluster(process)
         }
+    }
+
+    private suspend fun updateStateToClosed(process: CloudProcess) {
+        val updateRequest = process.createUpdateRequest()
+        updateRequest as InternalProcessUpdateRequest
+        updateRequest.setState(ProcessState.CLOSED)
+        updateRequest.submit().await()
     }
 
     private fun isProcessRunning(process: CloudProcess, kubeAPI: KubeAPI): Boolean {
