@@ -46,6 +46,7 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     @Test
     fun stopProcess_ProcessWillBeStopped() {
         this.processService.createShutdownRequest(this.process).submit().join()
+        Thread.sleep(1_100) //unregister scheduler is running every second only
         assertProcessesCount(0)
     }
 
@@ -53,6 +54,7 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     fun create2ProcessesAndShutdown1_OneWillStayOnline() {
         this.processService.createStartRequest(this.defaultGroup).submit().join()
         this.processService.createShutdownRequest(this.process).submit().join()
+        Thread.sleep(1_100) //unregister scheduler is running every second only
         assertProcessesCount(1)
     }
 
@@ -61,6 +63,14 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
         val cloudProcess2 = this.processService.createStartRequest(this.defaultGroup).submit().join()
         this.processService.createShutdownRequest(this.process).submit().join()
         this.processService.createShutdownRequest(cloudProcess2).submit().join()
+        Thread.sleep(1_100) //unregister scheduler is running every second only
+        assertProcessesCount(0)
+    }
+
+    @Test
+    fun createProcess_StopContainer_ProcessWillBeUnregistered() {
+        this.kubeAPI.getPodService().getPod(this.process.getName().lowercase()).shutdown()
+        Thread.sleep(1_100) //unregister scheduler is running every second only
         assertProcessesCount(0)
     }
 
