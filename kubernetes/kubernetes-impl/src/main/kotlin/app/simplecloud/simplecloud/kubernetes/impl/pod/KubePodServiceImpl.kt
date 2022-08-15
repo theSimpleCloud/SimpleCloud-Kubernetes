@@ -34,7 +34,10 @@ class KubePodServiceImpl(
 ) : KubePodService {
 
     override fun getPod(name: String): KubePod {
-        return KubePodImpl(name, this.api)
+        val kubePod = KubePodImpl(name, this.api)
+        if (!kubePod.isRunning())
+            throw NoSuchElementException("No Pod found by name '$name'")
+        return kubePod
     }
 
     override fun createPod(name: String, podSpec: PodSpec): KubePod {
