@@ -21,6 +21,8 @@ package app.simplecloud.simplecloud.distribution.hazelcast
 import app.simplecloud.simplecloud.distribution.api.*
 import app.simplecloud.simplecloud.distribution.api.impl.ServerComponentImpl
 import com.hazelcast.core.HazelcastInstance
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Date: 10.04.22
@@ -29,6 +31,8 @@ import com.hazelcast.core.HazelcastInstance
  *
  */
 abstract class AbstractHazelCastDistribution : Distribution {
+
+    private val userContext = ConcurrentHashMap<String, Any>()
 
     abstract fun getHazelCastInstance(): HazelcastInstance
 
@@ -46,6 +50,10 @@ abstract class AbstractHazelCastDistribution : Distribution {
 
     override fun getScheduler(name: String): ScheduledExecutorService {
         return HazelCastScheduledExecutorService(name, getHazelCastInstance(), this)
+    }
+
+    override fun getUserContext(): ConcurrentMap<String, Any> {
+        return this.userContext
     }
 
 }

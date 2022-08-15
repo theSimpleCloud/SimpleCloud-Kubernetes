@@ -19,6 +19,8 @@
 package app.simplecloud.simplecloud.distribution.test
 
 import app.simplecloud.simplecloud.distribution.api.*
+import java.util.concurrent.ConcurrentHashMap
+import java.util.concurrent.ConcurrentMap
 
 /**
  * Date: 08.04.22
@@ -27,6 +29,8 @@ import app.simplecloud.simplecloud.distribution.api.*
  *
  */
 abstract class AbstractTestDistribution : Distribution {
+
+    private val userContext = ConcurrentHashMap<String, Any>()
 
     abstract val messageManager: TestMessageManager
 
@@ -52,6 +56,10 @@ abstract class AbstractTestDistribution : Distribution {
 
     override fun getScheduler(name: String): ScheduledExecutorService {
         return getVirtualCluster().getScheduler(name)
+    }
+
+    override fun getUserContext(): ConcurrentMap<String, Any> {
+        return this.userContext
     }
 
     override fun shutdown() {

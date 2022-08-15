@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.distribution.api
 
+import java.util.concurrent.ConcurrentMap
+
 /**
  * Date: 03.04.22
  * Time: 15:25
@@ -52,6 +54,8 @@ interface Distribution {
     fun getMessageManager(): MessageManager
 
     fun getScheduler(name: String): ScheduledExecutorService
+
+    fun getUserContext(): ConcurrentMap<String, Any>
 
     fun shutdown()
 
