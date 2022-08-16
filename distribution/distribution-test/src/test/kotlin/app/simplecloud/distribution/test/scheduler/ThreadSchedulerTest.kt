@@ -84,9 +84,9 @@ class ThreadSchedulerTest {
         val countingRunnable = CountingRunnable()
         val countingRunnable2 = CountingRunnable()
         scheduler.scheduleAtFixedRate(countingRunnable, 1, 5, TimeUnit.SECONDS)
-        Thread.sleep(1_010)
+        Thread.sleep(1_100)
         scheduler.scheduleAtFixedRate(countingRunnable2, 1, 1, TimeUnit.SECONDS)
-        Thread.sleep(2_010)
+        Thread.sleep(2_200)
         Assertions.assertEquals(2, countingRunnable2.count)
     }
 
