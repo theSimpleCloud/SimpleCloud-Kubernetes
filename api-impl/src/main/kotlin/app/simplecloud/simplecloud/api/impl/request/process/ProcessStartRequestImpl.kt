@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import java.util.concurrent.CompletableFuture
 
@@ -36,23 +36,23 @@ import java.util.concurrent.CompletableFuture
  */
 class ProcessStartRequestImpl(
     private val internalService: InternalCloudProcessService,
-    private val processGroup: CloudProcessGroup
+    private val processTemplate: ProcessTemplate,
 ) : ProcessStartRequest {
 
     @Volatile
-    private var maxPlayers: Int = this.processGroup.getMaxPlayers()
+    private var maxPlayers: Int = this.processTemplate.getMaxPlayers()
 
     @Volatile
-    private var maxMemory: Int = this.processGroup.getMaxMemory()
+    private var maxMemory: Int = this.processTemplate.getMaxMemory()
 
     @Volatile
     private var processNumber: Int = -1
 
     @Volatile
-    private var image: Image = this.processGroup.getImage()
+    private var image: Image = this.processTemplate.getImage()
 
-    override fun getProcessGroup(): CloudProcessGroup {
-        return this.processGroup
+    override fun getProcessTemplate(): ProcessTemplate {
+        return this.processTemplate
     }
 
     override fun setMaxPlayers(maxPlayers: Int): ProcessStartRequest {
@@ -84,13 +84,13 @@ class ProcessStartRequestImpl(
 
     private fun startProcess(): CompletableFuture<CloudProcess> = CloudScope.future {
         val startConfiguration = ProcessStartConfiguration(
-            processGroup.getName(),
+            processTemplate.getName(),
             processNumber,
             image.getName(),
             maxMemory,
             maxPlayers,
-            processGroup.isStatic(),
-            processGroup.getProcessGroupType()
+            processTemplate.getProcessTemplateType(),
+            processTemplate.isStatic()
         )
         return@future internalService.startNewProcessInternal(startConfiguration)
     }

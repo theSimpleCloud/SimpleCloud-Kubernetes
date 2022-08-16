@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 
 /**
@@ -45,6 +46,10 @@ class CloudProxyGroupUpdateRequestImpl(
     }
 
     override fun getProcessGroup(): CloudProxyGroup {
+        return this.proxyGroup
+    }
+
+    override fun getProcessTemplate(): ProcessTemplate {
         return this.proxyGroup
     }
 
@@ -90,7 +95,6 @@ class CloudProxyGroupUpdateRequestImpl(
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            this.proxyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,

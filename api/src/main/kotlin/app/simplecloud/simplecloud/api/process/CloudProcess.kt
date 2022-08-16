@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.process
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
@@ -41,7 +41,7 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
 
     /**
      * Returns the process number
-     * e.g The name is Lobby-2 -> 2 would be the process number
+     * e.g. The name is Lobby-2 -> 2 would be the process number
      */
     fun getProcessNumber(): Int
 
@@ -93,7 +93,7 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     /**
      * Returns the process type
      */
-    fun getProcessType(): ProcessGroupType
+    fun getProcessType(): ProcessTemplateType
 
     /**
      * Returns the image this process was started from
@@ -108,14 +108,14 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     /**
      * Returns the termination future
      * The termination future will be completed when the process was stopped
-     * This methods always returns the same [CompletableFuture]
+     * This method always returns the same [CompletableFuture]
      */
     fun terminationFuture(): CompletableFuture<Void>
 
     /**
      * Returns the started future
      * The started future will be completed when the process was started
-     * This methods always returns the same [CompletableFuture]
+     * This method always returns the same [CompletableFuture]
      */
     fun startedFuture(): CompletableFuture<Void>
 

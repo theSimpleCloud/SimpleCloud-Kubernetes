@@ -16,46 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.process.group.configuration
+package app.simplecloud.simplecloud.api.impl.repository.distributed.predicate
 
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
+import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
+import app.simplecloud.simplecloud.distribution.api.Predicate
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 01/07/2021
- * Time: 12:56
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-class CloudServerProcessGroupConfiguration(
-    name: String,
-    maxMemory: Int,
-    maxPlayers: Int,
-    maintenance: Boolean,
-    imageName: String?,
-    stateUpdating: Boolean,
-    startPriority: Int,
-    joinPermission: String?,
-) : AbstractCloudProcessGroupConfiguration(
-    name,
-    maxMemory,
-    maxPlayers,
-    maintenance,
-    imageName,
-    stateUpdating,
-    startPriority,
-    joinPermission,
-    ProcessTemplateType.SERVER
-) {
+class CloudProcessCompareProcessTemplateNamePredicate(
+    private val compareGroupName: String,
+) : Predicate<String, CloudProcessConfiguration> {
 
-    private constructor() : this(
-        "",
-        1,
-        1,
-        false,
-        "",
-        false,
-        1,
-        ""
-    )
-
+    override fun apply(uuid: String, configuration: CloudProcessConfiguration): Boolean {
+        return configuration.processTemplateName == compareGroupName
+    }
 }

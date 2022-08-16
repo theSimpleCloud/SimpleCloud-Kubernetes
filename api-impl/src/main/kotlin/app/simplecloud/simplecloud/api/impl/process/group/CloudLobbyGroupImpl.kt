@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.api.impl.process.group
 import app.simplecloud.simplecloud.api.impl.request.group.update.CloudLobbyGroupUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
@@ -44,8 +44,8 @@ class CloudLobbyGroupImpl constructor(
         return this.configuration.lobbyPriority
     }
 
-    override fun getProcessGroupType(): ProcessGroupType {
-        return ProcessGroupType.LOBBY
+    override fun getProcessTemplateType(): ProcessTemplateType {
+        return ProcessTemplateType.LOBBY
     }
 
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {

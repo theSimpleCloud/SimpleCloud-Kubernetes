@@ -43,7 +43,6 @@ class CloudServerGroupUpdateRequestImpl(
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            this.serverGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission

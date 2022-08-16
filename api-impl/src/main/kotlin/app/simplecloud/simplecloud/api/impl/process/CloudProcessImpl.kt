@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
@@ -46,7 +46,7 @@ class CloudProcessImpl constructor(
 ) : CloudProcess {
 
     override fun getGroupName(): String {
-        return this.configuration.groupName
+        return this.configuration.processTemplateName
     }
 
     override fun getProcessNumber(): Int {
@@ -89,8 +89,8 @@ class CloudProcessImpl constructor(
         return this.configuration.static
     }
 
-    override fun getProcessType(): ProcessGroupType {
-        return this.configuration.processGroupType
+    override fun getProcessType(): ProcessTemplateType {
+        return this.configuration.processTemplateType
     }
 
     override fun getImage(): Image {
@@ -110,7 +110,7 @@ class CloudProcessImpl constructor(
     }
 
     override fun getName(): String {
-        return getGroupName() + "-" + getProcessNumber()
+        return this.configuration.getProcessName()
     }
 
     override fun getIdentifier(): String {

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.process
 
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import java.util.*
 
@@ -29,7 +29,7 @@ import java.util.*
  * @author Frederick Baier
  */
 data class CloudProcessConfiguration(
-    val groupName: String,
+    val processTemplateName: String,
     val uniqueId: UUID,
     val processNumber: Int,
     val state: ProcessState,
@@ -39,13 +39,16 @@ data class CloudProcessConfiguration(
     val maxPlayers: Int,
     val onlinePlayers: Int,
     val static: Boolean,
-    val processGroupType: ProcessGroupType,
+    val processTemplateType: ProcessTemplateType,
     val imageName: String,
-    val distributionId: UUID?
+    val distributionId: UUID?,
 ) : java.io.Serializable {
 
     fun getProcessName(): String {
-        return this.groupName + "-" + this.processNumber
+        if (this.static) {
+            return this.processTemplateName
+        }
+        return this.processTemplateName + "-" + this.processNumber
     }
 
 }

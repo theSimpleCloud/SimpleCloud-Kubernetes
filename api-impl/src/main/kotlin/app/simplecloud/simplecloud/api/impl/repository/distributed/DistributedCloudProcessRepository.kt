@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.repository.distributed
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareDistributionIdPredicate
-import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareGroupNamePredicate
+import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareProcessTemplateNamePredicate
 import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareUUIDPredicate
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessRepository
@@ -48,7 +48,7 @@ class DistributedCloudProcessRepository(
     }
 
     override fun findProcessesByGroupName(groupName: String): CompletableFuture<Collection<CloudProcessConfiguration>> {
-        return executeQuery(CloudProcessCompareGroupNamePredicate(groupName))
+        return executeQuery(CloudProcessCompareProcessTemplateNamePredicate(groupName))
     }
 
 }

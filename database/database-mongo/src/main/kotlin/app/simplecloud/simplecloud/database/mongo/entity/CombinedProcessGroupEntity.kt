@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.database.mongo.entity
 
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
@@ -34,13 +34,12 @@ class CombinedProcessGroupEntity(
     val maxPlayers: Int,
     val maintenance: Boolean,
     val imageName: String?,
-    val static: Boolean,
     val stateUpdating: Boolean,
     val startPriority: Int,
     val joinPermission: String?,
-    val type: ProcessGroupType,
+    val type: ProcessTemplateType,
     val lobbyPriority: Int = -1,
-    val startPort: Int = -1
+    val startPort: Int = -1,
 ) {
 
     private constructor() : this(
@@ -50,50 +49,48 @@ class CombinedProcessGroupEntity(
         false,
         "",
         false,
-        false,
         1,
         "",
-        ProcessGroupType.PROXY
+        ProcessTemplateType.PROXY
     )
 
     fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
         when (type) {
-            ProcessGroupType.LOBBY -> {
+            ProcessTemplateType.LOBBY -> {
                 return CloudLobbyProcessGroupConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.static,
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
                     this.lobbyPriority
                 )
             }
-            ProcessGroupType.PROXY -> {
+
+            ProcessTemplateType.PROXY -> {
                 return CloudProxyProcessGroupConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.static,
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
                     this.startPort
                 )
             }
-            ProcessGroupType.SERVER -> {
+
+            ProcessTemplateType.SERVER -> {
                 return CloudServerProcessGroupConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
                     this.maintenance,
                     this.imageName,
-                    this.static,
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
@@ -113,7 +110,6 @@ class CombinedProcessGroupEntity(
                 configuration.maxPlayers,
                 configuration.maintenance,
                 configuration.imageName,
-                configuration.static,
                 configuration.stateUpdating,
                 configuration.startPriority,
                 configuration.joinPermission,

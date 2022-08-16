@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import java.util.concurrent.CompletableFuture
 
@@ -36,6 +37,10 @@ class CloudProcessGroupDeleteRequestImpl(
     private val processGroup: CloudProcessGroup
 ) : CloudProcessGroupDeleteRequest {
     override fun getProcessGroup(): CloudProcessGroup {
+        return this.processGroup
+    }
+
+    override fun getProcessTemplate(): ProcessTemplate {
         return this.processGroup
     }
 

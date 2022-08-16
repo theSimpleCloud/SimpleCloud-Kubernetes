@@ -18,7 +18,9 @@
 
 package app.simplecloud.simplecloud.api.process.group.configuration
 
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
+import app.simplecloud.simplecloud.api.process.template.configuration.ProcessTemplateConfiguration
+import java.io.Serializable
 
 /**
  * Created by IntelliJ IDEA.
@@ -27,49 +29,27 @@ import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
  * @author Frederick Baier
  */
 abstract class AbstractCloudProcessGroupConfiguration(
-    val name: String,
-    val maxMemory: Int,
-    val maxPlayers: Int,
-    val maintenance: Boolean,
-    val imageName: String?,
-    val static: Boolean,
-    val stateUpdating: Boolean,
-    val startPriority: Int,
-    val joinPermission: String?,
-    val type: ProcessGroupType
-) : java.io.Serializable {
+    name: String,
+    maxMemory: Int,
+    maxPlayers: Int,
+    maintenance: Boolean,
+    imageName: String?,
+    stateUpdating: Boolean,
+    startPriority: Int,
+    joinPermission: String?,
+    type: ProcessTemplateType,
+) : ProcessTemplateConfiguration(
+    name, maxMemory, maxPlayers, maintenance, imageName, stateUpdating, startPriority, joinPermission, type
+), Serializable {
 
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (javaClass != other?.javaClass) return false
-
-        other as AbstractCloudProcessGroupConfiguration
-
-        if (name != other.name) return false
-        if (maxMemory != other.maxMemory) return false
-        if (maxPlayers != other.maxPlayers) return false
-        if (maintenance != other.maintenance) return false
-        if (imageName != other.imageName) return false
-        if (static != other.static) return false
-        if (stateUpdating != other.stateUpdating) return false
-        if (startPriority != other.startPriority) return false
-        if (joinPermission != other.joinPermission) return false
-        if (type != other.type) return false
-
+        if (!super.equals(other)) return false
         return true
     }
 
     override fun hashCode(): Int {
-        var result = name.hashCode()
-        result = 31 * result + maxMemory
-        result = 31 * result + maxPlayers
-        result = 31 * result + maintenance.hashCode()
-        result = 31 * result + (imageName?.hashCode() ?: 0)
-        result = 31 * result + static.hashCode()
-        result = 31 * result + stateUpdating.hashCode()
-        result = 31 * result + startPriority
-        result = 31 * result + (joinPermission?.hashCode() ?: 0)
-        result = 31 * result + type.hashCode()
-        return result
+        return super.hashCode()
     }
 }

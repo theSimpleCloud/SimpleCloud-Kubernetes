@@ -18,40 +18,21 @@
 
 package app.simplecloud.simplecloud.api.process.group
 
-import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.utils.Identifiable
-import app.simplecloud.simplecloud.api.utils.Nameable
 
 
-interface CloudProcessGroup : Nameable, Identifiable<String> {
-
-    fun getMaxMemory(): Int
-
-    fun getMaxPlayers(): Int
+interface CloudProcessGroup : ProcessTemplate, Identifiable<String> {
 
     fun getOnlinePlayerCount(): Int
 
-    fun isInMaintenance(): Boolean
+    override fun toConfiguration(): AbstractCloudProcessGroupConfiguration
 
-    fun getImage(): Image
+    override fun createUpdateRequest(): CloudProcessGroupUpdateRequest
 
-    fun getProcessGroupType(): ProcessGroupType
-
-    fun getJoinPermission(): String?
-
-    fun isStatic(): Boolean
-
-    fun isStateUpdatingEnabled(): Boolean
-
-    fun getStartPriority(): Int
-
-    fun toConfiguration(): AbstractCloudProcessGroupConfiguration
-
-    fun createUpdateRequest(): CloudProcessGroupUpdateRequest
-
-    fun createDeleteRequest(): CloudProcessGroupDeleteRequest
+    override fun createDeleteRequest(): CloudProcessGroupDeleteRequest
 
 }

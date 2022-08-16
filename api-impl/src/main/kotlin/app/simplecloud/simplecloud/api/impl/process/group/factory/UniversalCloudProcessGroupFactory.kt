@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.impl.process.group.factory
 
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
@@ -43,13 +43,15 @@ class UniversalCloudProcessGroupFactory(
         internalService: InternalCloudProcessGroupService
     ): CloudProcessGroup {
         return when (configuration.type) {
-            ProcessGroupType.PROXY -> {
+            ProcessTemplateType.PROXY -> {
                 this.proxyGroupFactory.create(configuration as CloudProxyProcessGroupConfiguration, internalService)
             }
-            ProcessGroupType.LOBBY -> {
+
+            ProcessTemplateType.LOBBY -> {
                 this.lobbyGroupFactory.create(configuration as CloudLobbyProcessGroupConfiguration, internalService)
             }
-            ProcessGroupType.SERVER -> {
+
+            ProcessTemplateType.SERVER -> {
                 this.serverGroupFactory.create(configuration as CloudServerProcessGroupConfiguration, internalService)
             }
         }

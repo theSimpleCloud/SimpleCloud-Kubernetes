@@ -20,8 +20,7 @@ package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.state.ProcessState
-import app.simplecloud.simplecloud.api.utils.Request
+import app.simplecloud.simplecloud.api.request.template.ProcessTemplateUpdateRequest
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,56 +31,25 @@ import app.simplecloud.simplecloud.api.utils.Request
  * Request for updating a registered group
  *
  */
-interface CloudProcessGroupUpdateRequest : Request<Unit> {
+interface CloudProcessGroupUpdateRequest : ProcessTemplateUpdateRequest {
 
     /**
      * Returns the group this request updates
      */
     fun getProcessGroup(): CloudProcessGroup
 
-    /**
-     * Sets the maximum amount of memory
-     * @return this
-     */
-    fun setMaxMemory(memory: Int): CloudProcessGroupUpdateRequest
+    override fun setMaxMemory(memory: Int): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets the maximum amount of players
-     * @return this
-     */
-    fun setMaxPlayers(players: Int): CloudProcessGroupUpdateRequest
+    override fun setMaxPlayers(players: Int): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets the image for the group
-     * @return this
-     */
-    fun setImage(image: Image?): CloudProcessGroupUpdateRequest
+    override fun setImage(image: Image?): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets the maintenance state for the group
-     * @return this
-     */
-    fun setMaintenance(maintenance: Boolean): CloudProcessGroupUpdateRequest
+    override fun setMaintenance(maintenance: Boolean): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets the permission a player need to join processes of the group
-     * @return this
-     */
-    fun setJoinPermission(permission: String?): CloudProcessGroupUpdateRequest
+    override fun setJoinPermission(permission: String?): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets whether the state of processes shall be automatically set to [ProcessState.ONLINE]
-     *  after the process has been started
-     * @return this
-     */
-    fun setStateUpdating(stateUpdating: Boolean): CloudProcessGroupUpdateRequest
+    override fun setStateUpdating(stateUpdating: Boolean): CloudProcessGroupUpdateRequest
 
-    /**
-     * Sets start priority for the group (higher will be started first)
-     * @return this
-     */
-    fun setStartPriority(priority: Int): CloudProcessGroupUpdateRequest
-
-
+    override fun setStartPriority(priority: Int): CloudProcessGroupUpdateRequest
 
 }

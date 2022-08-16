@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 
 /**
@@ -45,6 +46,10 @@ class CloudLobbyGroupUpdateRequestImpl(
     }
 
     override fun getProcessGroup(): CloudLobbyGroup {
+        return this.lobbyGroup
+    }
+
+    override fun getProcessTemplate(): ProcessTemplate {
         return this.lobbyGroup
     }
 
@@ -90,7 +95,6 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.maxPlayers,
             this.maintenance,
             image?.getName(),
-            this.lobbyGroup.isStatic(),
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,

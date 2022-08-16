@@ -47,7 +47,7 @@ class CloudProcessCreator(
                 startConfiguration.maxPlayers,
                 0,
                 startConfiguration.isStatic,
-                startConfiguration.groupType,
+                startConfiguration.templateType,
                 startConfiguration.imageName,
                 null
             ),

@@ -65,10 +65,6 @@ abstract class AbstractCloudProcessGroup constructor(
         return this.configuration.joinPermission
     }
 
-    override fun isStatic(): Boolean {
-        return this.configuration.static
-    }
-
     override fun isStateUpdatingEnabled(): Boolean {
         return this.configuration.stateUpdating
     }
@@ -83,6 +79,10 @@ abstract class AbstractCloudProcessGroup constructor(
 
     override fun getIdentifier(): String {
         return getName()
+    }
+
+    override fun isStatic(): Boolean {
+        return false
     }
 
     override fun createDeleteRequest(): CloudProcessGroupDeleteRequest {

@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.request.process
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**
@@ -37,7 +37,7 @@ interface ProcessStartRequest : Request<CloudProcess> {
     /**
      * Returns the process group this request will start a process of
      */
-    fun getProcessGroup(): CloudProcessGroup
+    fun getProcessTemplate(): ProcessTemplate
 
     /**
      * Sets the max players for the new process

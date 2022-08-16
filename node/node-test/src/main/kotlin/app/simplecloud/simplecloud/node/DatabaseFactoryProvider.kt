@@ -74,7 +74,6 @@ class DatabaseFactoryProvider {
             20,
             false,
             "image",
-            false,
             true,
             0,
             null,

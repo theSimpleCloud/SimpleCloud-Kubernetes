@@ -16,22 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.impl.repository.distributed.predicate
+package app.simplecloud.simplecloud.api.request.template
 
-import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.distribution.api.Predicate
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 30.05.2021
- * Time: 13:13
+ * Date: 18.03.2021
+ * Time: 15:18
  * @author Frederick Baier
  */
-class CloudProcessCompareGroupNamePredicate(
-    private val compareGroupName: String
-) : Predicate<String, CloudProcessConfiguration> {
+interface ProcessTemplateDeleteRequest : Request<Unit> {
 
-    override fun apply(uuid: String, configuration: CloudProcessConfiguration): Boolean {
-        return configuration.groupName == compareGroupName
-    }
+    /**
+     * Returns the [ProcessTemplate] this request will delete
+     */
+    fun getProcessTemplate(): ProcessTemplate
+
 }

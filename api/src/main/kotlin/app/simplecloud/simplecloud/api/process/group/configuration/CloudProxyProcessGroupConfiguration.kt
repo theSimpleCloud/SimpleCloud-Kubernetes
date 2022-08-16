@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.process.group.configuration
 
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 
 /**
  * Created by IntelliJ IDEA.
@@ -32,7 +32,6 @@ class CloudProxyProcessGroupConfiguration(
     maxPlayers: Int,
     maintenance: Boolean,
     imageName: String?,
-    static: Boolean,
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
@@ -43,11 +42,10 @@ class CloudProxyProcessGroupConfiguration(
     maxPlayers,
     maintenance,
     imageName,
-    static,
     stateUpdating,
     startPriority,
     joinPermission,
-    ProcessGroupType.PROXY
+    ProcessTemplateType.PROXY
 ) {
 
     private constructor() : this(
@@ -56,7 +54,6 @@ class CloudProxyProcessGroupConfiguration(
         1,
         false,
         "",
-        false,
         false,
         1,
         "",

@@ -24,7 +24,7 @@ package app.simplecloud.simplecloud.api.process.group
  * Time: 19:05
  * @author Frederick Baier
  */
-enum class ProcessGroupType {
+enum class ProcessTemplateType {
 
     /**
      * Represents a proxy process

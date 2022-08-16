@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.plugin.proxy.request.handler
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
@@ -66,7 +66,7 @@ class PlayerServerPreConnectRequestHandler(
     }
 
     private suspend fun checkIfRequestedServerIsJoinable(process: CloudProcess) {
-        if (process.getProcessType() == ProcessGroupType.PROXY)
+        if (process.getProcessType() == ProcessTemplateType.PROXY)
             throw ProxyController.IllegalGroupTypeException()
         if (process.getState() != ProcessState.ONLINE)
             throw ProxyController.ProcessNotJoinableException()

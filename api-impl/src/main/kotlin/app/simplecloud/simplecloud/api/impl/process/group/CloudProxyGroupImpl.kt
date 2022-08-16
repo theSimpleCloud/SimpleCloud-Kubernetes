@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.api.impl.process.group
 import app.simplecloud.simplecloud.api.impl.request.group.update.CloudProxyGroupUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
@@ -44,8 +44,8 @@ class CloudProxyGroupImpl(
         return this.configuration.startPort
     }
 
-    override fun getProcessGroupType(): ProcessGroupType {
-        return ProcessGroupType.PROXY
+    override fun getProcessTemplateType(): ProcessTemplateType {
+        return ProcessTemplateType.PROXY
     }
 
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {

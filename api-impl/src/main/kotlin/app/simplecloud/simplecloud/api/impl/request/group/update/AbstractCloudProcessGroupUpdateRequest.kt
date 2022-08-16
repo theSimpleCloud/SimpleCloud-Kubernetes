@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import java.util.concurrent.CompletableFuture
 
@@ -57,6 +58,10 @@ abstract class AbstractCloudProcessGroupUpdateRequest(
     protected var image: Image? = runCatching { this.processGroup.getImage() }.getOrNull()
 
     override fun getProcessGroup(): CloudProcessGroup {
+        return this.processGroup
+    }
+
+    override fun getProcessTemplate(): ProcessTemplate {
         return this.processGroup
     }
 

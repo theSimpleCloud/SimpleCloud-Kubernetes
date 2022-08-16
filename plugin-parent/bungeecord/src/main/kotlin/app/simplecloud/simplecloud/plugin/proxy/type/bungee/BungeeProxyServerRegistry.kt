@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.proxy.type.bungee
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
 import net.md_5.bungee.api.ProxyServer
 import java.net.InetSocketAddress
@@ -40,7 +40,7 @@ class BungeeProxyServerRegistry(
             throw IllegalArgumentException("Service is already registered!")
         }
 
-        if (cloudProcess.getProcessType() == ProcessGroupType.PROXY)
+        if (cloudProcess.getProcessType() == ProcessTemplateType.PROXY)
             return
 
         println("Registered process ${cloudProcess.getName()}")

@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.api.impl.process.group
 import app.simplecloud.simplecloud.api.impl.request.group.update.CloudServerGroupUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
 import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessGroupType
+import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
@@ -40,8 +40,8 @@ class CloudServerGroupImpl(
     processGroupService
 ), CloudServerGroup {
 
-    override fun getProcessGroupType(): ProcessGroupType {
-        return ProcessGroupType.SERVER
+    override fun getProcessTemplateType(): ProcessTemplateType {
+        return ProcessTemplateType.SERVER
     }
 
     override fun toConfiguration(): AbstractCloudProcessGroupConfiguration {

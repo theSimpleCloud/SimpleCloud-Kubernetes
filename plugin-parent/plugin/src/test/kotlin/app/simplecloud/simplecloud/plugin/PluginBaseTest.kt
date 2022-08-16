@@ -85,7 +85,6 @@ open class PluginBaseTest {
                 20,
                 false,
                 "test",
-                false,
                 true,
                 0,
                 null,
@@ -106,7 +105,6 @@ open class PluginBaseTest {
                 20,
                 false,
                 "test",
-                false,
                 true,
                 0,
                 null,
@@ -127,7 +125,6 @@ open class PluginBaseTest {
                 20,
                 false,
                 "test",
-                false,
                 true,
                 0,
                 null
