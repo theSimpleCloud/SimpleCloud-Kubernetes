@@ -42,7 +42,11 @@ class NodeSelfPod : KubePod {
         TODO("Not yet implemented")
     }
 
-    override fun shutdown() {
+    override fun isActive(): Boolean {
+        TODO("Not yet implemented")
+    }
+
+    override fun delete() {
         TODO("Not yet implemented")
     }
 
@@ -50,7 +54,7 @@ class NodeSelfPod : KubePod {
         TODO("Not yet implemented")
     }
 
-    override fun isRunning(): Boolean {
+    override fun exists(): Boolean {
         TODO("Not yet implemented")
     }
 

@@ -48,16 +48,20 @@ class TestKubePod(
         this.podSpec = podSpec
     }
 
-    override fun shutdown() {
+    override fun delete() {
         this.kubeService.delete(this)
         this.isRunning = false
     }
 
     override fun forceShutdown() {
-        shutdown()
+        delete()
     }
 
-    override fun isRunning(): Boolean {
+    override fun exists(): Boolean {
+        return this.isRunning
+    }
+
+    override fun isActive(): Boolean {
         return this.isRunning
     }
 

@@ -51,7 +51,7 @@ class KubePodTest {
     internal fun afterCreate_andShutdown_GetWillThrow() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
-        kubePod.shutdown()
+        kubePod.delete()
         Assertions.assertThrows(NoSuchElementException::class.java) {
             kubePodService.getPod("test")
         }
@@ -61,15 +61,15 @@ class KubePodTest {
     internal fun afterCreate_PodIsRunning() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
-        Assertions.assertTrue(kubePod.isRunning())
+        Assertions.assertTrue(kubePod.exists())
     }
 
     @Test
     internal fun afterCreateAndShutdown_PodIsNotRunning() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
-        kubePod.shutdown()
-        Assertions.assertFalse(kubePod.isRunning())
+        kubePod.delete()
+        Assertions.assertFalse(kubePod.exists())
     }
 
 

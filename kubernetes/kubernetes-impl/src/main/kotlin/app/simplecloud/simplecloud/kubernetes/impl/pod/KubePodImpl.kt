@@ -48,16 +48,21 @@ class KubePodImpl(
         this.executor.startContainer(podSpec)
     }
 
-    override fun shutdown() {
-        this.executor.shutdownContainer()
+    override fun delete() {
+        this.executor.deleteContainer()
     }
 
     override fun forceShutdown() {
         this.executor.killContainer()
     }
 
-    override fun isRunning(): Boolean {
-        return this.executor.isContainerRunning()
+    override fun exists(): Boolean {
+        return this.executor.doesContainerExist()
+    }
+
+    override fun isActive(): Boolean {
+        val phase = this.executor.getPhase()
+        return phase == "Pending" || phase == "Running"
     }
 
     override fun getLogs(): List<String> {

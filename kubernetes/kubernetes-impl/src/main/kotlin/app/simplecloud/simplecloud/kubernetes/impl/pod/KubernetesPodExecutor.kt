@@ -37,7 +37,7 @@ import java.util.concurrent.CopyOnWriteArrayList
 
 class KubernetesPodExecutor(
     private val containerName: String,
-    private val api: CoreV1Api
+    private val api: CoreV1Api,
 ) {
 
     fun startContainer(podSpec: PodSpec) {
@@ -47,13 +47,17 @@ class KubernetesPodExecutor(
             .startContainer()
     }
 
-    private fun doesContainerExist(): Boolean {
+    fun doesContainerExist(): Boolean {
         return runCatching {
             this.api.readNamespacedPod(this.containerName, "default", null)
         }.isSuccess
     }
 
-    fun shutdownContainer() {
+    fun getPhase(): String {
+        return this.api.readNamespacedPod(this.containerName, "default", null).status?.phase ?: "Unknown"
+    }
+
+    fun deleteContainer() {
         killContainer(60)
     }
 
@@ -68,10 +72,6 @@ class KubernetesPodExecutor(
             null,
             null
         )
-    }
-
-    fun isContainerRunning(): Boolean {
-        return doesContainerExist()
     }
 
 

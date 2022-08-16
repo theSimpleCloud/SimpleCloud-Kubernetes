@@ -44,9 +44,14 @@ interface KubePod {
     fun start(podSpec: PodSpec)
 
     /**
+     * Returns weather the pod is active
+     */
+    fun isActive(): Boolean
+
+    /**
      * Shuts this container down
      */
-    fun shutdown()
+    fun delete()
 
     /**
      * Shuts this container down immediately
@@ -56,7 +61,7 @@ interface KubePod {
     /**
      * Returns whether this container is running
      */
-    fun isRunning(): Boolean
+    fun exists(): Boolean
 
     /**
      * Returns the logs saved

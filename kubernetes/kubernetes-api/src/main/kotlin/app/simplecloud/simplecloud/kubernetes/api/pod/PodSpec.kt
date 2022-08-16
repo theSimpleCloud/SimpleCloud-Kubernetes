@@ -45,6 +45,9 @@ class PodSpec {
     var image: String? = null
         private set
 
+    var restartPolicy: String = "OnFailure"
+        private set
+
     fun withContainerPort(containerPort: Int): PodSpec {
         this.containerPort = containerPort
         return this
@@ -79,14 +82,19 @@ class PodSpec {
         return this
     }
 
+    fun withRestartPolicy(restartPolicy: String): PodSpec {
+        this.restartPolicy = restartPolicy
+        return this
+    }
+
     class EnvironmentVariable(
         val name: String,
-        val value: String
+        val value: String,
     )
 
     class MountableVolume(
         val volumeClaim: KubeVolumeClaim,
-        val mountPath: String
+        val mountPath: String,
     )
 
 }

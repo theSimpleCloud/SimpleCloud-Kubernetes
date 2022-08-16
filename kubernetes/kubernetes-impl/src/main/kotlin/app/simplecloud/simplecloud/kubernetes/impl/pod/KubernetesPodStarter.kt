@@ -71,7 +71,7 @@ class KubernetesPodStarter(
                         )
                     ).volumes(
                         volumes
-                    )
+                    ).restartPolicy(this.containerSpec.restartPolicy)
             )
         this.api.createNamespacedPod("default", pod, null, null, null)
     }

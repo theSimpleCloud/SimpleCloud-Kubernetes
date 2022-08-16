@@ -35,7 +35,7 @@ class KubePodServiceImpl(
 
     override fun getPod(name: String): KubePod {
         val kubePod = KubePodImpl(name, this.api)
-        if (!kubePod.isRunning())
+        if (!kubePod.exists())
             throw NoSuchElementException("No Pod found by name '$name'")
         return kubePod
     }
