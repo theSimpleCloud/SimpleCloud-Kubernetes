@@ -40,7 +40,7 @@ class ProcessShutdownHandlerImpl(
         logger.info("Stopping Process {}", this.process.getName())
         updateStateToClosed()
         val container = podService.getPod(this.process.getName().lowercase())
-        container.shutdown()
+        container.delete()
     }
 
     private suspend fun updateStateToClosed() {

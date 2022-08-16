@@ -33,7 +33,6 @@ class ProcessOnlineCountHandler(
 ) {
 
     suspend fun handle() {
-        logger.info("Checking online count for {}", group.getName())
         val expectedCount = calculateExpectedOnlineCount()
         val actualCount = calculateActualOnlineCount()
         if (expectedCount > actualCount) {

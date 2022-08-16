@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.api.future.unitFuture
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
@@ -28,7 +27,6 @@ import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
 import org.apache.logging.log4j.LogManager
-import java.util.concurrent.CompletableFuture
 
 class KubernetesProcessStarter(
     private val process: CloudProcess,
@@ -42,12 +40,11 @@ class KubernetesProcessStarter(
     private val processLabel = Label("cloud-process", this.process.getName())
     private val groupLabel = Label("cloud-group", this.process.getGroupName())
 
-    fun startProcess(): CompletableFuture<Unit> {
+    fun startProcess() {
         logger.info("Starting Process {}", process.getName())
 
         createPod()
         recreateServiceForProcess()
-        return unitFuture()
     }
 
     private fun recreateServiceForProcess() {
@@ -80,6 +77,7 @@ class KubernetesProcessStarter(
             //.withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
             .withEnvironmentVariables(processUniqueIdEnvironment)
             .withImage(this.process.getImage().getName())
+            .withRestartPolicy("Never")
     }
 
     private fun createPod(): KubePod {

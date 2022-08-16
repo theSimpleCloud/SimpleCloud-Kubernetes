@@ -30,6 +30,7 @@ import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.connect.DistributedRepositories
 import kotlinx.coroutines.launch
+import org.apache.logging.log4j.LogManager
 import java.io.Serializable
 
 /**
@@ -63,16 +64,31 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
 
     private suspend fun compareProcessesWithKubeAndUnregister(cloudAPI: CloudAPI, kubeAPI: KubeAPI) {
         val processes = cloudAPI.getProcessService().findAll().await()
-        for (process in processes) {
+        val filteredProcesses = processes.filter { it.getState() != ProcessState.PREPARED }
+        for (process in filteredProcesses) {
             unregisterProcessIfNoLongerRunning(process, kubeAPI)
         }
     }
 
     private suspend fun unregisterProcessIfNoLongerRunning(process: CloudProcess, kubeAPI: KubeAPI) {
-        if (!isProcessRunning(process, kubeAPI)) {
-            updateStateToClosed(process)
-            deleteProcessInCluster(process)
+        if (doesContainerExist(process, kubeAPI)) {
+            stopContainerIfInactive(process, kubeAPI)
+        } else {
+            deleteProcessFromCluster(process)
         }
+    }
+
+    private fun stopContainerIfInactive(process: CloudProcess, kubeAPI: KubeAPI) {
+        val pod = kubeAPI.getPodService().getPod(process.getName())
+        if (!pod.isActive()) {
+            pod.delete()
+        }
+    }
+
+    private suspend fun deleteProcessFromCluster(process: CloudProcess) {
+        updateStateToClosed(process)
+        deleteProcessInCluster(process)
+        logger.info("Unregistered process {}", process.getName())
     }
 
     private suspend fun updateStateToClosed(process: CloudProcess) {
@@ -82,7 +98,7 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
         updateRequest.submit().await()
     }
 
-    private fun isProcessRunning(process: CloudProcess, kubeAPI: KubeAPI): Boolean {
+    private fun doesContainerExist(process: CloudProcess, kubeAPI: KubeAPI): Boolean {
         return try {
             kubeAPI.getPodService().getPod(process.getName().lowercase())
             true
@@ -101,6 +117,11 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
         this.cloudAPI = userContext["cloudAPI"] as CloudAPI
         val distributedRepositories = userContext["distributedRepositories"] as DistributedRepositories
         this.distributedCloudProcessRepository = distributedRepositories.cloudProcessRepository
+    }
+
+    companion object {
+        private val logger =
+            LogManager.getLogger(ProcessUnregisterRunnable::class.java)
     }
 
 }

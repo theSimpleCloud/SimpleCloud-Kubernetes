@@ -49,10 +49,8 @@ import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImp
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.prepare.RestServerStartTask
-import app.simplecloud.simplecloud.node.task.NodeOnlineProcessesChecker
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
-import kotlinx.coroutines.runBlocking
 import org.apache.logging.log4j.LogManager
 
 class NodeClusterConnect(
@@ -75,7 +73,6 @@ class NodeClusterConnect(
         startRestServer(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories)
-        checkOnlineProcesses(nodeCloudAPI)
         return nodeCloudAPI
     }
 
@@ -106,19 +103,6 @@ class NodeClusterConnect(
             InternalMessageChannelProviderImpl(nodeCloudAPI.getMessageChannelManager())
         ).initializeMessageChannels()
     }
-
-    private fun checkOnlineProcesses(nodeCloudAPI: NodeCloudAPI) {
-        logger.info("Checking for online tasks")
-        val nodeOnlineProcessesChecker = NodeOnlineProcessesChecker(
-            nodeCloudAPI.getProcessGroupService(),
-            nodeCloudAPI.getProcessService(),
-            nodeCloudAPI.getOnlineStrategyService()
-        )
-        runBlocking {
-            nodeOnlineProcessesChecker.checkOnlineCount()
-        }
-    }
-
     private fun checkForFirstNodeInCluster(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories,

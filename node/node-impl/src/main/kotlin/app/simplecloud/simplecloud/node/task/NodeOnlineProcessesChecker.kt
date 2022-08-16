@@ -32,7 +32,6 @@ class NodeOnlineProcessesChecker(
 
     suspend fun checkOnlineCount() {
         val groups = this.groupService.findAll().await()
-        logger.info("Groups: ${groups.size}: ${groups.map { it.getName() }}")
         groups.forEach {
             ProcessOnlineCountHandler(it, this.processService, this.nodeProcessOnlineStrategyService).handle()
         }

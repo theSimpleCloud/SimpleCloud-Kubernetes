@@ -20,13 +20,15 @@ package app.simplecloud.simplecloud.node.process
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
+import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 
 class InternalProcessStartHandler(
     private val configuration: ProcessStartConfiguration,
     private val processService: CloudProcessService,
-    private val processStarterFactory: ProcessStarter.Factory
+    private val processStarterFactory: ProcessStarter.Factory,
 ) {
 
     private val processStarter = this.processStarterFactory.create(this.configuration, this.processService)
@@ -34,11 +36,14 @@ class InternalProcessStartHandler(
     suspend fun startProcess(): CloudProcess {
         val process = this.processStarter.startProcess()
         updateProcessToCluster(process)
-        return process
+        return this.processService.findByName(process.getName()).await()
     }
 
     private suspend fun updateProcessToCluster(process: CloudProcess) {
-        return this.processService.createUpdateRequest(process).submit().await()
+        val updateRequest = this.processService.createUpdateRequest(process)
+        updateRequest as InternalProcessUpdateRequest
+        updateRequest.setState(ProcessState.STARTING)
+        updateRequest.submit().await()
     }
 
 }

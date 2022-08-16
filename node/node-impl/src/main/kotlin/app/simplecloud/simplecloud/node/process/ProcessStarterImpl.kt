@@ -25,7 +25,6 @@ import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.task.CloudProcessCreator
 import app.simplecloud.simplecloud.node.task.KubernetesProcessStarter
-import app.simplecloud.simplecloud.node.util.UncaughtExceptions
 
 class ProcessStarterImpl(
     private val configuration: ProcessStartConfiguration,
@@ -48,11 +47,11 @@ class ProcessStarterImpl(
         ).createProcess()
     }
 
-    private fun startProcess(process: CloudProcess) {
+    private suspend fun startProcess(process: CloudProcess) {
         KubernetesProcessStarter(
             process,
             this.kubeAPI
-        ).startProcess().exceptionally { UncaughtExceptions.handle(it) }
+        ).startProcess()
     }
 
 
