@@ -20,10 +20,7 @@ package app.simplecloud.simplecloud.database.memory.factory
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.MemoryDatabaseCloudProcessGroupRepository
-import app.simplecloud.simplecloud.database.memory.MemoryDatabaseOfflineCloudPlayerRepository
-import app.simplecloud.simplecloud.database.memory.MemoryDatabaseOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.database.memory.MemoryDatabasePermissionGroupRepository
+import app.simplecloud.simplecloud.database.memory.*
 
 /**
  * Date: 24.04.22
@@ -38,7 +35,8 @@ class InMemoryDatabaseFactory : DatabaseFactory {
             MemoryDatabaseCloudProcessGroupRepository(),
             MemoryDatabaseOfflineCloudPlayerRepository(),
             MemoryDatabaseOnlineCountStrategyRepository(),
-            MemoryDatabasePermissionGroupRepository()
+            MemoryDatabasePermissionGroupRepository(),
+            MemoryDatabaseStaticProcessTemplateRepository()
         )
     }
 }

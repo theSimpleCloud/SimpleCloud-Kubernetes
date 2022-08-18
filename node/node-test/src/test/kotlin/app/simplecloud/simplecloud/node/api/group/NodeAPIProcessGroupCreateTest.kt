@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.node.api.group
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.node.assertContains
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
@@ -124,7 +124,7 @@ class NodeAPIProcessGroupCreateTest : NodeAPIProcessGroupTest() {
     }
 
 
-    private fun assertClusterContainsGroup(groupConfiguration: AbstractCloudProcessGroupConfiguration) {
+    private fun assertClusterContainsGroup(groupConfiguration: AbstractProcessTemplateConfiguration) {
         val allGroupConfigs = processGroupService.findAll().join().map { it.toConfiguration() }
         assertContains(allGroupConfigs, groupConfiguration)
     }
@@ -133,23 +133,23 @@ class NodeAPIProcessGroupCreateTest : NodeAPIProcessGroupTest() {
         assertEquals(count, processGroupService.findAll().join().size)
     }
 
-    private suspend fun createGroup(groupConfiguration: AbstractCloudProcessGroupConfiguration) {
+    private suspend fun createGroup(groupConfiguration: AbstractProcessTemplateConfiguration) {
         processGroupService.createCreateRequest(groupConfiguration).submit().await()
     }
 
-    private fun createGroupConfigWithMaxPlayers(maxPlayers: Int): CloudProxyProcessGroupConfiguration {
+    private fun createGroupConfigWithMaxPlayers(maxPlayers: Int): ProxyProcessTemplateConfiguration {
         return createGroupConfigWithMemoryAndMaxPlayers(512, maxPlayers)
     }
 
-    private fun createGroupConfigWithMemory(maxMemory: Int): CloudProxyProcessGroupConfiguration {
+    private fun createGroupConfigWithMemory(maxMemory: Int): ProxyProcessTemplateConfiguration {
         return createGroupConfigWithMemoryAndMaxPlayers(maxMemory, 20)
     }
 
     private fun createGroupConfigWithMemoryAndMaxPlayers(
         maxMemory: Int,
-        maxPlayers: Int
-    ): CloudProxyProcessGroupConfiguration {
-        return CloudProxyProcessGroupConfiguration(
+        maxPlayers: Int,
+    ): ProxyProcessTemplateConfiguration {
+        return ProxyProcessTemplateConfiguration(
             "Lobby",
             maxMemory,
             maxPlayers,
@@ -162,8 +162,8 @@ class NodeAPIProcessGroupCreateTest : NodeAPIProcessGroupTest() {
         )
     }
 
-    private fun createProxyGroupWithPort(port: Int): CloudProxyProcessGroupConfiguration {
-        return CloudProxyProcessGroupConfiguration(
+    private fun createProxyGroupWithPort(port: Int): ProxyProcessTemplateConfiguration {
+        return ProxyProcessTemplateConfiguration(
             "Lobby",
             512,
             20,

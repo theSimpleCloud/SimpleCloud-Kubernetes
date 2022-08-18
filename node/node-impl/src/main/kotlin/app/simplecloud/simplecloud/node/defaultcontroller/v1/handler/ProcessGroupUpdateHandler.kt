@@ -20,13 +20,13 @@ package app.simplecloud.simplecloud.node.defaultcontroller.v1.handler
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,15 +35,15 @@ import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
  * @author Frederick Baier
  */
 class ProcessGroupUpdateHandler(
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
 ) {
 
-    suspend fun update(configuration: AbstractCloudProcessGroupConfiguration) {
+    suspend fun update(configuration: AbstractProcessTemplateConfiguration) {
         val group = this.groupService.findByName(configuration.name).await()
         updateGroup(group, configuration)
     }
 
-    private suspend fun updateGroup(group: CloudProcessGroup, configuration: AbstractCloudProcessGroupConfiguration) {
+    private suspend fun updateGroup(group: CloudProcessGroup, configuration: AbstractProcessTemplateConfiguration) {
         val request = group.createUpdateRequest()
         request.setMaxMemory(configuration.maxMemory)
         request.setMaxPlayers(configuration.maxPlayers)
@@ -54,12 +54,12 @@ class ProcessGroupUpdateHandler(
         request.setStartPriority(configuration.startPriority)
 
         if (request is CloudProxyGroupUpdateRequest) {
-            configuration as CloudProxyProcessGroupConfiguration
+            configuration as ProxyProcessTemplateConfiguration
             request.setStartPort(configuration.startPort)
         }
 
         if (request is CloudLobbyGroupUpdateRequest) {
-            configuration as CloudLobbyProcessGroupConfiguration
+            configuration as LobbyProcessTemplateConfiguration
             request.setLobbyPriority(configuration.lobbyPriority)
         }
 

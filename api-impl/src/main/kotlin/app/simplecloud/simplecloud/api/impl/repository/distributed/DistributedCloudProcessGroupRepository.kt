@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.impl.repository.distributed
 
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.distribution.api.Distribution
 
 /**
@@ -30,6 +30,6 @@ import app.simplecloud.simplecloud.distribution.api.Distribution
  */
 class DistributedCloudProcessGroupRepository(
     private val distribution: Distribution,
-) : AbstractDistributedRepository<String, AbstractCloudProcessGroupConfiguration>(
+) : AbstractDistributedRepository<String, AbstractProcessTemplateConfiguration>(
     distribution.getOrCreateCache("cloud-process-groups")
 ), CloudProcessGroupRepository

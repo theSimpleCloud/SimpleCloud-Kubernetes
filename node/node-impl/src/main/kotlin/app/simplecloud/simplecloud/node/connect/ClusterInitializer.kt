@@ -53,7 +53,9 @@ class ClusterInitializer(
             distributedRepositories.permissionGroupRepository,
             this.databaseRepositories.permissionGroupRepository,
             distributedRepositories.distributedOnlineCountStrategyRepository,
-            this.databaseRepositories.onlineCountStrategyRepository
+            this.databaseRepositories.onlineCountStrategyRepository,
+            distributedRepositories.staticProcessTemplateRepository,
+            this.databaseRepositories.staticProcessTemplateRepository
         )
         nodeRepositoriesInitializer.initializeRepositories()
     }

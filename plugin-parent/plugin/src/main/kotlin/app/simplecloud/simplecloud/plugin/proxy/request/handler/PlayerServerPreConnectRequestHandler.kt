@@ -20,12 +20,12 @@ package app.simplecloud.simplecloud.plugin.proxy.request.handler
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse

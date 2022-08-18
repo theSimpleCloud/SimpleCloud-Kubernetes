@@ -24,8 +24,8 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfiguration
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import java.util.concurrent.CompletableFuture
 
 /**

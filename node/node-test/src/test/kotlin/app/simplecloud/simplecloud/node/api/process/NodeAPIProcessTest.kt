@@ -18,10 +18,10 @@
 
 package app.simplecloud.simplecloud.node.api.process
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
@@ -62,8 +62,8 @@ open class NodeAPIProcessTest : NodeAPIBaseTest() {
         Assertions.assertEquals(count, this.processService.findAll().join().size)
     }
 
-    private fun createLobbyGroupConfiguration(name: String = "Lobby"): CloudLobbyProcessGroupConfiguration {
-        return CloudLobbyProcessGroupConfiguration(
+    private fun createLobbyGroupConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
             name,
             512,
             20,

@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.request.template.ProcessTemplateUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Created by IntelliJ IDEA.
@@ -33,10 +33,7 @@ import app.simplecloud.simplecloud.api.request.template.ProcessTemplateUpdateReq
  */
 interface CloudProcessGroupUpdateRequest : ProcessTemplateUpdateRequest {
 
-    /**
-     * Returns the group this request updates
-     */
-    fun getProcessGroup(): CloudProcessGroup
+    override fun getProcessTemplate(): CloudProcessGroup
 
     override fun setMaxMemory(memory: Int): CloudProcessGroupUpdateRequest
 

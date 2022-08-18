@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.plugin.proxy
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProxyGroup
 import app.simplecloud.simplecloud.plugin.PluginBaseTest
 import app.simplecloud.simplecloud.plugin.TestCloudPluginStarter
 import app.simplecloud.simplecloud.plugin.startup.PluginCloudAPI

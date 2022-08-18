@@ -18,14 +18,16 @@
 
 package app.simplecloud.simplecloud.api.request.group.update
 
+import app.simplecloud.simplecloud.api.request.template.ProcessServerTemplateUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudServerGroup
+
 /**
  * Created by IntelliJ IDEA.
  * Date: 06.04.2021
  * Time: 10:11
  * @author Frederick Baier
  */
-interface CloudServerGroupUpdateRequest : CloudProcessGroupUpdateRequest {
-
-
+interface CloudServerGroupUpdateRequest : CloudProcessGroupUpdateRequest, ProcessServerTemplateUpdateRequest {
+    override fun getProcessTemplate(): CloudServerGroup
 
 }

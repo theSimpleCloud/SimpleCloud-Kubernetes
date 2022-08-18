@@ -18,10 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.*
 
 
 /**
@@ -34,5 +31,6 @@ data class DistributedRepositories(
     val cloudPlayerRepository: DistributedCloudPlayerRepository,
     val cloudProcessGroupRepository: DistributedCloudProcessGroupRepository,
     val cloudProcessRepository: DistributedCloudProcessRepository,
-    val permissionGroupRepository: DistributedPermissionGroupRepository
+    val permissionGroupRepository: DistributedPermissionGroupRepository,
+    val staticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
 )

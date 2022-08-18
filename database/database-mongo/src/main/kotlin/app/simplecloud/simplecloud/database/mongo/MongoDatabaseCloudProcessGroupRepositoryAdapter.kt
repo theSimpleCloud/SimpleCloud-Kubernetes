@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.database.mongo
 
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
 import app.simplecloud.simplecloud.database.mongo.entity.CombinedProcessGroupEntity
 import dev.morphia.Datastore
@@ -38,23 +38,23 @@ class MongoDatabaseCloudProcessGroupRepositoryAdapter(
         DefaultMongoRepository<String, CombinedProcessGroupEntity>(datastore, CombinedProcessGroupEntity::class.java)
 
 
-    override fun findAll(): CompletableFuture<List<AbstractCloudProcessGroupConfiguration>> {
+    override fun findAll(): CompletableFuture<List<AbstractProcessTemplateConfiguration>> {
         return this.mongoRepository.findAll().thenApply { list -> list.map { it.toConfiguration() } }
     }
 
-    override fun findFirst(): CompletableFuture<AbstractCloudProcessGroupConfiguration> {
+    override fun findFirst(): CompletableFuture<AbstractProcessTemplateConfiguration> {
         return this.mongoRepository.findFirst().thenApply { it.toConfiguration() }
     }
 
-    override fun find(identifier: String): CompletableFuture<AbstractCloudProcessGroupConfiguration> {
+    override fun find(identifier: String): CompletableFuture<AbstractProcessTemplateConfiguration> {
         return this.mongoRepository.find(identifier).thenApply { it.toConfiguration() }
     }
 
-    override fun findOrNull(identifier: String): CompletableFuture<AbstractCloudProcessGroupConfiguration?> {
+    override fun findOrNull(identifier: String): CompletableFuture<AbstractProcessTemplateConfiguration?> {
         return this.mongoRepository.findOrNull(identifier).thenApply { it?.toConfiguration() }
     }
 
-    override fun save(identifier: String, value: AbstractCloudProcessGroupConfiguration): CompletableFuture<Unit> {
+    override fun save(identifier: String, value: AbstractProcessTemplateConfiguration): CompletableFuture<Unit> {
         return this.mongoRepository.save(identifier, CombinedProcessGroupEntity.fromGroupConfiguration(value))
     }
 

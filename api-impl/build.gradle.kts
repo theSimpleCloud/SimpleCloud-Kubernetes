@@ -20,6 +20,5 @@ dependencies {
     api(project(":api"))
     api(project(":api-internal"))
     api(project(":distribution:distribution-api"))
-    api(project(":database:database-api"))
     testApi(project(":database:database-inmemory"))
 }

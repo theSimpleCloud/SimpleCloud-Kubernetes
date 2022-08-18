@@ -20,8 +20,8 @@ package app.simplecloud.simplecloud.node.api.group
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
@@ -152,7 +152,7 @@ class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
     }
 
 
-    private fun getCurrentGroupConfig(): AbstractCloudProcessGroupConfiguration {
+    private fun getCurrentGroupConfig(): AbstractProcessTemplateConfiguration {
         return this.processGroupService.findByName(existingGroup.getName()).join().toConfiguration()
     }
 

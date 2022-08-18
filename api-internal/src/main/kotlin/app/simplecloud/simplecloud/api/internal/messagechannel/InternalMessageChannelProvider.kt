@@ -25,7 +25,7 @@ import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import java.util.*
 
 /**
@@ -42,9 +42,13 @@ interface InternalMessageChannelProvider {
 
     fun getInternalStartProcessChannel(): MessageChannel<ProcessStartConfiguration, CloudProcessConfiguration>
 
-    fun getInternalUpdateGroupChannel(): MessageChannel<AbstractCloudProcessGroupConfiguration, Unit>
+    fun getInternalUpdateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
 
     fun getInternalDeleteGroupChannel(): MessageChannel<String, Unit>
+
+    fun getInternalUpdateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
+
+    fun getInternalDeleteStaticTemplateChannel(): MessageChannel<String, Unit>
 
     fun getInternalUpdatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit>
 

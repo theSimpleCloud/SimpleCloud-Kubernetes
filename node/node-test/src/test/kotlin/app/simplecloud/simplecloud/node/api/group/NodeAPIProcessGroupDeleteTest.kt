@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.api.group
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach

@@ -18,9 +18,9 @@
 
 package app.simplecloud.simplecloud.api.internal.service
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Created by IntelliJ IDEA.
@@ -30,10 +30,10 @@ import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
  */
 interface InternalCloudProcessGroupService : CloudProcessGroupService {
 
-    suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration)
+    suspend fun updateGroupInternal(configuration: AbstractProcessTemplateConfiguration)
 
     suspend fun deleteGroupInternal(group: CloudProcessGroup)
 
-    suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup
+    suspend fun createGroupInternal(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroup
 
 }

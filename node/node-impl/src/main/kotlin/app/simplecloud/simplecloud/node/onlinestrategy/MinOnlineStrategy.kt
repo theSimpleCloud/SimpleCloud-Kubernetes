@@ -18,9 +18,9 @@
 
 package app.simplecloud.simplecloud.node.onlinestrategy
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Date: 27.03.22

@@ -35,6 +35,8 @@ interface CloudAPI {
 
     fun getProcessGroupService(): CloudProcessGroupService
 
+    fun getStaticProcessTemplateService(): StaticProcessTemplateService
+
     fun getProcessService(): CloudProcessService
 
     fun getCloudPlayerService(): CloudPlayerService

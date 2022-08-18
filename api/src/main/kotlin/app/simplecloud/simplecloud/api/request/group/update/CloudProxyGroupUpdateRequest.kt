@@ -19,7 +19,8 @@
 package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
+import app.simplecloud.simplecloud.api.request.template.ProcessProxyTemplateUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProxyGroup
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -28,15 +29,11 @@ import java.util.concurrent.CompletableFuture
  * Time: 11:19
  * @author Frederick Baier
  */
-interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest {
+interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest, ProcessProxyTemplateUpdateRequest {
 
-    /**
-     * Sets the start priority for the group
-     * @return this
-     */
-    fun setStartPort(startPort: Int): CloudProxyGroupUpdateRequest
+    override fun setStartPort(startPort: Int): CloudProxyGroupUpdateRequest
 
-    override fun getProcessGroup(): CloudProxyGroup
+    override fun getProcessTemplate(): CloudProxyGroup
 
     override fun setMaxMemory(memory: Int): CloudProxyGroupUpdateRequest
 

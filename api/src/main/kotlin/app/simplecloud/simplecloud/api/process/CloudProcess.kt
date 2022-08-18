@@ -19,11 +19,11 @@
 package app.simplecloud.simplecloud.api.process
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import app.simplecloud.simplecloud.distribution.api.Address

@@ -19,10 +19,10 @@
 package app.simplecloud.simplecloud.node.service
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.impl.template.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
 
 class CloudProcessGroupServiceImpl(

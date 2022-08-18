@@ -22,8 +22,8 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.Address
 import java.util.*
@@ -68,7 +68,7 @@ class DatabaseFactoryProvider {
 
     fun withProxyGroup(groupName: String): DatabaseFactoryProvider {
         val groupRepository = this.databaseFactory.cloudProcessGroupRepository
-        val groupConfiguration = CloudProxyProcessGroupConfiguration(
+        val groupConfiguration = ProxyProcessTemplateConfiguration(
             groupName,
             512,
             20,

@@ -30,11 +30,11 @@ import app.simplecloud.simplecloud.api.impl.service.listener.CloudProcessEntryLi
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.*

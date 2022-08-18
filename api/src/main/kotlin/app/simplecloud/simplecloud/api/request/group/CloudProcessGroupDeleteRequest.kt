@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.request.group
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.request.template.ProcessTemplateDeleteRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Created by IntelliJ IDEA.
@@ -29,9 +29,6 @@ import app.simplecloud.simplecloud.api.request.template.ProcessTemplateDeleteReq
  */
 interface CloudProcessGroupDeleteRequest : ProcessTemplateDeleteRequest {
 
-    /**
-     * Returns the [CloudProcessGroup] this request will delete
-     */
-    fun getProcessGroup(): CloudProcessGroup
+    override fun getProcessTemplate(): CloudProcessGroup
 
 }

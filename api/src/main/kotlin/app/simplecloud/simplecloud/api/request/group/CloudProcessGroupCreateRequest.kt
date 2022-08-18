@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.request.group
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**

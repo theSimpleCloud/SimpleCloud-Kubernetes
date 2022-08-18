@@ -27,14 +27,15 @@ import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupFact
 import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudLobbyGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProxyGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudServerGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticLobbyTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticProxyTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticServerTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.UniversalStaticProcessTemplateFactory
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.distribution.api.Address
@@ -86,6 +87,12 @@ class CloudPlugin(
             CloudProxyGroupFactoryImpl(),
             CloudServerGroupFactoryImpl()
         )
+        val universalStaticProcessTemplateFactory = UniversalStaticProcessTemplateFactory(
+            StaticLobbyTemplateFactoryImpl(),
+            StaticProxyTemplateFactoryImpl(),
+            StaticServerTemplateFactoryImpl()
+        )
+
         val cloudProcessGroupService = CloudProcessGroupServiceImpl(
             distributedRepositories.cloudProcessGroupRepository,
             universalGroupFactory,
@@ -93,6 +100,12 @@ class CloudPlugin(
             nodeService
         )
 
+        val staticProcessTemplateService = StaticProcessTemplateServiceImpl(
+            distributedRepositories.staticProcessTemplateRepository,
+            universalStaticProcessTemplateFactory,
+            internalMessageChannelProvider,
+            nodeService
+        )
 
         val permissionFactory = PermissionFactoryImpl()
         val permissionGroupFactory = PermissionGroupFactoryImpl(permissionFactory)
@@ -111,10 +124,12 @@ class CloudPlugin(
             internalMessageChannelProvider,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
         )
+
         val selfComponent = findSelfProcess(cloudProcessService)
         return PluginCloudAPI(
             selfComponent.getName(),
             cloudProcessGroupService,
+            staticProcessTemplateService,
             cloudProcessService,
             cloudPlayerService,
             permissionGroupService,
@@ -138,7 +153,8 @@ class CloudPlugin(
             DistributedCloudPlayerRepository(distribution),
             DistributedCloudProcessGroupRepository(distribution),
             DistributedCloudProcessRepository(distribution),
-            DistributedPermissionGroupRepository(distribution)
+            DistributedPermissionGroupRepository(distribution),
+            DistributedStaticProcessTemplateRepository(distribution)
         )
     }
 

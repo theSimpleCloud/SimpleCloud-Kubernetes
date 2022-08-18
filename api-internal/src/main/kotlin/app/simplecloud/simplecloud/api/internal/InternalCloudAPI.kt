@@ -19,10 +19,7 @@
 package app.simplecloud.simplecloud.api.internal
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
-import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
+import app.simplecloud.simplecloud.api.internal.service.*
 
 /**
  * Date: 07.05.22
@@ -33,6 +30,8 @@ import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupS
 interface InternalCloudAPI : CloudAPI {
 
     override fun getProcessGroupService(): InternalCloudProcessGroupService
+
+    override fun getStaticProcessTemplateService(): InternalStaticProcessTemplateService
 
     override fun getProcessService(): InternalCloudProcessService
 

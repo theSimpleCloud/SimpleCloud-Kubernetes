@@ -18,10 +18,7 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.*
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 
 
@@ -36,5 +33,6 @@ data class DistributedRepositories(
     val cloudProcessGroupRepository: DistributedCloudProcessGroupRepository,
     val cloudProcessRepository: DistributedCloudProcessRepository,
     val permissionGroupRepository: DistributedPermissionGroupRepository,
-    val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository
+    val staticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
+    val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
 )

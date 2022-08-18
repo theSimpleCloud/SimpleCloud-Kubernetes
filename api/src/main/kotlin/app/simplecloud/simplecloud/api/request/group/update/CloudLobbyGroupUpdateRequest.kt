@@ -19,7 +19,8 @@
 package app.simplecloud.simplecloud.api.request.group.update
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
+import app.simplecloud.simplecloud.api.request.template.ProcessLobbyTemplateUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudLobbyGroup
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -28,15 +29,11 @@ import java.util.concurrent.CompletableFuture
  * Time: 09:59
  * @author Frederick Baier
  */
-interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest {
+interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest, ProcessLobbyTemplateUpdateRequest {
 
-    /**
-     * Sets the lobby priority for the group
-     * @return this
-     */
-    fun setLobbyPriority(lobbyPriority: Int): CloudLobbyGroupUpdateRequest
+    override fun getProcessTemplate(): CloudLobbyGroup
 
-    override fun getProcessGroup(): CloudLobbyGroup
+    override fun setLobbyPriority(lobbyPriority: Int): CloudLobbyGroupUpdateRequest
 
     override fun setMaxMemory(memory: Int): CloudLobbyGroupUpdateRequest
 

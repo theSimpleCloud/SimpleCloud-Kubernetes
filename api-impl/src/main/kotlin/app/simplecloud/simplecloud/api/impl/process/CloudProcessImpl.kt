@@ -22,12 +22,12 @@ import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.distribution.api.impl.ClientComponentImpl

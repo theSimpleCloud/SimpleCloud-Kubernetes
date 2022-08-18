@@ -25,12 +25,12 @@ import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnline
 import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequestImpl
 import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequestImpl
 import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlineCountStrategyService
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository

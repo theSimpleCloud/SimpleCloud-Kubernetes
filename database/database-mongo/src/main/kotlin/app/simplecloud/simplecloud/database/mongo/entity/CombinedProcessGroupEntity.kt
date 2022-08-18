@@ -18,11 +18,11 @@
 
 package app.simplecloud.simplecloud.database.mongo.entity
 
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
 import dev.morphia.annotations.Entity
 import dev.morphia.annotations.Id
 
@@ -54,10 +54,10 @@ class CombinedProcessGroupEntity(
         ProcessTemplateType.PROXY
     )
 
-    fun toConfiguration(): AbstractCloudProcessGroupConfiguration {
+    fun toConfiguration(): AbstractProcessTemplateConfiguration {
         when (type) {
             ProcessTemplateType.LOBBY -> {
-                return CloudLobbyProcessGroupConfiguration(
+                return LobbyProcessTemplateConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
@@ -71,7 +71,7 @@ class CombinedProcessGroupEntity(
             }
 
             ProcessTemplateType.PROXY -> {
-                return CloudProxyProcessGroupConfiguration(
+                return ProxyProcessTemplateConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
@@ -85,7 +85,7 @@ class CombinedProcessGroupEntity(
             }
 
             ProcessTemplateType.SERVER -> {
-                return CloudServerProcessGroupConfiguration(
+                return ServerProcessTemplateConfiguration(
                     this.name,
                     this.maxMemory,
                     this.maxPlayers,
@@ -100,10 +100,10 @@ class CombinedProcessGroupEntity(
     }
 
     companion object {
-        fun fromGroupConfiguration(configuration: AbstractCloudProcessGroupConfiguration): CombinedProcessGroupEntity {
-            val startPort = if (configuration is CloudProxyProcessGroupConfiguration) configuration.startPort else -1
+        fun fromGroupConfiguration(configuration: AbstractProcessTemplateConfiguration): CombinedProcessGroupEntity {
+            val startPort = if (configuration is ProxyProcessTemplateConfiguration) configuration.startPort else -1
             val lobbyPriority =
-                if (configuration is CloudLobbyProcessGroupConfiguration) configuration.lobbyPriority else -1
+                if (configuration is LobbyProcessTemplateConfiguration) configuration.lobbyPriority else -1
             return CombinedProcessGroupEntity(
                 configuration.name,
                 configuration.maxMemory,

@@ -20,9 +20,11 @@ package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedStaticProcessTemplateRepository
 import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
 import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
+import app.simplecloud.simplecloud.database.api.DatabaseStaticProcessTemplateRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import org.apache.logging.log4j.LogManager
 
@@ -32,7 +34,9 @@ class NodeRepositoriesInitializer(
     private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,
     private val databasePermissionGroupRepository: DatabasePermissionGroupRepository,
     private val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
-    private val databaseOnlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository
+    private val databaseOnlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
+    private val distributedStaticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
+    private val databaseStaticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
 ) {
 
     fun initializeRepositories() {
@@ -40,6 +44,15 @@ class NodeRepositoriesInitializer(
         initGroups()
         initPermissionGroups()
         initOnlineCountStrategies()
+        initStaticTemplate()
+    }
+
+    private fun initStaticTemplate() {
+        val configurations = this.databaseStaticProcessTemplateRepository.findAll().join()
+        logger.info("Found Static Templates: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedStaticProcessTemplateRepository.save(config.name, config)
+        }
     }
 
     private fun initOnlineCountStrategies() {

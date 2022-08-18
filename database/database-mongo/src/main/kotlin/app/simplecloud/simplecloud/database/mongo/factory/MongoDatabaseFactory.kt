@@ -20,10 +20,7 @@ package app.simplecloud.simplecloud.database.mongo.factory
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.mongo.MongoDatabaseCloudProcessGroupRepositoryAdapter
-import app.simplecloud.simplecloud.database.mongo.MongoDatabaseOfflineCloudPlayerRepositoryAdapter
-import app.simplecloud.simplecloud.database.mongo.MongoDatabaseOnlineCountStrategyRepositoryAdapter
-import app.simplecloud.simplecloud.database.mongo.MongoDatabasePermissionGroupRepositoryAdapter
+import app.simplecloud.simplecloud.database.mongo.*
 import app.simplecloud.simplecloud.database.mongo.start.MongoClientStarter
 import dev.morphia.Datastore
 import java.net.ConnectException
@@ -45,7 +42,8 @@ class MongoDatabaseFactory : DatabaseFactory {
             MongoDatabaseCloudProcessGroupRepositoryAdapter(datastore),
             MongoDatabaseOfflineCloudPlayerRepositoryAdapter(datastore),
             MongoDatabaseOnlineCountStrategyRepositoryAdapter(datastore),
-            MongoDatabasePermissionGroupRepositoryAdapter(datastore)
+            MongoDatabasePermissionGroupRepositoryAdapter(datastore),
+            MongoDatabaseStaticProcessTemplateRepositoryAdapter(datastore)
         )
     }
 

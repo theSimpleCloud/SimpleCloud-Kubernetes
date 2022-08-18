@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.node.api.group
 
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -47,8 +47,8 @@ open class NodeAPIProcessGroupTest : NodeAPIBaseTest() {
         super.tearDown()
     }
 
-    protected fun createLobbyGroupConfiguration(name: String = "Lobby"): CloudLobbyProcessGroupConfiguration {
-        return CloudLobbyProcessGroupConfiguration(
+    protected fun createLobbyGroupConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
             name,
             512,
             20,

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.internal.configutation
 
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 
 /**
  * Created by IntelliJ IDEA.

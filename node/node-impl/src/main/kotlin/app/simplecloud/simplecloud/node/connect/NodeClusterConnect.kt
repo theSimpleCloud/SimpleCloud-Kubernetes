@@ -27,14 +27,15 @@ import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerFa
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudLobbyGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudProxyGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.CloudServerGroupFactoryImpl
-import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
+import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticLobbyTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticProxyTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticServerTemplateFactoryImpl
+import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.UniversalStaticProcessTemplateFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
@@ -93,6 +94,7 @@ class NodeClusterConnect(
             DistributedCloudProcessGroupRepository(distribution),
             DistributedCloudProcessRepository(distribution),
             DistributedPermissionGroupRepository(distribution),
+            DistributedStaticProcessTemplateRepository(distribution),
             DistributedOnlineCountStrategyRepository(distribution)
         )
     }
@@ -136,6 +138,12 @@ class NodeClusterConnect(
             CloudProxyGroupFactoryImpl(),
             CloudServerGroupFactoryImpl()
         )
+        val universalStaticProcessTemplateFactory = UniversalStaticProcessTemplateFactory(
+            StaticLobbyTemplateFactoryImpl(),
+            StaticProxyTemplateFactoryImpl(),
+            StaticServerTemplateFactoryImpl()
+        )
+
         val nodeProcessOnlineStrategyService = NodeProcessOnlineStrategyServiceImpl(
             distributedRepositories.distributedOnlineCountStrategyRepository,
             databaseRepositories.onlineCountStrategyRepository,
@@ -145,6 +153,12 @@ class NodeClusterConnect(
             universalGroupFactory,
             distributedRepositories.cloudProcessGroupRepository,
             databaseRepositories.cloudProcessGroupRepository
+        )
+
+        val staticProcessTemplateService = StaticProcessTemplateServiceImpl(
+            universalStaticProcessTemplateFactory,
+            distributedRepositories.staticProcessTemplateRepository,
+            databaseRepositories.staticProcessTemplateRepository
         )
 
         val processFactory = CloudProcessFactoryImpl()
@@ -182,6 +196,7 @@ class NodeClusterConnect(
         return NodeCloudAPI(
             selfComponent.getName(),
             cloudProcessGroupService,
+            staticProcessTemplateService,
             cloudProcessService,
             cloudPlayerService,
             permissionGroupService,

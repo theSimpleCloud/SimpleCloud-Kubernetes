@@ -19,10 +19,7 @@
 package app.simplecloud.simplecloud.api.impl
 
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
-import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
+import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
@@ -37,13 +34,14 @@ import app.simplecloud.simplecloud.eventapi.EventManager
 open class CloudAPIImpl(
     private val localNetworkComponentName: String,
     private val processGroupService: InternalCloudProcessGroupService,
+    private val staticTemplateService: InternalStaticProcessTemplateService,
     private val processService: InternalCloudProcessService,
     private val playerService: InternalCloudPlayerService,
     private val permissionGroupService: InternalPermissionGroupService,
     private val nodeService: NodeService,
     private val messageChannelManager: MessageChannelManager,
     private val eventManager: EventManager,
-    private val permissionFactory: Permission.Factory
+    private val permissionFactory: Permission.Factory,
 ) : InternalCloudAPI {
 
     override fun getLocalNetworkComponentName(): String {
@@ -64,6 +62,10 @@ open class CloudAPIImpl(
 
     override fun getPermissionGroupService(): InternalPermissionGroupService {
         return this.permissionGroupService
+    }
+
+    override fun getStaticProcessTemplateService(): InternalStaticProcessTemplateService {
+        return this.staticTemplateService
     }
 
     override fun getNodeService(): NodeService {

@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.request.template
 
-import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**

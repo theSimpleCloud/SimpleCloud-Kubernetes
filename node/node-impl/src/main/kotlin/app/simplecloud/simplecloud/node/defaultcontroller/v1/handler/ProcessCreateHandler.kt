@@ -21,9 +21,9 @@ package app.simplecloud.simplecloud.node.defaultcontroller.v1.handler
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.dto.CloudProcessCreateRequestDto
 
 /**

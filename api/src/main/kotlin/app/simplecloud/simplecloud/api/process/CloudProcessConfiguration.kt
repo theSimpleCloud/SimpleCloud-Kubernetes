@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.process
 
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
 import app.simplecloud.simplecloud.api.process.state.ProcessState
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import java.util.*
 
 /**

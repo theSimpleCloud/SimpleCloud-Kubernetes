@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.database.memory
 
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
 
 /**
@@ -27,5 +27,5 @@ import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupReposit
  * @author Frederick Baier
  *
  */
-class MemoryDatabaseCloudProcessGroupRepository : InMemoryRepository<String, AbstractCloudProcessGroupConfiguration>(),
+class MemoryDatabaseCloudProcessGroupRepository : InMemoryRepository<String, AbstractProcessTemplateConfiguration>(),
     DatabaseCloudProcessGroupRepository

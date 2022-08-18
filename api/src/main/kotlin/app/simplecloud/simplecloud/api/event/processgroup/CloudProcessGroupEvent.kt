@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.event.processgroup
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.eventapi.Event
 
 /**

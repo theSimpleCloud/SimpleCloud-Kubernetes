@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.process.onlinestrategy
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.utils.Identifiable
 import app.simplecloud.simplecloud.api.utils.Nameable
 

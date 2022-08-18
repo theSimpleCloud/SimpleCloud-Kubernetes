@@ -18,11 +18,11 @@
 
 package app.simplecloud.simplecloud.api.service
 
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -46,7 +46,7 @@ interface CloudProcessGroupService : Service {
     /**
      * Creates a request to create a new group
      */
-    fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest
+    fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroupCreateRequest
 
     /**
      * Creates a request to update an existing group

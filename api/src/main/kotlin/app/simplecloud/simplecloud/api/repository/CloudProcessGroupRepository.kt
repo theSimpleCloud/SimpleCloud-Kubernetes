@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.repository
 
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -26,4 +26,4 @@ import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloud
  * Time: 13:41
  * @author Frederick Baier
  */
-interface CloudProcessGroupRepository : Repository<String, AbstractCloudProcessGroupConfiguration>
+interface CloudProcessGroupRepository : Repository<String, AbstractProcessTemplateConfiguration>

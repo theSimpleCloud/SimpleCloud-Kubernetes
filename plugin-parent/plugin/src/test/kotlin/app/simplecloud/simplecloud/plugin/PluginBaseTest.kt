@@ -20,16 +20,16 @@ package app.simplecloud.simplecloud.plugin
 
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudLobbyGroup
-import app.simplecloud.simplecloud.api.process.group.CloudProxyGroup
-import app.simplecloud.simplecloud.api.process.group.CloudServerGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudLobbyGroup
+import app.simplecloud.simplecloud.api.template.group.CloudProxyGroup
+import app.simplecloud.simplecloud.api.template.group.CloudServerGroup
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
@@ -79,7 +79,7 @@ open class PluginBaseTest {
 
     protected fun givenLobbyGroup(name: String, updateFunction: CloudLobbyGroupUpdateRequest.() -> Unit = {}) {
         val createRequest = this.nodeCloudAPI.getProcessGroupService().createCreateRequest(
-            CloudLobbyProcessGroupConfiguration(
+            LobbyProcessTemplateConfiguration(
                 name,
                 1024,
                 20,
@@ -99,7 +99,7 @@ open class PluginBaseTest {
 
     protected fun givenProxyGroup(name: String, updateFunction: CloudProxyGroupUpdateRequest.() -> Unit = {}) {
         val createRequest = this.nodeCloudAPI.getProcessGroupService().createCreateRequest(
-            CloudProxyProcessGroupConfiguration(
+            ProxyProcessTemplateConfiguration(
                 name,
                 1024,
                 20,
@@ -119,7 +119,7 @@ open class PluginBaseTest {
 
     protected fun givenServerGroup(name: String, updateFunction: CloudProcessGroupUpdateRequest.() -> Unit = {}) {
         val createRequest = this.nodeCloudAPI.getProcessGroupService().createCreateRequest(
-            CloudServerProcessGroupConfiguration(
+            ServerProcessTemplateConfiguration(
                 name,
                 1024,
                 20,

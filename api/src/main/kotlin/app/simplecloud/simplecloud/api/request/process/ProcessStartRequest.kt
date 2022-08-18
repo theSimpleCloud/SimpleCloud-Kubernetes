@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.api.request.process
 
 import app.simplecloud.simplecloud.api.image.Image
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.utils.Request
 
 /**

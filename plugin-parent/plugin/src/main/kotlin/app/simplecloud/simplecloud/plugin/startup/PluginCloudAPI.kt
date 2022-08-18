@@ -19,10 +19,7 @@
 package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessService
-import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
+import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
@@ -37,6 +34,7 @@ import app.simplecloud.simplecloud.eventapi.EventManager
 class PluginCloudAPI(
     localNetworkComponentName: String,
     val internalProcessGroupService: InternalCloudProcessGroupService,
+    val internalStaticProcessTemplateService: InternalStaticProcessTemplateService,
     val internalProcessService: InternalCloudProcessService,
     val internalPlayerService: InternalCloudPlayerService,
     val internalPermissionGroupService: InternalPermissionGroupService,
@@ -47,6 +45,7 @@ class PluginCloudAPI(
 ) : CloudAPIImpl(
     localNetworkComponentName,
     internalProcessGroupService,
+    internalStaticProcessTemplateService,
     internalProcessService,
     internalPlayerService,
     internalPermissionGroupService,

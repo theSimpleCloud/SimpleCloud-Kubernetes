@@ -32,11 +32,25 @@ class MessageChannelsInitializer(
         registerPermissionGroupUpdateMessageChannel()
         registerGroupDeleteMessageChannel()
         registerGroupUpdateMessageChannel()
+        registerStaticTemplateDeleteMessageChannel()
+        registerStaticTemplateUpdateMessageChannel()
         registerStartProcessMessageChannel()
         registerPlayerLoginMessageChannel()
         registerPlayerDisconnectMessageChannel()
         registerProcessExecuteCommandMessageChannel()
         registerProcessLogsMessageChannel()
+    }
+
+    private fun registerStaticTemplateUpdateMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalUpdateStaticTemplateChannel()
+        val messageHandler = UpdateStaticTemplateMessageHandler(this.cloudAPI.getStaticProcessTemplateService())
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
+    private fun registerStaticTemplateDeleteMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalDeleteStaticTemplateChannel()
+        val messageHandler = DeleteStaticTemplateMessageHandler(this.cloudAPI.getStaticProcessTemplateService())
+        messageChannel.setMessageHandler(messageHandler)
     }
 
     private fun registerProcessLogsMessageChannel() {

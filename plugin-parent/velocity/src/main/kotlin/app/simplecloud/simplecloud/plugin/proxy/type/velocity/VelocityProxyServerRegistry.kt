@@ -1,7 +1,7 @@
 package app.simplecloud.simplecloud.plugin.proxy.type.velocity
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.ProcessTemplateType
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.plugin.proxy.ProxyServerRegistry
 import com.velocitypowered.api.proxy.ProxyServer
 import com.velocitypowered.api.proxy.server.ServerInfo

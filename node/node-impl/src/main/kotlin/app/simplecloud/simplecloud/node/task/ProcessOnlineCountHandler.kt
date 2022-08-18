@@ -20,10 +20,10 @@ package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import org.apache.logging.log4j.LogManager
 
 class ProcessOnlineCountHandler(

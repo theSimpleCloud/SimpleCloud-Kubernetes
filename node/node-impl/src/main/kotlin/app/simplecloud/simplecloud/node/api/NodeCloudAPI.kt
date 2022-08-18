@@ -34,6 +34,7 @@ import app.simplecloud.simplecloud.eventapi.EventManager
 class NodeCloudAPI(
     localNetworkComponentName: String,
     processGroupService: InternalCloudProcessGroupService,
+    templateService: InternalStaticProcessTemplateService,
     processService: InternalCloudProcessService,
     playerService: InternalCloudPlayerService,
     permissionGroupService: InternalPermissionGroupService,
@@ -41,10 +42,11 @@ class NodeCloudAPI(
     messageChannelManager: MessageChannelManager,
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
-    private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService
+    private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
+    templateService,
     processService,
     playerService,
     permissionGroupService,

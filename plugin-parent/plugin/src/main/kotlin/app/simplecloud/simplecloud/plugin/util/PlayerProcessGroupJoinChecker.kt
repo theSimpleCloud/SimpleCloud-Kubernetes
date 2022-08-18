@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.plugin.util
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.permission.Permissions
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
  * Date: 29.03.22

@@ -18,16 +18,16 @@
 
 package app.simplecloud.simplecloud.api.impl.service
 
-import app.simplecloud.simplecloud.api.impl.process.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
-import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupCreateRequestImpl
-import app.simplecloud.simplecloud.api.impl.request.group.CloudProcessGroupDeleteRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.template.group.CloudProcessGroupCreateRequestImpl
+import app.simplecloud.simplecloud.api.impl.request.template.group.CloudProcessGroupDeleteRequestImpl
+import app.simplecloud.simplecloud.api.impl.template.group.factory.UniversalCloudProcessGroupFactory
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGroupService
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupDeleteRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -38,7 +38,7 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractCloudProcessGroupService(
     private val distributedRepository: DistributedCloudProcessGroupRepository,
-    private val processGroupFactory: UniversalCloudProcessGroupFactory
+    private val processGroupFactory: UniversalCloudProcessGroupFactory,
 ) : InternalCloudProcessGroupService {
 
     override fun findByName(name: String): CompletableFuture<CloudProcessGroup> {
@@ -51,7 +51,7 @@ abstract class AbstractCloudProcessGroupService(
         return completableFuture.thenApply { list -> list.map { this.processGroupFactory.create(it, this) } }
     }
 
-    override fun createCreateRequest(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroupCreateRequest {
+    override fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroupCreateRequest {
         return CloudProcessGroupCreateRequestImpl(this, configuration)
     }
 
@@ -64,14 +64,14 @@ abstract class AbstractCloudProcessGroupService(
         return CloudProcessGroupDeleteRequestImpl(this, group)
     }
 
-    override suspend fun updateGroupInternal(configuration: AbstractCloudProcessGroupConfiguration) {
+    override suspend fun updateGroupInternal(configuration: AbstractProcessTemplateConfiguration) {
         val group = this.processGroupFactory.create(configuration, this)
         updateGroupInternal0(group)
     }
 
     abstract suspend fun updateGroupInternal0(group: CloudProcessGroup)
 
-    override suspend fun createGroupInternal(configuration: AbstractCloudProcessGroupConfiguration): CloudProcessGroup {
+    override suspend fun createGroupInternal(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroup {
         val group = this.processGroupFactory.create(configuration, this)
         updateGroupInternal0(group)
         return group

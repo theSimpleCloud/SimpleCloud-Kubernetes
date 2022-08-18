@@ -18,11 +18,11 @@
 
 package app.simplecloud.simplecloud.node.defaultcontroller.v1
 
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudServerProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.handler.ProcessGroupUpdateHandler
 import app.simplecloud.simplecloud.restserver.api.controller.Controller
 import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestBody
@@ -40,20 +40,20 @@ import kotlinx.coroutines.runBlocking
  */
 @RestController(1, "cloud/group")
 class ProcessGroupController(
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
 ) : Controller {
 
 
     private val groupUpdateHandler = ProcessGroupUpdateHandler(this.groupService)
 
     @RequestMapping(RequestType.GET, "", "web.cloud.group.get")
-    fun handleGroupGetAll(): List<AbstractCloudProcessGroupConfiguration> {
+    fun handleGroupGetAll(): List<AbstractProcessTemplateConfiguration> {
         val groups = this.groupService.findAll().join()
         return groups.map { it.toConfiguration() }
     }
 
     @RequestMapping(RequestType.GET, "{name}", "web.cloud.group.get")
-    fun handleGroupGetOne(@RequestPathParam("name") name: String): AbstractCloudProcessGroupConfiguration {
+    fun handleGroupGetOne(@RequestPathParam("name") name: String): AbstractProcessTemplateConfiguration {
         val group = this.groupService.findByName(name).join()
         return group.toConfiguration()
     }
@@ -67,12 +67,12 @@ class ProcessGroupController(
                 "SERVER"
             ],
             classes = [
-                CloudLobbyProcessGroupConfiguration::class,
-                CloudProxyProcessGroupConfiguration::class,
-                CloudServerProcessGroupConfiguration::class
+                LobbyProcessTemplateConfiguration::class,
+                ProxyProcessTemplateConfiguration::class,
+                ServerProcessTemplateConfiguration::class
             ]
-        ) configuration: AbstractCloudProcessGroupConfiguration
-    ): AbstractCloudProcessGroupConfiguration {
+        ) configuration: AbstractProcessTemplateConfiguration,
+    ): AbstractProcessTemplateConfiguration {
         val completableFuture = this.groupService.createCreateRequest(configuration).submit()
         val group = completableFuture.join()
         return group.toConfiguration()
@@ -87,11 +87,11 @@ class ProcessGroupController(
                 "SERVER"
             ],
             classes = [
-                CloudLobbyProcessGroupConfiguration::class,
-                CloudProxyProcessGroupConfiguration::class,
-                CloudServerProcessGroupConfiguration::class
+                LobbyProcessTemplateConfiguration::class,
+                ProxyProcessTemplateConfiguration::class,
+                ServerProcessTemplateConfiguration::class
             ]
-        ) configuration: AbstractCloudProcessGroupConfiguration
+        ) configuration: AbstractProcessTemplateConfiguration,
     ): Boolean = runBlocking {
         groupUpdateHandler.update(configuration)
         return@runBlocking true
@@ -104,7 +104,6 @@ class ProcessGroupController(
         groupDeleteRequest.submit().join()
         return true
     }
-
 
 
 }

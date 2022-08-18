@@ -27,7 +27,7 @@ import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelMana
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.AbstractCloudProcessGroupConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import java.util.*
 
 /**
@@ -52,12 +52,20 @@ class InternalMessageChannelProviderImpl(
         return this.messageChannelManager.getOrCreateMessageChannel("internal_process_start")
     }
 
-    override fun getInternalUpdateGroupChannel(): MessageChannel<AbstractCloudProcessGroupConfiguration, Unit> {
+    override fun getInternalUpdateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_group_update")
     }
 
     override fun getInternalDeleteGroupChannel(): MessageChannel<String, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_group_delete")
+    }
+
+    override fun getInternalUpdateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_static_update")
+    }
+
+    override fun getInternalDeleteStaticTemplateChannel(): MessageChannel<String, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_static_delete")
     }
 
     override fun getInternalUpdatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit> {

@@ -20,11 +20,11 @@ package app.simplecloud.simplecloud.node.api.player
 
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.process.group.CloudProcessGroup
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudLobbyProcessGroupConfiguration
-import app.simplecloud.simplecloud.api.process.group.configuration.CloudProxyProcessGroupConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
@@ -85,9 +85,9 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
         name: String,
         maxPlayers: Int,
         maintenance: Boolean,
-        joinPermission: String?
-    ): CloudLobbyProcessGroupConfiguration {
-        return CloudLobbyProcessGroupConfiguration(
+        joinPermission: String?,
+    ): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
             name,
             512,
             maxPlayers,
@@ -114,9 +114,9 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
         name: String,
         maxPlayers: Int,
         maintenance: Boolean,
-        joinPermission: String?
-    ): CloudProxyProcessGroupConfiguration {
-        return CloudProxyProcessGroupConfiguration(
+        joinPermission: String?,
+    ): ProxyProcessTemplateConfiguration {
+        return ProxyProcessTemplateConfiguration(
             name,
             512,
             maxPlayers,
