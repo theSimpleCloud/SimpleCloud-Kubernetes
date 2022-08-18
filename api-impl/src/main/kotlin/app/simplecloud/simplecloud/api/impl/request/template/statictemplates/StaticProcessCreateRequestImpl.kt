@@ -39,7 +39,7 @@ class StaticProcessCreateRequestImpl(
 ) : StaticProcessTemplateCreateRequest {
 
     override fun submit(): CompletableFuture<StaticProcessTemplate> = CloudScope.future {
-        checkGroupName()
+        checkStaticTemplateName()
         checkMaxMemory()
         checkMaxPlayers()
         return@future internalService.createStaticTemplateInternal(configuration)
@@ -57,13 +57,13 @@ class StaticProcessCreateRequestImpl(
         }
     }
 
-    private suspend fun checkGroupName() {
-        if (doesGroupExist(configuration.name)) {
-            throw IllegalArgumentException("Group already exists")
+    private suspend fun checkStaticTemplateName() {
+        if (doesStaticTemplateExist(configuration.name)) {
+            throw IllegalArgumentException("Static Template already exists")
         }
     }
 
-    private suspend fun doesGroupExist(groupName: String): Boolean {
+    private suspend fun doesStaticTemplateExist(groupName: String): Boolean {
         return try {
             this.internalService.findByName(groupName).await()
             true
