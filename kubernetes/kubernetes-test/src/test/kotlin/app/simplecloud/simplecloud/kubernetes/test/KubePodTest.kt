@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test
 class KubePodTest {
 
     @Test
-    internal fun newPodService_get_willThrowNoSuchElement() {
+    fun newPodService_get_willThrowNoSuchElement() {
         val kubePodService: KubePodService = TestKubePodService()
         Assertions.assertThrows(NoSuchElementException::class.java) {
             kubePodService.getPod("test")
@@ -41,14 +41,14 @@ class KubePodTest {
     }
 
     @Test
-    internal fun afterCreate_willNotThrow() {
+    fun afterCreate_willNotThrow() {
         val kubePodService: KubePodService = TestKubePodService()
         kubePodService.createPod("test", PodSpec())
         kubePodService.getPod("test")
     }
 
     @Test
-    internal fun afterCreate_andShutdown_GetWillThrow() {
+    fun afterCreate_andShutdown_GetWillThrow() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
         kubePod.delete()
@@ -58,14 +58,14 @@ class KubePodTest {
     }
 
     @Test
-    internal fun afterCreate_PodIsRunning() {
+    fun afterCreate_PodIsRunning() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
         Assertions.assertTrue(kubePod.exists())
     }
 
     @Test
-    internal fun afterCreateAndShutdown_PodIsNotRunning() {
+    fun afterCreateAndShutdown_PodIsNotRunning() {
         val kubePodService: KubePodService = TestKubePodService()
         val kubePod = kubePodService.createPod("test", PodSpec())
         kubePod.delete()

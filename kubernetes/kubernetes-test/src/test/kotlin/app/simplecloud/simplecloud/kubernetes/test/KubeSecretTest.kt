@@ -36,32 +36,32 @@ class KubeSecretTest {
     private var kubeSecretService: KubeSecretService = TestKubeSecretService()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         this.kubeSecretService = TestKubeSecretService()
 
     }
 
     @Test
-    internal fun newKubeService_GetWillThrowError() {
+    fun newKubeService_GetWillThrowError() {
         Assertions.assertThrows(NoSuchElementException::class.java) {
             kubeSecretService.getSecret("test")
         }
     }
 
     @Test
-    internal fun afterCreate_GetWillNotThrow() {
+    fun afterCreate_GetWillNotThrow() {
         kubeSecretService.createSecret("test", SecretSpec().withData("test", "es"))
         kubeSecretService.getSecret("test")
     }
 
     @Test
-    internal fun createTwiceWithDifferentName_willNotThrow() {
+    fun createTwiceWithDifferentName_willNotThrow() {
         kubeSecretService.createSecret("test", SecretSpec().withData("test", "es"))
         kubeSecretService.createSecret("test2", SecretSpec().withData("test", "es"))
     }
 
     @Test
-    internal fun createTwiceWithSameName_willThrow() {
+    fun createTwiceWithSameName_willThrow() {
         kubeSecretService.createSecret("test", SecretSpec().withData("test", "es"))
         Assertions.assertThrows(KubeSecretService.SecretAlreadyExistException::class.java) {
             kubeSecretService.createSecret("test", SecretSpec().withData("test", "es"))

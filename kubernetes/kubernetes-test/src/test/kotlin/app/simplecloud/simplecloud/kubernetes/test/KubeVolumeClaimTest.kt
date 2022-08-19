@@ -37,37 +37,37 @@ class KubeVolumeClaimTest {
     private var kubeVolumeClaimService: KubeVolumeClaimService = TestKubeVolumeClaimService()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         this.kubeVolumeClaimService = TestKubeVolumeClaimService()
     }
 
     @Test
-    internal fun newVolumeClaimService_ClaimsWillBeEmpty() {
+    fun newVolumeClaimService_ClaimsWillBeEmpty() {
         Assertions.assertEquals(0, kubeVolumeClaimService.getAllClaims().size)
     }
 
     @Test
-    internal fun afterCreateOneClaim_ClaimsWillBeOne() {
+    fun afterCreateOneClaim_ClaimsWillBeOne() {
         kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
         Assertions.assertEquals(1, kubeVolumeClaimService.getAllClaims().size)
     }
 
     @Test
-    internal fun afterCreateOneAndDelete_ClaimsWillBeEmpty() {
+    fun afterCreateOneAndDelete_ClaimsWillBeEmpty() {
         val volumeClaim = kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
         volumeClaim.delete()
         Assertions.assertEquals(0, kubeVolumeClaimService.getAllClaims().size)
     }
 
     @Test
-    internal fun afterCreateTwo_ClaimsWillBeTwo() {
+    fun afterCreateTwo_ClaimsWillBeTwo() {
         kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
         kubeVolumeClaimService.createVolumeClaim("test2", KubeVolumeSpec())
         Assertions.assertEquals(2, kubeVolumeClaimService.getAllClaims().size)
     }
 
     @Test
-    internal fun createClaimWithSameNameTwice_WillThrowError() {
+    fun createClaimWithSameNameTwice_WillThrowError() {
         kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
         Assertions.assertThrows(KubeVolumeClaimService.VolumeClaimAlreadyExistException::class.java) {
             kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
@@ -75,14 +75,14 @@ class KubeVolumeClaimTest {
     }
 
     @Test
-    internal fun getNotExistingClaim_WillThrowError() {
+    fun getNotExistingClaim_WillThrowError() {
         Assertions.assertThrows(NoSuchElementException::class.java) {
             kubeVolumeClaimService.getClaim("test")
         }
     }
 
     @Test
-    internal fun afterCreate_GetWillNotThrow() {
+    fun afterCreate_GetWillNotThrow() {
         kubeVolumeClaimService.createVolumeClaim("test", KubeVolumeSpec())
         kubeVolumeClaimService.getClaim("test")
     }

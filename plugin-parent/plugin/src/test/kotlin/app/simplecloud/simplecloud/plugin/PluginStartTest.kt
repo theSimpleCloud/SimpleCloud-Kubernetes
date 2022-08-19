@@ -34,14 +34,14 @@ class PluginStartTest : PluginBaseTest() {
 
 
     @Test
-    internal fun startPluginOfNotExistingProcess_willFail() {
+    fun startPluginOfNotExistingProcess_willFail() {
         Assertions.assertThrows(CloudPlugin.CloudPluginStartException::class.java) {
             startPluginForProcess(UUID.randomUUID())
         }
     }
 
     @Test
-    internal fun startPluginOfNotExistingProcess2_willFail() {
+    fun startPluginOfNotExistingProcess2_willFail() {
         givenProxyGroup("Proxy")
         Assertions.assertThrows(CloudPlugin.CloudPluginStartException::class.java) {
             startPluginForProcess(UUID.randomUUID())
@@ -49,14 +49,14 @@ class PluginStartTest : PluginBaseTest() {
     }
 
     @Test
-    internal fun startPluginOfExistingProcess_willNotFail() {
+    fun startPluginOfExistingProcess_willNotFail() {
         givenProxyGroup("Proxy")
         givenProcess("Proxy", 1)
         startPluginForProcess("Proxy-1")
     }
 
     @Test
-    internal fun startPlugin_willBeOnline() {
+    fun startPlugin_willBeOnline() {
         givenProxyGroup("Proxy")
         givenProcess("Proxy", 1)
         startPluginForProcess("Proxy-1")

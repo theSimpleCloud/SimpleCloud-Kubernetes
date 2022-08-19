@@ -38,13 +38,13 @@ class NodeStartTest {
 
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         nodeStartTestTemplate.setUp()
         this.databaseFactoryProvider = DatabaseFactoryProvider()
     }
 
     @AfterEach
-    internal fun tearDown() {
+    fun tearDown() {
         VirtualNetwork.reset()
     }
 

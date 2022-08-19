@@ -50,7 +50,7 @@ class NodePrepareFirstUserSetupTest : AbstractNodePrepareTest() {
     }
 
     @Test
-    internal fun databaseSetupTest() {
+    fun databaseSetupTest() {
         givenNodeWithDatabaseAndFirstUserSetupAutoComplete()
         prepareNode()
         assertFirstUserCreated()

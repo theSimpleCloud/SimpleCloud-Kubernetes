@@ -46,7 +46,7 @@ class NodePrepareDatabaseSetupTest : AbstractNodePrepareTest() {
     }
 
     @Test
-    internal fun databaseSetupTest() {
+    fun databaseSetupTest() {
         givenNodeWithDatabaseSetupAutoComplete()
         prepareNode()
         assertDatabaseSecretWasCreated()

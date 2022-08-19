@@ -39,21 +39,21 @@ class NodePrepareSetupTest : NodePrepareSetupBaseTest() {
     }
 
     @Test
-    internal fun emptyNode_willExecuteDatabaseSetup() {
+    fun emptyNode_willExecuteDatabaseSetup() {
         givenEmptyNode()
         prepareNode()
         assertSetupExecuted("database")
     }
 
     @Test
-    internal fun databaseConfigGiven_WillExecuteFirstUserSetup() {
+    fun databaseConfigGiven_WillExecuteFirstUserSetup() {
         givenNodeWithDatabaseConnection()
         prepareNode()
         assertSetupExecuted("firstuser")
     }
 
     @Test
-    internal fun givenDatabaseAndFirstUser_WillNotExecuteSetup() {
+    fun givenDatabaseAndFirstUser_WillNotExecuteSetup() {
         givenDatabaseAndFirstUser()
         prepareNode()
         assertNoSetupExecuted()

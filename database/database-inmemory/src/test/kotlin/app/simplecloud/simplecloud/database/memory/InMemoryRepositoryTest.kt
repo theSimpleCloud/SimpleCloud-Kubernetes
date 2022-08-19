@@ -34,7 +34,7 @@ class InMemoryRepositoryTest {
     private var repository: Repository<String, String> = InMemoryRepository<String, String>()
 
     @BeforeEach
-    internal fun setUp() {
+    fun setUp() {
         this.repository = InMemoryRepository<String, String>()
     }
 
