@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.api.request.statictemplate
 
+import app.simplecloud.simplecloud.api.request.template.ProcessTemplateCreateRequest
 import app.simplecloud.simplecloud.api.template.static.StaticProcessTemplate
-import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Date: 16.08.22
@@ -27,4 +27,4 @@ import app.simplecloud.simplecloud.api.utils.Request
  * @author Frederick Baier
  *
  */
-interface StaticProcessTemplateCreateRequest : Request<StaticProcessTemplate>
+interface StaticProcessTemplateCreateRequest : ProcessTemplateCreateRequest<StaticProcessTemplate>

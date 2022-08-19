@@ -16,30 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.group
+package app.simplecloud.simplecloud.node.api.processtemplate
 
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.ProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 11.05.22
- * Time: 18:17
+ * Date: 19.08.22
+ * Time: 08:58
  * @author Frederick Baier
  *
  */
-open class NodeAPIProcessGroupTest : NodeAPIBaseTest() {
+abstract class NodeAPIProcessTemplateTest : NodeAPIBaseTest() {
 
-    protected lateinit var processGroupService: CloudProcessGroupService
+    protected lateinit var templateService: ProcessTemplateService<ProcessTemplate>
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        this.processGroupService = this.cloudAPI.getProcessGroupService()
+        this.templateService = getProcessTemplateService(this.cloudAPI) as ProcessTemplateService<ProcessTemplate>
 
     }
+
+    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 
     @AfterEach
@@ -47,7 +51,7 @@ open class NodeAPIProcessGroupTest : NodeAPIBaseTest() {
         super.tearDown()
     }
 
-    protected fun createLobbyGroupConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
+    protected fun createLobbyTemplateConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
         return LobbyProcessTemplateConfiguration(
             name,
             512,

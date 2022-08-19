@@ -31,33 +31,33 @@ import java.util.concurrent.CompletableFuture
  * Time: 12:28
  * @author Frederick Baier
  */
-interface CloudProcessGroupService : Service {
+interface CloudProcessGroupService : ProcessTemplateService<CloudProcessGroup> {
 
     /**
      * Returns the group found by [name] or the futures fails with [NoSuchElementException]
      */
-    fun findByName(name: String): CompletableFuture<CloudProcessGroup>
+    override fun findByName(name: String): CompletableFuture<CloudProcessGroup>
 
     /**
      * Returns all groups
      */
-    fun findAll(): CompletableFuture<List<CloudProcessGroup>>
+    override fun findAll(): CompletableFuture<List<CloudProcessGroup>>
 
     /**
      * Creates a request to create a new group
      */
-    fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroupCreateRequest
+    override fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroupCreateRequest
 
     /**
      * Creates a request to update an existing group
      * The returned request type depends on the type of the [group]
      * @see [CloudProcessGroup.createUpdateRequest]
      */
-    fun createUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest
+    override fun createUpdateRequest(group: CloudProcessGroup): CloudProcessGroupUpdateRequest
 
     /**
      * Creates a request to delete an existing group
      */
-    fun createDeleteRequest(group: CloudProcessGroup): CloudProcessGroupDeleteRequest
+    override fun createDeleteRequest(group: CloudProcessGroup): CloudProcessGroupDeleteRequest
 
 }

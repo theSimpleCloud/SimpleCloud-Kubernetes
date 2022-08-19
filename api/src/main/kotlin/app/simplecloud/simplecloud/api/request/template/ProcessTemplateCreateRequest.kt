@@ -16,15 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.request.group
+package app.simplecloud.simplecloud.api.request.template
 
-import app.simplecloud.simplecloud.api.request.template.ProcessTemplateCreateRequest
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 01/07/2021
- * Time: 21:34
+ * Date: 18.03.2021
+ * Time: 15:18
  * @author Frederick Baier
  */
-interface CloudProcessGroupCreateRequest : ProcessTemplateCreateRequest<CloudProcessGroup>
+interface ProcessTemplateCreateRequest<T : ProcessTemplate> : Request<T>

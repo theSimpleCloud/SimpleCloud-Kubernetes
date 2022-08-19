@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.group
+package app.simplecloud.simplecloud.node.api.processtemplate
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
@@ -29,52 +29,51 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
- * Date: 11.05.22
- * Time: 18:16
+ * Date: 19.08.22
+ * Time: 09:12
  * @author Frederick Baier
  *
  */
-class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
+abstract class NodeAPIProcessTemplateUpdateTest : NodeAPIProcessTemplateTest() {
 
-
-    private lateinit var existingGroup: CloudProcessGroup
+    private lateinit var existingTemplate: ProcessTemplate
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        existingGroup = this.processGroupService.createCreateRequest(createLobbyGroupConfiguration()).submit().join()
+        existingTemplate = this.templateService.createCreateRequest(createLobbyTemplateConfiguration()).submit().join()
     }
 
     @Test
     fun updateImageTest() {
         val imageName = RandomStringUtils.randomAlphabetic(16)
-        this.processGroupService.createUpdateRequest(existingGroup)
+        this.templateService.createUpdateRequest(existingTemplate)
             .setImage(ImageImpl.fromName(imageName))
             .submit().join()
-        Assertions.assertEquals(imageName, getCurrentGroupConfig().imageName)
+        Assertions.assertEquals(imageName, getCurrentTemplateConfig().imageName)
     }
 
     @Test
     fun updateMaintenanceTest() {
-        this.processGroupService.createUpdateRequest(existingGroup)
+        this.templateService.createUpdateRequest(existingTemplate)
             .setMaintenance(true)
             .submit().join()
-        Assertions.assertEquals(true, getCurrentGroupConfig().maintenance)
+        Assertions.assertEquals(true, getCurrentTemplateConfig().maintenance)
     }
 
     @Test
     fun updateStateUpdatingTest() {
-        this.processGroupService.createUpdateRequest(existingGroup)
+        this.templateService.createUpdateRequest(existingTemplate)
             .setStateUpdating(true)
             .submit().join()
-        Assertions.assertEquals(true, getCurrentGroupConfig().stateUpdating)
+        Assertions.assertEquals(true, getCurrentTemplateConfig().stateUpdating)
     }
 
     @Test
     fun updateMaxMemory_negativeInput_willFail() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                processGroupService.createUpdateRequest(existingGroup)
+                templateService.createUpdateRequest(existingTemplate)
                     .setMaxMemory(-7)
                     .submit().await()
             }
@@ -85,7 +84,7 @@ class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
     fun updateMemory_withTooLowInput_willFail() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                processGroupService.createUpdateRequest(existingGroup)
+                templateService.createUpdateRequest(existingTemplate)
                     .setMaxMemory(200)
                     .submit().await()
             }
@@ -94,7 +93,7 @@ class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
 
     @Test
     fun updateMemory_with256MB() {
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setMaxMemory(256)
             .submit().join()
     }
@@ -102,17 +101,17 @@ class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
     @Test
     fun updatePermissionTest() {
         val permission = RandomStringUtils.randomAlphabetic(16)
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setJoinPermission(permission)
             .submit().join()
-        Assertions.assertEquals(permission, getCurrentGroupConfig().joinPermission)
+        Assertions.assertEquals(permission, getCurrentTemplateConfig().joinPermission)
     }
 
     @Test
     fun updateMaxPlayers_withTooLowInput_willFail() {
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                processGroupService.createUpdateRequest(existingGroup)
+                templateService.createUpdateRequest(existingTemplate)
                     .setMaxPlayers(-2)
                     .submit().await()
             }
@@ -121,40 +120,39 @@ class NodeAPIProcessGroupUpdateTest : NodeAPIProcessGroupTest() {
 
     @Test
     fun updateMaxPlayers_withInfinitePlayers() {
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setMaxPlayers(-1)
             .submit().join()
-        Assertions.assertEquals(-1, getCurrentGroupConfig().maxPlayers)
+        Assertions.assertEquals(-1, getCurrentTemplateConfig().maxPlayers)
     }
 
     @Test
     fun updateMaxPlayersTest() {
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setMaxPlayers(14)
             .submit().join()
-        Assertions.assertEquals(14, getCurrentGroupConfig().maxPlayers)
+        Assertions.assertEquals(14, getCurrentTemplateConfig().maxPlayers)
     }
 
     @Test
     fun updatePriorityWithNegativeNumber() {
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setStartPriority(-5)
             .submit().join()
-        Assertions.assertEquals(-5, getCurrentGroupConfig().startPriority)
+        Assertions.assertEquals(-5, getCurrentTemplateConfig().startPriority)
     }
 
     @Test
     fun updatePriorityTest() {
-        processGroupService.createUpdateRequest(existingGroup)
+        templateService.createUpdateRequest(existingTemplate)
             .setStartPriority(22)
             .submit().join()
-        Assertions.assertEquals(22, getCurrentGroupConfig().startPriority)
+        Assertions.assertEquals(22, getCurrentTemplateConfig().startPriority)
     }
 
 
-    private fun getCurrentGroupConfig(): AbstractProcessTemplateConfiguration {
-        return this.processGroupService.findByName(existingGroup.getName()).join().toConfiguration()
+    private fun getCurrentTemplateConfig(): AbstractProcessTemplateConfiguration {
+        return this.templateService.findByName(existingTemplate.getName()).join().toConfiguration()
     }
-
 
 }

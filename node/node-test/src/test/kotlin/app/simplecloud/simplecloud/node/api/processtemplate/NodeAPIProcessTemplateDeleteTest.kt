@@ -16,30 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.group
+package app.simplecloud.simplecloud.node.api.processtemplate
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
- * Date: 11.05.22
- * Time: 18:16
+ * Date: 19.08.22
+ * Time: 09:12
  * @author Frederick Baier
  *
  */
-class NodeAPIProcessGroupDeleteTest : NodeAPIProcessGroupTest() {
+abstract class NodeAPIProcessTemplateDeleteTest : NodeAPIProcessTemplateTest() {
 
-
-    private lateinit var existingGroup: CloudProcessGroup
+    private lateinit var existingTemplate: ProcessTemplate
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        existingGroup = this.processGroupService.createCreateRequest(createLobbyGroupConfiguration()).submit().join()
+        existingTemplate = this.templateService.createCreateRequest(createLobbyTemplateConfiguration()).submit().join()
     }
 
     @Test
@@ -48,25 +47,24 @@ class NodeAPIProcessGroupDeleteTest : NodeAPIProcessGroupTest() {
     }
 
     @Test
-    fun deleteGroup_groupCountWillBe0() = runBlocking {
-        deleteGroup(existingGroup)
+    fun deleteTemplate_groupCountWillBe0() = runBlocking {
+        deleteTemplate(existingTemplate)
         assertExistingGroupCount(0)
     }
 
     @Test
     fun createTwoGroups_deleteOne_oneWillStillExist() = runBlocking {
-        processGroupService.createCreateRequest(createLobbyGroupConfiguration("Test")).submit().await()
-        deleteGroup(existingGroup)
+        templateService.createCreateRequest(createLobbyTemplateConfiguration("Test")).submit().await()
+        deleteTemplate(existingTemplate)
         assertExistingGroupCount(1)
     }
 
     private fun assertExistingGroupCount(count: Int) {
-        Assertions.assertEquals(count, this.processGroupService.findAll().join().size)
+        Assertions.assertEquals(count, this.templateService.findAll().join().size)
     }
 
-    private suspend fun deleteGroup(group: CloudProcessGroup) {
-        processGroupService.createDeleteRequest(group).submit().await()
+    private suspend fun deleteTemplate(template: ProcessTemplate) {
+        templateService.createDeleteRequest(template).submit().await()
     }
-
 
 }

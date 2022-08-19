@@ -31,16 +31,16 @@ import java.util.concurrent.CompletableFuture
  * @author Frederick Baier
  *
  */
-interface StaticProcessTemplateService : Service {
+interface StaticProcessTemplateService : ProcessTemplateService<StaticProcessTemplate> {
 
-    fun findByName(name: String): CompletableFuture<StaticProcessTemplate>
+    override fun findByName(name: String): CompletableFuture<StaticProcessTemplate>
 
-    fun findAll(): CompletableFuture<List<StaticProcessTemplate>>
+    override fun findAll(): CompletableFuture<List<StaticProcessTemplate>>
 
-    fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): StaticProcessTemplateCreateRequest
+    override fun createCreateRequest(configuration: AbstractProcessTemplateConfiguration): StaticProcessTemplateCreateRequest
 
-    fun createUpdateRequest(template: StaticProcessTemplate): StaticProcessTemplateUpdateRequest
+    override fun createUpdateRequest(template: StaticProcessTemplate): StaticProcessTemplateUpdateRequest
 
-    fun createDeleteRequest(template: StaticProcessTemplate): StaticProcessTemplateDeleteRequest
+    override fun createDeleteRequest(template: StaticProcessTemplate): StaticProcessTemplateDeleteRequest
 
 }

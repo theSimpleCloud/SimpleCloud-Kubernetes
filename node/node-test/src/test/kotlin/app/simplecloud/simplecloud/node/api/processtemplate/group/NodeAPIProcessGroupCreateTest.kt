@@ -16,15 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.request.group
+package app.simplecloud.simplecloud.node.api.processtemplate.group
 
-import app.simplecloud.simplecloud.api.request.template.ProcessTemplateCreateRequest
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.service.ProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTemplateCreateTest
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 01/07/2021
- * Time: 21:34
+ * Date: 11.05.22
+ * Time: 17:35
  * @author Frederick Baier
+ *
  */
-interface CloudProcessGroupCreateRequest : ProcessTemplateCreateRequest<CloudProcessGroup>
+class NodeAPIProcessGroupCreateTest : NodeAPIProcessTemplateCreateTest() {
+
+    override fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate> {
+        return cloudAPI.getProcessGroupService()
+    }
+
+}
