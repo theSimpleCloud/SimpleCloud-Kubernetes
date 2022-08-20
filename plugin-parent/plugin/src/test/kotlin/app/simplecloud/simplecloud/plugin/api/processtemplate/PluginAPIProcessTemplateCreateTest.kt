@@ -16,49 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.processtemplate.statictemplate
+package app.simplecloud.simplecloud.plugin.api.processtemplate
 
-import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
-import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.api.service.ProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.node.api.ProcessTemplateCreateBaseTest
+import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
+import app.simplecloud.simplecloud.plugin.startup.PluginCloudAPI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 18.08.22
- * Time: 17:11
+ * Date: 20.08.22
+ * Time: 10:27
  * @author Frederick Baier
  *
  */
-open class NodeAPIStaticTemplateTest : NodeAPIBaseTest() {
+abstract class PluginAPIProcessTemplateCreateTest : ProcessTemplateCreateBaseTest() {
 
-    protected lateinit var staticTemplateService: StaticProcessTemplateService
+    private val proxyPluginBaseTest = ProxyPluginBaseTest()
 
     @BeforeEach
     override fun setUp() {
+        proxyPluginBaseTest.setUp()
         super.setUp()
-        this.staticTemplateService = this.cloudAPI.getStaticProcessTemplateService()
-
     }
-
 
     @AfterEach
-    override fun tearDown() {
-        super.tearDown()
+    fun tearDown() {
+        proxyPluginBaseTest.tearDown()
     }
 
-    protected fun createLobbyTemplateConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
-        return LobbyProcessTemplateConfiguration(
-            name,
-            512,
-            20,
-            false,
-            "Test",
-            false,
-            0,
-            null,
-            0
-        )
+    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
+        return getProcessTemplateService(proxyPluginBaseTest.pluginCloudAPI)
     }
+
+    abstract fun getProcessTemplateService(cloudAPI: PluginCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }

@@ -18,15 +18,13 @@
 
 package app.simplecloud.simplecloud.node.api.processtemplate
 
-import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
-import kotlinx.coroutines.runBlocking
-import org.apache.commons.lang3.RandomStringUtils
-import org.junit.jupiter.api.Assertions
+import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.ProcessTemplateUpdateBaseTest
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 /**
  * Date: 19.08.22
@@ -34,125 +32,25 @@ import org.junit.jupiter.api.Test
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateUpdateTest : NodeAPIProcessTemplateTest() {
+abstract class NodeAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest() {
 
-    private lateinit var existingTemplate: ProcessTemplate
+    private val nodeAPIBaseTest = NodeAPIBaseTest()
 
     @BeforeEach
     override fun setUp() {
+        nodeAPIBaseTest.setUp()
         super.setUp()
-        existingTemplate = this.templateService.createCreateRequest(createLobbyTemplateConfiguration()).submit().join()
     }
 
-    @Test
-    fun updateImageTest() {
-        val imageName = RandomStringUtils.randomAlphabetic(16)
-        this.templateService.createUpdateRequest(existingTemplate)
-            .setImage(ImageImpl.fromName(imageName))
-            .submit().join()
-        Assertions.assertEquals(imageName, getCurrentTemplateConfig().imageName)
+    @AfterEach
+    fun tearDown() {
+        nodeAPIBaseTest.tearDown()
     }
 
-    @Test
-    fun updateMaintenanceTest() {
-        this.templateService.createUpdateRequest(existingTemplate)
-            .setMaintenance(true)
-            .submit().join()
-        Assertions.assertEquals(true, getCurrentTemplateConfig().maintenance)
+    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
+        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
     }
 
-    @Test
-    fun updateStateUpdatingTest() {
-        this.templateService.createUpdateRequest(existingTemplate)
-            .setStateUpdating(true)
-            .submit().join()
-        Assertions.assertEquals(true, getCurrentTemplateConfig().stateUpdating)
-    }
-
-    @Test
-    fun updateMaxMemory_negativeInput_willFail() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                templateService.createUpdateRequest(existingTemplate)
-                    .setMaxMemory(-7)
-                    .submit().await()
-            }
-        }
-    }
-
-    @Test
-    fun updateMemory_withTooLowInput_willFail() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                templateService.createUpdateRequest(existingTemplate)
-                    .setMaxMemory(200)
-                    .submit().await()
-            }
-        }
-    }
-
-    @Test
-    fun updateMemory_with256MB() {
-        templateService.createUpdateRequest(existingTemplate)
-            .setMaxMemory(256)
-            .submit().join()
-    }
-
-    @Test
-    fun updatePermissionTest() {
-        val permission = RandomStringUtils.randomAlphabetic(16)
-        templateService.createUpdateRequest(existingTemplate)
-            .setJoinPermission(permission)
-            .submit().join()
-        Assertions.assertEquals(permission, getCurrentTemplateConfig().joinPermission)
-    }
-
-    @Test
-    fun updateMaxPlayers_withTooLowInput_willFail() {
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                templateService.createUpdateRequest(existingTemplate)
-                    .setMaxPlayers(-2)
-                    .submit().await()
-            }
-        }
-    }
-
-    @Test
-    fun updateMaxPlayers_withInfinitePlayers() {
-        templateService.createUpdateRequest(existingTemplate)
-            .setMaxPlayers(-1)
-            .submit().join()
-        Assertions.assertEquals(-1, getCurrentTemplateConfig().maxPlayers)
-    }
-
-    @Test
-    fun updateMaxPlayersTest() {
-        templateService.createUpdateRequest(existingTemplate)
-            .setMaxPlayers(14)
-            .submit().join()
-        Assertions.assertEquals(14, getCurrentTemplateConfig().maxPlayers)
-    }
-
-    @Test
-    fun updatePriorityWithNegativeNumber() {
-        templateService.createUpdateRequest(existingTemplate)
-            .setStartPriority(-5)
-            .submit().join()
-        Assertions.assertEquals(-5, getCurrentTemplateConfig().startPriority)
-    }
-
-    @Test
-    fun updatePriorityTest() {
-        templateService.createUpdateRequest(existingTemplate)
-            .setStartPriority(22)
-            .submit().join()
-        Assertions.assertEquals(22, getCurrentTemplateConfig().startPriority)
-    }
-
-
-    private fun getCurrentTemplateConfig(): AbstractProcessTemplateConfiguration {
-        return this.templateService.findByName(existingTemplate.getName()).join().toConfiguration()
-    }
+    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }

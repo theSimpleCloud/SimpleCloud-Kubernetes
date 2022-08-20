@@ -37,7 +37,8 @@ open class ProxyPluginBaseTest : PluginBaseTest() {
 
     protected var proxyServerRegistry = TestProxyServerRegistry()
     protected var selfOnlineCountProvider = TestSelfOnlineCountProvider()
-    protected lateinit var pluginCloudAPI: PluginCloudAPI
+    lateinit var pluginCloudAPI: PluginCloudAPI
+        private set
     protected lateinit var proxyController: ProxyController
 
     @BeforeEach
@@ -49,12 +50,12 @@ open class ProxyPluginBaseTest : PluginBaseTest() {
         startPluginForProcess("Proxy-1")
     }
 
-    fun startPluginForProcess(name: String) {
+    private fun startPluginForProcess(name: String) {
         val processId = this.nodeCloudAPI.getProcessService().findByName(name).join().getUniqueId()
         startPluginForProcess(processId)
     }
 
-    fun startPluginForProcess(processId: UUID) {
+    private fun startPluginForProcess(processId: UUID) {
         val pluginConfig = TestCloudPluginStarter(this.kubeAPI, processId).createProxyPlugin()
         val proxyPlugin = pluginConfig.plugin
         this.pluginCloudAPI = proxyPlugin.cloudAPI

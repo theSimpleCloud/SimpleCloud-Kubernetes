@@ -7,4 +7,6 @@ dependencies {
     api(project(":distribution:distribution-test"))
     api(project(":rest-server:rest-server-base"))
     api(project(":database:database-inmemory"))
+
+    implementation("org.junit.jupiter:junit-jupiter:5.9.0")
 }

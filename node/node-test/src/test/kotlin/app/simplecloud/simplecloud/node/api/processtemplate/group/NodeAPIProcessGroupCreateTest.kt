@@ -22,6 +22,8 @@ import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTemplateCreateTest
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 /**
  * Date: 11.05.22
@@ -33,6 +35,11 @@ class NodeAPIProcessGroupCreateTest : NodeAPIProcessTemplateCreateTest() {
 
     override fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate> {
         return cloudAPI.getProcessGroupService()
+    }
+
+    @Test
+    fun newCluster_hasNoTemplates() {
+        Assertions.assertEquals(0, templateService.findAll().join().size)
     }
 
 }

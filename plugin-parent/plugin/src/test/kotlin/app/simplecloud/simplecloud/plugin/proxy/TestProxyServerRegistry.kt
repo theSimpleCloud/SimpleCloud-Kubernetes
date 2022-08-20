@@ -42,6 +42,6 @@ class TestProxyServerRegistry : ProxyServerRegistry {
     }
 
     override fun unregisterServer(name: String) {
-        TODO("Not yet implemented")
+        this.registeredServers.remove(name)
     }
 }

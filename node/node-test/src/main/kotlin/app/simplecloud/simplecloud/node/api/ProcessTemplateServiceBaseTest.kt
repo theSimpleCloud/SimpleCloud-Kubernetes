@@ -16,41 +16,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.processtemplate
+package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
-import app.simplecloud.simplecloud.node.api.ProcessTemplateDeleteBaseTest
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.BeforeEach
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 
 /**
- * Date: 19.08.22
- * Time: 09:12
+ * Date: 20.08.22
+ * Time: 09:39
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateDeleteTest : ProcessTemplateDeleteBaseTest() {
+abstract class ProcessTemplateServiceBaseTest {
 
-    private val nodeAPIBaseTest = NodeAPIBaseTest()
+    protected lateinit var templateService: ProcessTemplateService<ProcessTemplate>
 
-    @BeforeEach
-    override fun setUp() {
-        nodeAPIBaseTest.setUp()
-        super.setUp()
+    open fun setUp() {
+        this.templateService = getProcessTemplateService() as ProcessTemplateService<ProcessTemplate>
     }
 
-    @AfterEach
-    fun tearDown() {
-        nodeAPIBaseTest.tearDown()
-    }
+    abstract fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate>
 
-    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
-        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
+    protected fun createLobbyTemplateConfiguration(name: String = "Lobby"): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
+            name,
+            512,
+            20,
+            false,
+            "Test",
+            false,
+            0,
+            null,
+            0
+        )
     }
-
-    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }

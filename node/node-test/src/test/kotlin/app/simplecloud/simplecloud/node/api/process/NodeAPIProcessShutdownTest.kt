@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.node.api.process
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.opentest4j.AssertionFailedError
 
 /**
  * Date: 12.05.22
@@ -46,7 +47,7 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     @Test
     fun stopProcess_ProcessWillBeStopped() {
         this.processService.createShutdownRequest(this.process).submit().join()
-        Thread.sleep(1_100) //unregister scheduler is running every second only
+        Thread.sleep(1_300) //unregister scheduler is running every second only
         assertProcessesCount(0)
     }
 
@@ -70,8 +71,22 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     @Test
     fun createProcess_StopContainer_ProcessWillBeUnregistered() {
         this.kubeAPI.getPodService().getPod(this.process.getName().lowercase()).delete()
-        Thread.sleep(1_500) //unregister scheduler is running every second only
-        assertProcessesCount(0)
+
+        tryMultipleTimes(4) {
+            assertProcessesCount(0)
+        }
+    }
+
+    private fun tryMultipleTimes(tries: Int, function: Runnable) {
+        for (i in 0 until tries) {
+            try {
+                function.run()
+                break
+            } catch (e: AssertionFailedError) {
+                Thread.sleep(1_100)
+            }
+        }
+        function.run()
     }
 
 }

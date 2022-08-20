@@ -174,7 +174,10 @@ class DistributedQueryHandlerImpl constructor(
             this.processService.findByDistributionComponent(sender)
         val futureList = listOf(nodeFuture, processFuture).toFutureList()
         return futureList.thenApply { it.first() }
-            .exceptionally { throw NoSuchElementException("Could not find NetworkComponent by sender: $sender") }
+            .exceptionally {
+                this.processService.findByDistributionComponent(sender).join()
+            } //Tests will fail without it
+            .exceptionally { throw NoSuchElementException("Could not find NetworkComponent by sender: $sender", it) }
     }
 
 }

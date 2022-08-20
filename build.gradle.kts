@@ -56,7 +56,7 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
-        testImplementation(platform("org.junit:junit-bom:5.7.2"))
+        testImplementation(platform("org.junit:junit-bom:5.9.0"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")

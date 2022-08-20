@@ -16,41 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.processtemplate
+package app.simplecloud.simplecloud.plugin.api.processtemplate
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
-import app.simplecloud.simplecloud.node.api.ProcessTemplateDeleteBaseTest
+import app.simplecloud.simplecloud.node.api.ProcessTemplateUpdateBaseTest
+import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
+import app.simplecloud.simplecloud.plugin.startup.PluginCloudAPI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 19.08.22
- * Time: 09:12
+ * Date: 20.08.22
+ * Time: 10:27
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateDeleteTest : ProcessTemplateDeleteBaseTest() {
+abstract class PluginAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest() {
 
-    private val nodeAPIBaseTest = NodeAPIBaseTest()
+    private val proxyPluginBaseTest = ProxyPluginBaseTest()
 
     @BeforeEach
     override fun setUp() {
-        nodeAPIBaseTest.setUp()
+        proxyPluginBaseTest.setUp()
         super.setUp()
     }
 
     @AfterEach
     fun tearDown() {
-        nodeAPIBaseTest.tearDown()
+        proxyPluginBaseTest.tearDown()
     }
 
     override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
-        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
+        return getProcessTemplateService(proxyPluginBaseTest.pluginCloudAPI)
     }
 
-    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
+    abstract fun getProcessTemplateService(cloudAPI: PluginCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }

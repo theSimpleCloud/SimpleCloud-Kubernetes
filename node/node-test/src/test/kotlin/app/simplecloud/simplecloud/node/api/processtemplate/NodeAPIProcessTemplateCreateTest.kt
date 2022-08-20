@@ -18,13 +18,13 @@
 
 package app.simplecloud.simplecloud.node.api.processtemplate
 
-import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
-import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.node.assertContains
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.Test
+import app.simplecloud.simplecloud.api.service.ProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.ProcessTemplateCreateBaseTest
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
 
 /**
  * Date: 19.08.22
@@ -32,147 +32,25 @@ import org.junit.jupiter.api.Test
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateCreateTest : NodeAPIProcessTemplateTest() {
+abstract class NodeAPIProcessTemplateCreateTest : ProcessTemplateCreateBaseTest() {
 
-    @Test
-    fun newCluster_hasNoTemplates() {
-        Assertions.assertEquals(0, templateService.findAll().join().size)
+    private val nodeAPIBaseTest = NodeAPIBaseTest()
+
+    @BeforeEach
+    override fun setUp() {
+        nodeAPIBaseTest.setUp()
+        super.setUp()
     }
 
-    @Test
-    fun normalTemplateCreate_willNotFail() = runBlocking {
-        val configuration = createLobbyTemplateConfiguration()
-        createTemplate(configuration)
-        assertTemplateCount(1)
-        assertClusterContainsTemplate(configuration)
+    @AfterEach
+    fun tearDown() {
+        nodeAPIBaseTest.tearDown()
     }
 
-    @Test
-    fun createTwoDifferentTemplates_willNotFail(): Unit = runBlocking {
-        val configuration = createLobbyTemplateConfiguration("Lobby")
-        val configuration2 = createLobbyTemplateConfiguration("Test")
-        createTemplate(configuration)
-        createTemplate(configuration2)
+    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
+        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
     }
 
-    @Test
-    fun createSameTemplateTwice_willFail(): Unit = runBlocking {
-        val configuration = createLobbyTemplateConfiguration()
-        createTemplate(configuration)
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                createTemplate(configuration)
-            }
-        }
-    }
-
-    @Test
-    fun createTemplate_withNegativeMaxMemory_willFail(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMemory(-5)
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                createTemplate(configuration)
-            }
-        }
-    }
-
-    @Test
-    fun createTemplate_withTooLowMaxMemory_willFail(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMemory(200)
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                createTemplate(configuration)
-            }
-        }
-    }
-
-    @Test
-    fun createTemplate_withMaxMemory(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMemory(512)
-        runBlocking {
-            createTemplate(configuration)
-        }
-    }
-
-    @Test
-    fun createTemplate_withTooLowMaxPlayers_willFail(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMaxPlayers(-5)
-        Assertions.assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                createTemplate(configuration)
-            }
-        }
-    }
-
-    @Test
-    fun createTemplate_withInfiniteMaxPlayers(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMaxPlayers(-1)
-        createTemplate(configuration)
-    }
-
-    @Test
-    fun createTemplate_withNormalMaxPlayers(): Unit = runBlocking {
-        val configuration = createTemplateConfigWithMaxPlayers(22)
-        createTemplate(configuration)
-    }
-
-    @Test
-    fun createProxyTemplate_withNormalPort_willNotFail(): Unit = runBlocking {
-        val configuration = createProxyTemplateWithPort(25565)
-        createTemplate(configuration)
-    }
-
-
-    private fun assertClusterContainsTemplate(groupConfiguration: AbstractProcessTemplateConfiguration) {
-        val allTemplatesConfigs = templateService.findAll().join().map { it.toConfiguration() }
-        assertContains(allTemplatesConfigs, groupConfiguration)
-    }
-
-    private fun assertTemplateCount(count: Int) {
-        Assertions.assertEquals(count, templateService.findAll().join().size)
-    }
-
-    private suspend fun createTemplate(groupConfiguration: AbstractProcessTemplateConfiguration) {
-        templateService.createCreateRequest(groupConfiguration).submit().await()
-    }
-
-    private fun createTemplateConfigWithMaxPlayers(maxPlayers: Int): ProxyProcessTemplateConfiguration {
-        return createTemplateConfigWithMemoryAndMaxPlayers(512, maxPlayers)
-    }
-
-    private fun createTemplateConfigWithMemory(maxMemory: Int): ProxyProcessTemplateConfiguration {
-        return createTemplateConfigWithMemoryAndMaxPlayers(maxMemory, 20)
-    }
-
-    private fun createTemplateConfigWithMemoryAndMaxPlayers(
-        maxMemory: Int,
-        maxPlayers: Int,
-    ): ProxyProcessTemplateConfiguration {
-        return ProxyProcessTemplateConfiguration(
-            "Proxy",
-            maxMemory,
-            maxPlayers,
-            false,
-            "Test",
-            false,
-            0,
-            null,
-            25565,
-        )
-    }
-
-    private fun createProxyTemplateWithPort(port: Int): ProxyProcessTemplateConfiguration {
-        return ProxyProcessTemplateConfiguration(
-            "Proxy",
-            512,
-            20,
-            false,
-            "Test",
-            false,
-            0,
-            null,
-            port,
-        )
-    }
+    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }
