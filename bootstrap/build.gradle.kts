@@ -2,7 +2,7 @@ dependencies {
     implementation(project(":api"))
     api(project(":node:node-impl"))
     implementation(project(":rest-server:rest-server-base"))
-    implementation(project(":distribution:distribution-hazelcast"))
+    implementation("app.simplecloud:distribution-hazelcast:1.0.0-SNAPSHOT")
     implementation("com.github.ajalt:clikt:2.8.0")
     implementation(project(":kubernetes:kubernetes-impl"))
     implementation(project(":database:database-mongo"))

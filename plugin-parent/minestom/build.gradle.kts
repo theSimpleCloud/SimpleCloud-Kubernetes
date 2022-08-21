@@ -1,7 +1,7 @@
 
 
 dependencies {
-    compileOnly("com.github.Minestom:Minestom:4a40805ca0")
+    compileOnly("com.github.Minestom:Minestom:7867313290")
     api(project(":plugin-parent:plugin"))
-    implementation(project(":distribution:distribution-hazelcast"))
+    implementation("app.simplecloud:distribution-hazelcast:1.0.0-SNAPSHOT")
 }

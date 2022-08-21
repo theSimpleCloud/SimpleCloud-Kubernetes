@@ -2,7 +2,7 @@
 dependencies {
     api(project(":api"))
     api(project(":api-impl"))
-    testApi(project(":distribution:distribution-test"))
+    testApi("app.simplecloud:distribution-test:1.0.0-SNAPSHOT")
     testApi(project(":node:node-test"))
 }
 

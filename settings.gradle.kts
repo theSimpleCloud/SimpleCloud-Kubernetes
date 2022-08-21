@@ -21,7 +21,6 @@ include("api")
 include("api-impl")
 include("api-internal")
 include("event-api")
-include("distribution")
 include("kubernetes")
 include("rest-server")
 include("node")
@@ -34,10 +33,6 @@ include("plugin-parent:plugin")
 findProject(":plugin-parent:plugin")?.name = "plugin"
 include("plugin-parent:spigot")
 findProject(":plugin-parent:spigot")?.name = "spigot"
-include("distribution:distribution-api")
-findProject(":distribution:distribution-api")?.name = "distribution-api"
-include("distribution:distribution-hazelcast")
-findProject(":distribution:distribution-hazelcast")?.name = "distribution-hazelcast"
 include("database")
 include("database:database-api")
 findProject(":database:database-api")?.name = "database-api"
@@ -56,8 +51,6 @@ findProject(":rest-server:rest-server-base")?.name = "rest-server-base"
 include("rest-server:rest-server-api")
 findProject(":rest-server:rest-server-api")?.name = "rest-server-api"
 include("bootstrap")
-include("distribution:distribution-test")
-findProject(":distribution:distribution-test")?.name = "distribution-test"
 include("node:node-impl")
 findProject(":node:node-impl")?.name = "node-impl"
 include("node:node-test")

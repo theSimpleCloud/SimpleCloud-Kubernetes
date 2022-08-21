@@ -4,7 +4,7 @@ dependencies {
     api(project(":node:node-impl"))
 
     api(project(":kubernetes:kubernetes-test"))
-    api(project(":distribution:distribution-test"))
+    api("app.simplecloud:distribution-test:1.0.0-SNAPSHOT")
     api(project(":rest-server:rest-server-base"))
     api(project(":database:database-inmemory"))
 
