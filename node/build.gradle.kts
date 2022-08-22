@@ -17,5 +17,21 @@
  */
 
 dependencies {
+    implementation(kotlin("stdlib"))
+    implementation("org.apache.commons:commons-lang3:3.12.0")
 
+
+    api(project(":api-impl"))
+    implementation(project(":rest-server:rest-server-api"))
+    implementation(project(":kubernetes:kubernetes-api"))
+    implementation(project(":database:database-api"))
+
+    implementation("org.apache.logging.log4j:log4j-core:2.18.0")
+    implementation("org.apache.logging.log4j:log4j-api:2.18.0")
+
+    testFixturesApi(project(":kubernetes:kubernetes-test"))
+    testFixturesApi(project(":database:database-inmemory"))
+    testFixturesApi(project(":rest-server:rest-server-base"))
+    testFixturesApi("app.simplecloud:distribution-test:1.0.0-SNAPSHOT")
+    testFixturesImplementation("org.apache.commons:commons-lang3:3.12.0")
 }

@@ -1,6 +1,5 @@
 dependencies {
     implementation(project(":api"))
-    api(project(":node:node-impl"))
     implementation(project(":rest-server:rest-server-base"))
     implementation("app.simplecloud:distribution-hazelcast:1.0.0-SNAPSHOT")
     implementation("com.github.ajalt:clikt:2.8.0")

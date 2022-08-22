@@ -51,10 +51,6 @@ findProject(":rest-server:rest-server-base")?.name = "rest-server-base"
 include("rest-server:rest-server-api")
 findProject(":rest-server:rest-server-api")?.name = "rest-server-api"
 include("bootstrap")
-include("node:node-impl")
-findProject(":node:node-impl")?.name = "node-impl"
-include("node:node-test")
-findProject(":node:node-test")?.name = "node-test"
 include("plugin-parent:minestom")
 findProject(":plugin-parent:minestom")?.name = "minestom"
 include("plugin-parent:velocity")

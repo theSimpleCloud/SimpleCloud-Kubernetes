@@ -18,6 +18,7 @@
 
 plugins {
     java
+    `java-test-fixtures`
     id ("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("kapt") version "1.7.0"
     kotlin("jvm") version "1.6.21"
@@ -29,6 +30,7 @@ allprojects {
 
     apply {
         plugin("java")
+        plugin("java-test-fixtures")
         plugin("org.jetbrains.kotlin.jvm")
         plugin("com.github.johnrengelman.shadow")
         plugin("kotlin-kapt")
@@ -57,11 +59,19 @@ subprojects {
 
     dependencies {
         implementation(kotlin("stdlib"))
+
         testImplementation(platform("org.junit:junit-bom:5.9.0"))
         testImplementation("org.junit.jupiter:junit-jupiter")
         testRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
+        testFixturesImplementation(platform("org.junit:junit-bom:5.9.0"))
+        testFixturesImplementation("org.junit.jupiter:junit-jupiter")
+        testFixturesRuntimeOnly("org.junit.jupiter:junit-jupiter-engine")
+
         implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
+        testFixturesImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${coroutinesVersion}")
         implementation("com.google.guava:guava:31.1-jre")
+        testFixturesImplementation("com.google.guava:guava:31.1-jre")
     }
 
     tasks.test {
