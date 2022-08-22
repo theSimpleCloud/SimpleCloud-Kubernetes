@@ -23,8 +23,9 @@ class CloudMinestomPlugin : Extension() {
         SelfOnlineCountProvider { MinecraftServer.getConnectionManager().onlinePlayers.size }
     )
 
-    override fun initialize() {
+    override fun initialize(): LoadStatus {
         MinestomListener(this.cloudPlugin.onlineCountUpdater, this.eventNode).listen()
+        return LoadStatus.SUCCESS
     }
 
     override fun terminate() {
