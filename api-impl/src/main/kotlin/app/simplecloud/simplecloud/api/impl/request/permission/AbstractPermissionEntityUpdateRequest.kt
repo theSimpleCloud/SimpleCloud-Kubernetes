@@ -68,7 +68,7 @@ abstract class AbstractPermissionEntityUpdateRequest(
             "group.${permissionGroup.getName()}",
             true,
             expiresAt,
-            ""
+            null
         )
         addPermission(this.permissionFactory.create(newPermission))
         return this

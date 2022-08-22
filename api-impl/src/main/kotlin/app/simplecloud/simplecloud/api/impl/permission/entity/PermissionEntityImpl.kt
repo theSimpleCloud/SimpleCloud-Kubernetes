@@ -49,7 +49,7 @@ open class PermissionEntityImpl(
     }
 
     override fun hasTopLevelGroup(groupName: String): Boolean {
-        return getPermissions().any { it.getRawString() == "group.${groupName}" && it.isActive() }
+        return getPermissions().any { it.getRawString() == "group.${groupName}".lowercase() && it.isActive() }
     }
 
     override fun getTopLevelPermissionGroups(): CompletableFuture<List<PermissionGroup>> {

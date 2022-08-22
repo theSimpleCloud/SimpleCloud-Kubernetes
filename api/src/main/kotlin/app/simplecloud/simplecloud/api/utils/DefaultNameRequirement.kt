@@ -16,24 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.permission.configuration
+package app.simplecloud.simplecloud.api.utils
 
 /**
- * Date: 19.03.22
- * Time: 16:36
+ * Date: 21.08.22
+ * Time: 11:06
  * @author Frederick Baier
  *
  */
-class PermissionConfiguration(
-    permissionString: String,
-    val active: Boolean,
-    val expiresAtTimestamp: Long,
-    //empty string means no group set
-    val targetProcessGroup: String?,
-) : java.io.Serializable {
+object DefaultNameRequirement {
 
-    val permissionString: String = permissionString.lowercase()
-
-    private constructor() : this("", false, 0L, null)
+    fun checkName(name: String) {
+        require(name.length >= 2) { "Name must be at least 2 characters long" }
+    }
 
 }

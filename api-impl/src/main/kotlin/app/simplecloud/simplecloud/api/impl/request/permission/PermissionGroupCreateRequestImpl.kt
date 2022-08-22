@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.internal.service.InternalPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfigurationValidator
 import app.simplecloud.simplecloud.api.request.permission.PermissionGroupCreateRequest
 import java.util.concurrent.CompletableFuture
 
@@ -35,14 +36,20 @@ import java.util.concurrent.CompletableFuture
  */
 class PermissionGroupCreateRequestImpl(
     private val configuration: PermissionGroupConfiguration,
-    private val internalService: InternalPermissionGroupService
+    private val internalService: InternalPermissionGroupService,
 ) : PermissionGroupCreateRequest {
 
     override fun submit(): CompletableFuture<PermissionGroup> = CloudScope.future {
+        PermissionGroupConfigurationValidator(configuration, internalService).validate()
+        checkGroupDoesNotExist()
+
+        return@future internalService.createGroupInternal(configuration)
+    }
+
+    private suspend fun checkGroupDoesNotExist() {
         if (doesGroupExist(configuration.name)) {
             throw IllegalArgumentException("Group already exists")
         }
-        return@future internalService.createGroupInternal(configuration)
     }
 
     private suspend fun doesGroupExist(groupName: String): Boolean {
