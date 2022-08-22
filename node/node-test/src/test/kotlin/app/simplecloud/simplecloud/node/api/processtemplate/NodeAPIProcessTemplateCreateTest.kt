@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import app.simplecloud.simplecloud.node.api.NodeCloudAPI
-import app.simplecloud.simplecloud.node.api.ProcessTemplateCreateBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 

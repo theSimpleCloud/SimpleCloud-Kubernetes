@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api
+package app.simplecloud.simplecloud.node.api.processtemplate
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
@@ -46,23 +46,23 @@ abstract class ProcessTemplateDeleteBaseTest : ProcessTemplateServiceBaseTest() 
 
     @Test
     fun doNothing_groupExists() = runBlocking {
-        assertExistingGroupCount(prevRegisteredTemplateCount + 1)
+        assertExistingTemplateCount(prevRegisteredTemplateCount + 1)
     }
 
     @Test
-    fun deleteTemplate_groupCountWillBe0() = runBlocking {
+    fun deleteTemplate_groupCountWillBePrevCount() = runBlocking {
         deleteTemplate(existingTemplate)
-        assertExistingGroupCount(prevRegisteredTemplateCount)
+        assertExistingTemplateCount(prevRegisteredTemplateCount)
     }
 
     @Test
-    fun createTwoGroups_deleteOne_oneWillStillExist() = runBlocking {
+    fun createTwoTemplates_deleteOne_oneWillStillExist() = runBlocking {
         templateService.createCreateRequest(createLobbyTemplateConfiguration("Test")).submit().await()
         deleteTemplate(existingTemplate)
-        assertExistingGroupCount(prevRegisteredTemplateCount + 1)
+        assertExistingTemplateCount(prevRegisteredTemplateCount + 1)
     }
 
-    private fun assertExistingGroupCount(count: Int) {
+    private fun assertExistingTemplateCount(count: Int) {
         Assertions.assertEquals(count, this.templateService.findAll().join().size)
     }
 

@@ -16,24 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.processtemplate
+package app.simplecloud.simplecloud.node.api.permission
 
-import app.simplecloud.simplecloud.api.service.ProcessTemplateService
-import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 19.08.22
- * Time: 09:12
+ * Date: 20.08.22
+ * Time: 21:46
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest() {
+class NodeAPIPermissionGroupCreateTest : PermissionGroupCreateBaseTest() {
 
     private val nodeAPIBaseTest = NodeAPIBaseTest()
+
 
     @BeforeEach
     override fun setUp() {
@@ -46,10 +45,8 @@ abstract class NodeAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest(
         nodeAPIBaseTest.tearDown()
     }
 
-    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
-        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
+    override fun getCloudAPI(): CloudAPI {
+        return nodeAPIBaseTest.cloudAPI
     }
-
-    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
 
 }

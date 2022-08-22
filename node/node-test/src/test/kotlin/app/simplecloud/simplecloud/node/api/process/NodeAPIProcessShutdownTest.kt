@@ -48,7 +48,9 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     fun stopProcess_ProcessWillBeStopped() {
         this.processService.createShutdownRequest(this.process).submit().join()
         Thread.sleep(1_300) //unregister scheduler is running every second only
-        assertProcessesCount(0)
+        tryMultipleTimes(9) {
+            assertProcessesCount(0)
+        }
     }
 
     @Test
@@ -72,7 +74,7 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
     fun createProcess_StopContainer_ProcessWillBeUnregistered() {
         this.kubeAPI.getPodService().getPod(this.process.getName().lowercase()).delete()
 
-        tryMultipleTimes(4) {
+        tryMultipleTimes(9) {
             assertProcessesCount(0)
         }
     }

@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.plugin.api.processtemplate
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.ProcessTemplateUpdateBaseTest
+import app.simplecloud.simplecloud.node.api.processtemplate.ProcessTemplateUpdateBaseTest
 import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import app.simplecloud.simplecloud.plugin.startup.PluginCloudAPI
 import org.junit.jupiter.api.AfterEach

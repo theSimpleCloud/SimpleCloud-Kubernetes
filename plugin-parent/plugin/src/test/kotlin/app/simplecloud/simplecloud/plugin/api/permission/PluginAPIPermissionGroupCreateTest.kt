@@ -16,40 +16,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.processtemplate
+package app.simplecloud.simplecloud.plugin.api.permission
 
-import app.simplecloud.simplecloud.api.service.ProcessTemplateService
-import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.node.api.permission.PermissionGroupCreateBaseTest
+import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 19.08.22
- * Time: 09:12
+ * Date: 21.08.22
+ * Time: 11:19
  * @author Frederick Baier
  *
  */
-abstract class NodeAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest() {
+class PluginAPIPermissionGroupCreateTest : PermissionGroupCreateBaseTest() {
 
-    private val nodeAPIBaseTest = NodeAPIBaseTest()
+    private val proxyPluginBaseTest = ProxyPluginBaseTest()
 
     @BeforeEach
     override fun setUp() {
-        nodeAPIBaseTest.setUp()
+        proxyPluginBaseTest.setUp()
         super.setUp()
     }
 
     @AfterEach
     fun tearDown() {
-        nodeAPIBaseTest.tearDown()
+        proxyPluginBaseTest.tearDown()
     }
 
-    override fun getProcessTemplateService(): ProcessTemplateService<out ProcessTemplate> {
-        return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
+    override fun getCloudAPI(): CloudAPI {
+        return proxyPluginBaseTest.pluginCloudAPI
     }
-
-    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
-
 }
