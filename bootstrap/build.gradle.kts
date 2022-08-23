@@ -1,4 +1,5 @@
 dependencies {
+    implementation(project(":node"))
     implementation(project(":api"))
     implementation(project(":rest-server:rest-server-base"))
     implementation("app.simplecloud:distribution-hazelcast:1.0.0-SNAPSHOT")
