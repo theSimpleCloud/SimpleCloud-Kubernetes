@@ -58,7 +58,9 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
         this.processService.createStartRequest(this.defaultGroup).submit().join()
         this.processService.createShutdownRequest(this.process).submit().join()
         Thread.sleep(1_100) //unregister scheduler is running every second only
-        assertProcessesCount(1)
+        tryMultipleTimes(9) {
+            assertProcessesCount(1)
+        }
     }
 
     @Test
