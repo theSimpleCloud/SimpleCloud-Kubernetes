@@ -42,7 +42,7 @@ class ProcessOnlineCountStrategyUpdateRequestImpl(
 
 
     @Volatile
-    private var data = this.strategy.toConfiguration().data
+    private var dataMap = this.strategy.toConfiguration().dataMap
 
     override fun getStrategy(): ProcessesOnlineCountStrategy {
         return this.strategy
@@ -63,8 +63,8 @@ class ProcessOnlineCountStrategyUpdateRequestImpl(
         return this
     }
 
-    override fun setData(data: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest {
-        this.data = data
+    override fun setData(dataMap: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest {
+        this.dataMap = dataMap
         return this
     }
 
@@ -73,7 +73,7 @@ class ProcessOnlineCountStrategyUpdateRequestImpl(
             strategy.getName(),
             strategy.toConfiguration().className,
             targetGroupNames,
-            data
+            dataMap
         )
         internalService.updateStrategyInternal(configuration)
     }

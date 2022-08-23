@@ -55,7 +55,7 @@ class OnlineCountStrategyEntity(
                 configuration.name,
                 configuration.className,
                 configuration.targetGroupNames,
-                configuration.data
+                configuration.dataMap
             )
         }
 

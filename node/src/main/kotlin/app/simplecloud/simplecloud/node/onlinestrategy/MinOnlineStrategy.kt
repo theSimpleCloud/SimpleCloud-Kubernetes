@@ -32,7 +32,7 @@ class MinOnlineStrategy(
     private val configuration: ProcessOnlineCountStrategyConfiguration
 ) : ProcessesOnlineCountStrategy {
 
-    private val minCount = configuration.data["min"]!!.toInt()
+    private val minCount = configuration.dataMap["min"]!!.toInt()
 
     override fun getName(): String {
         return this.configuration.name

@@ -57,6 +57,6 @@ interface ProcessOnlineCountStrategyUpdateRequest : Request<Unit> {
      * Sets the data this strategy needs
      * @return this
      */
-    fun setData(data: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest
+    fun setData(dataMap: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest
 
 }
