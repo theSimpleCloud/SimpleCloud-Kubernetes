@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlin
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
+import app.simplecloud.simplecloud.api.utils.DefaultNameRequirement
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,6 +40,7 @@ class ProcessOnlineCountStrategyCreateRequestImpl(
 ) : ProcessOnlineCountStrategyCreateRequest {
 
     override fun submit(): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
+        DefaultNameRequirement.checkName(configuration.name)
         if (doesStrategyExist(configuration.name)) {
             throw IllegalArgumentException("Strategy already exists")
         }
