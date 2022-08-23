@@ -21,7 +21,7 @@ plugins {
     `java-test-fixtures`
     id ("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("kapt") version "1.7.0"
-    kotlin("jvm") version "1.6.21"
+    kotlin("jvm") version "1.7.10"
 }
 
 allprojects {
@@ -54,7 +54,7 @@ allprojects {
 subprojects {
 
 
-    val coroutinesVersion by extra("1.6.0")
+    val coroutinesVersion by extra("1.6.4")
     val jacksonVersion by extra("2.13.2")
 
     dependencies {
