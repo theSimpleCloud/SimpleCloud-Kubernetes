@@ -27,7 +27,12 @@ import org.opentest4j.AssertionFailedError
  *
  */
 
-fun <T> assertContains(list: List<T>, element: T) {
+fun <T> assertContains(list: Collection<T>, element: T) {
     if (!list.contains(element))
         throw AssertionFailedError("Expected element in list: $element")
+}
+
+fun <T> assertNotContains(list: Collection<T>, element: T) {
+    if (list.contains(element))
+        throw AssertionFailedError("Did not expect element in list: $element")
 }
