@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudProcessGrou
 import app.simplecloud.simplecloud.api.request.group.CloudProcessGroupCreateRequest
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.utils.DefaultNameRequirement
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,6 +40,7 @@ class CloudProcessGroupCreateRequestImpl(
 ) : CloudProcessGroupCreateRequest {
 
     override fun submit(): CompletableFuture<CloudProcessGroup> = CloudScope.future {
+        DefaultNameRequirement.checkName(configuration.name)
         checkGroupName()
         checkMaxMemory()
         checkMaxPlayers()

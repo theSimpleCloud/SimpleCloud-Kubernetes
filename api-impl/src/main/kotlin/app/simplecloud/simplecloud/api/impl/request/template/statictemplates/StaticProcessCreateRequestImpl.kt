@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalStaticProcessTem
 import app.simplecloud.simplecloud.api.request.statictemplate.StaticProcessTemplateCreateRequest
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.static.StaticProcessTemplate
+import app.simplecloud.simplecloud.api.utils.DefaultNameRequirement
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,6 +40,7 @@ class StaticProcessCreateRequestImpl(
 ) : StaticProcessTemplateCreateRequest {
 
     override fun submit(): CompletableFuture<StaticProcessTemplate> = CloudScope.future {
+        DefaultNameRequirement.checkName(configuration.name)
         checkStaticTemplateName()
         checkMaxMemory()
         checkMaxPlayers()

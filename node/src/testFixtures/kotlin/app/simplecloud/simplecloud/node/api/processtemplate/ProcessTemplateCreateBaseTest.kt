@@ -26,6 +26,8 @@ import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 /**
  * Date: 19.08.22
@@ -47,6 +49,17 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
         createTemplate(configuration)
         assertTemplateCount(prevGroupCount + 1)
         assertClusterContainsTemplate(configuration)
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = ["", "e", "a"])
+    fun createTemplateWithInvalidName_willFail(name: String) {
+        val configuration = createLobbyTemplateConfiguration(name)
+        Assertions.assertThrows(IllegalArgumentException::class.java) {
+            runBlocking {
+                createTemplate(configuration)
+            }
+        }
     }
 
     @Test
