@@ -18,46 +18,17 @@
 
 package app.simplecloud.simplecloud.node.api
 
-import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
-import app.simplecloud.simplecloud.api.internal.service.*
-import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
-import app.simplecloud.simplecloud.api.permission.Permission
-import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.eventapi.EventManager
+import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 
 /**
- * Date: 07.05.22
- * Time: 11:24
+ * Date: 24.08.22
+ * Time: 09:51
  * @author Frederick Baier
  *
  */
-class NodeCloudAPI(
-    localNetworkComponentName: String,
-    processGroupService: InternalCloudProcessGroupService,
-    templateService: InternalStaticProcessTemplateService,
-    processService: InternalCloudProcessService,
-    playerService: InternalCloudPlayerService,
-    permissionGroupService: InternalPermissionGroupService,
-    nodeService: NodeService,
-    messageChannelManager: MessageChannelManager,
-    eventManager: EventManager,
-    permissionFactory: Permission.Factory,
-    private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
-) : CloudAPIImpl(
-    localNetworkComponentName,
-    processGroupService,
-    templateService,
-    processService,
-    playerService,
-    permissionGroupService,
-    nodeService,
-    messageChannelManager,
-    eventManager,
-    permissionFactory
-) {
+interface NodeCloudAPI : CloudAPI {
 
-    fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
-        return this.onlineStrategyService
-    }
+    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
 
 }

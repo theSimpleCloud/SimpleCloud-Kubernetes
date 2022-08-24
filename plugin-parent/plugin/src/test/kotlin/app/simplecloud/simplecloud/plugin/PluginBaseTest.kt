@@ -35,7 +35,7 @@ import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
@@ -48,7 +48,7 @@ import org.junit.jupiter.api.BeforeEach
 open class PluginBaseTest {
 
     private lateinit var nodeAPIBaseTest: NodeAPIBaseTest
-    protected lateinit var nodeCloudAPI: NodeCloudAPI
+    protected lateinit var nodeCloudAPI: NodeCloudAPIImpl
     protected lateinit var kubeAPI: KubeAPI
     protected lateinit var databaseFactory: InMemoryRepositorySafeDatabaseFactory
 

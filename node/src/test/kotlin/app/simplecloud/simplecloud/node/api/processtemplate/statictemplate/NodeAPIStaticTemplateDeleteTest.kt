@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.api.processtemplate.statictemplate
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTemplateDeleteTest
 
 /**
@@ -31,7 +31,7 @@ import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTempla
  */
 class NodeAPIStaticTemplateDeleteTest : NodeAPIProcessTemplateDeleteTest() {
 
-    override fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate> {
+    override fun getProcessTemplateService(cloudAPI: NodeCloudAPIImpl): ProcessTemplateService<out ProcessTemplate> {
         return cloudAPI.getStaticProcessTemplateService()
     }
 

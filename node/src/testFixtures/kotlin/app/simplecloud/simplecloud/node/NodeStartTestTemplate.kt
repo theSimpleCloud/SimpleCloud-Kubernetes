@@ -25,7 +25,7 @@ import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.start.restserver.FailingRestSetupManager
 import app.simplecloud.simplecloud.node.start.restserver.TestRestServer
 import app.simplecloud.simplecloud.node.start.restserver.TestTokenHandlerFactory
@@ -80,7 +80,7 @@ class NodeStartTestTemplate {
         )
     }
 
-    fun startNode(): NodeCloudAPI {
+    fun startNode(): NodeCloudAPIImpl {
         val selfPod = createNodeSelfPod()
         return NodeStartup(
             this.databaseFactory,

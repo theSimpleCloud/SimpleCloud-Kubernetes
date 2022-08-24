@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import kotlinx.coroutines.runBlocking
 
 /**
@@ -33,7 +33,7 @@ class NodeOnlineProcessCheckerRunnable : Runnable, DistributionAware {
 
     @Transient
     @Volatile
-    private var cloudAPI: NodeCloudAPI? = null
+    private var cloudAPI: NodeCloudAPIImpl? = null
 
     override fun run() {
         val cloudAPI = this.cloudAPI ?: return
@@ -50,6 +50,6 @@ class NodeOnlineProcessCheckerRunnable : Runnable, DistributionAware {
 
     override fun setDistribution(distribution: Distribution) {
         val userContext = distribution.getUserContext()
-        this.cloudAPI = userContext["cloudAPI"] as NodeCloudAPI
+        this.cloudAPI = userContext["cloudAPI"] as NodeCloudAPIImpl
     }
 }

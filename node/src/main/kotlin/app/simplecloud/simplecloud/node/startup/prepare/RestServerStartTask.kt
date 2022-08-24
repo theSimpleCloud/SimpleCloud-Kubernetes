@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
 import app.simplecloud.simplecloud.restserver.api.RestServer
 import app.simplecloud.simplecloud.restserver.api.auth.AuthService
@@ -31,10 +31,10 @@ import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFa
  * @author Frederick Baier
  */
 class RestServerStartTask(
-    private val cloudAPI: NodeCloudAPI,
+    private val cloudAPI: NodeCloudAPIImpl,
     private val controllerHandlerFactory: ControllerHandlerFactory,
     private val restServer: RestServer,
-    private val authService: AuthService
+    private val authService: AuthService,
 ) {
 
     private val controllerHandler = this.controllerHandlerFactory.create(restServer)

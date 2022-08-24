@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.api.internal
 
 import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.internal.service.*
+import app.simplecloud.simplecloud.distribution.api.Distribution
 
 /**
  * Date: 07.05.22
@@ -38,5 +39,7 @@ interface InternalCloudAPI : CloudAPI {
     override fun getCloudPlayerService(): InternalCloudPlayerService
 
     override fun getPermissionGroupService(): InternalPermissionGroupService
+
+    fun getDistribution(): Distribution
 
 }

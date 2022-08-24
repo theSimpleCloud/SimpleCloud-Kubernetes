@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.api.processtemplate.group
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTemplateCreateTest
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -33,7 +33,7 @@ import org.junit.jupiter.api.Test
  */
 class NodeAPIProcessGroupCreateTest : NodeAPIProcessTemplateCreateTest() {
 
-    override fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate> {
+    override fun getProcessTemplateService(cloudAPI: NodeCloudAPIImpl): ProcessTemplateService<out ProcessTemplate> {
         return cloudAPI.getProcessGroupService()
     }
 

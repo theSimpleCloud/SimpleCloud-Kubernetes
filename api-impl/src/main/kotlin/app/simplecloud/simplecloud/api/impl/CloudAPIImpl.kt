@@ -23,6 +23,7 @@ import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
 
 /**
@@ -42,6 +43,7 @@ open class CloudAPIImpl(
     private val messageChannelManager: MessageChannelManager,
     private val eventManager: EventManager,
     private val permissionFactory: Permission.Factory,
+    private val distribution: Distribution,
 ) : InternalCloudAPI {
 
     override fun getLocalNetworkComponentName(): String {
@@ -83,4 +85,9 @@ open class CloudAPIImpl(
     override fun getPermissionFactory(): Permission.Factory {
         return this.permissionFactory
     }
+
+    override fun getDistribution(): Distribution {
+        return this.distribution
+    }
+
 }

@@ -16,69 +16,47 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.process
+package app.simplecloud.simplecloud.node.process.unregister
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
-import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import kotlinx.coroutines.launch
 import org.apache.logging.log4j.LogManager
-import java.io.Serializable
 
 /**
- * Date: 14.08.22
- * Time: 13:57
+ * Date: 24.08.22
+ * Time: 10:45
  * @author Frederick Baier
  *
  */
-class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
+class ProcessUnregisterExecutor(
+    private val kubeAPI: KubeAPI,
+    private val cloudAPI: CloudAPI,
+    private val distributedCloudProcessRepository: DistributedCloudProcessRepository,
+) {
 
-    @Transient
-    @Volatile
-    private var kubeAPI: KubeAPI? = null
-
-    @Transient
-    @Volatile
-    private var cloudAPI: CloudAPI? = null
-
-    @Transient
-    @Volatile
-    private var distributedCloudProcessRepository: DistributedCloudProcessRepository? = null
-
-    override fun run() {
-        val kubeAPI = this.kubeAPI ?: return
-        val cloudAPI = this.cloudAPI ?: return
-
-        CloudScope.launch {
-            compareProcessesWithKubeAndUnregister(cloudAPI, kubeAPI)
-        }
-    }
-
-    private suspend fun compareProcessesWithKubeAndUnregister(cloudAPI: CloudAPI, kubeAPI: KubeAPI) {
-        val processes = cloudAPI.getProcessService().findAll().await()
+    suspend fun compareProcessesWithKubeAndUnregister() {
+        val processes = this.cloudAPI.getProcessService().findAll().await()
         val filteredProcesses = processes.filter { it.getState() != ProcessState.PREPARED }
         for (process in filteredProcesses) {
-            unregisterProcessIfNoLongerRunning(process, kubeAPI)
+            unregisterProcessIfNoLongerRunning(process)
         }
     }
 
-    private suspend fun unregisterProcessIfNoLongerRunning(process: CloudProcess, kubeAPI: KubeAPI) {
-        if (doesContainerExist(process, kubeAPI)) {
-            stopContainerIfInactive(process, kubeAPI)
+    private suspend fun unregisterProcessIfNoLongerRunning(process: CloudProcess) {
+        if (doesContainerExist(process)) {
+            stopContainerIfInactive(process)
         } else {
             deleteProcessFromCluster(process)
         }
     }
 
-    private fun stopContainerIfInactive(process: CloudProcess, kubeAPI: KubeAPI) {
-        val pod = kubeAPI.getPodService().getPod(process.getName())
+    private fun stopContainerIfInactive(process: CloudProcess) {
+        val pod = this.kubeAPI.getPodService().getPod(process.getName())
         if (!pod.isActive()) {
             pod.delete()
         }
@@ -97,9 +75,9 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
         updateRequest.submit().await()
     }
 
-    private fun doesContainerExist(process: CloudProcess, kubeAPI: KubeAPI): Boolean {
+    private fun doesContainerExist(process: CloudProcess): Boolean {
         return try {
-            kubeAPI.getPodService().getPod(process.getName().lowercase())
+            this.kubeAPI.getPodService().getPod(process.getName().lowercase())
             true
         } catch (e: NoSuchElementException) {
             false
@@ -107,21 +85,12 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
     }
 
     private suspend fun deleteProcessInCluster(process: CloudProcess) {
-        this.distributedCloudProcessRepository!!.remove(process.getName()).await()
-    }
-
-    override fun setDistribution(distribution: Distribution) {
-        val userContext = distribution.getUserContext()
-        this.kubeAPI = userContext["kubeAPI"] as KubeAPI
-        this.cloudAPI = userContext["cloudAPI"] as CloudAPI
-        val distributedRepositories =
-            userContext["distributedRepositories"] as app.simplecloud.simplecloud.node.connect.DistributedRepositories
-        this.distributedCloudProcessRepository = distributedRepositories.cloudProcessRepository
+        this.distributedCloudProcessRepository.remove(process.getName()).await()
     }
 
     companion object {
         private val logger =
-            LogManager.getLogger(ProcessUnregisterRunnable::class.java)
+            LogManager.getLogger(ProcessUnregisterExecutor::class.java)
     }
 
 }

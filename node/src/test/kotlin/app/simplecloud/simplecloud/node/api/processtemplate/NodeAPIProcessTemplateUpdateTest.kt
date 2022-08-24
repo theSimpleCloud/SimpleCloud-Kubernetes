@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.node.api.processtemplate
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
@@ -50,6 +50,6 @@ abstract class NodeAPIProcessTemplateUpdateTest : ProcessTemplateUpdateBaseTest(
         return getProcessTemplateService(nodeAPIBaseTest.cloudAPI)
     }
 
-    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPI): ProcessTemplateService<out ProcessTemplate>
+    abstract fun getProcessTemplateService(cloudAPI: NodeCloudAPIImpl): ProcessTemplateService<out ProcessTemplate>
 
 }

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.startup
+package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
 import app.simplecloud.simplecloud.api.internal.service.*
@@ -28,32 +28,39 @@ import app.simplecloud.simplecloud.eventapi.EventManager
 
 /**
  * Date: 07.05.22
- * Time: 21:16
+ * Time: 11:24
  * @author Frederick Baier
  *
  */
-class PluginCloudAPI(
+class NodeCloudAPIImpl(
     localNetworkComponentName: String,
-    val internalProcessGroupService: InternalCloudProcessGroupService,
-    val internalStaticProcessTemplateService: InternalStaticProcessTemplateService,
-    val internalProcessService: InternalCloudProcessService,
-    val internalPlayerService: InternalCloudPlayerService,
-    val internalPermissionGroupService: InternalPermissionGroupService,
+    processGroupService: InternalCloudProcessGroupService,
+    templateService: InternalStaticProcessTemplateService,
+    processService: InternalCloudProcessService,
+    playerService: InternalCloudPlayerService,
+    permissionGroupService: InternalPermissionGroupService,
     nodeService: NodeService,
     messageChannelManager: MessageChannelManager,
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
     distribution: Distribution,
+    private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
-    internalProcessGroupService,
-    internalStaticProcessTemplateService,
-    internalProcessService,
-    internalPlayerService,
-    internalPermissionGroupService,
+    processGroupService,
+    templateService,
+    processService,
+    playerService,
+    permissionGroupService,
     nodeService,
     messageChannelManager,
     eventManager,
     permissionFactory,
     distribution
-)
+), NodeCloudAPI {
+
+    override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
+        return this.onlineStrategyService
+    }
+
+}

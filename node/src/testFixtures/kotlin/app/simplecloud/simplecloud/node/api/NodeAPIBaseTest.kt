@@ -37,7 +37,7 @@ open class NodeAPIBaseTest {
     lateinit var kubeAPI: KubeTestAPI
         private set
 
-    lateinit var cloudAPI: NodeCloudAPI
+    lateinit var cloudAPI: NodeCloudAPIImpl
         private set
 
     var databaseFactory = InMemoryRepositorySafeDatabaseFactory()

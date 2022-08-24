@@ -43,7 +43,7 @@ import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
@@ -65,8 +65,8 @@ class NodeClusterConnect(
 
     private val nodeBindPort = 1670
 
-    fun connect(): NodeCloudAPI {
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to cluster...")
+    fun connect(): NodeCloudAPIImpl {
+        logger.info("Connecting to cluster...")
         val distribution = startDistribution()
         val distributedRepositories = initializeDistributedRepositories(distribution)
         val nodeCloudAPI = initializeServices(distribution, distributedRepositories)
@@ -80,7 +80,7 @@ class NodeClusterConnect(
     private fun injectUserContextIntoDistribution(
         distribution: Distribution,
         cloudAPI: CloudAPI,
-        distributedRepositories: app.simplecloud.simplecloud.node.connect.DistributedRepositories,
+        distributedRepositories: DistributedRepositories,
     ) {
         val userContext = distribution.getUserContext()
         userContext["kubeAPI"] = this.kubeAPI
@@ -88,8 +88,8 @@ class NodeClusterConnect(
         userContext["distributedRepositories"] = distributedRepositories
     }
 
-    private fun initializeDistributedRepositories(distribution: Distribution): app.simplecloud.simplecloud.node.connect.DistributedRepositories {
-        return app.simplecloud.simplecloud.node.connect.DistributedRepositories(
+    private fun initializeDistributedRepositories(distribution: Distribution): DistributedRepositories {
+        return DistributedRepositories(
             DistributedCloudPlayerRepository(distribution),
             DistributedCloudProcessGroupRepository(distribution),
             DistributedCloudProcessRepository(distribution),
@@ -99,18 +99,19 @@ class NodeClusterConnect(
         )
     }
 
-    private fun registerMessageChannels(nodeCloudAPI: NodeCloudAPI) {
-        app.simplecloud.simplecloud.node.connect.MessageChannelsInitializer(
+    private fun registerMessageChannels(nodeCloudAPI: NodeCloudAPIImpl) {
+        MessageChannelsInitializer(
             nodeCloudAPI,
             InternalMessageChannelProviderImpl(nodeCloudAPI.getMessageChannelManager())
         ).initializeMessageChannels()
     }
+
     private fun checkForFirstNodeInCluster(
         distribution: Distribution,
-        distributedRepositories: app.simplecloud.simplecloud.node.connect.DistributedRepositories,
+        distributedRepositories: DistributedRepositories,
     ) {
         if (distribution.getServers().size == 1) {
-            app.simplecloud.simplecloud.node.connect.ClusterInitializer(
+            ClusterInitializer(
                 distribution,
                 distributedRepositories,
                 this.databaseRepositories
@@ -118,8 +119,8 @@ class NodeClusterConnect(
         }
     }
 
-    private fun startRestServer(nodeCloudAPI: NodeCloudAPI) {
-        val authService = app.simplecloud.simplecloud.node.connect.RestAuthServiceImpl(
+    private fun startRestServer(nodeCloudAPI: NodeCloudAPIImpl) {
+        val authService = RestAuthServiceImpl(
             nodeCloudAPI.getCloudPlayerService(),
             this.tokenHandler
         )
@@ -133,8 +134,8 @@ class NodeClusterConnect(
 
     private fun initializeServices(
         distribution: Distribution,
-        distributedRepositories: app.simplecloud.simplecloud.node.connect.DistributedRepositories,
-    ): NodeCloudAPI {
+        distributedRepositories: DistributedRepositories,
+    ): NodeCloudAPIImpl {
         val eventManager = DefaultEventManager()
         val nodeService = NodeServiceImpl(distribution)
         val universalGroupFactory = UniversalCloudProcessGroupFactory(
@@ -197,7 +198,7 @@ class NodeClusterConnect(
         )
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
-        return NodeCloudAPI(
+        return NodeCloudAPIImpl(
             selfComponent.getName(),
             cloudProcessGroupService,
             staticProcessTemplateService,
@@ -208,13 +209,14 @@ class NodeClusterConnect(
             messageChannelManager,
             eventManager,
             permissionFactory,
+            distribution,
             nodeProcessOnlineStrategyService,
         )
     }
 
     private fun startDistribution(): Distribution {
         val addresses = getOtherNodesAddressesToConnectTo()
-        app.simplecloud.simplecloud.node.connect.NodeClusterConnect.Companion.logger.info("Connecting to {}", addresses)
+        logger.info("Connecting to {}", addresses)
         val actualPort = this.kubeAPI.getNetworkService().requestPort(this.selfPod, this.nodeBindPort)
         return this.distributionFactory.createServer(actualPort, addresses)
     }
@@ -226,7 +228,7 @@ class NodeClusterConnect(
 
     companion object {
         private val logger =
-            LogManager.getLogger(app.simplecloud.simplecloud.node.connect.NodeClusterConnect::class.java)
+            LogManager.getLogger(NodeClusterConnect::class.java)
     }
 
 }

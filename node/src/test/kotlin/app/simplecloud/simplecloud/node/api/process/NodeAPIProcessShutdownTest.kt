@@ -19,9 +19,11 @@
 package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.node.connect.DistributedRepositories
+import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterExecutor
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.opentest4j.AssertionFailedError
 
 /**
  * Date: 12.05.22
@@ -41,26 +43,23 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
 
     @Test
     fun dontStop_ProcessWillStayOnline() {
+        executeUnregisterRunnable()
         assertProcessesCount(1)
     }
 
     @Test
     fun stopProcess_ProcessWillBeStopped() {
         this.processService.createShutdownRequest(this.process).submit().join()
-        Thread.sleep(1_300) //unregister scheduler is running every second only
-        tryMultipleTimes(9) {
-            assertProcessesCount(0)
-        }
+        executeUnregisterRunnable()
+        assertProcessesCount(0)
     }
 
     @Test
     fun create2ProcessesAndShutdown1_OneWillStayOnline() {
         this.processService.createStartRequest(this.defaultGroup).submit().join()
         this.processService.createShutdownRequest(this.process).submit().join()
-        Thread.sleep(1_100) //unregister scheduler is running every second only
-        tryMultipleTimes(9) {
-            assertProcessesCount(1)
-        }
+        executeUnregisterRunnable()
+        assertProcessesCount(1)
     }
 
     @Test
@@ -68,29 +67,27 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
         val cloudProcess2 = this.processService.createStartRequest(this.defaultGroup).submit().join()
         this.processService.createShutdownRequest(this.process).submit().join()
         this.processService.createShutdownRequest(cloudProcess2).submit().join()
-        Thread.sleep(1_100) //unregister scheduler is running every second only
+        executeUnregisterRunnable()
         assertProcessesCount(0)
     }
 
     @Test
     fun createProcess_StopContainer_ProcessWillBeUnregistered() {
         this.kubeAPI.getPodService().getPod(this.process.getName().lowercase()).delete()
-
-        tryMultipleTimes(9) {
-            assertProcessesCount(0)
-        }
+        executeUnregisterRunnable()
+        assertProcessesCount(0)
     }
 
-    private fun tryMultipleTimes(tries: Int, function: Runnable) {
-        for (i in 0 until tries) {
-            try {
-                function.run()
-                break
-            } catch (e: AssertionFailedError) {
-                Thread.sleep(1_100)
-            }
+    private fun executeUnregisterRunnable() {
+        val distribution = cloudAPI.getDistribution()
+        val distributedRepositories =
+            distribution.getUserContext()["distributedRepositories"] as DistributedRepositories
+
+        runBlocking {
+            ProcessUnregisterExecutor(kubeAPI, cloudAPI, distributedRepositories.cloudProcessRepository)
+                .compareProcessesWithKubeAndUnregister()
         }
-        function.run()
+
     }
 
 }
