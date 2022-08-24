@@ -18,52 +18,53 @@
 
 package app.simplecloud.simplecloud.eventapi.test
 
+import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
- * Date: 14.05.22
- * Time: 14:39
+ * Date: 24.08.22
+ * Time: 09:23
  * @author Frederick Baier
  *
  */
-class EventAPIUnregisterTest : EventAPITest() {
+class EventAPIExceptionTest : EventAPITest() {
 
-    private lateinit var registeredListener: TestEventListener
+    private var exceptionHandler = ExceptionHandler()
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
-        this.registeredListener = TestEventListener()
-        this.eventManager.registerListener(this.eventRegisterer, registeredListener)
+        this.exceptionHandler = ExceptionHandler()
+        this.eventManager = DefaultEventManager(exceptionHandler)
     }
 
     @Test
-    fun doNotUnregister_ListenerWillBeCalled() {
+    fun registerNormalListener_callEvent_NoExceptionWasThrown() {
+        val failingEventListener = TestEventListener()
+        this.eventManager.registerListener(eventRegisterer, failingEventListener)
         this.eventManager.call(TestEvent())
-        Assertions.assertTrue(this.registeredListener.wasEventCalled)
+        Assertions.assertNull(this.exceptionHandler.lastException)
     }
 
     @Test
-    fun unregisterListener_ListenerWillNotBeCalled() {
-        this.eventManager.unregisterListener(this.registeredListener)
+    fun registerFailingListener_callEvent_EventExceptionWillBeThrown() {
+        val failingEventListener = FailingEventListener()
+        this.eventManager.registerListener(eventRegisterer, failingEventListener)
         this.eventManager.call(TestEvent())
-        Assertions.assertFalse(this.registeredListener.wasEventCalled)
+        Assertions.assertNotNull(this.exceptionHandler.lastException)
     }
 
-    @Test
-    fun unregisterListenerByEventRegisterer_ListenerWillNotBeCalled() {
-        this.eventManager.unregisterAllListenersByRegisterer(this.eventRegisterer)
-        this.eventManager.call(TestEvent())
-        Assertions.assertFalse(this.registeredListener.wasEventCalled)
-    }
+    class ExceptionHandler : (Exception) -> Unit {
 
-    @Test
-    fun unregisterAll_ListenerWillNotBeCalled() {
-        this.eventManager.unregisterAll()
-        this.eventManager.call(TestEvent())
-        Assertions.assertFalse(this.registeredListener.wasEventCalled)
+        var lastException: Exception? = null
+            private set
+
+        override fun invoke(ex: Exception) {
+            this.lastException = ex
+        }
+
     }
 
 }

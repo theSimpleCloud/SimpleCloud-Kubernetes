@@ -18,6 +18,9 @@
 
 package app.simplecloud.simplecloud.eventapi.test
 
+import app.simplecloud.simplecloud.eventapi.Event
+import app.simplecloud.simplecloud.eventapi.EventExecutor
+import app.simplecloud.simplecloud.eventapi.Listener
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
 
@@ -42,6 +45,35 @@ class EventAPICallTest : EventAPITest() {
         this.eventManager.registerListener(eventRegisterer, testEventListener)
         this.eventManager.call(TestEvent())
         Assertions.assertTrue(testEventListener.wasEventCalled)
+    }
+
+    @Test
+    fun registerEventHandler_doNotCallEvent_handlerWasNotCalled() {
+        val listenerObj = object : Listener {}
+        val eventExecutor = TestEventExecutor()
+        this.eventManager.registerEvent(eventRegisterer, TestEvent::class.java, listenerObj, eventExecutor)
+        Assertions.assertNull(eventExecutor.lastCalledEvent)
+    }
+
+    @Test
+    fun registerEventHandler_callEvent_handlerWillBeCalled() {
+        val listenerObj = object : Listener {}
+        val eventExecutor = TestEventExecutor()
+        this.eventManager.registerEvent(eventRegisterer, TestEvent::class.java, listenerObj, eventExecutor)
+        val calledEvent = TestEvent()
+        this.eventManager.call(calledEvent)
+        Assertions.assertEquals(calledEvent, eventExecutor.lastCalledEvent)
+    }
+
+    class TestEventExecutor() : EventExecutor {
+
+        var lastCalledEvent: Event? = null
+            private set
+
+        override fun execute(event: Event) {
+            this.lastCalledEvent = event
+        }
+
     }
 
 }

@@ -55,4 +55,13 @@ open class EventAPITest {
 
     }
 
+    class FailingEventListener : Listener {
+
+        @CloudEventHandler
+        fun on(event: TestEvent) {
+            throw RuntimeException("FailingEventListener")
+        }
+
+    }
+
 }
