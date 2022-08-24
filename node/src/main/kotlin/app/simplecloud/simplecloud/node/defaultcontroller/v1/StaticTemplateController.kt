@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
@@ -39,24 +39,25 @@ import kotlinx.coroutines.runBlocking
  * Time: 12:43
  * @author Frederick Baier
  */
-@RestController(1, "cloud/group")
-class ProcessGroupController(
-    private val groupService: CloudProcessGroupService,
+@RestController(1, "cloud/static")
+class StaticTemplateController(
+    private val staticTemplateService: StaticProcessTemplateService,
 ) : Controller {
 
-    @RequestMapping(RequestType.GET, "", "web.cloud.group.get")
-    fun handleGroupGetAll(): List<AbstractProcessTemplateConfiguration> {
-        val groups = this.groupService.findAll().join()
-        return groups.map { it.toConfiguration() }
+
+    @RequestMapping(RequestType.GET, "", "web.cloud.static.get")
+    fun handleStaticTemplateGetAll(): List<AbstractProcessTemplateConfiguration> {
+        val templates = this.staticTemplateService.findAll().join()
+        return templates.map { it.toConfiguration() }
     }
 
-    @RequestMapping(RequestType.GET, "{name}", "web.cloud.group.get")
-    fun handleGroupGetOne(@RequestPathParam("name") name: String): AbstractProcessTemplateConfiguration {
-        val group = this.groupService.findByName(name).join()
-        return group.toConfiguration()
+    @RequestMapping(RequestType.GET, "{name}", "web.cloud.static.get")
+    fun handleStaticTemplateGetOne(@RequestPathParam("name") name: String): AbstractProcessTemplateConfiguration {
+        val template = this.staticTemplateService.findByName(name).join()
+        return template.toConfiguration()
     }
 
-    @RequestMapping(RequestType.POST, "", "web.cloud.group.create")
+    @RequestMapping(RequestType.POST, "", "web.cloud.static.create")
     fun handleGroupCreate(
         @RequestBody(
             types = [
@@ -71,12 +72,12 @@ class ProcessGroupController(
             ]
         ) configuration: AbstractProcessTemplateConfiguration,
     ): AbstractProcessTemplateConfiguration {
-        val completableFuture = this.groupService.createCreateRequest(configuration).submit()
-        val group = completableFuture.join()
-        return group.toConfiguration()
+        val completableFuture = this.staticTemplateService.createCreateRequest(configuration).submit()
+        val staticTemplate = completableFuture.join()
+        return staticTemplate.toConfiguration()
     }
 
-    @RequestMapping(RequestType.PUT, "", "web.cloud.group.update")
+    @RequestMapping(RequestType.PUT, "", "web.cloud.static.update")
     fun handleGroupUpdate(
         @RequestBody(
             types = [
@@ -91,16 +92,16 @@ class ProcessGroupController(
             ]
         ) targetConfig: AbstractProcessTemplateConfiguration,
     ): Boolean = runBlocking {
-        val processGroup = groupService.findByName(targetConfig.name).await()
-        ProcessTemplateUpdateHandler(processGroup, targetConfig).update()
+        val staticTemplate = staticTemplateService.findByName(targetConfig.name).await()
+        ProcessTemplateUpdateHandler(staticTemplate, targetConfig).update()
         return@runBlocking true
     }
 
-    @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.group.delete")
+    @RequestMapping(RequestType.DELETE, "{name}", "we.cloud.static.delete")
     fun handleDelete(@RequestPathParam("name") groupName: String): Boolean {
-        val group = this.groupService.findByName(groupName).join()
-        val groupDeleteRequest = group.createDeleteRequest()
-        groupDeleteRequest.submit().join()
+        val staticTemplate = this.staticTemplateService.findByName(groupName).join()
+        val templateDeleteRequest = staticTemplate.createDeleteRequest()
+        templateDeleteRequest.submit().join()
         return true
     }
 

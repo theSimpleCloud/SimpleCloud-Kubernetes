@@ -51,6 +51,7 @@ class RestServerStartTask(
         this.controllerHandler.registerController(LoginController(this.authService))
 
         this.controllerHandler.registerController(ProcessGroupController(this.cloudAPI.getProcessGroupService()))
+        this.controllerHandler.registerController(StaticTemplateController(this.cloudAPI.getStaticProcessTemplateService()))
 
         this.controllerHandler.registerController(
             ProcessController(
