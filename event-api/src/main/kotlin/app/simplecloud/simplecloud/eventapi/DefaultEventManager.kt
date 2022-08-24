@@ -23,7 +23,9 @@ import com.google.common.collect.Maps
 import java.lang.reflect.Method
 import java.util.concurrent.CopyOnWriteArrayList
 
-class DefaultEventManager : EventManager {
+class DefaultEventManager(
+    private val exceptionOccurred: (Exception) -> Unit = { throw it },
+) : EventManager {
 
     private val listeners = Maps.newConcurrentMap<Class<out Event>, MutableList<RegisteredEventHandler>>()
 
@@ -51,7 +53,15 @@ class DefaultEventManager : EventManager {
 
     override fun call(event: Event) {
         this.listeners[event::class.java]?.forEach { registeredEvent ->
-            registeredEvent.eventExecutor.execute(event)
+            callEvent(event, registeredEvent)
+        }
+    }
+
+    private fun callEvent(event: Event, registeredEventHandler: RegisteredEventHandler) {
+        try {
+            registeredEventHandler.eventExecutor.execute(event)
+        } catch (ex: Exception) {
+            this.exceptionOccurred.invoke(ex)
         }
     }
 
