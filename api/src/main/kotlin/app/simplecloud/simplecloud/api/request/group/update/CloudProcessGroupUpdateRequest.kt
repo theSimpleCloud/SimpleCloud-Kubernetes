@@ -49,4 +49,6 @@ interface CloudProcessGroupUpdateRequest : ProcessTemplateUpdateRequest {
 
     override fun setStartPriority(priority: Int): CloudProcessGroupUpdateRequest
 
+    override fun setActive(active: Boolean): CloudProcessGroupUpdateRequest
+
 }

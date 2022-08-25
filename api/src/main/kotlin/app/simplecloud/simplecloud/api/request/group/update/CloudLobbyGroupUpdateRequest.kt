@@ -49,5 +49,7 @@ interface CloudLobbyGroupUpdateRequest : CloudServerGroupUpdateRequest, ProcessL
 
     override fun setStartPriority(priority: Int): CloudLobbyGroupUpdateRequest
 
+    override fun setActive(active: Boolean): CloudLobbyGroupUpdateRequest
+
     override fun submit(): CompletableFuture<Unit>
 }

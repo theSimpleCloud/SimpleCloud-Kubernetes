@@ -36,6 +36,7 @@ abstract class AbstractProcessTemplateConfiguration(
     val stateUpdating: Boolean,
     val startPriority: Int,
     val joinPermission: String?,
+    val active: Boolean,
     val type: ProcessTemplateType,
 ) : Serializable {
 

@@ -76,6 +76,11 @@ class CloudServerGroupUpdateRequestImpl(
         return this
     }
 
+    override fun setActive(active: Boolean): CloudServerGroupUpdateRequest {
+        super.setActive(active)
+        return this
+    }
+
     override suspend fun submit0(image: Image?) {
         val updateObj = ServerProcessTemplateConfiguration(
             this.serverGroup.getName(),
@@ -85,7 +90,8 @@ class CloudServerGroupUpdateRequestImpl(
             image?.getName(),
             this.stateUpdating,
             this.startPriority,
-            this.joinPermission
+            this.joinPermission,
+            this.active
         )
         return this.internalService.updateGroupInternal(updateObj)
     }

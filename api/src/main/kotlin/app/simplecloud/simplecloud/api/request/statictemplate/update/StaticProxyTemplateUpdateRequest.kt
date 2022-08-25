@@ -48,4 +48,6 @@ interface StaticProxyTemplateUpdateRequest : StaticProcessTemplateUpdateRequest,
 
     override fun setStartPriority(priority: Int): StaticProxyTemplateUpdateRequest
 
+    override fun setActive(active: Boolean): StaticProxyTemplateUpdateRequest
+
 }

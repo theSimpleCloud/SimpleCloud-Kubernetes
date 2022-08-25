@@ -48,6 +48,7 @@ abstract class ProcessTemplateServiceBaseTest {
             false,
             0,
             null,
+            true,
             0
         )
     }

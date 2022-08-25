@@ -46,4 +46,6 @@ interface StaticServerTemplateUpdateRequest : StaticProcessTemplateUpdateRequest
 
     override fun setStartPriority(priority: Int): StaticServerTemplateUpdateRequest
 
+    override fun setActive(active: Boolean): StaticServerTemplateUpdateRequest
+
 }

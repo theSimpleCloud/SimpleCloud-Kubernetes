@@ -55,6 +55,9 @@ abstract class AbstractProcessTemplateUpdateRequest(
     protected var startPriority: Int = this.processTemplate.getStartPriority()
 
     @Volatile
+    protected var active: Boolean = this.processTemplate.isActive()
+
+    @Volatile
     protected var image: Image? = runCatching { this.processTemplate.getImage() }.getOrNull()
 
     override fun getProcessTemplate(): ProcessTemplate {
@@ -95,6 +98,11 @@ abstract class AbstractProcessTemplateUpdateRequest(
 
     override fun setStartPriority(priority: Int): ProcessTemplateUpdateRequest {
         this.startPriority = priority
+        return this
+    }
+
+    override fun setActive(active: Boolean): ProcessTemplateUpdateRequest {
+        this.active = active
         return this
     }
 

@@ -68,6 +68,10 @@ abstract class AbstractProcessTemplate(
         return this.configuration.startPriority
     }
 
+    override fun isActive(): Boolean {
+        return this.configuration.active
+    }
+
     override fun toConfiguration(): AbstractProcessTemplateConfiguration {
         return this.configuration
     }

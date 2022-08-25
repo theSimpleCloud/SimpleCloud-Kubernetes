@@ -81,6 +81,11 @@ interface ProcessTemplate : Nameable, Identifiable<String> {
      */
     fun getStartPriority(): Int
 
+    /**
+     * Returns whether this template is active. Templates with active=false will not start.
+     */
+    fun isActive(): Boolean
+
     fun toConfiguration(): AbstractProcessTemplateConfiguration
 
     fun createUpdateRequest(): ProcessTemplateUpdateRequest

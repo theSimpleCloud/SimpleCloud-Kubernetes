@@ -35,6 +35,7 @@ class ServerProcessTemplateConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
+    active: Boolean,
 ) : AbstractProcessTemplateConfiguration(
     name,
     maxMemory,
@@ -44,7 +45,8 @@ class ServerProcessTemplateConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
-    ProcessTemplateType.SERVER
+    active,
+    ProcessTemplateType.SERVER,
 ) {
 
     private constructor() : this(
@@ -55,7 +57,8 @@ class ServerProcessTemplateConfiguration(
         "",
         false,
         1,
-        ""
+        "",
+        true
     )
 
 }

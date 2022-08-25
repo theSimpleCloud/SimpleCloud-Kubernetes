@@ -35,6 +35,7 @@ class LobbyProcessTemplateConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
+    active: Boolean,
     val lobbyPriority: Int,
 ) : AbstractProcessTemplateConfiguration(
     name,
@@ -45,7 +46,8 @@ class LobbyProcessTemplateConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
-    ProcessTemplateType.LOBBY
+    active,
+    ProcessTemplateType.LOBBY,
 ) {
 
     private constructor() : this(
@@ -57,6 +59,7 @@ class LobbyProcessTemplateConfiguration(
         false,
         1,
         "",
+        true,
         1
     )
 

@@ -35,6 +35,7 @@ class ProxyProcessTemplateConfiguration(
     stateUpdating: Boolean,
     startPriority: Int,
     joinPermission: String?,
+    active: Boolean,
     val startPort: Int,
 ) : AbstractProcessTemplateConfiguration(
     name,
@@ -45,6 +46,7 @@ class ProxyProcessTemplateConfiguration(
     stateUpdating,
     startPriority,
     joinPermission,
+    active,
     ProcessTemplateType.PROXY
 ) {
 
@@ -57,6 +59,7 @@ class ProxyProcessTemplateConfiguration(
         false,
         1,
         "",
+        true,
         1
     )
 

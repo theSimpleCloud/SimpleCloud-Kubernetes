@@ -82,6 +82,11 @@ class CloudLobbyGroupUpdateRequestImpl(
         return this
     }
 
+    override fun setActive(active: Boolean): CloudLobbyGroupUpdateRequest {
+        super.setActive(active)
+        return this
+    }
+
     override suspend fun submit0(image: Image?) {
         val updateObj = LobbyProcessTemplateConfiguration(
             this.lobbyGroup.getName(),
@@ -92,6 +97,7 @@ class CloudLobbyGroupUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
+            this.active,
             this.lobbyPriority
         )
         return this.internalService.updateGroupInternal(updateObj)

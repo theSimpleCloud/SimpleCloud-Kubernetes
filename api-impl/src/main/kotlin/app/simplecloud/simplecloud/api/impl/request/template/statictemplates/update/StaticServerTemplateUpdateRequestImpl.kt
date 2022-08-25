@@ -75,6 +75,11 @@ class StaticServerTemplateUpdateRequestImpl(
         return this
     }
 
+    override fun setActive(active: Boolean): StaticServerTemplateUpdateRequest {
+        super.setActive(active)
+        return this
+    }
+
     override suspend fun submit0(image: Image?) {
         val updateObj = ServerProcessTemplateConfiguration(
             this.staticServerTemplate.getName(),
@@ -85,6 +90,7 @@ class StaticServerTemplateUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
+            this.active
         )
         this.internalService.updateStaticTemplateInternal(updateObj)
     }

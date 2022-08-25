@@ -37,6 +37,7 @@ class StaticProcessTemplateEntity(
     val stateUpdating: Boolean,
     val startPriority: Int,
     val joinPermission: String?,
+    val active: Boolean,
     val type: ProcessTemplateType,
     val lobbyPriority: Int = -1,
     val startPort: Int = -1,
@@ -51,6 +52,7 @@ class StaticProcessTemplateEntity(
         false,
         1,
         "",
+        true,
         ProcessTemplateType.PROXY
     )
 
@@ -66,6 +68,7 @@ class StaticProcessTemplateEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
+                    this.active,
                     this.lobbyPriority
                 )
             }
@@ -80,6 +83,7 @@ class StaticProcessTemplateEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
+                    this.active,
                     this.startPort
                 )
             }
@@ -94,6 +98,7 @@ class StaticProcessTemplateEntity(
                     this.stateUpdating,
                     this.startPriority,
                     this.joinPermission,
+                    this.active
                 )
             }
         }
@@ -113,6 +118,7 @@ class StaticProcessTemplateEntity(
                 configuration.stateUpdating,
                 configuration.startPriority,
                 configuration.joinPermission,
+                configuration.active,
                 configuration.type,
                 lobbyPriority,
                 startPort

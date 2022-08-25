@@ -49,19 +49,19 @@ interface ProcessTemplateUpdateRequest : Request<Unit> {
     fun setMaxPlayers(players: Int): ProcessTemplateUpdateRequest
 
     /**
-     * Sets the image for the group
+     * Sets the image for the template
      * @return this
      */
     fun setImage(image: Image?): ProcessTemplateUpdateRequest
 
     /**
-     * Sets the maintenance state for the group
+     * Sets the maintenance state for the template
      * @return this
      */
     fun setMaintenance(maintenance: Boolean): ProcessTemplateUpdateRequest
 
     /**
-     * Sets the permission a player need to join processes of the group
+     * Sets the permission a player need to join processes of the template
      * @return this
      */
     fun setJoinPermission(permission: String?): ProcessTemplateUpdateRequest
@@ -74,9 +74,14 @@ interface ProcessTemplateUpdateRequest : Request<Unit> {
     fun setStateUpdating(stateUpdating: Boolean): ProcessTemplateUpdateRequest
 
     /**
-     * Sets start priority for the group (higher will be started first)
+     * Sets start priority for the template (higher will be started first)
      * @return this
      */
     fun setStartPriority(priority: Int): ProcessTemplateUpdateRequest
+
+    /**
+     * Sets whether this template is active. Templates with active=false will not start
+     */
+    fun setActive(active: Boolean): ProcessTemplateUpdateRequest
 
 }

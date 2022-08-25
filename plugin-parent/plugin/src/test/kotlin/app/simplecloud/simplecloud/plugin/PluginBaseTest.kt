@@ -88,6 +88,7 @@ open class PluginBaseTest {
                 true,
                 0,
                 null,
+                true,
                 0
             )
         )
@@ -108,6 +109,7 @@ open class PluginBaseTest {
                 true,
                 0,
                 null,
+                true,
                 25565
             )
         )
@@ -127,7 +129,8 @@ open class PluginBaseTest {
                 "test",
                 true,
                 0,
-                null
+                null,
+                true
             )
         )
         val processGroup = createRequest.submit().join() as CloudServerGroup

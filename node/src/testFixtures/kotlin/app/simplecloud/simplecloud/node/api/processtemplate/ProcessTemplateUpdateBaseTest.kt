@@ -27,6 +27,8 @@ import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.ValueSource
 
 /**
  * Date: 19.08.22
@@ -148,6 +150,15 @@ abstract class ProcessTemplateUpdateBaseTest : ProcessTemplateServiceBaseTest() 
             .setStartPriority(22)
             .submit().join()
         Assertions.assertEquals(22, getCurrentTemplateConfig().startPriority)
+    }
+
+    @ParameterizedTest
+    @ValueSource(booleans = [true, false])
+    fun updateActiveTest(active: Boolean) {
+        templateService.createUpdateRequest(existingTemplate)
+            .setActive(active)
+            .submit().join()
+        Assertions.assertEquals(active, getCurrentTemplateConfig().active)
     }
 
 

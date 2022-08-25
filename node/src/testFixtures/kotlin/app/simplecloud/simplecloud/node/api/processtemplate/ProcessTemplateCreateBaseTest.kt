@@ -172,6 +172,7 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
             false,
             0,
             null,
+            true,
             25565,
         )
     }
@@ -186,6 +187,7 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
             false,
             0,
             null,
+            true,
             port,
         )
     }

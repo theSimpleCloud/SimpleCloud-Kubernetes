@@ -49,6 +49,8 @@ interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest, Process
 
     override fun setStartPriority(priority: Int): CloudProxyGroupUpdateRequest
 
+    override fun setActive(active: Boolean): CloudProxyGroupUpdateRequest
+
     override fun submit(): CompletableFuture<Unit>
 
 }

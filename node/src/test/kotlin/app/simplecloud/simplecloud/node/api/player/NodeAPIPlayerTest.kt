@@ -75,7 +75,7 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
         name: String,
         maxPlayers: Int,
         maintenance: Boolean,
-        joinPermission: String?
+        joinPermission: String?,
     ): CloudProcessGroup {
         val config = createLobbyGroupConfig(name, maxPlayers, maintenance, joinPermission)
         return this.cloudProcessGroupService.createCreateRequest(config).submit().join()
@@ -96,6 +96,7 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
             true,
             1,
             joinPermission,
+            true,
             0
         )
     }
@@ -104,7 +105,7 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
         name: String,
         maxPlayers: Int,
         maintenance: Boolean,
-        joinPermission: String?
+        joinPermission: String?,
     ): CloudProcessGroup {
         val config = createProxyGroupConfig(name, maxPlayers, maintenance, joinPermission)
         return this.cloudProcessGroupService.createCreateRequest(config).submit().join()
@@ -125,6 +126,7 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
             true,
             0,
             joinPermission,
+            true,
             25565
         )
     }

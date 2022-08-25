@@ -46,4 +46,6 @@ interface StaticProcessTemplateUpdateRequest : ProcessTemplateUpdateRequest {
 
     override fun setStartPriority(priority: Int): StaticProcessTemplateUpdateRequest
 
+    override fun setActive(active: Boolean): StaticProcessTemplateUpdateRequest
+
 }

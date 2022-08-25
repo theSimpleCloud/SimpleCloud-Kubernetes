@@ -48,4 +48,6 @@ interface StaticLobbyTemplateUpdateRequest : StaticProcessTemplateUpdateRequest,
 
     override fun setStartPriority(priority: Int): StaticLobbyTemplateUpdateRequest
 
+    override fun setActive(active: Boolean): StaticLobbyTemplateUpdateRequest
+
 }
