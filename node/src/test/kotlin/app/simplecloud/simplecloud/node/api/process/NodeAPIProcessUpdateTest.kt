@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.CloudProcess
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -35,10 +36,12 @@ import kotlin.random.Random
 class NodeAPIProcessUpdateTest : NodeAPIProcessTest() {
 
     private lateinit var process: CloudProcess
+    private lateinit var defaultGroup: CloudProcessGroup
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
+        this.defaultGroup = createLobbyGroup("MyLobby")
         this.process = this.processService.createStartRequest(this.defaultGroup).submit().join()
     }
 

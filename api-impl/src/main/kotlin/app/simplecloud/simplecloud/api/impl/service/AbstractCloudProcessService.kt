@@ -34,6 +34,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequ
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.eventapi.EventManager
@@ -102,8 +103,8 @@ abstract class AbstractCloudProcessService(
         this.distributedRepository.save(configuration.getProcessName(), configuration).await()
     }
 
-    override fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest {
-        return ProcessStartRequestImpl(this, group)
+    override fun createStartRequest(template: ProcessTemplate): ProcessStartRequest {
+        return ProcessStartRequestImpl(this, template)
     }
 
     override fun createUpdateRequest(process: CloudProcess): ProcessUpdateRequest {

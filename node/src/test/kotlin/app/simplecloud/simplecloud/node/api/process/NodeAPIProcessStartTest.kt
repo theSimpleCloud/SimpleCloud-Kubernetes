@@ -20,9 +20,11 @@ package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.RandomStringUtils
 import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -32,6 +34,14 @@ import org.junit.jupiter.api.Test
  *
  */
 class NodeAPIProcessStartTest : NodeAPIProcessTest() {
+
+    private lateinit var defaultGroup: CloudProcessGroup
+
+    @BeforeEach
+    override fun setUp() {
+        super.setUp()
+        this.defaultGroup = createLobbyGroup("MyLobby")
+    }
 
     @Test
     fun startNothing_ZeroProcessesWillExist() {

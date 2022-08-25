@@ -19,9 +19,7 @@
 package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.process.CloudProcess
-import app.simplecloud.simplecloud.node.connect.DistributedRepositories
-import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterExecutor
-import kotlinx.coroutines.runBlocking
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -34,10 +32,12 @@ import org.junit.jupiter.api.Test
 class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
 
     private lateinit var process: CloudProcess
+    private lateinit var defaultGroup: CloudProcessGroup
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
+        this.defaultGroup = createLobbyGroup("MyLobby")
         this.process = this.processService.createStartRequest(this.defaultGroup).submit().join()
     }
 
@@ -76,18 +76,6 @@ class NodeAPIProcessShutdownTest : NodeAPIProcessTest() {
         this.kubeAPI.getPodService().getPod(this.process.getName().lowercase()).delete()
         executeUnregisterRunnable()
         assertProcessesCount(0)
-    }
-
-    private fun executeUnregisterRunnable() {
-        val distribution = cloudAPI.getDistribution()
-        val distributedRepositories =
-            distribution.getUserContext()["distributedRepositories"] as DistributedRepositories
-
-        runBlocking {
-            ProcessUnregisterExecutor(kubeAPI, cloudAPI, distributedRepositories.cloudProcessRepository)
-                .compareProcessesWithKubeAndUnregister()
-        }
-
     }
 
 }

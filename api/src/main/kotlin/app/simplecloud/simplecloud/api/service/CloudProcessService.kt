@@ -23,6 +23,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessExecuteCommandRequ
 import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.*
@@ -69,7 +70,7 @@ interface CloudProcessService : Service {
     /**
      * Creates a request to start a process
      */
-    fun createStartRequest(group: CloudProcessGroup): ProcessStartRequest
+    fun createStartRequest(template: ProcessTemplate): ProcessStartRequest
 
     /**
      * Creates a request to stop a process

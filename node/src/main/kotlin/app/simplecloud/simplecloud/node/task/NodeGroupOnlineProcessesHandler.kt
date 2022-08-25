@@ -22,23 +22,24 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
-import org.apache.logging.log4j.LogManager
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
-class NodeOnlineProcessesChecker(
+class NodeGroupOnlineProcessesHandler(
     private val groupService: CloudProcessGroupService,
     private val processService: CloudProcessService,
-    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
+    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService,
 ) {
 
-    suspend fun checkOnlineCount() {
-        val groups = this.groupService.findAll().await()
+    suspend fun handleProcesses() {
+        val groups = getActiveGroups()
         groups.forEach {
-            ProcessOnlineCountHandler(it, this.processService, this.nodeProcessOnlineStrategyService).handle()
+            GroupProcessOnlineCountHandler(it, this.processService, this.nodeProcessOnlineStrategyService).handle()
         }
     }
 
-    companion object {
-        private val logger = LogManager.getLogger(NodeOnlineProcessesChecker::class.java)
+    private suspend fun getActiveGroups(): List<CloudProcessGroup> {
+        val groups = this.groupService.findAll().await()
+        return groups.filter { it.isActive() }
     }
 
 }

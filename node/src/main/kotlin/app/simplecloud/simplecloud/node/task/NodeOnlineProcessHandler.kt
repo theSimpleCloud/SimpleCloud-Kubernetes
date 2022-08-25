@@ -18,33 +18,32 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
-import kotlinx.coroutines.runBlocking
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 
 /**
- * Date: 15.08.22
- * Time: 17:30
+ * Date: 25.08.22
+ * Time: 11:52
  * @author Frederick Baier
  *
  */
-class NodeOnlineProcessCheckerRunnable : Runnable, DistributionAware {
+class NodeOnlineProcessHandler(
+    private val cloudAPI: NodeCloudAPI,
+) {
 
-    @Transient
-    @Volatile
-    private var cloudAPI: NodeCloudAPIImpl? = null
+    suspend fun handleProcesses() {
+        val nodeGroupOnlineProcessesHandler = NodeGroupOnlineProcessesHandler(
+            cloudAPI.getProcessGroupService(),
+            cloudAPI.getProcessService(),
+            cloudAPI.getOnlineStrategyService()
+        )
 
-    override fun run() {
-        val cloudAPI = this.cloudAPI ?: return
+        val nodeStaticOnlineProcessesHandler = NodeStaticOnlineProcessesHandler(
+            cloudAPI.getStaticProcessTemplateService(),
+            cloudAPI.getProcessService()
+        )
 
-        runBlocking {
-            NodeOnlineProcessHandler(cloudAPI).handleProcesses()
-        }
+        nodeGroupOnlineProcessesHandler.handleProcesses()
+        nodeStaticOnlineProcessesHandler.handleProcesses()
     }
 
-    override fun setDistribution(distribution: Distribution) {
-        val userContext = distribution.getUserContext()
-        this.cloudAPI = userContext["cloudAPI"] as NodeCloudAPIImpl
-    }
 }

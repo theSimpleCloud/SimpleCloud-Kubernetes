@@ -20,9 +20,13 @@ package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.connect.DistributedRepositories
+import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterExecutor
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -37,20 +41,32 @@ open class NodeAPIProcessTest : NodeAPIBaseTest() {
 
     protected lateinit var processService: CloudProcessService
     protected lateinit var processGroupService: CloudProcessGroupService
-    protected lateinit var defaultGroup: CloudProcessGroup
+    protected lateinit var staticTemplateService: StaticProcessTemplateService
 
     @BeforeEach
     override fun setUp() {
         super.setUp()
         this.processService = this.cloudAPI.getProcessService()
         this.processGroupService = this.cloudAPI.getProcessGroupService()
-        this.defaultGroup = createLobbyGroup("MyLobby")
+        this.staticTemplateService = this.cloudAPI.getStaticProcessTemplateService()
     }
 
 
     @AfterEach
     override fun tearDown() {
         super.tearDown()
+    }
+
+    protected fun executeUnregisterRunnable() {
+        val distribution = cloudAPI.getDistribution()
+        val distributedRepositories =
+            distribution.getUserContext()["distributedRepositories"] as DistributedRepositories
+
+        runBlocking {
+            ProcessUnregisterExecutor(kubeAPI, cloudAPI, distributedRepositories.cloudProcessRepository)
+                .compareProcessesWithKubeAndUnregister()
+        }
+
     }
 
     protected fun createLobbyGroup(name: String = "Lobby"): CloudProcessGroup {

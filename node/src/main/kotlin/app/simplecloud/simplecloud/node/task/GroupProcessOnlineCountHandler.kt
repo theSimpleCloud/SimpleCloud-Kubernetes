@@ -26,10 +26,10 @@ import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import org.apache.logging.log4j.LogManager
 
-class ProcessOnlineCountHandler(
+class GroupProcessOnlineCountHandler(
     private val group: CloudProcessGroup,
     private val processService: CloudProcessService,
-    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService
+    private val nodeProcessOnlineStrategyService: NodeProcessOnlineStrategyService,
 ) {
 
     suspend fun handle() {
@@ -73,7 +73,7 @@ class ProcessOnlineCountHandler(
 
 
     companion object {
-        private val logger = LogManager.getLogger(ProcessOnlineCountHandler::class.java)
+        private val logger = LogManager.getLogger(GroupProcessOnlineCountHandler::class.java)
     }
 
 }

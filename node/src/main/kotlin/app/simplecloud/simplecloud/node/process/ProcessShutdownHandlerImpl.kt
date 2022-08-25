@@ -44,6 +44,8 @@ class ProcessShutdownHandlerImpl(
     }
 
     private suspend fun updateStateToClosed() {
+        if (this.process.getState() == ProcessState.CLOSED)
+            return
         val updateRequest = this.process.createUpdateRequest()
         updateRequest as InternalProcessUpdateRequest
         updateRequest.setState(ProcessState.CLOSED)
