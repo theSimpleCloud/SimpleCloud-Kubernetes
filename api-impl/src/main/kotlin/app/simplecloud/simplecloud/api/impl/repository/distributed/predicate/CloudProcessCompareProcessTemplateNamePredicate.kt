@@ -28,10 +28,10 @@ import app.simplecloud.simplecloud.distribution.api.Predicate
  * @author Frederick Baier
  */
 class CloudProcessCompareProcessTemplateNamePredicate(
-    private val compareGroupName: String,
+    private val compareTemplateName: String,
 ) : Predicate<String, CloudProcessConfiguration> {
 
     override fun apply(uuid: String, configuration: CloudProcessConfiguration): Boolean {
-        return configuration.processTemplateName == compareGroupName
+        return configuration.processTemplateName == compareTemplateName
     }
 }

@@ -181,6 +181,16 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
         assertPlayerCurrentServer("Higher-Lobby-1")
     }
 
+    @Test
+    fun givenStaticLobby_playerJoin_willConnectToStaticLobby() {
+        givenStaticLobbyTemplate("StaticLobby")
+        changeStateOfStaticProcessToOnline("StaticLobby")
+
+        loginAndConnectToFallback()
+
+        assertPlayerCurrentServer("StaticLobby")
+    }
+
     private fun loginAndConnectToFallbackWithPermission(permission: String) {
         insertPlayerWithPermissionInDatabase(permission)
         executePlayerLogin()

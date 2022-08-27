@@ -27,6 +27,12 @@ interface KubeVolumeClaimService {
 
     fun getClaim(name: String): KubeVolumeClaim
 
-    class VolumeClaimAlreadyExistException : Exception()
+    class VolumeClaimAlreadyExistException : Exception {
+
+        constructor() : super()
+
+        constructor(cause: Exception) : super(cause)
+
+    }
 
 }

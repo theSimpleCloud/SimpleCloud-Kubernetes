@@ -45,7 +45,7 @@ class CloudProcessImpl constructor(
     private val processService: CloudProcessService
 ) : CloudProcess {
 
-    override fun getGroupName(): String {
+    override fun getProcessTemplateName(): String {
         return this.configuration.processTemplateName
     }
 

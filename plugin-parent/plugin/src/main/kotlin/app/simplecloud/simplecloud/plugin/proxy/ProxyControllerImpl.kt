@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdater
 import app.simplecloud.simplecloud.plugin.proxy.request.*
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerDisconnectRequestHandler
@@ -36,8 +37,9 @@ class ProxyControllerImpl(
     private val playerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
     private val processGroupService: CloudProcessGroupService,
+    private val staticTemplateService: StaticProcessTemplateService,
     private val onlineCountUpdater: OnlineCountUpdater,
-    private val proxyName: String
+    private val proxyName: String,
 ) : ProxyController {
 
     override suspend fun handleLogin(request: PlayerConnectionConfiguration): CloudPlayer {
@@ -61,7 +63,8 @@ class ProxyControllerImpl(
             request,
             processService,
             playerService,
-            processGroupService
+            processGroupService,
+            staticTemplateService
         ).handle()
     }
 
@@ -77,7 +80,8 @@ class ProxyControllerImpl(
             request,
             playerService,
             processService,
-            processGroupService
+            processGroupService,
+            staticTemplateService
         ).handle()
     }
 }

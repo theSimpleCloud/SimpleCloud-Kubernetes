@@ -30,7 +30,7 @@ import org.apache.logging.log4j.LogManager
 
 class KubernetesProcessStarter(
     private val process: CloudProcess,
-    private val kubeAPI: KubeAPI
+    private val kubeAPI: KubeAPI,
 ) {
 
     private val networkService = this.kubeAPI.getNetworkService()
@@ -38,7 +38,7 @@ class KubernetesProcessStarter(
     private val volumeClaimService = this.kubeAPI.getVolumeClaimService()
 
     private val processLabel = Label("cloud-process", this.process.getName())
-    private val groupLabel = Label("cloud-group", this.process.getGroupName())
+    private val groupLabel = Label("cloud-group", this.process.getProcessTemplateName())
 
     fun startProcess() {
         logger.info("Starting Process {}", process.getName())
@@ -67,17 +67,19 @@ class KubernetesProcessStarter(
     }
 
     private fun createContainerSpecifications(): PodSpec {
-        //val volume = createVolumeClaim()
-
         val processUniqueIdEnvironment = createProcessIdEnvironmentVariable()
-        return PodSpec()
-            .withContainerPort(25565)
+        val podSpec = PodSpec().withContainerPort(25565)
             .withMaxMemory(this.process.getMaxMemory())
             .withLabels(this.processLabel, this.groupLabel)
-            //.withVolumes(ContainerSpec.MountableVolume(volume, "/data"))
             .withEnvironmentVariables(processUniqueIdEnvironment)
             .withImage(this.process.getImage().getName())
             .withRestartPolicy("Never")
+
+        if (this.process.isStatic()) {
+            val volume = getOrCreateVolumeClaim()
+            podSpec.withVolumes(PodSpec.MountableVolume(volume, "/static"))
+        }
+        return podSpec
     }
 
     private fun createPod(): KubePod {
@@ -95,13 +97,30 @@ class KubernetesProcessStarter(
         )
     }
 
-    private fun createVolumeClaim(): KubeVolumeClaim {
+    private fun getOrCreateVolumeClaim(): KubeVolumeClaim {
+        val claimName = ("claim-" + this.process.getName()).lowercase()
+        val existingVolumeClaim = getExistingVolumeClaimOrNull(claimName)
+        if (existingVolumeClaim != null)
+            return existingVolumeClaim
+
+        return createVolumeClaim(claimName)
+    }
+
+    private fun createVolumeClaim(claimName: String): KubeVolumeClaim {
         return this.volumeClaimService.createVolumeClaim(
-            "claim-" + this.process.getName(),
+            claimName,
             KubeVolumeSpec()
                 .withStorageClassName("microk8s-hostpath")
                 .withRequestedStorageInGB(1)
         )
+    }
+
+    private fun getExistingVolumeClaimOrNull(claimName: String): KubeVolumeClaim? {
+        return try {
+            this.volumeClaimService.getClaim(claimName)
+        } catch (e: NoSuchElementException) {
+            null
+        }
     }
 
     companion object {

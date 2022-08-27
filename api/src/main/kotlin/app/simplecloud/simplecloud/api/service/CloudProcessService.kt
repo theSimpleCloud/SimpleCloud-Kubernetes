@@ -24,7 +24,6 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -48,14 +47,14 @@ interface CloudProcessService : Service {
     fun findByNames(vararg names: String): CompletableFuture<List<CloudProcess>>
 
     /**
-     * Returns the processes found by the specified [group]
+     * Returns the processes found by the specified [template]
      */
-    fun findByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>>
+    fun findByTemplate(template: ProcessTemplate): CompletableFuture<List<CloudProcess>>
 
     /**
-     * Returns the processes found by the specified [groupName]
+     * Returns the processes found by the specified [templateName]
      */
-    fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>>
+    fun findByTemplate(templateName: String): CompletableFuture<List<CloudProcess>>
 
     /**
      * Returns the process found by the specified [uniqueId]

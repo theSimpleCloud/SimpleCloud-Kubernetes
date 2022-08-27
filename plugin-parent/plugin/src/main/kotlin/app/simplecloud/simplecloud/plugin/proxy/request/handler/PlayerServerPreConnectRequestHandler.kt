@@ -24,12 +24,13 @@ import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.ProcessTemplateType
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectRequest
 import app.simplecloud.simplecloud.plugin.proxy.request.ServerPreConnectResponse
-import app.simplecloud.simplecloud.plugin.util.PlayerProcessGroupJoinChecker
+import app.simplecloud.simplecloud.plugin.util.PlayerProcessTemplateJoinChecker
 
 /**
  * Date: 29.03.22
@@ -42,7 +43,8 @@ class PlayerServerPreConnectRequestHandler(
     private val request: ServerPreConnectRequest,
     private val processService: CloudProcessService,
     private val playerService: CloudPlayerService,
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
+    private val staticTemplateService: StaticProcessTemplateService,
 ) {
 
     private val player = this.playerService.findOnlinePlayerByUniqueId(this.request.playerConnection.uniqueId).join()
@@ -51,10 +53,17 @@ class PlayerServerPreConnectRequestHandler(
         if (isConnectingToFallbackServer())
             return findLobbyForPlayer()
         val processConnectingTo = getProcessConnectingTo()
-        val group = this.groupService.findByName(processConnectingTo.getGroupName()).await()
-        checkIfPlayerAllowedToJoinRequestedGroup(group)
+        val processTemplate = getProcessTemplateByProcess(processConnectingTo)
+        checkIfPlayerAllowedToJoinRequestedTemplate(processTemplate)
         checkIfRequestedServerIsJoinable(processConnectingTo)
         return ServerPreConnectResponse(request.serverNameTo)
+    }
+
+    private suspend fun getProcessTemplateByProcess(process: CloudProcess): ProcessTemplate {
+        if (process.isStatic()) {
+            return this.staticTemplateService.findByName(process.getProcessTemplateName()).await()
+        }
+        return this.groupService.findByName(process.getProcessTemplateName()).await()
     }
 
     private suspend fun getProcessConnectingTo(): CloudProcess {
@@ -74,8 +83,8 @@ class PlayerServerPreConnectRequestHandler(
             throw ProxyController.ProcessFullException()
     }
 
-    private suspend fun checkIfPlayerAllowedToJoinRequestedGroup(group: CloudProcessGroup) {
-        val isAllowedToJoin = PlayerProcessGroupJoinChecker(this.player, group).isAllowedToJoin()
+    private suspend fun checkIfPlayerAllowedToJoinRequestedTemplate(template: ProcessTemplate) {
+        val isAllowedToJoin = PlayerProcessTemplateJoinChecker(this.player, template).isAllowedToJoin()
         if (!isAllowedToJoin)
             throw ProxyController.NoPermissionToJoinGroupException()
     }
@@ -85,6 +94,7 @@ class PlayerServerPreConnectRequestHandler(
             this.player,
             this.processService,
             this.groupService,
+            this.staticTemplateService,
             emptyList(),
             emptyList()
         ).findLobby()

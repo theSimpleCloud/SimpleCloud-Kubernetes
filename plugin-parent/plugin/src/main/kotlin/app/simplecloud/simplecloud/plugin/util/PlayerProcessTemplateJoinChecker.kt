@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.plugin.util
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.permission.Permissions
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 
 /**
  * Date: 29.03.22
@@ -29,26 +29,26 @@ import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
  * @author Frederick Baier
  *
  */
-class PlayerProcessGroupJoinChecker(
+class PlayerProcessTemplateJoinChecker(
     private val player: CloudPlayer,
-    private val processGroup: CloudProcessGroup
+    private val processTemplate: ProcessTemplate,
 ) {
 
     suspend fun isAllowedToJoin(): Boolean {
-        if (processGroup.isInMaintenance())
+        if (processTemplate.isInMaintenance())
             return doesPlayerHasMaintenancePermission()
-        if (hasJoinPermission(processGroup))
-            return doesPlayerHasGroupsJoinPermission()
+        if (hasJoinPermission(processTemplate))
+            return doesPlayerHasTemplatesJoinPermission()
         return true
     }
 
-    private suspend fun doesPlayerHasGroupsJoinPermission(): Boolean {
-        val groupPermission = this.processGroup.getJoinPermission()!!
+    private suspend fun doesPlayerHasTemplatesJoinPermission(): Boolean {
+        val groupPermission = this.processTemplate.getJoinPermission()!!
         return this.player.hasPermission(groupPermission).await()
     }
 
-    private fun hasJoinPermission(processGroup: CloudProcessGroup): Boolean {
-        return processGroup.getJoinPermission() != null
+    private fun hasJoinPermission(processTemplate: ProcessTemplate): Boolean {
+        return processTemplate.getJoinPermission() != null
     }
 
     private suspend fun doesPlayerHasMaintenancePermission(): Boolean {

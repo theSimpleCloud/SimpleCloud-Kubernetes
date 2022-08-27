@@ -38,7 +38,7 @@ class CloudPlayerLoginJoinPermissionChecker(
 ) {
 
     suspend fun check() {
-        val proxyGroup = this.groupService.findByName(this.proxyProcess.getGroupName()).await()
+        val proxyGroup = this.groupService.findByName(this.proxyProcess.getProcessTemplateName()).await()
         checkProxyMaintenance(proxyGroup)
         checkProxyJoinPermission(proxyGroup)
         checkProxyOnlineCount()

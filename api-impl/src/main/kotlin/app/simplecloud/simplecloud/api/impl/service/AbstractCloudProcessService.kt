@@ -35,7 +35,6 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.*
@@ -50,7 +49,7 @@ import java.util.concurrent.CompletableFuture
 abstract class AbstractCloudProcessService(
     protected val processFactory: CloudProcessFactory,
     protected val distributedRepository: DistributedCloudProcessRepository,
-    private val eventManager: EventManager
+    private val eventManager: EventManager,
 ) : InternalCloudProcessService {
 
     init {
@@ -80,12 +79,12 @@ abstract class AbstractCloudProcessService(
         return futures.toFutureList()
     }
 
-    override fun findByGroup(group: CloudProcessGroup): CompletableFuture<List<CloudProcess>> {
-        return findByGroup(group.getName())
+    override fun findByTemplate(template: ProcessTemplate): CompletableFuture<List<CloudProcess>> {
+        return findByTemplate(template.getName())
     }
 
-    override fun findByGroup(groupName: String): CompletableFuture<List<CloudProcess>> {
-        val processesFuture = this.distributedRepository.findProcessesByGroupName(groupName)
+    override fun findByTemplate(templateName: String): CompletableFuture<List<CloudProcess>> {
+        val processesFuture = this.distributedRepository.findProcessesByTemplateName(templateName)
         return processesFuture.thenApply { list -> list.map { this.processFactory.create(it, this) } }
     }
 
@@ -117,7 +116,7 @@ abstract class AbstractCloudProcessService(
 
     override fun createExecuteCommandRequest(
         cloudProcess: CloudProcess,
-        command: String
+        command: String,
     ): ProcessExecuteCommandRequest {
         return ProcessExecuteCommandRequestImpl(command, cloudProcess, this)
     }

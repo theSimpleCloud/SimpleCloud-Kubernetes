@@ -43,6 +43,6 @@ interface CloudProcessRepository : Repository<String, CloudProcessConfiguration>
     /**
      * Returns all processes found by the specified [groupName]
      */
-    fun findProcessesByGroupName(groupName: String): CompletableFuture<Collection<CloudProcessConfiguration>>
+    fun findProcessesByTemplateName(templateName: String): CompletableFuture<Collection<CloudProcessConfiguration>>
 
 }

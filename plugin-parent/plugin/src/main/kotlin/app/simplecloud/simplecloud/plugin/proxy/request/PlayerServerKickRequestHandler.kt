@@ -21,13 +21,15 @@ package app.simplecloud.simplecloud.plugin.proxy.request
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.plugin.proxy.request.handler.PlayerLobbyFinder
 
 class PlayerServerKickRequestHandler(
     private val request: ServerKickRequest,
     private val playerService: CloudPlayerService,
     private val processService: CloudProcessService,
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
+    private val staticTemplateService: StaticProcessTemplateService,
 ) {
 
     private val player = this.playerService.findOnlinePlayerByUniqueId(this.request.playerUniqueId).join()
@@ -42,6 +44,7 @@ class PlayerServerKickRequestHandler(
             this.player,
             this.processService,
             this.groupService,
+            this.staticTemplateService,
             emptyList(),
             listOf(this.serverNameKickedFrom)
         ).findLobby()

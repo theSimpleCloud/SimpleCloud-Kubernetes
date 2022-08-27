@@ -22,24 +22,28 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
+import app.simplecloud.simplecloud.api.template.ProcessLobbyTemplate
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.group.CloudLobbyGroup
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.api.template.static.StaticLobbyTemplate
 import app.simplecloud.simplecloud.plugin.proxy.ProxyController
-import app.simplecloud.simplecloud.plugin.util.PlayerProcessGroupJoinChecker
+import app.simplecloud.simplecloud.plugin.util.PlayerProcessTemplateJoinChecker
 
 class PlayerLobbyFinder(
     private val player: CloudPlayer,
     private val processService: CloudProcessService,
     private val groupService: CloudProcessGroupService,
+    private val staticTemplateService: StaticProcessTemplateService,
     private val excludedGroups: List<String>,
     private val excludedProcesses: List<String>,
 ) {
 
     suspend fun findLobby(): String {
-        val groups = getLobbyGroupsThePlayerIsAllowedToJoinSorted()
-        for (group in groups) {
-            val processes = this.processService.findByGroup(group).await()
-            val notExcludedProcesses = processes.filterNot { excludedProcesses.contains(it.getName()) }
+        val lobbyTemplates = getLobbyGroupsThePlayerIsAllowedToJoinSorted()
+        for (lobbyTemplate in lobbyTemplates) {
+            val processes = this.processService.findByTemplate(lobbyTemplate).await()
+            val notExcludedProcesses = processes.filterNot { this.excludedProcesses.contains(it.getName()) }
             val notFullProcesses = notExcludedProcesses.filterNot { it.isFull() }
             if (notFullProcesses.isEmpty()) continue
             return notFullProcesses.first().getName()
@@ -47,10 +51,19 @@ class PlayerLobbyFinder(
         throw ProxyController.NoLobbyServerFoundException()
     }
 
-    private suspend fun getLobbyGroupsThePlayerIsAllowedToJoinSorted(): List<CloudLobbyGroup> {
-        val lobbyGroups = getNotExcludedLobbyGroups()
-        val notInMaintenanceGroups = lobbyGroups.filter { isPlayerAllowedToJoin(it) }
-        return notInMaintenanceGroups.sortedByDescending { it.getLobbyPriority() }
+    private suspend fun getLobbyGroupsThePlayerIsAllowedToJoinSorted(): List<ProcessLobbyTemplate> {
+        val lobbyTemplates = getNotExcludedTemplates()
+        val allowedTemplates = lobbyTemplates.filter { isPlayerAllowedToJoin(it) }
+        return allowedTemplates.sortedByDescending { it.getLobbyPriority() }
+    }
+
+    private suspend fun getNotExcludedTemplates(): Collection<ProcessLobbyTemplate> {
+        return getNotExcludedStaticTemplates().union(getNotExcludedLobbyGroups())
+    }
+
+    private suspend fun getNotExcludedStaticTemplates(): List<StaticLobbyTemplate> {
+        val lobbyTemplates = staticTemplateService.findAll().await().filterIsInstance<StaticLobbyTemplate>()
+        return lobbyTemplates.filterNot { this.excludedProcesses.contains(it.getName()) }
     }
 
     private suspend fun getNotExcludedLobbyGroups(): List<CloudLobbyGroup> {
@@ -58,8 +71,8 @@ class PlayerLobbyFinder(
         return allGroups.filterNot { this.excludedGroups.contains(it.getName()) }
     }
 
-    private suspend fun isPlayerAllowedToJoin(group: CloudProcessGroup): Boolean {
-        return PlayerProcessGroupJoinChecker(this.player, group).isAllowedToJoin()
+    private suspend fun isPlayerAllowedToJoin(processTemplate: ProcessTemplate): Boolean {
+        return PlayerProcessTemplateJoinChecker(this.player, processTemplate).isAllowedToJoin()
     }
 
 

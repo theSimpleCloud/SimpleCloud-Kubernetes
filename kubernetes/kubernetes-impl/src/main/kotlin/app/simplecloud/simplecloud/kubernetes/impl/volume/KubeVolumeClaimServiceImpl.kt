@@ -69,7 +69,7 @@ class KubeVolumeClaimServiceImpl(
                 null
             )
         } catch (e: ApiException) {
-            throw KubeVolumeClaimService.VolumeClaimAlreadyExistException()
+            throw KubeVolumeClaimService.VolumeClaimAlreadyExistException(e)
         }
         return getClaim(name)
     }

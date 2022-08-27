@@ -58,6 +58,7 @@ class CloudProxyPlugin(
             this.cloudAPI.internalPlayerService,
             this.cloudAPI.getProcessService(),
             this.cloudAPI.getProcessGroupService(),
+            this.cloudAPI.getStaticProcessTemplateService(),
             OnlineCountUpdaterImpl(selfProcessProvider, this.selfOnlineCountProvider),
             this.cloudAPI.getLocalNetworkComponentName()
         )

@@ -47,8 +47,8 @@ class DistributedCloudProcessRepository(
         return executeQueryAndFindFirst(CloudProcessCompareDistributionIdPredicate(distributionId))
     }
 
-    override fun findProcessesByGroupName(groupName: String): CompletableFuture<Collection<CloudProcessConfiguration>> {
-        return executeQuery(CloudProcessCompareProcessTemplateNamePredicate(groupName))
+    override fun findProcessesByTemplateName(templateName: String): CompletableFuture<Collection<CloudProcessConfiguration>> {
+        return executeQuery(CloudProcessCompareProcessTemplateNamePredicate(templateName))
     }
 
 }

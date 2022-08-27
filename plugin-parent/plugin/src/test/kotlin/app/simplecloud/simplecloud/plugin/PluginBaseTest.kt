@@ -18,24 +18,29 @@
 
 package app.simplecloud.simplecloud.plugin
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.api.request.group.update.CloudLobbyGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProcessGroupUpdateRequest
 import app.simplecloud.simplecloud.api.request.group.update.CloudProxyGroupUpdateRequest
+import app.simplecloud.simplecloud.api.request.statictemplate.update.StaticLobbyTemplateUpdateRequest
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.group.CloudLobbyGroup
 import app.simplecloud.simplecloud.api.template.group.CloudProxyGroup
 import app.simplecloud.simplecloud.api.template.group.CloudServerGroup
+import app.simplecloud.simplecloud.api.template.static.StaticLobbyTemplate
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.node.task.NodeStaticOnlineProcessesHandler
+import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
@@ -98,6 +103,48 @@ open class PluginBaseTest {
         updateRequest.submit().join()
     }
 
+    protected fun givenStaticLobbyTemplate(
+        name: String,
+        updateFunction: StaticLobbyTemplateUpdateRequest.() -> Unit = {},
+    ) {
+        val createRequest = this.nodeCloudAPI.getStaticProcessTemplateService().createCreateRequest(
+            LobbyProcessTemplateConfiguration(
+                name,
+                1024,
+                20,
+                false,
+                "test",
+                true,
+                0,
+                null,
+                true,
+                0
+            )
+        )
+        val staticTemplate = createRequest.submit().join() as StaticLobbyTemplate
+        val updateRequest = staticTemplate.createUpdateRequest()
+        updateFunction.invoke(updateRequest)
+        updateRequest.submit().join()
+
+        startAndStopStaticProcessesAsNeeded()
+    }
+
+    protected fun changeStateOfStaticProcessToOnline(staticProcessName: String): Unit = runBlocking {
+        val processService = nodeCloudAPI.getProcessService()
+        val cloudProcess = processService.findByName(staticProcessName).await()
+        val updateRequest = cloudProcess.createUpdateRequest()
+        updateRequest as InternalProcessUpdateRequest
+        updateRequest.setState(ProcessState.ONLINE)
+        updateRequest.submit().await()
+    }
+
+    private fun startAndStopStaticProcessesAsNeeded() = runBlocking {
+        NodeStaticOnlineProcessesHandler(
+            nodeCloudAPI.getStaticProcessTemplateService(),
+            nodeCloudAPI.getProcessService()
+        ).handleProcesses()
+    }
+
     protected fun givenProxyGroup(name: String, updateFunction: CloudProxyGroupUpdateRequest.() -> Unit = {}) {
         val createRequest = this.nodeCloudAPI.getProcessGroupService().createCreateRequest(
             ProxyProcessTemplateConfiguration(
@@ -140,7 +187,7 @@ open class PluginBaseTest {
     }
 
     protected fun givenProcess(groupName: String, count: Int): List<CloudProcess> {
-        val processes = ArrayList<CloudProcess>();
+        val processes = ArrayList<CloudProcess>()
         val group = nodeCloudAPI.getProcessGroupService().findByName(groupName).join()
         for (i in 0 until count) {
             val process = nodeCloudAPI.getProcessService().createStartRequest(group).submit().join()

@@ -37,7 +37,7 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     /**
      * Returns the group name of this process
      */
-    fun getGroupName(): String
+    fun getProcessTemplateName(): String
 
     /**
      * Returns the process number
