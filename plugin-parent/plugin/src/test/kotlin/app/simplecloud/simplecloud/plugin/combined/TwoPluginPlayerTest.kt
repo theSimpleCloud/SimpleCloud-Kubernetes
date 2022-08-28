@@ -42,8 +42,8 @@ class TwoPluginPlayerTest : PluginBaseTest() {
         super.setUp()
         givenProxyGroup("Proxy")
         givenLobbyGroup("Lobby")
-        givenProcess("Proxy", 1)
-        givenProcess("Lobby", 1)
+        givenGroupProcesses("Proxy", 1)
+        givenGroupProcesses("Lobby", 1)
         val serverPlugin = startServerPlugin("Lobby-1")
         val proxyPlugin = startProxyPlugin("Proxy-1")
         this.lobbyOnlineCountProvider = serverPlugin.testSelfOnlineCountProvider

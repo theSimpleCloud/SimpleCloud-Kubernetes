@@ -41,8 +41,8 @@ class NodeAPIPlayerLogoutTest : NodeAPIPlayerTest() {
     @BeforeEach
     override fun setUp(): Unit = runBlocking {
         super.setUp()
-        givenProxyGroup("Proxy", 20, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy")
+        givenOnlineGroupProcesses("Proxy", 1)
         val configuration = PlayerLoginConfiguration(createDefaultPlayerConnectionConfiguration(), "Proxy-1")
         loggedInPlayer = cloudPlayerService.loginPlayer(configuration)
     }

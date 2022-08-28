@@ -51,14 +51,14 @@ class PluginStartTest : PluginBaseTest() {
     @Test
     fun startPluginOfExistingProcess_willNotFail() {
         givenProxyGroup("Proxy")
-        givenProcess("Proxy", 1)
+        givenGroupProcesses("Proxy", 1)
         startPluginForProcess("Proxy-1")
     }
 
     @Test
     fun startPlugin_willBeOnline() {
         givenProxyGroup("Proxy")
-        givenProcess("Proxy", 1)
+        givenGroupProcesses("Proxy", 1)
         startPluginForProcess("Proxy-1")
         val process = this.nodeCloudAPI.getProcessService().findByName("Proxy-1").join()
         Assertions.assertEquals(ProcessState.ONLINE, process.getState())

@@ -33,9 +33,9 @@ class ProxyPluginPlayerSwitchServerTest : ProxyPluginPlayerBaseTest() {
     override fun setUp() {
         super.setUp()
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
         givenServerGroup("BedWars")
-        givenOnlineProcess("BedWars", 1)
+        givenOnlineGroupProcesses("BedWars", 1)
         executeLoginAndConnect("Lobby-1")
     }
 

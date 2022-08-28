@@ -22,11 +22,10 @@ import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerServi
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.node.util.TestProcessProvider
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
@@ -36,7 +35,7 @@ import org.junit.jupiter.api.BeforeEach
  * @author Frederick Baier
  *
  */
-open class NodeAPIPlayerTest : NodeAPIBaseTest() {
+open class NodeAPIPlayerTest : NodeAPIBaseTest(), TestProcessProvider {
 
     protected lateinit var cloudPlayerService: InternalCloudPlayerService
     protected lateinit var cloudProcessService: CloudProcessService
@@ -64,71 +63,8 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest() {
         return DefaultPlayerProvider.createDefaultPlayerConnectionConfiguration()
     }
 
-    protected fun givenProcesses(groupName: String, count: Int) {
-        val processGroup = this.cloudProcessGroupService.findByName(groupName).join()
-        for (i in 0 until count) {
-            this.cloudProcessService.createStartRequest(processGroup).submit().join()
-        }
-    }
-
-    protected fun givenLobbyGroup(
-        name: String,
-        maxPlayers: Int,
-        maintenance: Boolean,
-        joinPermission: String?,
-    ): CloudProcessGroup {
-        val config = createLobbyGroupConfig(name, maxPlayers, maintenance, joinPermission)
-        return this.cloudProcessGroupService.createCreateRequest(config).submit().join()
-    }
-
-    private fun createLobbyGroupConfig(
-        name: String,
-        maxPlayers: Int,
-        maintenance: Boolean,
-        joinPermission: String?,
-    ): LobbyProcessTemplateConfiguration {
-        return LobbyProcessTemplateConfiguration(
-            name,
-            512,
-            maxPlayers,
-            maintenance,
-            "Test",
-            true,
-            1,
-            joinPermission,
-            true,
-            0
-        )
-    }
-
-    protected fun givenProxyGroup(
-        name: String,
-        maxPlayers: Int,
-        maintenance: Boolean,
-        joinPermission: String?,
-    ): CloudProcessGroup {
-        val config = createProxyGroupConfig(name, maxPlayers, maintenance, joinPermission)
-        return this.cloudProcessGroupService.createCreateRequest(config).submit().join()
-    }
-
-    private fun createProxyGroupConfig(
-        name: String,
-        maxPlayers: Int,
-        maintenance: Boolean,
-        joinPermission: String?,
-    ): ProxyProcessTemplateConfiguration {
-        return ProxyProcessTemplateConfiguration(
-            name,
-            512,
-            maxPlayers,
-            maintenance,
-            "Test",
-            true,
-            0,
-            joinPermission,
-            true,
-            25565
-        )
+    override fun getNodeAPI(): NodeCloudAPI {
+        return this.cloudAPI
     }
 
 }

@@ -44,7 +44,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaintenance(true)
         }
-        givenProcess("Lobby", 1)
+        givenGroupProcesses("Lobby", 1)
         executePlayerLogin()
         Assertions.assertThrows(ProxyController.NoPermissionToJoinGroupException::class.java) {
             executeConnect("Lobby-1")
@@ -56,7 +56,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setJoinPermission("my.join.permission")
         }
-        givenProcess("Lobby", 1)
+        givenGroupProcesses("Lobby", 1)
         executePlayerLogin()
         Assertions.assertThrows(ProxyController.NoPermissionToJoinGroupException::class.java) {
             executeConnect("Lobby-1")
@@ -68,7 +68,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(1)
         }
-        givenProcess("Lobby", 1)
+        givenGroupProcesses("Lobby", 1)
         executePlayerLogin()
         Assertions.assertThrows(ProxyController.ProcessNotJoinableException::class.java) {
             executeConnect("Lobby-1")
@@ -80,7 +80,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(0)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
         executePlayerLogin()
         Assertions.assertThrows(ProxyController.ProcessFullException::class.java) {
             executeConnect("Lobby-1")
@@ -92,7 +92,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(1)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         executePlayerLogin()
         executeConnect("Lobby-1")
@@ -107,7 +107,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(1)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         executePlayerLogin()
         executeConnect("fallback")
@@ -119,7 +119,7 @@ class ProxyPluginPlayerConnectTest : ProxyPluginPlayerBaseTest() {
     @Test
     fun givenProxy_playerConnectToProxy_willFail() {
         givenProxyGroup("TestProxy")
-        givenOnlineProcess("TestProxy", 1)
+        givenOnlineGroupProcesses("TestProxy", 1)
 
         executePlayerLogin()
 

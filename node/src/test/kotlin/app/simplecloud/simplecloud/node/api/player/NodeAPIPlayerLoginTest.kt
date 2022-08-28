@@ -37,7 +37,7 @@ import org.junit.jupiter.api.Test
  * @author Frederick Baier
  *
  */
-class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeAPIPlayerTest() {
+class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
 
     @Test
     fun playerLoginOnUnregisteredGroup_willThrow() {
@@ -48,7 +48,7 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginOnUnregisteredProcess_willThrow() {
-        givenProxyGroup("Proxy", 20, false, null)
+        givenProxyGroup("Proxy")
         Assertions.assertThrows(UnknownProxyProcessException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
@@ -56,8 +56,10 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginOnRegisteredProcessWith0MaxPlayers_willThrow() {
-        givenProxyGroup("Proxy", 0, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setMaxPlayers(0)
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         Assertions.assertThrows(CloudPlayerLoginJoinPermissionChecker.ProxyFullException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
@@ -65,8 +67,10 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginOnRegisteredProcessWithMaintenance_willThrow() {
-        givenProxyGroup("Proxy", 20, true, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setMaintenance(true)
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         Assertions.assertThrows(CloudPlayerLoginJoinPermissionChecker.ProxyMaintenanceException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
@@ -74,8 +78,10 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginOnRegisteredProcessWithJoinPermission_willThrow() {
-        givenProxyGroup("Proxy", 20, false, "proxy.join")
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setJoinPermission("proxy.join")
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         Assertions.assertThrows(CloudPlayerLoginJoinPermissionChecker.NoJoinPermissionException::class.java) {
             executeLoginOnProxy1WithDefaultPlayer()
         }
@@ -83,8 +89,8 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginOnRegisteredProcess() {
-        givenProxyGroup("Proxy", 20, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy")
+        givenOnlineGroupProcesses("Proxy", 1)
         val player = executeLoginOnProxy1WithDefaultPlayer()
         Assertions.assertEquals("Proxy-1", player.getCurrentProxyName())
         Assertions.assertEquals(null, player.getCurrentServerName())
@@ -92,29 +98,35 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun playerLoginWithMaintenanceEnabled_playerLoginWithMaintenancePermission_willNotFail() {
-        givenProxyGroup("Proxy", 20, true, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setMaintenance(true)
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithPermission(Permissions.MAINTENANCE_JOIN)
     }
 
     @Test
     fun playerLoginWithJoinPermissionEnabled_playerLoginWithJoinPermission_willNotFail() {
-        givenProxyGroup("Proxy", 20, false, "proxy.join")
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setJoinPermission("proxy.join")
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithPermission("proxy.join")
     }
 
     @Test
     fun playerLoginOnFullProxy_playerLoginWithJoinFullPermission_willNotFail() {
-        givenProxyGroup("Proxy", 0, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy") {
+            setMaxPlayers(0)
+        }
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithPermission(Permissions.JOIN_FULL)
     }
 
     @Test
     fun afterLogin_playerWillBeInCache() {
-        givenProxyGroup("Proxy", 20, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy")
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()
         runBlocking {
             cloudPlayerService.findOnlinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await()
@@ -123,16 +135,16 @@ class NodeAPIPlayerLoginTest : app.simplecloud.simplecloud.node.api.player.NodeA
 
     @Test
     fun afterFirstLogin_playerWillBeSavedInDatabase() {
-        givenProxyGroup("Proxy", 20, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy")
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()
         assertDefaultPlayerInDatabase()
     }
 
     @Test
     fun executeLoginTwice_willFail() {
-        givenProxyGroup("Proxy", 20, false, null)
-        givenProcesses("Proxy", 1)
+        givenProxyGroup("Proxy")
+        givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()
 
         Assertions.assertThrows(PlayerAlreadyRegisteredException::class.java) {

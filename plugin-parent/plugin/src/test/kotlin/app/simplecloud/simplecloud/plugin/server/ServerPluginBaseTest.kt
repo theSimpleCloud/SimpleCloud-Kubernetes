@@ -41,7 +41,7 @@ open class ServerPluginBaseTest : PluginBaseTest() {
     override fun setUp() {
         super.setUp()
         givenLobbyGroup("Lobby")
-        givenProcess("Lobby", 1)
+        givenGroupProcesses("Lobby", 1)
         startPluginForProcess("Lobby-1")
     }
 

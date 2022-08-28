@@ -52,7 +52,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaintenance(true)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         Assertions.assertThrows(ProxyController.NoLobbyServerFoundException::class.java) {
             loginAndConnectToFallback()
@@ -64,7 +64,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setJoinPermission("cloud.join")
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         Assertions.assertThrows(ProxyController.NoLobbyServerFoundException::class.java) {
             loginAndConnectToFallback()
@@ -76,7 +76,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(0)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         Assertions.assertThrows(ProxyController.NoLobbyServerFoundException::class.java) {
             loginAndConnectToFallback()
@@ -88,7 +88,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(1)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         loginAndConnectToFallback()
 
@@ -101,8 +101,8 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setLobbyPriority(10)
         }
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("VIP-Lobby", 1)
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("VIP-Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         loginAndConnectToFallback()
 
@@ -115,7 +115,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setLobbyPriority(10)
         }
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         loginAndConnectToFallback()
 
@@ -129,8 +129,8 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setLobbyPriority(10)
         }
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("VIP-Lobby", 1)
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("VIP-Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         loginAndConnectToFallbackWithPermission("wrong.permission")
 
@@ -143,7 +143,7 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setJoinPermission("lobby.vip.join")
             setLobbyPriority(10)
         }
-        givenOnlineProcess("VIP-Lobby", 1)
+        givenOnlineGroupProcesses("VIP-Lobby", 1)
 
 
         Assertions.assertThrows(ProxyController.NoLobbyServerFoundException::class.java) {
@@ -158,8 +158,8 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setLobbyPriority(10)
         }
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("VIP-Lobby", 1)
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("VIP-Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
         loginAndConnectToFallbackWithPermission("lobby.vip.join")
 
@@ -172,8 +172,8 @@ class ProxyPluginPlayerConnectFallbackTest : ProxyPluginPlayerBaseTest() {
             setLobbyPriority(10)
         }
         givenLobbyGroup("Lobby")
-        givenOnlineProcess("Higher-Lobby", 1)
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Higher-Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
 
 
         loginAndConnectToFallback()

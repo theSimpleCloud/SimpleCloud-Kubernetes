@@ -43,7 +43,7 @@ class ProxyPluginPlayerKickTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("Lobby") {
             setMaxPlayers(1)
         }
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
         executePlayerLogin()
         executeConnect("Lobby-1")
     }
@@ -57,7 +57,7 @@ class ProxyPluginPlayerKickTest : ProxyPluginPlayerBaseTest() {
 
     @Test
     fun givenTwoLobbies_playerKickFromLobby_willConnectToOtherLobby() {
-        givenOnlineProcess("Lobby", 1)
+        givenOnlineGroupProcesses("Lobby", 1)
         val response = executeKick("Lobby-1")
         Assertions.assertEquals("Lobby-2", response.targetProcessName)
     }
@@ -67,7 +67,7 @@ class ProxyPluginPlayerKickTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("LobbyVIP") {
             setJoinPermission("cloud.join")
         }
-        givenOnlineProcess("LobbyVIP", 1)
+        givenOnlineGroupProcesses("LobbyVIP", 1)
         Assertions.assertThrows(ProxyController.NoLobbyServerFoundException::class.java) {
             executeKick("Lobby-1")
         }
@@ -78,7 +78,7 @@ class ProxyPluginPlayerKickTest : ProxyPluginPlayerBaseTest() {
         givenLobbyGroup("LobbyVIP") {
             setJoinPermission("cloud.join")
         }
-        givenOnlineProcess("LobbyVIP", 1)
+        givenOnlineGroupProcesses("LobbyVIP", 1)
         addPermissionToOnlineDefaultPlayer("cloud.join")
         val response = executeKick("Lobby-1")
         Assertions.assertEquals("LobbyVIP-1", response.targetProcessName)
