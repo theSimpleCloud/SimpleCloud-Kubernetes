@@ -19,48 +19,39 @@
 package app.simplecloud.simplecloud.node.api.player
 
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
-import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
-import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
-import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.util.TestPlayerProvider
-import app.simplecloud.simplecloud.node.util.TestProcessProvider
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 15.05.22
- * Time: 19:14
+ * Date: 28.08.22
+ * Time: 11:37
  * @author Frederick Baier
  *
  */
-open class NodeAPIPlayerTest : NodeAPIBaseTest(), TestProcessProvider, TestPlayerProvider {
+class NodeAPIOfflinePlayerTest : OfflinePlayerTest() {
 
-    protected lateinit var cloudPlayerService: InternalCloudPlayerService
-    protected lateinit var cloudProcessService: CloudProcessService
-    protected lateinit var cloudProcessGroupService: CloudProcessGroupService
 
+    private val nodeAPIBaseTest = NodeAPIBaseTest()
 
     @BeforeEach
     override fun setUp() {
+        nodeAPIBaseTest.setUp()
         super.setUp()
-        this.cloudPlayerService = this.cloudAPI.getCloudPlayerService()
-        this.cloudProcessService = this.cloudAPI.getProcessService()
-        this.cloudProcessGroupService = this.cloudAPI.getProcessGroupService()
-    }
-
-    @AfterEach
-    override fun tearDown() {
-        super.tearDown()
     }
 
     override fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory {
-        return this.databaseFactory
+        return nodeAPIBaseTest.databaseFactory
+    }
+
+    @AfterEach
+    fun tearDown() {
+        nodeAPIBaseTest.tearDown()
     }
 
     override fun getCloudAPI(): InternalCloudAPI {
-        return this.cloudAPI
+        return nodeAPIBaseTest.cloudAPI
     }
 
 }

@@ -48,9 +48,16 @@ object DefaultPlayerProvider {
         )
     }
 
+    fun insertPlayerInDatabase(databaseFactory: InMemoryRepositorySafeDatabaseFactory) {
+        insertPlayerInDatabase(
+            databaseFactory,
+            createOfflineDefaultPlayer(emptyList())
+        )
+    }
+
     private fun insertPlayerInDatabase(
         databaseFactory: InMemoryRepositorySafeDatabaseFactory,
-        player: OfflineCloudPlayerConfiguration
+        player: OfflineCloudPlayerConfiguration,
     ) {
         val offlineCloudPlayerRepository = databaseFactory.offlineCloudPlayerRepository
         offlineCloudPlayerRepository.save(

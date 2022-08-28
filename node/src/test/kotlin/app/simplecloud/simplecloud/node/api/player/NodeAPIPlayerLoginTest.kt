@@ -19,12 +19,9 @@
 package app.simplecloud.simplecloud.node.api.player
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.internal.exception.PlayerAlreadyRegisteredException
 import app.simplecloud.simplecloud.api.internal.exception.UnknownProxyProcessException
 import app.simplecloud.simplecloud.api.permission.Permissions
-import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginJoinPermissionChecker
 import kotlinx.coroutines.runBlocking
@@ -158,19 +155,5 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
         runBlocking {
             Assertions.assertTrue(repository.doesExist(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await())
         }
-    }
-
-    private fun executeLoginOnProxy1WithPermission(permissionString: String): CloudPlayer {
-        insertPlayerWithPermissionInDatabase(permissionString)
-        return executeLoginOnProxy1WithDefaultPlayer()
-    }
-
-    private fun executeLoginOnProxy1WithDefaultPlayer(): CloudPlayer {
-        val connectionConfig = createDefaultPlayerConnectionConfiguration()
-        return executePlayerLoginOnProxy1(connectionConfig)
-    }
-
-    private fun executePlayerLoginOnProxy1(config: PlayerConnectionConfiguration): CloudPlayer = runBlocking {
-        return@runBlocking cloudPlayerService.loginPlayer(PlayerLoginConfiguration(config, "Proxy-1"))
     }
 }

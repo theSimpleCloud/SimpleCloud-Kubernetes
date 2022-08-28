@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.util
 
+import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessUpdateRequest
 import app.simplecloud.simplecloud.api.process.CloudProcess
@@ -37,7 +38,6 @@ import app.simplecloud.simplecloud.api.template.group.CloudServerGroup
 import app.simplecloud.simplecloud.api.template.static.StaticLobbyTemplate
 import app.simplecloud.simplecloud.api.template.static.StaticProxyTemplate
 import app.simplecloud.simplecloud.api.template.static.StaticServerTemplate
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.task.NodeStaticOnlineProcessesHandler
 import kotlinx.coroutines.runBlocking
 
@@ -49,7 +49,7 @@ import kotlinx.coroutines.runBlocking
  */
 interface TestProcessProvider {
 
-    fun getNodeAPI(): NodeCloudAPI
+    fun getCloudAPI(): CloudAPI
 
     private fun createDefaultLobbyTemplateConfig(name: String): LobbyProcessTemplateConfiguration {
         return LobbyProcessTemplateConfiguration(
@@ -97,7 +97,7 @@ interface TestProcessProvider {
 
 
     fun givenLobbyGroup(name: String, updateFunction: CloudLobbyGroupUpdateRequest.() -> Unit = {}) {
-        val createRequest = getNodeAPI().getProcessGroupService().createCreateRequest(
+        val createRequest = getCloudAPI().getProcessGroupService().createCreateRequest(
             createDefaultLobbyTemplateConfig(name)
         )
         val processGroup = createRequest.submit().join() as CloudLobbyGroup
@@ -107,7 +107,7 @@ interface TestProcessProvider {
     }
 
     fun givenProxyGroup(name: String, updateFunction: CloudProxyGroupUpdateRequest.() -> Unit = {}) {
-        val createRequest = getNodeAPI().getProcessGroupService().createCreateRequest(
+        val createRequest = getCloudAPI().getProcessGroupService().createCreateRequest(
             createDefaultProxyTemplateConfig(name)
         )
         val processGroup = createRequest.submit().join() as CloudProxyGroup
@@ -117,7 +117,7 @@ interface TestProcessProvider {
     }
 
     fun givenServerGroup(name: String, updateFunction: CloudProcessGroupUpdateRequest.() -> Unit = {}) {
-        val createRequest = getNodeAPI().getProcessGroupService().createCreateRequest(
+        val createRequest = getCloudAPI().getProcessGroupService().createCreateRequest(
             createDefaultServerTemplateConfig(name)
         )
         val processGroup = createRequest.submit().join() as CloudServerGroup
@@ -130,7 +130,7 @@ interface TestProcessProvider {
         name: String,
         updateFunction: StaticLobbyTemplateUpdateRequest.() -> Unit = {},
     ) {
-        val createRequest = getNodeAPI().getStaticProcessTemplateService().createCreateRequest(
+        val createRequest = getCloudAPI().getStaticProcessTemplateService().createCreateRequest(
             createDefaultLobbyTemplateConfig(name)
         )
         val staticTemplate = createRequest.submit().join() as StaticLobbyTemplate
@@ -145,7 +145,7 @@ interface TestProcessProvider {
         name: String,
         updateFunction: StaticProxyTemplateUpdateRequest.() -> Unit = {},
     ) {
-        val createRequest = getNodeAPI().getStaticProcessTemplateService().createCreateRequest(
+        val createRequest = getCloudAPI().getStaticProcessTemplateService().createCreateRequest(
             createDefaultProxyTemplateConfig(name)
         )
         val staticTemplate = createRequest.submit().join() as StaticProxyTemplate
@@ -160,7 +160,7 @@ interface TestProcessProvider {
         name: String,
         updateFunction: StaticServerTemplateUpdateRequest.() -> Unit = {},
     ) {
-        val createRequest = getNodeAPI().getStaticProcessTemplateService().createCreateRequest(
+        val createRequest = getCloudAPI().getStaticProcessTemplateService().createCreateRequest(
             createDefaultServerTemplateConfig(name)
         )
         val staticTemplate = createRequest.submit().join() as StaticServerTemplate
@@ -172,7 +172,7 @@ interface TestProcessProvider {
     }
 
     fun startAndStopStaticProcessesAsNeeded() = runBlocking {
-        val nodeCloudAPI = getNodeAPI()
+        val nodeCloudAPI = getCloudAPI()
         NodeStaticOnlineProcessesHandler(
             nodeCloudAPI.getStaticProcessTemplateService(),
             nodeCloudAPI.getProcessService()
@@ -180,7 +180,7 @@ interface TestProcessProvider {
     }
 
     fun changeStateOfStaticProcessToOnline(staticProcessName: String): Unit = runBlocking {
-        val processService = getNodeAPI().getProcessService()
+        val processService = getCloudAPI().getProcessService()
         val cloudProcess = processService.findByName(staticProcessName).await()
         val updateRequest = cloudProcess.createUpdateRequest()
         updateRequest as InternalProcessUpdateRequest
@@ -189,7 +189,7 @@ interface TestProcessProvider {
     }
 
     fun givenGroupProcesses(groupName: String, count: Int): List<CloudProcess> {
-        val nodeCloudAPI = getNodeAPI()
+        val nodeCloudAPI = getCloudAPI()
         val processes = ArrayList<CloudProcess>()
         val group = nodeCloudAPI.getProcessGroupService().findByName(groupName).join()
         for (i in 0 until count) {

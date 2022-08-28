@@ -67,7 +67,7 @@ open class PluginBaseTest : TestProcessProvider {
         )
     }
 
-    override fun getNodeAPI(): NodeCloudAPI {
+    override fun getCloudAPI(): NodeCloudAPI {
         return this.nodeCloudAPI
     }
 }

@@ -56,7 +56,7 @@ class NodeAPIPlayerLogoutTest : NodeAPIPlayerTest() {
 
     @Test
     fun doLogout_playerWillNoLongerBeInCache(): Unit = runBlocking {
-        executeLogout()
+        executeLogoutOnDefaultPlayer()
         Assertions.assertThrows(NoSuchElementException::class.java) {
             runBlocking {
                 cloudPlayerService.findOnlinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await()
@@ -68,14 +68,11 @@ class NodeAPIPlayerLogoutTest : NodeAPIPlayerTest() {
     fun changeDisplayNameOfPlayer_logout_displayNameWillBeSavedInDatabase(): Unit = runBlocking {
         val newDisplayName = RandomStringUtils.randomAlphabetic(16)
         loggedInPlayer.createUpdateRequest().setDisplayName(newDisplayName).submit().await()
-        executeLogout()
+        executeLogoutOnDefaultPlayer()
         val playerConfiguration =
             databaseFactory.offlineCloudPlayerRepository.find(loggedInPlayer.getUniqueId()).await()
         Assertions.assertEquals(newDisplayName, playerConfiguration.displayName)
     }
 
-    private suspend fun executeLogout() {
-        cloudPlayerService.logoutPlayer(DefaultPlayerProvider.DEFAULT_PLAYER_UUID)
-    }
 
 }
