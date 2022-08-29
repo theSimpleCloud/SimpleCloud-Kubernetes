@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
 import app.simplecloud.simplecloud.api.impl.permission.group.PermissionGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.permission.player.PermissionPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImpl
+import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
@@ -122,7 +123,8 @@ class CloudPlugin(
             distributedRepositories.cloudPlayerRepository,
             nodeService,
             internalMessageChannelProvider,
-            CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory)
+            CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory),
+            OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory)
         )
 
         val selfComponent = findSelfProcess(cloudProcessService)

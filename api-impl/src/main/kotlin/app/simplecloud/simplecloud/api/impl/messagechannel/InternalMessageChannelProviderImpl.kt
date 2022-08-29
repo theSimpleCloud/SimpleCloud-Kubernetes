@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import java.util.*
@@ -82,6 +83,18 @@ class InternalMessageChannelProviderImpl(
 
     override fun getInternalProcessLogsMessageChannel(): MessageChannel<String, List<String>> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_process_logs")
+    }
+
+    override fun getInternalGetOfflineCloudPlayerByNameChannel(): MessageChannel<String, OfflineCloudPlayerConfiguration> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_oplayer_name")
+    }
+
+    override fun getInternalGetOfflineCloudPlayerByUUIDChannel(): MessageChannel<UUID, OfflineCloudPlayerConfiguration> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_oplayer_uuid")
+    }
+
+    override fun getInternalOfflinePlayerUpdateChannel(): MessageChannel<OfflineCloudPlayerConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_oplayer_update")
     }
 
 

@@ -39,6 +39,27 @@ class MessageChannelsInitializer(
         registerPlayerDisconnectMessageChannel()
         registerProcessExecuteCommandMessageChannel()
         registerProcessLogsMessageChannel()
+        registerGetOfflinePlayerByNameMessageChannel()
+        registerGetOfflinePlayerByUUIDMessageChannel()
+        registerUpdateOfflinePlayerMessageChannel()
+    }
+
+    private fun registerGetOfflinePlayerByNameMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalGetOfflineCloudPlayerByNameChannel()
+        val messageHandler = GetOfflinePlayerByNameMessageHandler(this.cloudAPI.getCloudPlayerService())
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
+    private fun registerGetOfflinePlayerByUUIDMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalGetOfflineCloudPlayerByUUIDChannel()
+        val messageHandler = GetOfflinePlayerByUUIDMessageHandler(this.cloudAPI.getCloudPlayerService())
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
+    private fun registerUpdateOfflinePlayerMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalOfflinePlayerUpdateChannel()
+        val messageHandler = UpdateOfflineCloudPlayerMessageHandler(this.cloudAPI.getCloudPlayerService())
+        messageChannel.setMessageHandler(messageHandler)
     }
 
     private fun registerStaticTemplateUpdateMessageChannel() {

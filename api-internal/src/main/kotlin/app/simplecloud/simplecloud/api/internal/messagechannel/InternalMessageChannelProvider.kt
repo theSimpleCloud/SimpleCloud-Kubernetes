@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.messagechannel.MessageChannel
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import java.util.*
@@ -57,5 +58,11 @@ interface InternalMessageChannelProvider {
     fun getInternalExecuteCommandChannel(): MessageChannel<ProcessExecuteCommandConfiguration, Unit>
 
     fun getInternalProcessLogsMessageChannel(): MessageChannel<String, List<String>>
+
+    fun getInternalGetOfflineCloudPlayerByNameChannel(): MessageChannel<String, OfflineCloudPlayerConfiguration>
+
+    fun getInternalGetOfflineCloudPlayerByUUIDChannel(): MessageChannel<UUID, OfflineCloudPlayerConfiguration>
+
+    fun getInternalOfflinePlayerUpdateChannel(): MessageChannel<OfflineCloudPlayerConfiguration, Unit>
 
 }

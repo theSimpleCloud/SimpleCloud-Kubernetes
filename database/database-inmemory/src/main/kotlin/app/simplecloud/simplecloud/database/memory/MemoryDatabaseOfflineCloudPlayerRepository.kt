@@ -32,6 +32,24 @@ import java.util.concurrent.CompletableFuture
 class MemoryDatabaseOfflineCloudPlayerRepository : InMemoryRepository<UUID, OfflineCloudPlayerConfiguration>(),
     DatabaseOfflineCloudPlayerRepository {
 
+    override fun save(identifier: UUID, value: OfflineCloudPlayerConfiguration): CompletableFuture<Unit> {
+        //need to create OfflineCloudPlayerConfiguration because input could be of type CloudPlayerConfiguration.
+        //Because this is an InMemoryDB the config doesn't get serialized. Therefore it would store and return
+        // online players.
+        val configuration = OfflineCloudPlayerConfiguration(
+            value.name,
+            value.uniqueId,
+            value.firstLogin,
+            value.lastLogin,
+            value.onlineTime,
+            value.displayName,
+            value.lastPlayerConnection,
+            value.webConfig,
+            value.permissionPlayerConfiguration
+        )
+        return super.save(identifier, configuration)
+    }
+
     override fun findByName(name: String): CompletableFuture<OfflineCloudPlayerConfiguration> {
         return this.executeQueryAndFindFist { _, value -> value.name == name }
     }

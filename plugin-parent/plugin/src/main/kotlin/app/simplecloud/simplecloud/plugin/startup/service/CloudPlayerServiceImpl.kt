@@ -18,14 +18,18 @@
 
 package app.simplecloud.simplecloud.plugin.startup.service
 
+import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
+import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
+import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.NodeService
 import java.util.*
@@ -41,22 +45,43 @@ class CloudPlayerServiceImpl(
     distributedRepository: DistributedCloudPlayerRepository,
     private val nodeService: NodeService,
     internalMessageChannelProvider: InternalMessageChannelProvider,
-    private val playerFactory: CloudPlayerFactory
+    private val playerFactory: CloudPlayerFactory,
+    private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory,
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     private val loginMessageChannel = internalMessageChannelProvider.getInternalPlayerLoginChannel()
     private val disconnectMessageChannel = internalMessageChannelProvider.getInternalPlayerDisconnectChannel()
+    private val offlinePlayerGetByNameMessageChannel =
+        internalMessageChannelProvider.getInternalGetOfflineCloudPlayerByNameChannel()
+    private val offlinePlayerGetByUUIDMessageChannel =
+        internalMessageChannelProvider.getInternalGetOfflineCloudPlayerByUUIDChannel()
+    private val offlinePlayerUpdateChannel =
+        internalMessageChannelProvider.getInternalOfflinePlayerUpdateChannel()
 
-    override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
-        TODO("Not yet implemented")
+    override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> = CloudScope.future {
+        val node = nodeService.findFirst().await()
+        val playerConfiguration = offlinePlayerGetByNameMessageChannel.createMessageRequest(name, node)
+            .submit().await()
+        return@future configurationToPlayer(playerConfiguration)
     }
 
-    override fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer> {
-        TODO("Not yet implemented")
+    override fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer> =
+        CloudScope.future {
+            val node = nodeService.findFirst().await()
+            val playerConfiguration = offlinePlayerGetByUUIDMessageChannel.createMessageRequest(uniqueId, node)
+                .submit().await()
+            return@future configurationToPlayer(playerConfiguration)
+        }
+
+    private fun configurationToPlayer(configuration: OfflineCloudPlayerConfiguration): OfflineCloudPlayer {
+        if (configuration is CloudPlayerConfiguration)
+            return this.playerFactory.create(configuration, this)
+        return this.offlineCloudPlayerFactory.create(configuration, this)
     }
 
     override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
-        TODO()
+        val node = this.nodeService.findFirst().await()
+        this.offlinePlayerUpdateChannel.createMessageRequest(configuration, node).submit().await()
     }
 
     override suspend fun logoutPlayer(uniqueId: UUID) {
