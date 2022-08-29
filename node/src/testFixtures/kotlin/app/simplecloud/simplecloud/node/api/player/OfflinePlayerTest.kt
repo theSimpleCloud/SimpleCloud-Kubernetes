@@ -27,7 +27,8 @@ import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.util.TestPlayerProvider
 import app.simplecloud.simplecloud.node.util.TestProcessProvider
 import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Assertions.assertThrows
+import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
@@ -50,7 +51,7 @@ abstract class OfflinePlayerTest : TestProcessProvider, TestPlayerProvider {
 
     @Test
     fun playerNotInDatabase_findOfflinePlayer_WillFail(): Unit = runBlocking {
-        Assertions.assertThrows(NoSuchElementException::class.java) {
+        assertThrows(NoSuchElementException::class.java) {
             findDefaultOfflinePlayer()
         }
     }
@@ -61,7 +62,14 @@ abstract class OfflinePlayerTest : TestProcessProvider, TestPlayerProvider {
         givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()
 
-        Assertions.assertTrue(findDefaultOfflinePlayer() is CloudPlayer)
+        assertTrue(findDefaultOfflinePlayer() is CloudPlayer)
+    }
+
+    @Test
+    fun playerInDatabase_finOfflinePlayer_willReturnNormalOfflinePlayer(): Unit = runBlocking {
+        insertPlayerInDatabase()
+
+        assertTrue(findDefaultOfflinePlayer() !is CloudPlayer)
     }
 
     @Test
@@ -71,7 +79,7 @@ abstract class OfflinePlayerTest : TestProcessProvider, TestPlayerProvider {
         executeLoginOnProxy1WithDefaultPlayer()
         executeLogoutOnDefaultPlayer()
 
-        Assertions.assertTrue(findDefaultOfflinePlayer() !is CloudPlayer)
+        assertTrue(findDefaultOfflinePlayer() !is CloudPlayer)
     }
 
     private fun findDefaultOfflinePlayer(): OfflineCloudPlayer = runBlocking {

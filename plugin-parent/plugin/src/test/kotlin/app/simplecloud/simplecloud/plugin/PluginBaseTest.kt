@@ -37,7 +37,9 @@ import org.junit.jupiter.api.BeforeEach
  */
 open class PluginBaseTest : TestProcessProvider {
 
-    private lateinit var nodeAPIBaseTest: NodeAPIBaseTest
+    lateinit var nodeAPIBaseTest: NodeAPIBaseTest
+        private set
+
     protected lateinit var nodeCloudAPI: NodeCloudAPIImpl
     protected lateinit var kubeAPI: KubeAPI
     protected lateinit var databaseFactory: InMemoryRepositorySafeDatabaseFactory
