@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.plugin.api.player
 
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
-import app.simplecloud.simplecloud.node.api.player.OfflinePlayerTest
+import app.simplecloud.simplecloud.node.api.player.OfflinePlayerGetTest
 import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -31,7 +31,7 @@ import org.junit.jupiter.api.BeforeEach
  * @author Frederick Baier
  *
  */
-class PluginAPIOfflinePlayerTest : OfflinePlayerTest() {
+class PluginAPIOfflinePlayerGetTest : OfflinePlayerGetTest() {
 
     private val proxyPluginBaseTest = ProxyPluginBaseTest()
 

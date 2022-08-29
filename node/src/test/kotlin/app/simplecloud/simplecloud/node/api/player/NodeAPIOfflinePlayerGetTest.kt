@@ -30,7 +30,7 @@ import org.junit.jupiter.api.BeforeEach
  * @author Frederick Baier
  *
  */
-class NodeAPIOfflinePlayerTest : OfflinePlayerTest() {
+class NodeAPIOfflinePlayerGetTest : OfflinePlayerGetTest() {
 
 
     private val nodeAPIBaseTest = NodeAPIBaseTest()

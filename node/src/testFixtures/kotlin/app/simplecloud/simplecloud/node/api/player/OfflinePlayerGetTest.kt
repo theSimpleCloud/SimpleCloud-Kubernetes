@@ -38,7 +38,7 @@ import org.junit.jupiter.api.Test
  * @author Frederick Baier
  *
  */
-abstract class OfflinePlayerTest : TestProcessProvider, TestPlayerProvider {
+abstract class OfflinePlayerGetTest : TestProcessProvider, TestPlayerProvider {
 
     protected lateinit var playerService: CloudPlayerService
 
