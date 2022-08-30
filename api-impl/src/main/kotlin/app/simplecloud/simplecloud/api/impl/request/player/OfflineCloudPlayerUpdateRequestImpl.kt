@@ -26,6 +26,7 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.PermissionPlayer
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfiguration
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayerConfigurationValidator
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
@@ -108,6 +109,7 @@ open class OfflineCloudPlayerUpdateRequestImpl(
             offlinePlayer.getUniqueId(),
             permissions.map { it.toConfiguration() }
         )
+        PermissionPlayerConfigurationValidator(permissionPlayerConfiguration).validate()
         val offlineCloudPlayerConfiguration = OfflineCloudPlayerConfiguration(
             offlinePlayer.getName(),
             offlinePlayer.getUniqueId(),

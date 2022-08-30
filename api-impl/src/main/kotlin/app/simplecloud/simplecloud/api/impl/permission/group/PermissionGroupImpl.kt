@@ -33,7 +33,7 @@ import app.simplecloud.simplecloud.api.service.PermissionGroupService
 class PermissionGroupImpl constructor(
     private val configuration: PermissionGroupConfiguration,
     factory: Permission.Factory,
-    permissionGroupService: PermissionGroupService
+    permissionGroupService: PermissionGroupService,
 ) : PermissionEntityImpl(
     configuration.permissions.map { factory.create(it) },
     permissionGroupService
