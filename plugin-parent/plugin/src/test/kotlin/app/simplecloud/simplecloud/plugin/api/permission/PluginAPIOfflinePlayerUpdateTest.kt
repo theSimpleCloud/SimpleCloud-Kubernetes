@@ -16,38 +16,43 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.permission
+package app.simplecloud.simplecloud.plugin.api.permission
 
-import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.permission.group.PermissionGroupCreateBaseTest
+import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
+import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.node.api.player.OfflinePlayerUpdateTest
+import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 20.08.22
- * Time: 21:46
+ * Date: 28.08.22
+ * Time: 11:37
  * @author Frederick Baier
  *
  */
-class NodeAPIPermissionGroupCreateTest : PermissionGroupCreateBaseTest() {
+class PluginAPIOfflinePlayerUpdateTest : OfflinePlayerUpdateTest() {
 
-    private val nodeAPIBaseTest = NodeAPIBaseTest()
 
+    private val pluginBaseTest = ProxyPluginBaseTest()
 
     @BeforeEach
     override fun setUp() {
-        nodeAPIBaseTest.setUp()
+        pluginBaseTest.setUp()
         super.setUp()
+    }
+
+    override fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory {
+        return pluginBaseTest.nodeAPIBaseTest.databaseFactory
     }
 
     @AfterEach
     fun tearDown() {
-        nodeAPIBaseTest.tearDown()
+        pluginBaseTest.tearDown()
     }
 
-    override fun getCloudAPI(): CloudAPI {
-        return nodeAPIBaseTest.cloudAPI
+    override fun getCloudAPI(): InternalCloudAPI {
+        return pluginBaseTest.pluginCloudAPI
     }
 
 }

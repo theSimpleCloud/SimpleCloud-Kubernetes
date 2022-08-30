@@ -18,9 +18,13 @@
 
 package app.simplecloud.simplecloud.node.api.permission
 
+import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
+import app.simplecloud.simplecloud.api.request.permission.PermissionEntityUpdateRequest
+import app.simplecloud.simplecloud.node.util.TestPermissionGroupProvider
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
@@ -30,46 +34,40 @@ import org.junit.jupiter.params.provider.MethodSource
 import org.junit.jupiter.params.provider.ValueSource
 
 /**
- * Date: 20.08.22
- * Time: 21:42
+ * Date: 29.08.22
+ * Time: 11:41
  * @author Frederick Baier
  *
  */
-abstract class PermissionGroupUpdateBaseTest : PermissionGroupServiceBaseTest() {
+abstract class PermissionEntityUpdateBaseTest : TestPermissionGroupProvider {
 
-    private lateinit var existingGroup: PermissionGroup
+    private lateinit var existingEntity: PermissionEntity
+
+    abstract fun fetchDefaultPermissionEntity(): PermissionEntity
+
+    abstract fun createUpdateRequest(entity: PermissionEntity): PermissionEntityUpdateRequest
+
+    abstract override fun getCloudAPI(): CloudAPI
 
     @BeforeEach
-    override fun setUp() {
-        super.setUp()
-        this.existingGroup =
-            this.groupService.createCreateRequest(createPermissionGroupConfiguration("ExistingGroup")).submit().join()
+    open fun setUp() {
+        this.existingEntity = fetchDefaultPermissionEntity()
     }
 
     @Test
     fun updateWithoutEditing_willNotFail() {
-        this.groupService.createUpdateRequest(existingGroup).submit().join()
-    }
-
-    @ParameterizedTest
-    @ValueSource(ints = [-5, -1, 65, 2463, 2, 0])
-    fun updatePriorityTest(prioriy: Int) {
-        this.groupService.createUpdateRequest(existingGroup)
-            .setPriority(prioriy)
-            .submit().join()
-
-        Assertions.assertEquals(prioriy, fetchPermissionGroupAgain().getPriority())
+        createUpdateRequest(existingEntity).submit().join()
     }
 
     @ParameterizedTest
     @MethodSource("permissions")
     fun addPermissionTest(permission: PermissionConfiguration) {
-        this.groupService.createUpdateRequest(existingGroup)
-            .addPermission(this.permissionFactory.create(permission))
+        createUpdateRequest(existingEntity)
+            .addPermission(getCloudAPI().getPermissionFactory().create(permission))
             .submit().join()
 
-        val updatedGroup = fetchPermissionGroupAgain()
-        val allPermissionConfigurations = updatedGroup.getPermissions().map { it.toConfiguration() }
+        val updatedEntity = fetchDefaultPermissionEntity()
+        val allPermissionConfigurations = updatedEntity.getPermissions().map { it.toConfiguration() }
         Assertions.assertTrue(allPermissionConfigurations.contains(permission))
     }
 
@@ -84,8 +82,8 @@ abstract class PermissionGroupUpdateBaseTest : PermissionGroupServiceBaseTest() 
         )
         Assertions.assertThrows(IllegalArgumentException::class.java) {
             runBlocking {
-                groupService.createUpdateRequest(existingGroup)
-                    .addPermission(permissionFactory.create(configuration))
+                createUpdateRequest(existingEntity)
+                    .addPermission(getCloudAPI().getPermissionFactory().create(configuration))
                     .submit().await()
             }
         }
@@ -96,25 +94,24 @@ abstract class PermissionGroupUpdateBaseTest : PermissionGroupServiceBaseTest() 
         val otherName = "Other"
         val otherGroup = givenPermissionGroup(otherName)
 
-        this.groupService.createUpdateRequest(existingGroup)
+        createUpdateRequest(existingEntity)
             .addPermissionGroup(otherGroup, -1L)
             .submit().join()
 
-        val permissionGroup = fetchPermissionGroupAgain()
+        val permissionGroup = fetchDefaultPermissionEntity()
         Assertions.assertTrue(permissionGroup.hasTopLevelGroup(otherName))
-
     }
 
     @Test
     fun removePermissionGroupTest() {
         val otherGroup = givenPermissionGroup("Other")
-        addOtherGroupToExistingGroup(otherGroup)
+        addOtherGroupToExistingEntity(otherGroup)
 
-        this.groupService.createUpdateRequest(existingGroup)
+        createUpdateRequest(this.existingEntity)
             .removePermissionGroup(otherGroup.getName())
             .submit().join()
 
-        val permissionGroup = fetchPermissionGroupAgain()
+        val permissionGroup = fetchDefaultPermissionEntity()
         Assertions.assertFalse(permissionGroup.hasTopLevelGroup(otherGroup.getName()))
     }
 
@@ -122,53 +119,44 @@ abstract class PermissionGroupUpdateBaseTest : PermissionGroupServiceBaseTest() 
     fun clearPermissionGroupTest() {
         val otherGroup = givenPermissionGroup("Other")
         val other2Group = givenPermissionGroup("Other2")
-        addOtherGroupToExistingGroup(otherGroup)
-        addOtherGroupToExistingGroup(other2Group)
+        addOtherGroupToExistingEntity(otherGroup)
+        addOtherGroupToExistingEntity(other2Group)
 
-        this.groupService.createUpdateRequest(existingGroup)
+        createUpdateRequest(existingEntity)
             .clearPermissionGroups()
             .submit().join()
 
-        val permissionGroup = fetchPermissionGroupAgain()
+        val permissionGroup = fetchDefaultPermissionEntity()
         Assertions.assertEquals(0, permissionGroup.getTopLevelPermissionGroups().join().size)
     }
 
     @Test
     fun removePermissionTest() {
         val permissionString = "test.*"
-        addPermissionToExistingGroup(permissionString)
+        addPermissionToExistingEntity(permissionString)
 
-        this.groupService.createUpdateRequest(existingGroup)
+        createUpdateRequest(existingEntity)
             .removePermission(permissionString)
             .submit().join()
 
 
-        val permissionGroup = fetchPermissionGroupAgain()
+        val permissionGroup = fetchDefaultPermissionEntity()
         Assertions.assertEquals(0, permissionGroup.getPermissions().size)
     }
 
-    private fun addPermissionToExistingGroup(permissionString: String) {
-        this.groupService.createUpdateRequest(existingGroup)
+    private fun addPermissionToExistingEntity(permissionString: String) {
+        createUpdateRequest(existingEntity)
             .addPermission(
-                this.permissionFactory.create(
+                getCloudAPI().getPermissionFactory().create(
                     PermissionConfiguration(permissionString, true, -1L, null)
                 )
             ).submit().join()
     }
 
-    private fun addOtherGroupToExistingGroup(otherGroup: PermissionGroup) {
-        this.groupService.createUpdateRequest(existingGroup)
+    private fun addOtherGroupToExistingEntity(otherGroup: PermissionGroup) {
+        createUpdateRequest(this.existingEntity)
             .addPermissionGroup(otherGroup, -1L)
             .submit().join()
-    }
-
-    private fun givenPermissionGroup(name: String): PermissionGroup {
-        val configuration = createPermissionGroupConfiguration(name)
-        return this.groupService.createCreateRequest(configuration).submit().join()
-    }
-
-    private fun fetchPermissionGroupAgain(): PermissionGroup {
-        return this.groupService.findByName(this.existingGroup.getName()).join()
     }
 
     companion object {

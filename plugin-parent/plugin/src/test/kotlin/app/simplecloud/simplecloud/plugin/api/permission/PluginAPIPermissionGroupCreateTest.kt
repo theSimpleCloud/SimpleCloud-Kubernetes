@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.api.permission
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.node.api.permission.PermissionGroupCreateBaseTest
+import app.simplecloud.simplecloud.node.api.permission.group.PermissionGroupCreateBaseTest
 import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach

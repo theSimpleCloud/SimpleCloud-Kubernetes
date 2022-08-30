@@ -18,9 +18,11 @@
 
 package app.simplecloud.simplecloud.node.util
 
+import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
 import app.simplecloud.simplecloud.api.player.CloudPlayer
+import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
@@ -71,6 +73,11 @@ interface TestPlayerProvider {
 
     fun executeLogoutOnDefaultPlayer(): Unit = runBlocking {
         getCloudAPI().getCloudPlayerService().logoutPlayer(DefaultPlayerProvider.DEFAULT_PLAYER_UUID)
+    }
+
+    fun findDefaultOfflinePlayer(): OfflineCloudPlayer = runBlocking {
+        getCloudAPI().getCloudPlayerService().findOfflinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID)
+            .await()
     }
 
 }

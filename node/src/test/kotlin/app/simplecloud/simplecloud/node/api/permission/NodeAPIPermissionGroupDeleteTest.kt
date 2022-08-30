@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.api.permission
 
 import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
+import app.simplecloud.simplecloud.node.api.permission.group.PermissionGroupDeleteBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 

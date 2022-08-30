@@ -45,9 +45,9 @@ open class ProxyPluginBaseTest : PluginBaseTest() {
     override fun setUp() {
         super.setUp()
         this.proxyServerRegistry = TestProxyServerRegistry()
-        givenProxyGroup("ProxyN")
-        givenGroupProcesses("ProxyN", 1)
-        startPluginForProcess("ProxyN-1")
+        givenProxyGroup("StartProxy")
+        givenGroupProcesses("StartProxy", 1)
+        startPluginForProcess("StartProxy-1")
     }
 
     private fun startPluginForProcess(name: String) {

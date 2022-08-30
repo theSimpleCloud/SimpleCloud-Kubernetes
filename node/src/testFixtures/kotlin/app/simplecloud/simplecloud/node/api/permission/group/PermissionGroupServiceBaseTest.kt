@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.permission
+package app.simplecloud.simplecloud.node.api.permission.group
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.api.permission.Permission
-import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
-import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.service.PermissionGroupService
+import app.simplecloud.simplecloud.node.util.TestPermissionGroupProvider
 
 /**
  * Date: 20.08.22
@@ -30,34 +28,15 @@ import app.simplecloud.simplecloud.api.service.PermissionGroupService
  * @author Frederick Baier
  *
  */
-abstract class PermissionGroupServiceBaseTest {
+abstract class PermissionGroupServiceBaseTest : TestPermissionGroupProvider {
 
     protected lateinit var groupService: PermissionGroupService
-
-    protected lateinit var permissionFactory: Permission.Factory
 
     open fun setUp() {
         val cloudAPI = getCloudAPI()
         this.groupService = cloudAPI.getPermissionGroupService()
-        this.permissionFactory = cloudAPI.getPermissionFactory()
     }
 
-    abstract fun getCloudAPI(): CloudAPI
-
-    protected fun createPermissionGroupConfiguration(name: String = "Admin"): PermissionGroupConfiguration {
-        return PermissionGroupConfiguration(
-            name,
-            0,
-            emptyList()
-        )
-    }
-
-    protected fun createPermissionGroupConfigurationWithPermission(permission: PermissionConfiguration): PermissionGroupConfiguration {
-        return PermissionGroupConfiguration(
-            "Test",
-            0,
-            listOf(permission)
-        )
-    }
+    abstract override fun getCloudAPI(): CloudAPI
 
 }

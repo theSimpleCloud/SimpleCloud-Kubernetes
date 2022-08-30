@@ -16,24 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.permission
+package app.simplecloud.simplecloud.node.api.player
 
-import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
+import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.permission.group.PermissionGroupCreateBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
 
 /**
- * Date: 20.08.22
- * Time: 21:46
+ * Date: 28.08.22
+ * Time: 11:37
  * @author Frederick Baier
  *
  */
-class NodeAPIPermissionGroupCreateTest : PermissionGroupCreateBaseTest() {
+class NodeAPIOfflinePlayerUpdateTest : OfflinePlayerUpdateTest() {
+
 
     private val nodeAPIBaseTest = NodeAPIBaseTest()
-
 
     @BeforeEach
     override fun setUp() {
@@ -41,12 +41,16 @@ class NodeAPIPermissionGroupCreateTest : PermissionGroupCreateBaseTest() {
         super.setUp()
     }
 
+    override fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory {
+        return nodeAPIBaseTest.databaseFactory
+    }
+
     @AfterEach
     fun tearDown() {
         nodeAPIBaseTest.tearDown()
     }
 
-    override fun getCloudAPI(): CloudAPI {
+    override fun getCloudAPI(): InternalCloudAPI {
         return nodeAPIBaseTest.cloudAPI
     }
 

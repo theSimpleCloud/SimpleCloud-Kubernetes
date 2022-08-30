@@ -18,12 +18,9 @@
 
 package app.simplecloud.simplecloud.node.api.player
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.service.CloudPlayerService
-import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.util.TestPlayerProvider
 import app.simplecloud.simplecloud.node.util.TestProcessProvider
 import kotlinx.coroutines.runBlocking
@@ -80,10 +77,6 @@ abstract class OfflinePlayerGetTest : TestProcessProvider, TestPlayerProvider {
         executeLogoutOnDefaultPlayer()
 
         assertTrue(findDefaultOfflinePlayer() !is CloudPlayer)
-    }
-
-    private fun findDefaultOfflinePlayer(): OfflineCloudPlayer = runBlocking {
-        playerService.findOfflinePlayerByUniqueId(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await()
     }
 
 }

@@ -16,14 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.permission
+package app.simplecloud.simplecloud.node.api.permission.group
 
-import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.permission.PermissionEntity
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
-import kotlinx.coroutines.runBlocking
-import org.junit.jupiter.api.Assertions
+import app.simplecloud.simplecloud.api.request.permission.PermissionEntityUpdateRequest
+import app.simplecloud.simplecloud.api.service.PermissionGroupService
+import app.simplecloud.simplecloud.node.api.permission.PermissionEntityUpdateBaseTest
 import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
 
 /**
  * Date: 20.08.22
@@ -31,41 +32,27 @@ import org.junit.jupiter.api.Test
  * @author Frederick Baier
  *
  */
-abstract class PermissionGroupDeleteBaseTest : PermissionGroupServiceBaseTest() {
+abstract class PermissionGroupUpdateBaseTest : PermissionEntityUpdateBaseTest() {
 
     private lateinit var existingGroup: PermissionGroup
+    private lateinit var groupService: PermissionGroupService
+
+    abstract override fun getCloudAPI(): CloudAPI
 
     @BeforeEach
     override fun setUp() {
-        super.setUp()
+        this.groupService = getCloudAPI().getPermissionGroupService()
         this.existingGroup =
             this.groupService.createCreateRequest(createPermissionGroupConfiguration("ExistingGroup")).submit().join()
+        super.setUp()
     }
 
-    @Test
-    fun doNothing_GroupStillExsist() {
-        Assertions.assertEquals(1, this.groupService.findAll().join().size)
+    override fun fetchDefaultPermissionEntity(): PermissionEntity {
+        return this.groupService.findByName(this.existingGroup.getName()).join()
     }
 
-    @Test
-    fun deleteGroup_groupCountWillBe0() = runBlocking {
-        deleteGroup(existingGroup)
-        assertExistingGroupCount(0)
-    }
-
-    @Test
-    fun createTwoGroups_deleteOne_oneWillStillExist() = runBlocking {
-        groupService.createCreateRequest(createPermissionGroupConfiguration("Test")).submit().await()
-        deleteGroup(existingGroup)
-        assertExistingGroupCount(1)
-    }
-
-    private fun assertExistingGroupCount(count: Int) {
-        Assertions.assertEquals(count, this.groupService.findAll().join().size)
-    }
-
-    private fun deleteGroup(existingGroup: PermissionGroup) {
-        this.groupService.createDeleteRequest(existingGroup).submit().join()
+    override fun createUpdateRequest(entity: PermissionEntity): PermissionEntityUpdateRequest {
+        return this.groupService.createUpdateRequest(entity as PermissionGroup)
     }
 
 }
