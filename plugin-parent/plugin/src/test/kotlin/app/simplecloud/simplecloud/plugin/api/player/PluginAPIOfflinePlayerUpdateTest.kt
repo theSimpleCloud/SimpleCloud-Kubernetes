@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.plugin.api.permission
+package app.simplecloud.simplecloud.plugin.api.player
 
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
