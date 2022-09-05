@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.task
 
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
+import app.simplecloud.simplecloud.api.NodeCloudAPI
 
 /**
  * Date: 25.08.22

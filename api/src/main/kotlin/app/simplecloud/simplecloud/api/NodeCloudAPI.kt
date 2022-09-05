@@ -16,9 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api
+package app.simplecloud.simplecloud.api
 
-import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 
 /**

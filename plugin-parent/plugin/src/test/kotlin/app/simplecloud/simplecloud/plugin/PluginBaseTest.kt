@@ -18,12 +18,12 @@
 
 package app.simplecloud.simplecloud.plugin
 
+import app.simplecloud.simplecloud.api.NodeCloudAPI
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.service.ServiceSpec
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import app.simplecloud.simplecloud.node.api.NodeCloudAPI
 import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.util.TestProcessProvider
 import org.junit.jupiter.api.AfterEach

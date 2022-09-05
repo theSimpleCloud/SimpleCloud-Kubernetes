@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.api
 
+import app.simplecloud.simplecloud.api.NodeCloudAPI
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
