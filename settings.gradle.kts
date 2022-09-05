@@ -55,3 +55,8 @@ include("plugin-parent:minestom")
 findProject(":plugin-parent:minestom")?.name = "minestom"
 include("plugin-parent:velocity")
 findProject(":plugin-parent:velocity")?.name = "velocity"
+include("module")
+include("module:module-api")
+findProject(":module:module-api")?.name = "module-api"
+include("module:module-load")
+findProject(":module:module-load")?.name = "module-load"
