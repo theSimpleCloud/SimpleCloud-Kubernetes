@@ -18,34 +18,24 @@
 
 package app.simplecloud.simplecloud.graph
 
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import java.util.concurrent.ConcurrentHashMap
 
-/**
- * Created by IntelliJ IDEA.
- * Date: 28.04.2021
- * Time: 19:32
- * @author Frederick Baier
- */
-class NodeTest {
+class Node<T>(
+    val nodeValue: T,
+    private val successors: MutableSet<Node<T>> = ConcurrentHashMap.newKeySet(),
+) {
 
-    private lateinit var node: Node<String>
 
-    @BeforeEach
-    internal fun setUp() {
-        this.node = Node<String>("test")
+    fun getSuccessors(): Set<Node<T>> {
+        return this.successors
     }
 
-    @Test
-    fun newNode_HasNoSuccessors() {
-        Assertions.assertTrue(node.getSuccessors().isEmpty())
+    fun addSuccessor(node: Node<T>) {
+        this.successors.add(node)
     }
 
-    @Test
-    fun afterNodeSuccessorAddSuccessorsAreNotEmpty() {
-        val node2 = Node("test2")
-        node.addSuccessor(node2)
-        Assertions.assertFalse(node.getSuccessors().isEmpty())
+    fun addSuccessors(nodes: Collection<Node<T>>) {
+        this.successors.addAll(nodes)
     }
+
 }
