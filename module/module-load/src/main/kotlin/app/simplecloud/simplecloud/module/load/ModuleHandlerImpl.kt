@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.module.api.NodeAPI
 import app.simplecloud.simplecloud.module.load.exception.ModuleLoadException
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
+import app.simplecloud.simplecloud.module.load.util.ModuleClassFinderImpl
 import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -34,17 +35,24 @@ class ModuleHandlerImpl(
 
     private val loadedModules = CopyOnWriteArrayList<LoadedModule>()
 
+    private val moduleClassFinder = ModuleClassFinderImpl() { this.loadedModules }
+
     override fun load(list: Set<File>): List<LoadedModule> {
         val loadModuleFileContents = loadModuleFileContents(list)
         val newlyLoadedModules = ModuleListLoader(
             loadModuleFileContents,
             this.loadedModules,
             this.unsafeModuleLoader,
+            this,
             this.errorHandler
         ).load()
         newlyLoadedModules.forEach { enableModuleCatching(it) }
         this.loadedModules.addAll(newlyLoadedModules)
         return newlyLoadedModules
+    }
+
+    override fun findModuleClass(name: String): Class<*> {
+        return this.moduleClassFinder.findModuleClass(name)
     }
 
     private fun enableModuleCatching(loadedModule: LoadedModule) {

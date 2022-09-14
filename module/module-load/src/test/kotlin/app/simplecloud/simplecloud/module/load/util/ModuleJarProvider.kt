@@ -30,21 +30,34 @@ object ModuleJarProvider {
 
 
     fun failingJar(name: String): File {
-        return ModuleJarCreator(name, "app/simplecloud/simplecloud/module/load/testmodule/FailingModuleMain.class")
-            .createJar()
+        return ModuleJarCreator(
+            name,
+            "app/simplecloud/simplecloud/module/load/testmodule/FailingModuleMain.class",
+            emptyArray(),
+            emptyArray()
+        ).createJar()
     }
 
     fun emptyJar(name: String): File {
-        return ModuleJarCreator(name, "app/simplecloud/simplecloud/module/load/testmodule/EmptyModuleMain.class")
-            .createJar()
+        return ModuleJarCreator(
+            name,
+            "app/simplecloud/simplecloud/module/load/testmodule/EmptyModuleMain.class",
+            emptyArray(),
+            emptyArray()
+        ).createJar()
     }
 
     fun enableAwareJar(name: String): File {
         return ModuleJarCreator(
             name,
-            "app/simplecloud/simplecloud/module/load/testmodule/OnEnableAwareModuleMain.class"
-        )
-            .createJar()
+            "app/simplecloud/simplecloud/module/load/testmodule/OnEnableAwareModuleMain.class",
+            emptyArray(),
+            emptyArray()
+        ).createJar()
+    }
+
+    fun builder(moduleName: String): ModuleJarBuilder {
+        return ModuleJarBuilder(moduleName)
     }
 
 

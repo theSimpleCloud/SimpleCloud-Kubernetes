@@ -16,13 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.load
+package app.simplecloud.simplecloud.module.load.util
 
-import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
-import java.io.File
+/**
+ * Date: 06.09.22
+ * Time: 09:33
+ * @author Frederick Baier
+ *
+ */
+interface ModuleClassFinder {
 
-interface ModuleHandler : ModuleClassFinder {
-
-    fun load(list: Set<File>): List<LoadedModule>
+    fun findModuleClass(name: String): Class<*>
 
 }

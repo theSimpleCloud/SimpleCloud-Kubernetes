@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.module.load
 
 import app.simplecloud.simplecloud.module.api.CloudModule
+import app.simplecloud.simplecloud.module.load.classloader.ModuleClassLoader
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContent
 import java.io.File
 
@@ -32,5 +33,5 @@ class LoadedModule(
     val cloudModule: CloudModule,
     val file: File,
     val fileContent: ModuleFileContent,
-    val classLoader: ClassLoader,
+    val classLoader: ModuleClassLoader,
 )

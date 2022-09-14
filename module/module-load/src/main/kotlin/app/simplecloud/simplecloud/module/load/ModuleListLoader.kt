@@ -32,13 +32,19 @@ class ModuleListLoader(
     private val modulesToLoad: List<LoadedModuleFileContent>,
     private val alreadyLoadedModules: List<LoadedModule>,
     private val unsafeModuleLoader: UnsafeModuleLoader,
+    private val moduleHandler: ModuleHandler,
     private val errorHandler: (Throwable) -> Unit = { throw it },
 ) {
 
     private val loadedModules = CopyOnWriteArrayList<LoadedModule>()
 
     fun load(): List<LoadedModule> {
-        return this.modulesToLoad.mapNotNull { loadModuleCatching(it) }
+        val orderedModules = determineLoadOrder()
+        return orderedModules.mapNotNull { loadModuleCatching(it) }
+    }
+
+    private fun determineLoadOrder(): List<LoadedModuleFileContent> {
+        return ModuleLoadOrderDeterminer(this.modulesToLoad, this.alreadyLoadedModules).determineLoadOrder()
     }
 
     private fun loadModuleCatching(fileContent: LoadedModuleFileContent): LoadedModule? {
@@ -51,20 +57,44 @@ class ModuleListLoader(
     }
 
     private fun loadModule(loadedFileContent: LoadedModuleFileContent): LoadedModule {
-        if (isModuleLoaded(loadedFileContent))
-            throw ModuleLoadException("Module '${loadedFileContent.moduleFileContent.name}' is already loaded")
+        checkModuleAlreadyLoaded(loadedFileContent)
+        checkModuleDependencies(loadedFileContent)
+
         return loadModuleUnsafe(loadedFileContent)
     }
 
+    private fun checkModuleAlreadyLoaded(loadedFileContent: LoadedModuleFileContent) {
+        if (isModuleLoaded(loadedFileContent))
+            throw ModuleLoadException("Module '${loadedFileContent.moduleFileContent.name}' is already loaded")
+    }
+
+    private fun checkModuleDependencies(loadedFileContent: LoadedModuleFileContent) {
+        val moduleName = loadedFileContent.moduleFileContent.name
+        val dependencies = loadedFileContent.moduleFileContent.depend
+        for (dependency in dependencies) {
+            if (!isModuleLoaded(dependency)) {
+                throw ModuleLoadException("An error occurred loading module '${moduleName}': Dependency '${dependency}' is not loaded")
+            }
+        }
+    }
+
     private fun loadModuleUnsafe(loadedFileContent: LoadedModuleFileContent): LoadedModule {
-        val loadedModule = this.unsafeModuleLoader.load(loadedFileContent.file, loadedFileContent.moduleFileContent)
+        val loadedModule = this.unsafeModuleLoader.load(
+            this.moduleHandler,
+            loadedFileContent.file,
+            loadedFileContent.moduleFileContent
+        )
         this.loadedModules.add(loadedModule)
         return loadedModule
     }
 
     private fun isModuleLoaded(loadedFileContent: LoadedModuleFileContent): Boolean {
+        return isModuleLoaded(loadedFileContent.moduleFileContent.name)
+    }
+
+    private fun isModuleLoaded(moduleName: String): Boolean {
         return getAllLoadedModules().map { it.fileContent.name.lowercase() }
-            .contains(loadedFileContent.moduleFileContent.name.lowercase())
+            .contains(moduleName.lowercase())
     }
 
     private fun getAllLoadedModules(): Collection<LoadedModule> {

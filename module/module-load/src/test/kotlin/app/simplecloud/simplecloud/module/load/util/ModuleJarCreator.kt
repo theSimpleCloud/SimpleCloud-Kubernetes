@@ -29,6 +29,8 @@ import java.io.File
 class ModuleJarCreator(
     private val name: String,
     private val pathToMainCass: String,
+    private val depends: Array<String>,
+    private val softDepends: Array<String>,
 ) {
 
     private val tmpDir = TmpDirProvider.generateTmpDir()
@@ -57,14 +59,21 @@ class ModuleJarCreator(
     }
 
     private fun getModuleFileContentString(): String {
-        val replacedMain = this.pathToMainCass.replace("/", ".").replace(".class", "")
+        val pathInJar = this.pathToMainCass
+        val replacedMain = pathInJar.replace("/", ".").replace(".class", "")
         return """
             name: ${this.name}
             main: $replacedMain
             author: Fllip
-            depend: []
-            softDepend: []
+            depend: [${getYamlArrayString(this.depends)}]
+            softDepend: [${getYamlArrayString(this.softDepends)}]
         """.trimIndent()
+    }
+
+    private fun getYamlArrayString(array: Array<String>): String {
+        if (array.isEmpty())
+            return ""
+        return array.joinToString("', '", "'", "'")
     }
 
     companion object {

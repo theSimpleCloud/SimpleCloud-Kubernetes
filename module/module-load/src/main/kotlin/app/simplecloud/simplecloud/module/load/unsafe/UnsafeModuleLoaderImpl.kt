@@ -20,12 +20,22 @@ package app.simplecloud.simplecloud.module.load.unsafe
 
 import app.simplecloud.simplecloud.module.load.LoadedModule
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContent
+import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
 import java.io.File
 
 class UnsafeModuleLoaderImpl : UnsafeModuleLoader {
 
-    override fun load(file: File, moduleFileContent: ModuleFileContent): LoadedModule {
-        return UnsafeDirectModuleLoader(file, moduleFileContent).load()
+    override fun load(
+        moduleClassFinder: ModuleClassFinder,
+        file: File,
+        moduleFileContent: ModuleFileContent,
+    ): LoadedModule {
+        return UnsafeDirectModuleLoader(
+            file,
+            moduleFileContent,
+            ClassLoader.getSystemClassLoader(),
+            moduleClassFinder
+        ).load()
     }
 
 

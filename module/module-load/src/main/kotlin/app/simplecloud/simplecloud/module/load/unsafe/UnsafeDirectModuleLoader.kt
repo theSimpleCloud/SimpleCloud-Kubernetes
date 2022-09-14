@@ -20,9 +20,10 @@ package app.simplecloud.simplecloud.module.load.unsafe
 
 import app.simplecloud.simplecloud.module.api.CloudModule
 import app.simplecloud.simplecloud.module.load.LoadedModule
+import app.simplecloud.simplecloud.module.load.classloader.ModuleClassLoader
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContent
+import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
 import java.io.File
-import java.net.URLClassLoader
 
 /**
  * Date: 02.09.22
@@ -33,13 +34,15 @@ import java.net.URLClassLoader
 class UnsafeDirectModuleLoader(
     private val file: File,
     private val moduleFileContent: ModuleFileContent,
+    private val parentClassLoader: ClassLoader,
+    private val moduleClassFinder: ModuleClassFinder,
 ) {
 
-    private val urlClassLoader = URLClassLoader(arrayOf(this.file.toURI().toURL()), ClassLoader.getSystemClassLoader())
+    private val classLoader = createClassLoader()
 
     fun load(): LoadedModule {
         val cloudModule = loadModuleClassInstance()
-        return LoadedModule(cloudModule, this.file, this.moduleFileContent, this.urlClassLoader)
+        return LoadedModule(cloudModule, this.file, this.moduleFileContent, this.classLoader)
     }
 
     private fun loadModuleClassInstance(): CloudModule {
@@ -49,8 +52,12 @@ class UnsafeDirectModuleLoader(
     }
 
     private fun loadModuleClass(): Class<out CloudModule> {
-        val mainClass = this.urlClassLoader.loadClass(this.moduleFileContent.main)
+        val mainClass = this.classLoader.loadClass(this.moduleFileContent.main)
         return mainClass.asSubclass(CloudModule::class.java)
+    }
+
+    private fun createClassLoader(): ModuleClassLoader {
+        return ModuleClassLoader(arrayOf(this.file.toURI().toURL()), this.parentClassLoader, this.moduleClassFinder)
     }
 
 }

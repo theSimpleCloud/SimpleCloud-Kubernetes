@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.module.load.testmodule.OnEnableAwareModuleMai
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoaderImpl
 import app.simplecloud.simplecloud.module.load.util.EmptyNodeAPI
+import app.simplecloud.simplecloud.module.load.util.ModuleJarBuilder
 import app.simplecloud.simplecloud.module.load.util.ModuleJarProvider
 import app.simplecloud.simplecloud.module.load.util.TmpDirProvider
 import org.junit.jupiter.api.AfterEach
@@ -139,6 +140,46 @@ class ModuleHandlerTest {
         assertModuleError(ModuleLoadException::class.java) {
             val loadedModules = this.moduleHandler.load(setOf(moduleJar1, moduleJar2))
             Assertions.assertTrue(loadedModules.isNotEmpty())
+        }
+    }
+
+    @Test
+    fun loadTwoModules_canFindEachOthersClasses() {
+        val moduleJar1 = ModuleJarBuilder("TestModule")
+            .mainClass(ModuleJarBuilder.MainClassType.ENABLE_AWARE).build()
+        val moduleJar2 = ModuleJarBuilder("TestModule2")
+            .mainClass(ModuleJarBuilder.MainClassType.EMPTY).build()
+
+        val loadedModules = this.moduleHandler.load(setOf(moduleJar1, moduleJar2))
+
+        assertLoadedModulesCanAllFindClasses(
+            loadedModules,
+            listOf(
+                ModuleJarBuilder.MainClassType.ENABLE_AWARE.dotString(),
+                ModuleJarBuilder.MainClassType.EMPTY.dotString()
+            )
+        )
+    }
+
+    @Test
+    fun moduleDependOnOtherModule_willBeLoadedLater() {
+        val moduleJar1 = ModuleJarBuilder("TestModule")
+            .mainClass(ModuleJarBuilder.MainClassType.ENABLE_AWARE).build()
+        val moduleJar2 = ModuleJarBuilder("TestModule2")
+            .mainClass(ModuleJarBuilder.MainClassType.ENABLE_AWARE)
+            .depends(arrayOf("TestModule")).build()
+
+        val loadedModules = this.moduleHandler.load(setOf(moduleJar1, moduleJar2))
+
+    }
+
+    private fun assertLoadedModulesCanAllFindClasses(loadedModules: List<LoadedModule>, classes: List<String>) {
+        for (loadedModule in loadedModules) {
+            for (className in classes) {
+                Assertions.assertDoesNotThrow {
+                    loadedModule.classLoader.loadClass(className)
+                }
+            }
         }
     }
 

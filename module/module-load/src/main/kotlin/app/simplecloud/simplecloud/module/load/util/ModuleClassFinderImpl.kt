@@ -16,15 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.load.unsafe
+package app.simplecloud.simplecloud.module.load.util
 
 import app.simplecloud.simplecloud.module.load.LoadedModule
-import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContent
-import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
-import java.io.File
+import app.simplecloud.simplecloud.module.load.classloader.ModuleClassLoader
 
-interface UnsafeModuleLoader {
+/**
+ * Date: 06.09.22
+ * Time: 09:34
+ * @author Frederick Baier
+ *
+ */
+class ModuleClassFinderImpl(
+    private val loadedModulesGetFunction: () -> List<LoadedModule>,
+) : ModuleClassFinder {
 
-    fun load(moduleClassFinder: ModuleClassFinder, file: File, moduleFileContent: ModuleFileContent): LoadedModule
+    override fun findModuleClass(name: String): Class<*> {
+        val loadedModules = this.loadedModulesGetFunction.invoke()
+        val mapNotNull = loadedModules.mapNotNull {
+            findModuleClass(it.classLoader, name)
+        }
+        return mapNotNull.firstOrNull() ?: throw ClassNotFoundException(name)
+    }
+
+    private fun findModuleClass(classLoader: ModuleClassLoader, name: String): Class<*>? {
+        return runCatching {
+            classLoader.findClass0(name, false)
+        }.getOrNull()
+    }
 
 }

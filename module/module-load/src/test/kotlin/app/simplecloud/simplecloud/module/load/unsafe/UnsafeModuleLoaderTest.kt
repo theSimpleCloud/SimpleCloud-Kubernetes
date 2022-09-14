@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.module.load.unsafe
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContent
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoaderImpl
+import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
 import app.simplecloud.simplecloud.module.load.util.ModuleJarProvider
 import app.simplecloud.simplecloud.module.load.util.TmpDirProvider
 import org.junit.jupiter.api.AfterEach
@@ -56,9 +57,16 @@ class UnsafeModuleLoaderTest {
     @Test
     fun test() {
         val unsafeModuleLoader: UnsafeModuleLoader = UnsafeModuleLoaderImpl()
-        val loadedModule = unsafeModuleLoader.load(this.fileToLoad, this.moduleFileContent)
+        val loadedModule = unsafeModuleLoader.load(NotFoundModuleClassFinder(), this.fileToLoad, this.moduleFileContent)
         Assertions.assertEquals(this.fileToLoad, loadedModule.file)
         Assertions.assertEquals(this.moduleFileContent, loadedModule.fileContent)
+    }
+
+    class NotFoundModuleClassFinder : ModuleClassFinder {
+        override fun findModuleClass(name: String): Class<*> {
+            throw ClassNotFoundException("NotFoundModuleClassFinder: $name")
+        }
+
     }
 
 }
