@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.module.load
 
 import app.simplecloud.simplecloud.module.load.exception.ModuleLoadException
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
+import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**
@@ -39,8 +40,44 @@ class ModuleListLoader(
     private val loadedModules = CopyOnWriteArrayList<LoadedModule>()
 
     fun load(): List<LoadedModule> {
+        checkForDuplicateModuleFile()
         val orderedModules = determineLoadOrder()
-        return orderedModules.mapNotNull { loadModuleCatching(it) }
+        val newlyLoadedModules = orderedModules.mapNotNull { loadModuleCatching(it) }
+        checkForNotLoadedDuplicateModule()
+        return newlyLoadedModules
+    }
+
+    private fun checkForDuplicateModuleFile() {
+        this.modulesToLoad.forEach {
+            if (isFileAlreadyLoaded(it.file)) {
+                this.errorHandler.invoke(
+                    ModuleLoadException(
+                        it.moduleFileContent.name,
+                        ModuleAlreadyLoadedException(it.moduleFileContent.name)
+                    )
+                )
+            }
+        }
+    }
+
+    private fun checkForNotLoadedDuplicateModule() {
+        val allLoadedModules = getAllLoadedModules()
+        val allLoadedModuleFiles = allLoadedModules.map { it.file }
+        val notLoadedModules = this.modulesToLoad.filter { !allLoadedModuleFiles.contains(it.file) }
+        notLoadedModules.forEach {
+            errorHandler.invoke(
+                ModuleLoadException(
+                    it.moduleFileContent.name,
+                    DuplicateModuleException(it.moduleFileContent.name)
+                )
+            )
+        }
+    }
+
+    private fun isFileAlreadyLoaded(file: File): Boolean {
+        val allLoadedModules = getAllLoadedModules()
+        val allLoadedModuleFiles = allLoadedModules.map { it.file }
+        return allLoadedModuleFiles.contains(file)
     }
 
     private fun determineLoadOrder(): List<LoadedModuleFileContent> {
@@ -100,5 +137,9 @@ class ModuleListLoader(
     private fun getAllLoadedModules(): Collection<LoadedModule> {
         return this.alreadyLoadedModules.union(this.loadedModules)
     }
+
+    class DuplicateModuleException(moduleName: String) : Exception("Duplicate module name: $moduleName")
+
+    class ModuleAlreadyLoadedException(moduleName: String) : Exception("Module $moduleName is already loaded")
 
 }
