@@ -18,16 +18,14 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.volume
 
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeSpec
 import io.kubernetes.client.custom.Quantity
 import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
-import io.kubernetes.client.openapi.models.V1ObjectMeta
-import io.kubernetes.client.openapi.models.V1PersistentVolumeClaim
-import io.kubernetes.client.openapi.models.V1PersistentVolumeClaimSpec
-import io.kubernetes.client.openapi.models.V1ResourceRequirements
+import io.kubernetes.client.openapi.models.*
 
 /**
  * Date: 30.04.22
@@ -40,21 +38,29 @@ class KubeVolumeClaimServiceImpl(
 ) : KubeVolumeClaimService {
 
     override fun getAllClaims(): List<KubeVolumeClaim> {
-        val volumeClaimList = this.api.listNamespacedPersistentVolumeClaim(
-            "default",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        val volumeClaimList = fetchAllVolumeClaims()
         val items = volumeClaimList.items
         return items.map { KubeVolumeClaimImpl(it.metadata!!.name!!, this.api) }
+    }
+
+    private fun fetchAllVolumeClaims(): V1PersistentVolumeClaimList {
+        try {
+            return this.api.listNamespacedPersistentVolumeClaim(
+                "default",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
     }
 
     override fun createVolumeClaim(name: String, volumeSpec: KubeVolumeSpec): KubeVolumeClaim {
@@ -89,7 +95,7 @@ class KubeVolumeClaimServiceImpl(
     override fun getClaim(name: String): KubeVolumeClaim {
         try {
             return KubeVolumeClaimImpl(name, api)
-        } catch (e: ApiException) {
+        } catch (e: KubeException) {
             throw NoSuchElementException("Volume Claim '${name}' does not exist")
         }
     }

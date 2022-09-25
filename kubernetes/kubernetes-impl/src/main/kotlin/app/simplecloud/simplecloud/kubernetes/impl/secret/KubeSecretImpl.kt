@@ -18,8 +18,11 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.secret
 
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
+import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
+import io.kubernetes.client.openapi.models.V1Secret
 import java.nio.charset.StandardCharsets
 
 /**
@@ -36,7 +39,15 @@ class KubeSecretImpl(
 
     private val name: String = name.lowercase()
 
-    private val secret = api.readNamespacedSecret(this.name, "default", null)
+    private val secret = readNamespacedSecret()
+
+    private fun readNamespacedSecret(): V1Secret {
+        try {
+            return api.readNamespacedSecret(this.name, "default", null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
+    }
 
     override fun getName(): String {
         return this.name

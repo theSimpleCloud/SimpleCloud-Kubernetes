@@ -1,6 +1,7 @@
 package app.simplecloud.simplecloud.kubernetes.impl.service
 
 import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
@@ -25,7 +26,11 @@ class KubeNetworkServiceImpl(
 
     override fun createService(name: String, serviceSpec: ServiceSpec): KubeService {
         val service = createServiceObj(name.lowercase(), serviceSpec)
-        this.api.createNamespacedService("default", service, null, null, null)
+        try {
+            this.api.createNamespacedService("default", service, null, null, null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
         return getService(name.lowercase())
     }
 
@@ -68,7 +73,7 @@ class KubeNetworkServiceImpl(
     override fun getService(name: String): KubeService {
         try {
             return KubeServiceImpl(name.lowercase(), this.api)
-        } catch (e: ApiException) {
+        } catch (e: KubeException) {
             throw NoSuchElementException("Service '${name}' does not exist")
         }
     }

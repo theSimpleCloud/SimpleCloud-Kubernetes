@@ -18,8 +18,11 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.volume
 
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
+import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
+import io.kubernetes.client.openapi.models.V1PersistentVolumeClaim
 
 /**
  * Date: 30.04.22
@@ -32,22 +35,34 @@ class KubeVolumeClaimImpl(
     private val api: CoreV1Api
 ) : KubeVolumeClaim {
 
-    private val claim = this.api.readNamespacedPersistentVolumeClaim(this.name, "default", null)
+    private val claim = fetchThisVolumeClaim()
+
+    private fun fetchThisVolumeClaim(): V1PersistentVolumeClaim {
+        try {
+            return this.api.readNamespacedPersistentVolumeClaim(this.name, "default", null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
+    }
 
     override fun getName(): String {
         return this.name
     }
 
     override fun delete() {
-        this.api.deleteNamespacedPersistentVolumeClaim(
-            this.name,
-            "default",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        try {
+            this.api.deleteNamespacedPersistentVolumeClaim(
+                this.name,
+                "default",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
     }
 }

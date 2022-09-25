@@ -23,9 +23,11 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.nonNull
 import app.simplecloud.simplecloud.api.future.timeout.timout
 import app.simplecloud.simplecloud.kubernetes.api.Label
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import io.kubernetes.client.Attach
 import io.kubernetes.client.PodLogs
+import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.openapi.models.V1Pod
 import kotlinx.coroutines.runBlocking
@@ -49,12 +51,12 @@ class KubernetesPodExecutor(
 
     fun doesContainerExist(): Boolean {
         return runCatching {
-            this.api.readNamespacedPod(this.containerName, "default", null)
+            fetchThisPod()
         }.isSuccess
     }
 
     fun getPhase(): String {
-        return this.api.readNamespacedPod(this.containerName, "default", null).status?.phase ?: "Unknown"
+        return fetchThisPod().status?.phase ?: "Unknown"
     }
 
     fun deleteContainer() {
@@ -62,31 +64,43 @@ class KubernetesPodExecutor(
     }
 
     fun killContainer(timeBeforeKillInSeconds: Int = 1) {
-        this.api.deleteNamespacedPod(
-            this.containerName,
-            "default",
-            null,
-            null,
-            timeBeforeKillInSeconds,
-            null,
-            null,
-            null
-        )
+        try {
+            this.api.deleteNamespacedPod(
+                this.containerName,
+                "default",
+                null,
+                null,
+                timeBeforeKillInSeconds,
+                null,
+                null,
+                null
+            )
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
     }
 
 
     fun executeCommand(command: String) {
-        val attach = Attach(this.api.apiClient)
-        val result = attach.attach("default", this.containerName, true)
+        val result = attachPod()
         val output = result.standardInputStream
         output.write(command.toByteArray(StandardCharsets.UTF_8))
         output.write('\n'.code)
         output.flush()
     }
 
+    private fun attachPod(): Attach.AttachResult {
+        try {
+            val attach = Attach(this.api.apiClient)
+            return attach.attach("default", this.containerName, true)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
+    }
+
     fun getLogs(): List<String> {
         val logs = PodLogs(this.api.apiClient)
-        val pod: V1Pod = this.api.readNamespacedPod(this.containerName, "default", null)
+        val pod: V1Pod = fetchThisPod()
         val inputStream = logs.streamNamespacedPodLog(pod)
         val bufferedReader = BufferedReader(InputStreamReader(inputStream))
 
@@ -113,7 +127,16 @@ class KubernetesPodExecutor(
     }
 
     fun getLabels(): List<Label> {
-        val pod = this.api.readNamespacedPod(this.containerName, "default", null)
+        val pod = fetchThisPod()
         return pod.metadata?.labels?.map { Label(it.key, it.value) } ?: emptyList()
     }
+
+    private fun fetchThisPod(): V1Pod {
+        try {
+            return this.api.readNamespacedPod(this.containerName, "default", null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
+    }
+
 }

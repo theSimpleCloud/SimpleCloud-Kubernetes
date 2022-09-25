@@ -18,8 +18,10 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.pod
 
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import io.kubernetes.client.custom.Quantity
+import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.openapi.models.*
 
@@ -73,7 +75,15 @@ class KubernetesPodStarter(
                         volumes
                     ).restartPolicy(this.containerSpec.restartPolicy)
             )
-        this.api.createNamespacedPod("default", pod, null, null, null)
+        createNamespacedPod(pod)
+    }
+
+    private fun createNamespacedPod(pod: V1Pod) {
+        try {
+            this.api.createNamespacedPod("default", pod, null, null, null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
     }
 
     private fun createVolumes(): List<V1Volume> {

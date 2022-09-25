@@ -19,8 +19,11 @@
 package app.simplecloud.simplecloud.kubernetes.impl.service
 
 import app.simplecloud.simplecloud.kubernetes.api.Label
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeService
+import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
+import io.kubernetes.client.openapi.models.V1Service
 
 /**
  * Date: 30.04.22
@@ -33,7 +36,15 @@ class KubeServiceImpl(
     private val api: CoreV1Api
 ) : KubeService {
 
-    private val service = this.api.readNamespacedService(this.name, "default", null)
+    private val service = fetchThisService()
+
+    private fun fetchThisService(): V1Service {
+        try {
+            return this.api.readNamespacedService(this.name, "default", null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
+    }
 
     override fun getName(): String {
         return this.name
@@ -54,15 +65,19 @@ class KubeServiceImpl(
     }
 
     override fun delete() {
-        this.api.deleteNamespacedService(
-            this.name,
-            "default",
-            null,
-            null,
-            null,
-            null,
-            null,
-            null
-        )
+        try {
+            this.api.deleteNamespacedService(
+                this.name,
+                "default",
+                null,
+                null,
+                null,
+                null,
+                null,
+                null
+            )
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
     }
 }

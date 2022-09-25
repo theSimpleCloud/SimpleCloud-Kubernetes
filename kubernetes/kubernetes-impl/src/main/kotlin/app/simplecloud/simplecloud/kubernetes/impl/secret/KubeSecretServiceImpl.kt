@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.kubernetes.impl.secret
 
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
@@ -38,7 +39,11 @@ class KubeSecretServiceImpl(
 
     override fun createSecret(name: String, secretSpec: SecretSpec): KubeSecret {
         val secret = createSecretObj(name, secretSpec)
-        this.api.createNamespacedSecret("default", secret, null, null, null)
+        try {
+            this.api.createNamespacedSecret("default", secret, null, null, null)
+        } catch (ex: ApiException) {
+            throw KubeException(ex.responseBody, ex)
+        }
         return getSecret(name)
     }
 
@@ -55,7 +60,7 @@ class KubeSecretServiceImpl(
     override fun getSecret(name: String): KubeSecret {
         try {
             return KubeSecretImpl(name, api)
-        } catch (e: ApiException) {
+        } catch (e: KubeException) {
             throw NoSuchElementException("Kube Secret does not exist")
         }
 
