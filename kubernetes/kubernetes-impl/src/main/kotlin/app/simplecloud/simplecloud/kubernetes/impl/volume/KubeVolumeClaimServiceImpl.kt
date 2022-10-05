@@ -34,7 +34,7 @@ import io.kubernetes.client.openapi.models.*
  *
  */
 class KubeVolumeClaimServiceImpl(
-    private val api: CoreV1Api
+    private val api: CoreV1Api,
 ) : KubeVolumeClaimService {
 
     override fun getAllClaims(): List<KubeVolumeClaim> {
@@ -80,17 +80,21 @@ class KubeVolumeClaimServiceImpl(
         return getClaim(name)
     }
 
-    private fun createPersistentVolumeClaimObj(name: String, volumeSpec: KubeVolumeSpec) = V1PersistentVolumeClaim()
-        .metadata(V1ObjectMeta().name(name))
-        .spec(
-            V1PersistentVolumeClaimSpec()
-                .storageClassName(volumeSpec.storageClassName.lowercase())
-                .accessModes(listOf("ReadWriteOnce"))
-                .resources(
-                    V1ResourceRequirements()
-                        .requests(mapOf("storage" to Quantity.fromString("${volumeSpec.requestedStorageInGB}Gi")))
-                )
-        )
+    private fun createPersistentVolumeClaimObj(name: String, volumeSpec: KubeVolumeSpec): V1PersistentVolumeClaim {
+        val volumeClaimSpec = V1PersistentVolumeClaimSpec()
+            .accessModes(listOf("ReadWriteOnce"))
+            .resources(
+                V1ResourceRequirements()
+                    .requests(mapOf("storage" to Quantity.fromString("${volumeSpec.requestedStorageInGB}Gi")))
+            )
+        val storageClassName = volumeSpec.storageClassName.lowercase()
+        if (storageClassName.isNotBlank()) {
+            volumeClaimSpec.storageClassName(storageClassName)
+        }
+        return V1PersistentVolumeClaim()
+            .metadata(V1ObjectMeta().name(name))
+            .spec(volumeClaimSpec)
+    }
 
     override fun getClaim(name: String): KubeVolumeClaim {
         try {
