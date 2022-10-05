@@ -28,7 +28,9 @@ import app.simplecloud.simplecloud.eventapi.EventRegisterer
  */
 abstract class CloudModule : EventRegisterer {
 
-    abstract fun onEnable(nodeAPI: NodeAPI)
+    abstract fun onEnable(localAPI: LocalAPI)
+
+    abstract fun onClusterActive(clusterAPI: ClusterAPI)
 
     abstract fun onDisable()
 

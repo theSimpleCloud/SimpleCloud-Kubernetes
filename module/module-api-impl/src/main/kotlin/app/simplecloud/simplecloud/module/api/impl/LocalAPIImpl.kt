@@ -16,18 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
+package app.simplecloud.simplecloud.module.api.impl
+
+import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.LocalServiceRegistry
 
 /**
- * Date: 31.08.22
- * Time: 09:11
+ * Date: 05.10.22
+ * Time: 09:47
  * @author Frederick Baier
  *
  */
-interface LocalServiceRegistry {
+class LocalAPIImpl : LocalAPI {
 
-    fun <T> registerService(clazz: Class<T>, implementation: T)
+    private val executorService = PausableThreadPoolExecutor(1)
+    private val serviceRegistry = LocalServiceRegistryImpl()
 
-    fun <T> getService(clazz: Class<T>): T
+    init {
+        executorService.pause()
+    }
 
+    override fun getLocalExecutorService(): PausableThreadPoolExecutor {
+        return this.executorService
+    }
+
+    override fun getLocalServiceRegistry(): LocalServiceRegistry {
+        return this.serviceRegistry
+    }
 }

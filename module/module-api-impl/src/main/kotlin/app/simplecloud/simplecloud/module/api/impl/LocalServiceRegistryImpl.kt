@@ -16,18 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
+package app.simplecloud.simplecloud.module.api.impl
+
+import app.simplecloud.simplecloud.module.api.LocalServiceRegistry
+import com.google.common.collect.Maps
 
 /**
- * Date: 31.08.22
- * Time: 09:11
+ * Date: 24.09.22
+ * Time: 10:07
  * @author Frederick Baier
  *
  */
-interface LocalServiceRegistry {
+class LocalServiceRegistryImpl : LocalServiceRegistry {
 
-    fun <T> registerService(clazz: Class<T>, implementation: T)
+    private val clazzToServiceImplementation = Maps.newConcurrentMap<Class<*>, Any>()
 
-    fun <T> getService(clazz: Class<T>): T
+    override fun <T> registerService(clazz: Class<T>, implementation: T) {
+        this.clazzToServiceImplementation[clazz] = implementation
+    }
 
+    override fun <T> getService(clazz: Class<T>): T {
+        if (!clazzToServiceImplementation.containsKey(clazz))
+            throw NoSuchElementException("Service by class ${clazz.name} cannot be found")
+        return clazzToServiceImplementation[clazz] as T
+    }
 }

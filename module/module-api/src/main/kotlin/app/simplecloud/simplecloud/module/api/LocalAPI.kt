@@ -18,16 +18,18 @@
 
 package app.simplecloud.simplecloud.module.api
 
+import java.util.concurrent.ScheduledExecutorService
+
 /**
- * Date: 31.08.22
- * Time: 09:11
+ * Date: 03.10.22
+ * Time: 19:32
  * @author Frederick Baier
  *
  */
-interface LocalServiceRegistry {
+interface LocalAPI {
 
-    fun <T> registerService(clazz: Class<T>, implementation: T)
+    fun getLocalExecutorService(): ScheduledExecutorService
 
-    fun <T> getService(clazz: Class<T>): T
+    fun getLocalServiceRegistry(): LocalServiceRegistry
 
 }

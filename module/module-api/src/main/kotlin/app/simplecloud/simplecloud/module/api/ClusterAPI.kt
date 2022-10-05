@@ -19,23 +19,21 @@
 package app.simplecloud.simplecloud.module.api
 
 import app.simplecloud.simplecloud.api.NodeCloudAPI
+import app.simplecloud.simplecloud.distribution.api.Cache
 
 /**
- * Date: 31.08.22
- * Time: 09:15
+ * Date: 03.10.22
+ * Time: 19:31
  * @author Frederick Baier
  *
  */
-interface NodeAPI {
+interface ClusterAPI {
 
     /**
-     * Returns the normal cloud api
+     * Creates a distributed key value store
      */
+    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
+
     fun getCloudAPI(): NodeCloudAPI
-
-    /**
-     * Returns the local node api. Operations on this api are only local. Changes cannot be seen by other nodes.
-     */
-    fun getLocalAPI(): LocalNodeAPI
 
 }
