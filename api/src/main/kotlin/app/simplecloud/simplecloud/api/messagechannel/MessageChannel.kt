@@ -21,7 +21,6 @@ package app.simplecloud.simplecloud.api.messagechannel
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
 import app.simplecloud.simplecloud.api.utils.Nameable
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
-import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -53,7 +52,7 @@ interface MessageChannel<T : Any, R: Any> : Nameable {
     fun createMessageRequest(message: T, receivers: List<NetworkComponent>): MessageRequest<Unit>
 
     /**
-     * Creates a message request to all [DistributionComponent]s in the cluster (servers and nodes)
+     * Creates a message request to all [NetworkComponent]s in the cluster (servers and nodes)
      * @param message the message to be sent
      * @return the created message request with no response
      */
