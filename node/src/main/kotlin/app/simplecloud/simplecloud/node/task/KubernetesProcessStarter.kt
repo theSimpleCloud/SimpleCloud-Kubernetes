@@ -110,7 +110,6 @@ class KubernetesProcessStarter(
         return this.volumeClaimService.createVolumeClaim(
             claimName,
             KubeVolumeSpec()
-                .withStorageClassName("microk8s-hostpath")
                 .withRequestedStorageInGB(1)
         )
     }
