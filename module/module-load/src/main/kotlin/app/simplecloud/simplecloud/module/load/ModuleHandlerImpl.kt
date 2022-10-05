@@ -18,7 +18,8 @@
 
 package app.simplecloud.simplecloud.module.load
 
-import app.simplecloud.simplecloud.module.api.NodeAPI
+import app.simplecloud.simplecloud.module.api.ClusterAPI
+import app.simplecloud.simplecloud.module.api.LocalAPI
 import app.simplecloud.simplecloud.module.load.exception.ModuleLoadException
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
@@ -27,7 +28,7 @@ import java.io.File
 import java.util.concurrent.CopyOnWriteArrayList
 
 class ModuleHandlerImpl(
-    private val nodeAPI: NodeAPI,
+    private val localAPI: LocalAPI,
     private val moduleFileContentLoader: ModuleFileContentLoader,
     private val unsafeModuleLoader: UnsafeModuleLoader,
     private val errorHandler: (Throwable) -> Unit = { throw it },
@@ -51,6 +52,12 @@ class ModuleHandlerImpl(
         return newlyLoadedModules
     }
 
+    override fun onClusterActive(clusterAPI: ClusterAPI) {
+        for (loadedModule in this.loadedModules) {
+            loadedModule.cloudModule.onClusterActive(clusterAPI)
+        }
+    }
+
     override fun findModuleClass(name: String): Class<*> {
         return this.moduleClassFinder.findModuleClass(name)
     }
@@ -65,7 +72,7 @@ class ModuleHandlerImpl(
 
     private fun enableModule(loadedModule: LoadedModule) {
         try {
-            loadedModule.cloudModule.onEnable(this.nodeAPI)
+            loadedModule.cloudModule.onEnable(this.localAPI)
         } catch (ex: Exception) {
             val moduleName = loadedModule.fileContent.name
             throw ModuleLoadException("An error occurred while enabling module '${moduleName}':", ex)

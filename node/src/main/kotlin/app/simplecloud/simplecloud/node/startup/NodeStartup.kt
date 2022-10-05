@@ -67,9 +67,8 @@ class NodeStartup(
             this.distributionFactory,
             this.kubeAPI,
             this.selfPod,
-            preparedNode.repositories,
+            preparedNode,
             restServerConfig,
-            preparedNode.tokenHandler
         ).connect()
     }
 

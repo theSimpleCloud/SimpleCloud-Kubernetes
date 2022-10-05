@@ -19,7 +19,8 @@
 package app.simplecloud.simplecloud.module.load.testmodule
 
 import app.simplecloud.simplecloud.module.api.CloudModule
-import app.simplecloud.simplecloud.module.api.NodeAPI
+import app.simplecloud.simplecloud.module.api.ClusterAPI
+import app.simplecloud.simplecloud.module.api.LocalAPI
 
 /**
  * Date: 02.09.22
@@ -33,8 +34,12 @@ class OnEnableAwareModuleMain : CloudModule() {
     var wasOnEnableCalled = false
         private set
 
-    override fun onEnable(nodeAPI: NodeAPI) {
+    override fun onEnable(localAPI: LocalAPI) {
         this.wasOnEnableCalled = true
+    }
+
+    override fun onClusterActive(clusterAPI: ClusterAPI) {
+
     }
 
     override fun onDisable() {

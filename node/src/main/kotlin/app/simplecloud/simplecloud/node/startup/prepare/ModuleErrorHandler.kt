@@ -16,29 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.load.testmodule
+package app.simplecloud.simplecloud.node.startup.prepare
 
-import app.simplecloud.simplecloud.module.api.CloudModule
-import app.simplecloud.simplecloud.module.api.ClusterAPI
-import app.simplecloud.simplecloud.module.api.LocalAPI
+import org.apache.logging.log4j.LogManager
 
 /**
- * Date: 01.09.22
+ * Date: 05.10.22
  * Time: 10:14
  * @author Frederick Baier
  *
  */
-class FailingModuleMain : CloudModule() {
+class ModuleErrorHandler : (Throwable) -> Unit {
 
-    override fun onEnable(localAPI: LocalAPI) {
-        throw RuntimeException("FailingModuleMain: Init failed")
+    override fun invoke(throwable: Throwable) {
+        logger.error("Caught module error:", throwable)
     }
 
-    override fun onClusterActive(clusterAPI: ClusterAPI) {
-        throw RuntimeException("FailingModuleMain: Cluster active failed")
+    companion object {
+        private val logger = LogManager.getLogger(ModuleErrorHandler::class.java)
     }
 
-    override fun onDisable() {
-
-    }
 }

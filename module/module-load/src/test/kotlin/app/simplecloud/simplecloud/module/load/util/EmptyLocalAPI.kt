@@ -18,9 +18,9 @@
 
 package app.simplecloud.simplecloud.module.load.util
 
-import app.simplecloud.simplecloud.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.LocalNodeAPI
-import app.simplecloud.simplecloud.module.api.NodeAPI
+import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.LocalServiceRegistry
+import java.util.concurrent.ScheduledExecutorService
 
 /**
  * Date: 04.09.22
@@ -28,12 +28,15 @@ import app.simplecloud.simplecloud.module.api.NodeAPI
  * @author Frederick Baier
  *
  */
-class EmptyNodeAPI : NodeAPI {
-    override fun getCloudAPI(): NodeCloudAPI {
+class EmptyLocalAPI : LocalAPI {
+
+    override fun getLocalExecutorService(): ScheduledExecutorService {
         throw UnsupportedOperationException()
     }
 
-    override fun getLocalAPI(): LocalNodeAPI {
+    override fun getLocalServiceRegistry(): LocalServiceRegistry {
         throw UnsupportedOperationException()
     }
+
+
 }

@@ -49,13 +49,20 @@ class NodePreparer(
         val jwtTokenHandler = this.tokenHandlerFactory.create(restToken)
         checkForAnyWebAccount(databaseRepositories.offlineCloudPlayerRepository, jwtTokenHandler)
         setupEnd()
+        val nodeModuleLoader = loadModules()
         logger.info("Node Startup completed")
-        return PreparedNode(databaseRepositories, jwtTokenHandler)
+        return PreparedNode(databaseRepositories, jwtTokenHandler, nodeModuleLoader)
+    }
+
+    private fun loadModules(): NodeModuleLoader {
+        val moduleLoader = NodeModuleLoader()
+        moduleLoader.loadModules()
+        return moduleLoader
     }
 
     private fun checkForAnyWebAccount(
         offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-        tokenHandler: TokenHandler
+        tokenHandler: TokenHandler,
     ) {
         FirstAccountCheck(
             offlineCloudPlayerRepository,

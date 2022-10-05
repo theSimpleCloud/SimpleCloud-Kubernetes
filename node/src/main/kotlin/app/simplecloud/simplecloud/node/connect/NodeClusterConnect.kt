@@ -36,7 +36,7 @@ import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.Stat
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticProxyTemplateFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticServerTemplateFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.UniversalStaticProcessTemplateFactory
-import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
+import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
@@ -49,20 +49,22 @@ import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFa
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.service.*
+import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
 import app.simplecloud.simplecloud.node.startup.prepare.RestServerStartTask
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
-import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 import org.apache.logging.log4j.LogManager
 
 class NodeClusterConnect(
     private val distributionFactory: DistributionFactory,
     private val kubeAPI: KubeAPI,
     private val selfPod: KubePod,
-    private val databaseRepositories: DatabaseRepositories,
+    private val preparedNode: PreparedNode,
     private val restServerConfig: RestServerConfig,
-    private val tokenHandler: TokenHandler,
 ) {
 
+    private val databaseRepositories = this.preparedNode.repositories
+    private val tokenHandler = this.preparedNode.tokenHandler
+    private val nodeModuleLoader = this.preparedNode.nodeModuleLoader
     private val nodeBindPort = 1670
 
     fun connect(): NodeCloudAPIImpl {
@@ -74,7 +76,12 @@ class NodeClusterConnect(
         startRestServer(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories)
+        callModulesClusterActive(nodeCloudAPI)
         return nodeCloudAPI
+    }
+
+    private fun callModulesClusterActive(nodeCloudAPI: InternalNodeCloudAPI) {
+        this.nodeModuleLoader.onClusterActive(nodeCloudAPI)
     }
 
     private fun injectUserContextIntoDistribution(

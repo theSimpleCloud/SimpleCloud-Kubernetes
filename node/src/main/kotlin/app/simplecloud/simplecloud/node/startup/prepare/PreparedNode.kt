@@ -30,4 +30,5 @@ import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 data class PreparedNode(
     val repositories: DatabaseRepositories,
     val tokenHandler: TokenHandler,
+    val nodeModuleLoader: NodeModuleLoader,
 )

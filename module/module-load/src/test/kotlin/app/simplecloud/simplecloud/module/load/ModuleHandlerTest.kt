@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileConte
 import app.simplecloud.simplecloud.module.load.testmodule.OnEnableAwareModuleMain
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoaderImpl
-import app.simplecloud.simplecloud.module.load.util.EmptyNodeAPI
+import app.simplecloud.simplecloud.module.load.util.EmptyLocalAPI
 import app.simplecloud.simplecloud.module.load.util.ModuleJarBuilder
 import app.simplecloud.simplecloud.module.load.util.ModuleJarProvider
 import app.simplecloud.simplecloud.module.load.util.TmpDirProvider
@@ -51,7 +51,7 @@ class ModuleHandlerTest {
         val unsafeModuleLoader: UnsafeModuleLoader = UnsafeModuleLoaderImpl()
         val moduleFileContentLoader: ModuleFileContentLoader = ModuleFileContentLoaderImpl()
         this.moduleHandler =
-            ModuleHandlerImpl(EmptyNodeAPI(), moduleFileContentLoader, unsafeModuleLoader, errorHandler)
+            ModuleHandlerImpl(EmptyLocalAPI(), moduleFileContentLoader, unsafeModuleLoader, errorHandler)
     }
 
     @AfterEach
