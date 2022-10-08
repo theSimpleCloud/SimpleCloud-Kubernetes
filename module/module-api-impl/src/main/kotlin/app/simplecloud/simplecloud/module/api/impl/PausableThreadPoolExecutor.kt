@@ -81,6 +81,9 @@ class PausableThreadPoolExecutor(
      * Pause the execution
      */
     fun pause() {
+        if (isPaused)
+            return
+
         lock.lock()
         isPaused = try {
             true
@@ -93,6 +96,9 @@ class PausableThreadPoolExecutor(
      * Resume pool execution
      */
     fun resume() {
+        if (!isPaused)
+            return
+
         lock.lock()
         try {
             isPaused = false
@@ -100,5 +106,12 @@ class PausableThreadPoolExecutor(
         } finally {
             lock.unlock()
         }
+    }
+
+    fun setPaused(paused: Boolean) {
+        if (paused)
+            this.pause()
+        else
+            this.resume()
     }
 }

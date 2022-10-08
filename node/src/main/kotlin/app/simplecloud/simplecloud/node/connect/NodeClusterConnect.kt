@@ -76,11 +76,12 @@ class NodeClusterConnect(
         startRestServer(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories)
-        callModulesClusterActive(nodeCloudAPI)
+        handleClusterActive(nodeCloudAPI)
         return nodeCloudAPI
     }
 
-    private fun callModulesClusterActive(nodeCloudAPI: InternalNodeCloudAPI) {
+    private fun handleClusterActive(nodeCloudAPI: InternalNodeCloudAPI) {
+        this.nodeModuleLoader.startModuleSchedulerWatcher(nodeCloudAPI.getDistribution())
         this.nodeModuleLoader.onClusterActive(nodeCloudAPI)
     }
 
