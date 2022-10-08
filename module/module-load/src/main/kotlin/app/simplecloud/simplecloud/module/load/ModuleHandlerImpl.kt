@@ -54,7 +54,15 @@ class ModuleHandlerImpl(
 
     override fun onClusterActive(clusterAPI: ClusterAPI) {
         for (loadedModule in this.loadedModules) {
+            invokeOnClusterActiveCatching(loadedModule, clusterAPI)
+        }
+    }
+
+    private fun invokeOnClusterActiveCatching(loadedModule: LoadedModule, clusterAPI: ClusterAPI) {
+        try {
             loadedModule.cloudModule.onClusterActive(clusterAPI)
+        } catch (ex: Exception) {
+            this.errorHandler.invoke(ex)
         }
     }
 

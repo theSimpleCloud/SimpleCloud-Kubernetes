@@ -16,26 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.prepare
-
-import app.simplecloud.simplecloud.module.api.impl.ModuleException
-import org.apache.logging.log4j.LogManager
+package app.simplecloud.simplecloud.module.api.impl
 
 /**
- * Date: 05.10.22
- * Time: 10:14
+ * Date: 08.10.22
+ * Time: 11:00
  * @author Frederick Baier
  *
  */
-class ModuleErrorHandler : (Throwable) -> Unit {
-
-    override fun invoke(throwable: Throwable) {
-        val exception = ModuleException("Caught module error", throwable)
-        logger.error("Caught module error:", exception)
-    }
-
-    companion object {
-        private val logger = LogManager.getLogger(ModuleErrorHandler::class.java)
-    }
+class ModuleException(message: String, cause: Throwable) : Exception(message, cause) {
 
 }
