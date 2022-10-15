@@ -63,3 +63,5 @@ findProject(":module:module-load")?.name = "module-load"
 include("graph")
 include("module:module-api-impl")
 findProject(":module:module-api-impl")?.name = "module-api-impl"
+include("module:module-annotation-processor")
+findProject(":module:module-annotation-processor")?.name = "module-annotation-processor"
