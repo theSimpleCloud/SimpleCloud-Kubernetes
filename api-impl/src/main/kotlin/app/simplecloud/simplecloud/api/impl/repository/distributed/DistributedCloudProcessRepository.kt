@@ -20,9 +20,11 @@ package app.simplecloud.simplecloud.api.impl.repository.distributed
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareDistributionIdPredicate
 import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareProcessTemplateNamePredicate
+import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareProcessTemplateTypePredicate
 import app.simplecloud.simplecloud.api.impl.repository.distributed.predicate.CloudProcessCompareUUIDPredicate
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.repository.CloudProcessRepository
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -49,6 +51,10 @@ class DistributedCloudProcessRepository(
 
     override fun findProcessesByTemplateName(templateName: String): CompletableFuture<Collection<CloudProcessConfiguration>> {
         return executeQuery(CloudProcessCompareProcessTemplateNamePredicate(templateName))
+    }
+
+    override fun findProcessesByTemplateType(templateType: ProcessTemplateType): CompletableFuture<Collection<CloudProcessConfiguration>> {
+        return executeQuery(CloudProcessCompareProcessTemplateTypePredicate(templateType))
     }
 
 }

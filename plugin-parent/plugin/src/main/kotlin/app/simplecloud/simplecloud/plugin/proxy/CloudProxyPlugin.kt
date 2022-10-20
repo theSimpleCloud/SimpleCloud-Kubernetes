@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.EventRegisterer
 import app.simplecloud.simplecloud.plugin.OnlineCountUpdaterImpl
 import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
+import app.simplecloud.simplecloud.plugin.proxy.messagechannel.MessageChannelsInitializer
 import app.simplecloud.simplecloud.plugin.startup.CloudPlugin
 import app.simplecloud.simplecloud.plugin.startup.SelfProcessProvider
 
@@ -38,7 +39,8 @@ class CloudProxyPlugin(
     environmentVariables: EnvironmentVariables,
     nodeAddress: Address,
     private val proxyServerRegistry: ProxyServerRegistry,
-    private val selfOnlineCountProvider: SelfOnlineCountProvider
+    private val selfOnlineCountProvider: SelfOnlineCountProvider,
+    private val cloudPlayerProxyActions: CloudPlayerProxyActions
 ) {
 
     private val cloudPlugin = CloudPlugin(distributionFactory, environmentVariables, nodeAddress)
@@ -54,6 +56,9 @@ class CloudProxyPlugin(
             ProxyCloudListener(this.proxyServerRegistry)
         )
         val selfProcessProvider = SelfProcessProvider(this.cloudPlugin.selfProcessId, this.cloudAPI.getProcessService())
+
+        MessageChannelsInitializer(this.cloudAPI, this.cloudPlayerProxyActions).initializeMessageChannels()
+
         this.proxyController = ProxyControllerImpl(
             this.cloudAPI.internalPlayerService,
             this.cloudAPI.getProcessService(),

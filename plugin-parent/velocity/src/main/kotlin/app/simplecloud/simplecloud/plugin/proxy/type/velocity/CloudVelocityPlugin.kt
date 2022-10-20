@@ -35,7 +35,8 @@ class CloudVelocityPlugin @Inject constructor(
         RealEnvironmentVariables(),
         Address.fromIpString("distribution:1670"),
         this.proxyServerRegistry,
-        SelfOnlineCountProvider { this.proxyServer.allPlayers.size }
+        SelfOnlineCountProvider { this.proxyServer.allPlayers.size },
+        CloudPlayerVelocityActions(this.proxyServer)
     )
 
     @Subscribe

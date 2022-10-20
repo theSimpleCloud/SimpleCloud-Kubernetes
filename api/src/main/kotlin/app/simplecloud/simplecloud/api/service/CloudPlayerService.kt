@@ -20,6 +20,9 @@ package app.simplecloud.simplecloud.api.service
 
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
+import net.kyori.adventure.audience.MessageType
+import net.kyori.adventure.identity.Identity
+import net.kyori.adventure.text.Component
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -40,5 +43,7 @@ interface CloudPlayerService : Service {
     fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer>
 
     fun findOnlinePlayers(): CompletableFuture<List<CloudPlayer>>
+
+    fun sendMessage(uniqueId: UUID, message: Component, type: MessageType)
 
 }

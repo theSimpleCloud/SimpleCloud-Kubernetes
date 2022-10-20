@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.plugin
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
+import app.simplecloud.simplecloud.plugin.proxy.CloudPlayerTestActions
 import app.simplecloud.simplecloud.plugin.proxy.CloudProxyPlugin
 import app.simplecloud.simplecloud.plugin.proxy.TestProxyServerRegistry
 import app.simplecloud.simplecloud.plugin.proxy.TestSelfOnlineCountProvider
@@ -40,7 +41,8 @@ class ProxyPluginStarter(
             this.environmentVariables,
             this.translatedAddress,
             this.proxyServerRegistry,
-            this.selfOnlineCountProvider
+            this.selfOnlineCountProvider,
+            CloudPlayerTestActions()
         )
         return ProxyPluginConfig(cloudProxyPlugin, selfOnlineCountProvider)
     }

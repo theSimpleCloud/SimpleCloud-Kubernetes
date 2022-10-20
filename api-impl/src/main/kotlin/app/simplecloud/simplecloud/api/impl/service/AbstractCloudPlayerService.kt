@@ -19,11 +19,16 @@
 package app.simplecloud.simplecloud.api.impl.service
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.flatten
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
+import net.kyori.adventure.audience.MessageType
+import net.kyori.adventure.text.Component
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -35,7 +40,8 @@ import java.util.concurrent.CompletableFuture
  */
 abstract class AbstractCloudPlayerService(
     protected val distributedRepository: DistributedCloudPlayerRepository,
-    private val playerFactory: CloudPlayerFactory
+    private val playerFactory: CloudPlayerFactory,
+    private val messageChannelProvider: InternalMessageChannelProvider
 ) : InternalCloudPlayerService {
 
     override fun findOnlinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<CloudPlayer> {
@@ -53,6 +59,24 @@ abstract class AbstractCloudPlayerService(
 
     override suspend fun updateOnlinePlayerInternal(configuration: CloudPlayerConfiguration) {
         this.distributedRepository.save(configuration.uniqueId, configuration).await()
+    }
+
+    override fun sendMessage(uniqueId: UUID, message: Component, type: MessageType) {
+        this.findOnlinePlayerByUniqueId(uniqueId)
+            .thenApply {
+                it.getCurrentProxy()
+            }
+            .flatten()
+            .thenAccept{
+                this.messageChannelProvider.getInternalCloudPlayerMessageChannel().createMessageRequest(
+                    MessageConfiguration(
+                        uniqueId,
+                        message,
+                        type
+                    ),
+                    it
+                ).submit()
+            }
     }
 
 }

@@ -27,14 +27,21 @@ import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFac
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudPlayerService
 import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfiguration
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.utils.NetworkComponent
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
 import app.simplecloud.simplecloud.node.player.CloudPlayerLogoutHandler
+import net.kyori.adventure.audience.MessageType
+import net.kyori.adventure.text.Component
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -51,7 +58,8 @@ class CloudPlayerServiceImpl(
     private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory,
     private val cloudProcessService: CloudProcessService,
     private val cloudProcessGroupService: CloudProcessGroupService,
-) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
+    private val messageChannelProvider: InternalMessageChannelProvider
+) : AbstractCloudPlayerService(distributedRepository, playerFactory, messageChannelProvider) {
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         val onlinePlayerFuture = findOnlinePlayerByName(name)

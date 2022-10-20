@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.api
 
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
 import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -45,6 +46,7 @@ class NodeCloudAPIImpl(
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
     distribution: Distribution,
+    internalMessageChannelProvider: InternalMessageChannelProvider,
     private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
@@ -57,7 +59,8 @@ class NodeCloudAPIImpl(
     messageChannelManager,
     eventManager,
     permissionFactory,
-    distribution
+    distribution,
+    internalMessageChannelProvider
 ), InternalNodeCloudAPI {
 
     override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {

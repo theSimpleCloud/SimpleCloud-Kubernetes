@@ -46,8 +46,8 @@ class CloudPlayerServiceImpl(
     private val nodeService: NodeService,
     internalMessageChannelProvider: InternalMessageChannelProvider,
     private val playerFactory: CloudPlayerFactory,
-    private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory,
-) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
+    private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory
+) : AbstractCloudPlayerService(distributedRepository, playerFactory, internalMessageChannelProvider) {
 
     private val loginMessageChannel = internalMessageChannelProvider.getInternalPlayerLoginChannel()
     private val disconnectMessageChannel = internalMessageChannelProvider.getInternalPlayerDisconnectChannel()
@@ -72,7 +72,6 @@ class CloudPlayerServiceImpl(
                 .submit().await()
             return@future configurationToPlayer(playerConfiguration)
         }
-
     private fun configurationToPlayer(configuration: OfflineCloudPlayerConfiguration): OfflineCloudPlayer {
         if (configuration is CloudPlayerConfiguration)
             return this.playerFactory.create(configuration, this)
@@ -94,4 +93,5 @@ class CloudPlayerServiceImpl(
         val playerConfiguration = this.loginMessageChannel.createMessageRequest(configuration, node).submit().await()
         return this.playerFactory.create(playerConfiguration, this)
     }
+
 }

@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.api.impl.player
 
 import app.simplecloud.simplecloud.api.future.failedFuture
 import app.simplecloud.simplecloud.api.impl.request.player.CloudPlayerUpdateRequestImpl
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionPlayer
@@ -64,7 +65,6 @@ class CloudPlayerImpl constructor(
         return this.configuration.connectedProxyName
     }
 
-
     override fun getCurrentServer(): CompletableFuture<CloudProcess> {
         val connectedServerName = this.configuration.connectedServerName
             ?: return failedFuture(NullPointerException("Connected-Server not set"))
@@ -92,7 +92,7 @@ class CloudPlayerImpl constructor(
     }
 
     override fun sendMessage(source: Identity, message: Component, type: MessageType) {
-
+        this.cloudPlayerService.sendMessage(this.getUniqueId(), message, type)
     }
 
     override fun sendActionBar(message: Component) {

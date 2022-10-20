@@ -23,10 +23,12 @@ import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.plugin.SelfOnlineCountProvider
 import app.simplecloud.simplecloud.plugin.proxy.CloudProxyPlugin
+import net.kyori.adventure.platform.bungeecord.BungeeAudiences
 import net.md_5.bungee.api.ProxyServer
 import net.md_5.bungee.api.plugin.Plugin
 import java.net.InetSocketAddress
 import java.util.*
+import java.util.function.Supplier
 
 class CloudBungeePlugin : Plugin() {
 
@@ -35,10 +37,14 @@ class CloudBungeePlugin : Plugin() {
         RealEnvironmentVariables(),
         Address.fromIpString("distribution:1670"),
         BungeeProxyServerRegistry(ProxyServer.getInstance()),
-        SelfOnlineCountProvider { ProxyServer.getInstance().onlineCount }
+        SelfOnlineCountProvider { ProxyServer.getInstance().onlineCount },
+        CloudPlayerBungeeActions { this.adventure }
     )
     private val cloudAPI = proxyPlugin.cloudAPI
     private val proxyServerRegistry = BungeeProxyServerRegistry(ProxyServer.getInstance())
+    private val adventure by lazy {
+        BungeeAudiences.create(this)
+    }
 
     override fun onLoad() {
         ProxyServer.getInstance().reconnectHandler = ReconnectHandlerImpl()

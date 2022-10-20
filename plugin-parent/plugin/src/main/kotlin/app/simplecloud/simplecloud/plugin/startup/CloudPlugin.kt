@@ -139,7 +139,8 @@ class CloudPlugin(
             messageChannelManager,
             eventManager,
             permissionFactory,
-            distribution
+            distribution,
+            internalMessageChannelProvider
         )
     }
 

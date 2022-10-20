@@ -43,5 +43,4 @@ class ProxyCloudListener(
         this.proxyServerRegistry.unregisterServer(event.process.getName())
     }
 
-
 }

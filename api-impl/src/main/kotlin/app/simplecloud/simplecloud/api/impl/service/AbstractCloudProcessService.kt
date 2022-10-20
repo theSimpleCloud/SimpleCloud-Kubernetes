@@ -35,6 +35,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.*
@@ -64,6 +65,13 @@ abstract class AbstractCloudProcessService(
 
     override fun findAll(): CompletableFuture<List<CloudProcess>> {
         val allProcessConfigurations = this.distributedRepository.findAll()
+        return allProcessConfigurations.thenApply { configuration ->
+            configuration.map { this.processFactory.create(it, this) }
+        }
+    }
+
+    override fun findAllByTemplateType(templateType: ProcessTemplateType): CompletableFuture<List<CloudProcess>> {
+        val allProcessConfigurations = this.distributedRepository.findProcessesByTemplateType(templateType)
         return allProcessConfigurations.thenApply { configuration ->
             configuration.map { this.processFactory.create(it, this) }
         }

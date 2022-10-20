@@ -19,6 +19,6 @@
 dependencies {
     api(project(":api"))
     api(project(":api-internal"))
-    api("app.simplecloud:distribution-api:1.0.0-SNAPSHOT")
+    api("app.simplecloud:distribution-api:1.0.1-SNAPSHOT")
     testApi(project(":database:database-inmemory"))
 }

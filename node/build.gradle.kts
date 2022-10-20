@@ -19,6 +19,7 @@
 dependencies {
     implementation(kotlin("stdlib"))
     implementation("org.apache.commons:commons-lang3:3.12.0")
+    implementation("net.kyori:adventure-text-serializer-gson:4.11.0")
 
 
     api(project(":api-impl"))
@@ -34,6 +35,6 @@ dependencies {
     testFixturesApi(project(":kubernetes:kubernetes-test"))
     testFixturesApi(project(":database:database-inmemory"))
     testFixturesApi(project(":rest-server:rest-server-base"))
-    testFixturesApi("app.simplecloud:distribution-test:1.0.0-SNAPSHOT")
+    testFixturesApi("app.simplecloud:distribution-test:1.0.1-SNAPSHOT")
     testFixturesImplementation("org.apache.commons:commons-lang3:3.12.0")
 }

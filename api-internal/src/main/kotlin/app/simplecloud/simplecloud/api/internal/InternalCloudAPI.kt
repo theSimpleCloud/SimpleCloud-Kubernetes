@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.internal
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.distribution.api.Distribution
 
@@ -41,5 +42,7 @@ interface InternalCloudAPI : CloudAPI {
     override fun getPermissionGroupService(): InternalPermissionGroupService
 
     fun getDistribution(): Distribution
+
+    fun getInternalMessageChannelProvider(): InternalMessageChannelProvider
 
 }

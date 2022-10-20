@@ -108,10 +108,7 @@ class NodeClusterConnect(
     }
 
     private fun registerMessageChannels(nodeCloudAPI: NodeCloudAPIImpl) {
-        MessageChannelsInitializer(
-            nodeCloudAPI,
-            InternalMessageChannelProviderImpl(nodeCloudAPI.getMessageChannelManager())
-        ).initializeMessageChannels()
+        MessageChannelsInitializer(nodeCloudAPI).initializeMessageChannels()
     }
 
     private fun checkForFirstNodeInCluster(
@@ -195,6 +192,10 @@ class NodeClusterConnect(
             permissionFactory
         )
 
+        val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
+        val internalMessageChannelProvider =
+            InternalMessageChannelProviderImpl(messageChannelManager)
+
         val permissionPlayerFactory = PermissionPlayerFactoryImpl(permissionGroupService, permissionFactory)
         val cloudPlayerService = CloudPlayerServiceImpl(
             distributedRepositories.cloudPlayerRepository,
@@ -202,9 +203,9 @@ class NodeClusterConnect(
             this.databaseRepositories.offlineCloudPlayerRepository,
             OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory),
             cloudProcessService,
-            cloudProcessGroupService
+            cloudProcessGroupService,
+            internalMessageChannelProvider
         )
-        val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         return NodeCloudAPIImpl(
             selfComponent.getName(),
@@ -218,6 +219,7 @@ class NodeClusterConnect(
             eventManager,
             permissionFactory,
             distribution,
+            internalMessageChannelProvider,
             nodeProcessOnlineStrategyService,
         )
     }

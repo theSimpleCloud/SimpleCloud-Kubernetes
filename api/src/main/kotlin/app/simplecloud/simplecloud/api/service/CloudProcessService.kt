@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.request.process.ProcessShutdownRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessStartRequest
 import app.simplecloud.simplecloud.api.request.process.ProcessUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.distribution.api.DistributionComponent
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -90,6 +91,11 @@ interface CloudProcessService : Service {
      * Returns all registered processes
      */
     fun findAll(): CompletableFuture<List<CloudProcess>>
+
+    /**
+     * Returns all processes found by the specified [templateType]
+     */
+    fun findAllByTemplateType(templateType: ProcessTemplateType): CompletableFuture<List<CloudProcess>>
 
     /**
      * Returns the logs of the process

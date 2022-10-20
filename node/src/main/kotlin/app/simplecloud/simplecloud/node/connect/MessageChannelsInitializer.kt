@@ -23,9 +23,10 @@ import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageCh
 import app.simplecloud.simplecloud.node.messagechannel.*
 
 class MessageChannelsInitializer(
-    private val cloudAPI: InternalCloudAPI,
-    private val internalMessageChannelProvider: InternalMessageChannelProvider
+    private val cloudAPI: InternalCloudAPI
 ) {
+
+    private val internalMessageChannelProvider = cloudAPI.getInternalMessageChannelProvider()
 
     fun initializeMessageChannels() {
         registerPermissionGroupDeleteMessageChannel()

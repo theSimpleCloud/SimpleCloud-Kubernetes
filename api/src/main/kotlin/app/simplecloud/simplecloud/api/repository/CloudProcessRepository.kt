@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.repository
 
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -44,5 +45,10 @@ interface CloudProcessRepository : Repository<String, CloudProcessConfiguration>
      * Returns all processes found by the specified [groupName]
      */
     fun findProcessesByTemplateName(templateName: String): CompletableFuture<Collection<CloudProcessConfiguration>>
+
+    /**
+     * Returns all processes found by the specified [templateType]
+     */
+    fun findProcessesByTemplateType(templateType: ProcessTemplateType): CompletableFuture<Collection<CloudProcessConfiguration>>
 
 }
