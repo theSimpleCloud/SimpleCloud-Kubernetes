@@ -18,11 +18,18 @@ class MessageChannelsInitializer(
 
     fun initializeMessageChannels() {
         registerCloudPlayerMessageChannel()
+        registerCloudPlayerActionBarChannel()
     }
 
     private fun registerCloudPlayerMessageChannel() {
         val messageChannel = this.internalMessageChannelProvider.getInternalCloudPlayerMessageChannel()
         val messageHandler = CloudPlayerMessageMessageHandler(this.cloudPlayerProxyActions)
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
+    private fun registerCloudPlayerActionBarChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalCloudPlayerActionBarChannel()
+        val messageHandler = CloudPlayerActionBarMessageHandler(this.cloudPlayerProxyActions)
         messageChannel.setMessageHandler(messageHandler)
     }
 
