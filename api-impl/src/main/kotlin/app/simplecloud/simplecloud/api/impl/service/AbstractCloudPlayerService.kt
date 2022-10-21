@@ -26,7 +26,9 @@ import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageCh
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.message.ActionBarConfiguration
 import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
+import app.simplecloud.simplecloud.api.process.CloudProcess
 import net.kyori.adventure.audience.MessageType
 import net.kyori.adventure.text.Component
 import java.util.*
@@ -62,11 +64,7 @@ abstract class AbstractCloudPlayerService(
     }
 
     override fun sendMessage(uniqueId: UUID, message: Component, type: MessageType) {
-        this.findOnlinePlayerByUniqueId(uniqueId)
-            .thenApply {
-                it.getCurrentProxy()
-            }
-            .flatten()
+        this.findOnlinePlayersProxyByUniqueId(uniqueId)
             .thenAccept{
                 this.messageChannelProvider.getInternalCloudPlayerMessageChannel().createMessageRequest(
                     MessageConfiguration(
@@ -77,6 +75,26 @@ abstract class AbstractCloudPlayerService(
                     it
                 ).submit()
             }
+    }
+
+    override fun sendActionBar(uniqueId: UUID, message: Component) {
+        this.findOnlinePlayersProxyByUniqueId(uniqueId)
+            .thenAccept{
+                this.messageChannelProvider.getInternalCloudPlayerActionBarChannel().createMessageRequest(
+                    ActionBarConfiguration(
+                        uniqueId,
+                        message,
+                    ),
+                    it
+                ).submit()
+            }
+    }
+
+    private fun findOnlinePlayersProxyByUniqueId(uniqueId: UUID): CompletableFuture<CloudProcess> {
+        return this.findOnlinePlayerByUniqueId(uniqueId)
+            .thenApply {
+                it.getCurrentProxy()
+            }.flatten()
     }
 
 }

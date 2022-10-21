@@ -96,7 +96,7 @@ class CloudPlayerImpl constructor(
     }
 
     override fun sendActionBar(message: Component) {
-
+        this.cloudPlayerService.sendActionBar(this.getUniqueId(), message)
     }
 
     override fun sendPlayerListHeaderAndFooter(header: Component, footer: Component) {

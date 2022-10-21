@@ -46,4 +46,6 @@ interface CloudPlayerService : Service {
 
     fun sendMessage(uniqueId: UUID, message: Component, type: MessageType)
 
+    fun sendActionBar(uniqueId: UUID, message: Component)
+
 }
