@@ -27,6 +27,7 @@ import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelMana
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
+import app.simplecloud.simplecloud.api.player.message.ActionBarConfiguration
 import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
@@ -100,6 +101,10 @@ class InternalMessageChannelProviderImpl(
 
     override fun getInternalCloudPlayerMessageChannel(): MessageChannel<MessageConfiguration, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_player_message")
+    }
+
+    override fun getInternalCloudPlayerActionBarChannel(): MessageChannel<ActionBarConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_player_actionbar")
     }
 
 }
