@@ -1,5 +1,6 @@
 package app.simplecloud.simplecloud.plugin.proxy
 
+import app.simplecloud.simplecloud.api.player.message.ActionBarConfiguration
 import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
 
 /**
@@ -11,5 +12,7 @@ import app.simplecloud.simplecloud.api.player.message.MessageConfiguration
 interface CloudPlayerProxyActions {
 
     fun sendMessage(configuration: MessageConfiguration)
+
+    fun sendActionBar(configuration: ActionBarConfiguration)
 
 }
