@@ -47,7 +47,7 @@ class StaticProcessTemplateServiceImpl(
     }
 
     override suspend fun deleteStaticTemplateInternal(template: StaticProcessTemplate) {
-        this.distributedRepository.remove(template.getName())
+        this.distributedRepository.remove(template.getName()).await()
         deleteTemplateFromDatabase(template)
     }
 

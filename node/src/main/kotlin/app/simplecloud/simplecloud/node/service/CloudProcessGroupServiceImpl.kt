@@ -39,7 +39,7 @@ class CloudProcessGroupServiceImpl(
     }
 
     override suspend fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.distributedRepository.remove(group.getName())
+        this.distributedRepository.remove(group.getName()).await()
         deleteGroupFromDatabase(group)
     }
 
