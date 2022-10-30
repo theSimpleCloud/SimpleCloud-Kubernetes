@@ -35,4 +35,5 @@ data class DistributedRepositories(
     val permissionGroupRepository: DistributedPermissionGroupRepository,
     val staticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
     val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
+    val errorRepository: DistributedErrorRepository,
 )

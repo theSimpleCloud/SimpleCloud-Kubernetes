@@ -16,21 +16,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.api.impl.error
 
-import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.error.Error
+import app.simplecloud.simplecloud.api.error.ResolveFunction
+import app.simplecloud.simplecloud.api.error.configuration.ErrorConfiguration
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 18.10.22
+ * Time: 12:45
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+class ErrorImpl(
+    private val configuration: ErrorConfiguration,
+) : Error {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
+    override fun getShortMessage(): String {
+        return this.configuration.shortMessage
+    }
 
-    fun getErrorService(): ErrorService
+    override fun getMessage(): String {
+        return this.configuration.message
+    }
 
+    override fun getProcessName(): String {
+        return this.configuration.processName
+    }
+
+    override fun getResolveFunction(): ResolveFunction? {
+        return this.configuration.resolveFunction
+    }
+
+    override fun toConfiguration(): ErrorConfiguration {
+        return this.configuration
+    }
 }

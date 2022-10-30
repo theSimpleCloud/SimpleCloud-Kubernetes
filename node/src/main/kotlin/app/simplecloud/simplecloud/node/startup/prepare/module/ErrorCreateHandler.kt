@@ -16,21 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.node.startup.prepare.module
 
+import app.simplecloud.simplecloud.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 
 /**
- * Date: 24.08.22
+ * Date: 23.10.22
  * Time: 09:51
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+interface ErrorCreateHandler {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
+    /**
+     * Creates an error and stores it in the distribution cache
+     */
+    fun create(errorCreateConfiguration: ErrorCreateConfiguration)
 
-    fun getErrorService(): ErrorService
+    /**
+     * Sets the errors service
+     */
+    fun setErrorService(errorService: ErrorService)
 
 }

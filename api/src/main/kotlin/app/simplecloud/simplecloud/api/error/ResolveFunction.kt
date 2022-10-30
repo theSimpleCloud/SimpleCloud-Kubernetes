@@ -16,21 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.api.error
 
-import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.CloudAPI
+import java.io.Serializable
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 10.10.22
+ * Time: 12:43
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+fun interface ResolveFunction : Serializable {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
-
-    fun getErrorService(): ErrorService
+    fun isResolved(api: CloudAPI): Boolean
 
 }

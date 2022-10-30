@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.prepare
+package app.simplecloud.simplecloud.node.startup.prepare.module
 
 import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.distribution.api.Distribution
@@ -33,13 +33,19 @@ import java.io.File
 class NodeModuleLoader {
 
     private val localAPI = LocalAPIImpl()
+    private val errorCreateHandler = ErrorCreateHandlerImpl()
     private val moduleHandler: ModuleHandler
 
     init {
         val moduleFileContentLoaderImpl = ModuleFileContentLoaderImpl()
         val unsafeModuleLoader: UnsafeModuleLoader = UnsafeModuleLoaderImpl()
         this.moduleHandler =
-            ModuleHandlerImpl(localAPI, moduleFileContentLoaderImpl, unsafeModuleLoader, ModuleErrorHandler())
+            ModuleHandlerImpl(
+                localAPI,
+                moduleFileContentLoaderImpl,
+                unsafeModuleLoader,
+                ModuleErrorHandler(this.errorCreateHandler)
+            )
 
     }
 
@@ -49,6 +55,7 @@ class NodeModuleLoader {
     }
 
     fun onClusterActive(internalNodeCloudAPI: InternalNodeCloudAPI) {
+        this.errorCreateHandler.setErrorService(internalNodeCloudAPI.getErrorService())
         val clusterAPI = ClusterAPIImpl(internalNodeCloudAPI)
         this.moduleHandler.onClusterActive(clusterAPI)
     }

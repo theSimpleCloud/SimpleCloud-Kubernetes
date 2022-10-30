@@ -21,6 +21,7 @@ package app.simplecloud.simplecloud.node.connect
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterRunnable
+import app.simplecloud.simplecloud.node.task.ErrorResolvedCheckerRunnable
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessCheckerRunnable
 import java.util.concurrent.TimeUnit
 
@@ -44,6 +45,7 @@ class ClusterInitializer(
         val scheduler = this.distribution.getScheduler("system")
         scheduler.scheduleAtFixedRate(ProcessUnregisterRunnable(), 1, 1, TimeUnit.SECONDS)
         scheduler.scheduleAtFixedRate(NodeOnlineProcessCheckerRunnable(), 1, 1, TimeUnit.SECONDS)
+        scheduler.scheduleAtFixedRate(ErrorResolvedCheckerRunnable(), 1, 1, TimeUnit.SECONDS)
     }
 
     private fun initializeRepositories() {

@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.node.connect.RestTokenLoader
 import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseSafeStarter
+import app.simplecloud.simplecloud.node.startup.prepare.module.NodeModuleLoader
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
 import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager

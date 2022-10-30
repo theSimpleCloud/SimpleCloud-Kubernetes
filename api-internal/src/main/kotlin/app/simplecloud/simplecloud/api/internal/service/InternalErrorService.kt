@@ -16,21 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.api.internal.service
 
+import app.simplecloud.simplecloud.api.error.configuration.ErrorConfiguration
 import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 10.10.22
+ * Time: 13:05
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+interface InternalErrorService : ErrorService {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
+    suspend fun createErrorInternal(configuration: ErrorConfiguration)
 
-    fun getErrorService(): ErrorService
+    /**
+     * Deletes all resolved errors
+     */
+    suspend fun deleteResolvedErrors()
 
 }

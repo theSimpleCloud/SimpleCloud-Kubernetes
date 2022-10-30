@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.impl.error.ErrorFactoryImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
@@ -28,6 +29,7 @@ import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImp
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.api.impl.service.DefaultErrorService
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
@@ -103,7 +105,8 @@ class NodeClusterConnect(
             DistributedCloudProcessRepository(distribution),
             DistributedPermissionGroupRepository(distribution),
             DistributedStaticProcessTemplateRepository(distribution),
-            DistributedOnlineCountStrategyRepository(distribution)
+            DistributedOnlineCountStrategyRepository(distribution),
+            DistributedErrorRepository(distribution)
         )
     }
 
@@ -204,6 +207,9 @@ class NodeClusterConnect(
             cloudProcessService,
             cloudProcessGroupService
         )
+
+        val errorService = DefaultErrorService(distributedRepositories.errorRepository, ErrorFactoryImpl())
+
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         return NodeCloudAPIImpl(
@@ -218,6 +224,7 @@ class NodeClusterConnect(
             eventManager,
             permissionFactory,
             distribution,
+            errorService,
             nodeProcessOnlineStrategyService,
         )
     }

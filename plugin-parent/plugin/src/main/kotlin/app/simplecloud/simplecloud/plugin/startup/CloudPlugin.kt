@@ -50,7 +50,7 @@ import java.util.*
 class CloudPlugin(
     private val distributionFactory: DistributionFactory,
     private val environmentVariables: EnvironmentVariables,
-    private val nodeAddress: Address
+    private val nodeAddress: Address,
 ) {
 
     val selfProcessId = UUID.fromString(this.environmentVariables.get("SIMPLECLOUD_PROCESS_ID"))
@@ -68,7 +68,7 @@ class CloudPlugin(
 
     private fun initializeServices(
         distribution: Distribution,
-        distributedRepositories: DistributedRepositories
+        distributedRepositories: DistributedRepositories,
     ): PluginCloudAPI {
         val eventManager = DefaultEventManager()
         val nodeService = NodeServiceImpl(distribution)
@@ -157,7 +157,8 @@ class CloudPlugin(
             DistributedCloudProcessGroupRepository(distribution),
             DistributedCloudProcessRepository(distribution),
             DistributedPermissionGroupRepository(distribution),
-            DistributedStaticProcessTemplateRepository(distribution)
+            DistributedStaticProcessTemplateRepository(distribution),
+            DistributedErrorRepository(distribution)
         )
     }
 

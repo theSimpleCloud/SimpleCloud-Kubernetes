@@ -16,21 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.api.repository
 
-import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.error.configuration.ErrorConfiguration
+import java.util.*
+import java.util.concurrent.CompletableFuture
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 07.01.22
+ * Time: 18:07
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+interface ErrorRepository : Repository<UUID, ErrorConfiguration> {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
+    fun findByProcessName(processName: String): CompletableFuture<Collection<ErrorConfiguration>>
 
-    fun getErrorService(): ErrorService
+    fun findResolvedErrors(): CompletableFuture<Collection<ErrorConfiguration>>
 
 }

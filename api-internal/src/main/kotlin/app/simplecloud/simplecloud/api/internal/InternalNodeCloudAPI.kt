@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.api.internal
 
 import app.simplecloud.simplecloud.api.NodeCloudAPI
+import app.simplecloud.simplecloud.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 
 /**
@@ -30,5 +31,7 @@ import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlin
 interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
 
     override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService
+
+    override fun getErrorService(): InternalErrorService
 
 }

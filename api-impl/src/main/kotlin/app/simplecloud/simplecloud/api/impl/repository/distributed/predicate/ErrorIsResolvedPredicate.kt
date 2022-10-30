@@ -16,21 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api
+package app.simplecloud.simplecloud.api.impl.repository.distributed.predicate
 
-import app.simplecloud.simplecloud.api.service.ErrorService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.api.error.configuration.ErrorConfiguration
+import app.simplecloud.simplecloud.distribution.api.Predicate
+import java.util.*
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 18.10.22
+ * Time: 12:32
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+class ErrorIsResolvedPredicate : Predicate<UUID, ErrorConfiguration> {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
-
-    fun getErrorService(): ErrorService
-
+    override fun apply(uuid: UUID, configuration: ErrorConfiguration): Boolean {
+        return configuration.resolveFunction?.isResolved(configuration) ?: false
+    }
 }

@@ -77,6 +77,8 @@ class RestServerStartTask(
         )
 
         this.controllerHandler.registerController(OnlineStrategyController(this.cloudAPI.getOnlineStrategyService()))
+
+        this.controllerHandler.registerController(ErrorController(this.cloudAPI.getErrorService()))
     }
 
 

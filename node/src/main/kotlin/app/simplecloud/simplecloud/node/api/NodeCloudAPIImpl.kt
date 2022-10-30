@@ -45,6 +45,7 @@ class NodeCloudAPIImpl(
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
     distribution: Distribution,
+    private val errorService: InternalErrorService,
     private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
@@ -62,6 +63,10 @@ class NodeCloudAPIImpl(
 
     override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
         return this.onlineStrategyService
+    }
+
+    override fun getErrorService(): InternalErrorService {
+        return this.errorService
     }
 
 }

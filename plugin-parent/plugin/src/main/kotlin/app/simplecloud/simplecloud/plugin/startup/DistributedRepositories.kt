@@ -33,4 +33,5 @@ data class DistributedRepositories(
     val cloudProcessRepository: DistributedCloudProcessRepository,
     val permissionGroupRepository: DistributedPermissionGroupRepository,
     val staticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
+    val errorRepository: DistributedErrorRepository,
 )
