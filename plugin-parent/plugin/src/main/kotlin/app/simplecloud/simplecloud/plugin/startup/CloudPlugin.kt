@@ -157,8 +157,7 @@ class CloudPlugin(
             DistributedCloudProcessGroupRepository(distribution),
             DistributedCloudProcessRepository(distribution),
             DistributedPermissionGroupRepository(distribution),
-            DistributedStaticProcessTemplateRepository(distribution),
-            DistributedErrorRepository(distribution)
+            DistributedStaticProcessTemplateRepository(distribution)
         )
     }
 

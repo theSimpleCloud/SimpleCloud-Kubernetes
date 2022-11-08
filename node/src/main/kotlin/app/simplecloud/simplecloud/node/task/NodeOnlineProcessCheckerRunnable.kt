@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import kotlinx.coroutines.runBlocking
 
 /**

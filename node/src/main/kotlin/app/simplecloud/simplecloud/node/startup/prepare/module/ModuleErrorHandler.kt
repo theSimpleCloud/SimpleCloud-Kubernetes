@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare.module
 
-import app.simplecloud.simplecloud.api.error.configuration.ErrorCreateConfiguration
+import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.impl.ModuleException
 import org.apache.logging.log4j.LogManager
 import java.io.PrintWriter

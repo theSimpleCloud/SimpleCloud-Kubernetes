@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.dto.OnlineStrategyUpdateRequestDto
 import app.simplecloud.simplecloud.restserver.api.controller.Controller
 import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestBody
@@ -36,7 +36,7 @@ import app.simplecloud.simplecloud.restserver.api.route.RequestType
  */
 @RestController(1, "cloud/onlinestrategy")
 class OnlineStrategyController(
-    private val service: NodeProcessOnlineStrategyService
+    private val service: NodeProcessOnlineStrategyService,
 ) : Controller {
 
     @RequestMapping(RequestType.GET, "", "web.cloud.onlinestrategy.get")
@@ -56,7 +56,7 @@ class OnlineStrategyController(
         @RequestBody(
             types = [],
             classes = [ProcessOnlineCountStrategyConfiguration::class]
-        ) configuration: ProcessOnlineCountStrategyConfiguration
+        ) configuration: ProcessOnlineCountStrategyConfiguration,
     ): ProcessOnlineCountStrategyConfiguration {
         val completableFuture = this.service.createCreateRequest(configuration).submit()
         val group = completableFuture.join()
@@ -68,7 +68,7 @@ class OnlineStrategyController(
         @RequestBody(
             types = [],
             classes = [OnlineStrategyUpdateRequestDto::class]
-        ) configuration: OnlineStrategyUpdateRequestDto
+        ) configuration: OnlineStrategyUpdateRequestDto,
     ): Boolean {
         val strategy = this.service.findByName(configuration.name).join()
         val updateRequest = this.service.createUpdateRequest(strategy)

@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig

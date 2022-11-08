@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 
 

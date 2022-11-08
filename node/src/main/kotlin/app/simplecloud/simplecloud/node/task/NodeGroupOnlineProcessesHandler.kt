@@ -21,8 +21,8 @@ package app.simplecloud.simplecloud.node.task
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
+import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
 
 class NodeGroupOnlineProcessesHandler(
     private val groupService: CloudProcessGroupService,

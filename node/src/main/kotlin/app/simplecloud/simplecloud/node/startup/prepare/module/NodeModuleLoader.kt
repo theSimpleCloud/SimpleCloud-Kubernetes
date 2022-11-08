@@ -18,10 +18,10 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare.module
 
-import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.module.api.impl.ClusterAPIImpl
 import app.simplecloud.simplecloud.module.api.impl.LocalAPIImpl
+import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.load.ModuleHandler
 import app.simplecloud.simplecloud.module.load.ModuleHandlerImpl
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoaderImpl

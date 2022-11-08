@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.api.processtemplate.group
 
 import app.simplecloud.simplecloud.api.service.ProcessTemplateService
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.api.processtemplate.NodeAPIProcessTemplateUpdateTest
 
 /**

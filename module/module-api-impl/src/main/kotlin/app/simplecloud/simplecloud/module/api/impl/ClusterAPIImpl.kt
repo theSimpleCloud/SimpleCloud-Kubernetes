@@ -18,10 +18,10 @@
 
 package app.simplecloud.simplecloud.module.api.impl
 
-import app.simplecloud.simplecloud.api.NodeCloudAPI
-import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.distribution.api.Cache
 import app.simplecloud.simplecloud.module.api.ClusterAPI
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 
 /**
  * Date: 05.10.22

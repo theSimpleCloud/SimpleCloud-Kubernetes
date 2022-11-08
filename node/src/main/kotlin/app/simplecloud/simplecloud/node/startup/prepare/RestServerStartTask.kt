@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
 import app.simplecloud.simplecloud.restserver.api.RestServer
 import app.simplecloud.simplecloud.restserver.api.auth.AuthService

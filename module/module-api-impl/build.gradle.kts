@@ -1,4 +1,4 @@
 dependencies {
-    implementation(project(":module:module-api"))
-    implementation(project(":api-internal"))
+    api(project(":module:module-api-internal"))
+    implementation(project(":api-impl"))
 }

@@ -22,15 +22,16 @@ dependencies {
 
 
     api(project(":api-impl"))
+    api(project(":module:module-api-impl"))
     implementation(project(":rest-server:rest-server-api"))
     implementation(project(":kubernetes:kubernetes-api"))
     implementation(project(":database:database-api"))
     implementation(project(":module:module-load"))
-    implementation(project(":module:module-api-impl"))
 
     implementation("org.apache.logging.log4j:log4j-core:2.18.0")
     implementation("org.apache.logging.log4j:log4j-api:2.18.0")
 
+    testFixturesApi(project(":module:module-api-impl"))
     testFixturesApi(project(":kubernetes:kubernetes-test"))
     testFixturesApi(project(":database:database-inmemory"))
     testFixturesApi(project(":rest-server:rest-server-base"))

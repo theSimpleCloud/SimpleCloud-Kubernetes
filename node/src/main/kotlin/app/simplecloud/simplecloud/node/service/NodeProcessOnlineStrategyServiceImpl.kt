@@ -21,17 +21,17 @@ package app.simplecloud.simplecloud.node.service
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
-import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequestImpl
-import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequestImpl
-import app.simplecloud.simplecloud.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequestImpl
-import app.simplecloud.simplecloud.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
-import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
-import app.simplecloud.simplecloud.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequestImpl
+import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequestImpl
+import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequestImpl
+import app.simplecloud.simplecloud.module.api.internal.InternalNodeProcessOnlineCountStrategyService
+import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
+import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
+import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import java.util.concurrent.CompletableFuture
@@ -45,7 +45,7 @@ import java.util.concurrent.CompletableFuture
 class NodeProcessOnlineStrategyServiceImpl(
     private val distributedRepository: DistributedOnlineCountStrategyRepository,
     private val databaseRepository: DatabaseOnlineCountStrategyRepository,
-    private val factory: UniversalProcessOnlineCountStrategyFactory
+    private val factory: UniversalProcessOnlineCountStrategyFactory,
 ) : InternalNodeProcessOnlineCountStrategyService {
 
     override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
@@ -59,7 +59,7 @@ class NodeProcessOnlineStrategyServiceImpl(
     }
 
     override fun findByProcessGroupName(
-        name: String
+        name: String,
     ): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
         val foundStrategies = distributedRepository.findByTargetProcessGroup(name).await()
         if (foundStrategies.isEmpty()) return@future DefaultProcessesOnlineCountStrategy

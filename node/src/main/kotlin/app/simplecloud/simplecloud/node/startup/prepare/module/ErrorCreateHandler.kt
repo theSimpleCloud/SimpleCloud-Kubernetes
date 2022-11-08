@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare.module
 
-import app.simplecloud.simplecloud.api.error.configuration.ErrorCreateConfiguration
-import app.simplecloud.simplecloud.api.service.ErrorService
+import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
+import app.simplecloud.simplecloud.module.api.service.ErrorService
 
 /**
  * Date: 23.10.22

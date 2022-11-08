@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.node.defaultcontroller.v1
 
-import app.simplecloud.simplecloud.api.error.configuration.ErrorConfiguration
-import app.simplecloud.simplecloud.api.service.ErrorService
+import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
+import app.simplecloud.simplecloud.module.api.service.ErrorService
 import app.simplecloud.simplecloud.restserver.api.controller.Controller
 import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestMapping
 import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestPathParam

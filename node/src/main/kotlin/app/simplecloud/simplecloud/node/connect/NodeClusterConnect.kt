@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.api.impl.error.ErrorFactoryImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
@@ -29,7 +28,6 @@ import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImp
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
-import app.simplecloud.simplecloud.api.impl.service.DefaultErrorService
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
@@ -38,14 +36,17 @@ import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.Stat
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticProxyTemplateFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.StaticServerTemplateFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.UniversalStaticProcessTemplateFactory
-import app.simplecloud.simplecloud.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.distribution.api.Address
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.error.ErrorFactoryImpl
+import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
+import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
+import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl

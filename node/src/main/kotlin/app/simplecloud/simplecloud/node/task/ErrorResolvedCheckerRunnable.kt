@@ -20,10 +20,10 @@ package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
-import app.simplecloud.simplecloud.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.node.api.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
+import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
 
 /**
  * Date: 18.10.22

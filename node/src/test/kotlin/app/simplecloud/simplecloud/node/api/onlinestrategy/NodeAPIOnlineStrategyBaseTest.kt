@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.api.onlinestrategy
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
