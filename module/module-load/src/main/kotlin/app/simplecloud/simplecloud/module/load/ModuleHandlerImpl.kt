@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.module.load
 
 import app.simplecloud.simplecloud.module.api.ClusterAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.load.classloader.ModuleClassLoader
 import app.simplecloud.simplecloud.module.load.exception.ModuleLoadException
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
@@ -37,6 +38,8 @@ class ModuleHandlerImpl(
     private val loadedModules = CopyOnWriteArrayList<LoadedModule>()
 
     private val moduleClassFinder = ModuleClassFinderImpl() { this.loadedModules }
+    private val unspecificModuleClassLoader =
+        ModuleClassLoader(emptyArray(), ClassLoader.getSystemClassLoader(), this.moduleClassFinder)
 
     override fun load(list: Set<File>): List<LoadedModule> {
         val loadModuleFileContents = loadModuleFileContents(list)
@@ -56,6 +59,10 @@ class ModuleHandlerImpl(
         for (loadedModule in this.loadedModules) {
             invokeOnClusterActiveCatching(loadedModule, clusterAPI)
         }
+    }
+
+    override fun getModuleClassLoader(): ClassLoader {
+        return this.unspecificModuleClassLoader
     }
 
     private fun invokeOnClusterActiveCatching(loadedModule: LoadedModule, clusterAPI: ClusterAPI) {

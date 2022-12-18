@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.module.api.impl.service
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.Error
 import app.simplecloud.simplecloud.module.api.error.ErrorFactory
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
@@ -65,9 +66,17 @@ class DefaultErrorService(
         return ErrorCreateRequestImpl(errorConfiguration, this)
     }
 
-    override suspend fun deleteResolvedErrors() {
-        val list = this.repository.findResolvedErrors().await()
-        list.forEach { this.repository.remove(it.id).await() }
+    override suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI) {
+        val allErrors = findAll().await()
+        val resolvedErrors = allErrors.forEach { deleteErrorIfResolved(it, nodeCloudAPI) }
+
+    }
+
+    private suspend fun deleteErrorIfResolved(error: Error, nodeCloudAPI: NodeCloudAPI) {
+        val isResolved = error.isResolved(nodeCloudAPI).await()
+        if (isResolved) {
+            this.repository.remove(error.toConfiguration().id).await()
+        }
     }
 
     private fun mapConfigurationListToError(list: Collection<ErrorConfiguration>): List<Error> {

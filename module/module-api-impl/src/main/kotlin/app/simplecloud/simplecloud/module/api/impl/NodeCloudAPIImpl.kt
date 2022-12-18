@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
+import app.simplecloud.simplecloud.module.api.LocalAPI
 import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
 import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.api.internal.InternalNodeProcessOnlineCountStrategyService
@@ -49,6 +50,7 @@ class NodeCloudAPIImpl(
     distribution: Distribution,
     private val errorService: InternalErrorService,
     private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
+    private val localAPI: LocalAPI,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -69,6 +71,10 @@ class NodeCloudAPIImpl(
 
     override fun getErrorService(): InternalErrorService {
         return this.errorService
+    }
+
+    override fun getLocalAPI(): LocalAPI {
+        return this.localAPI
     }
 
 }

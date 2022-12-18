@@ -68,6 +68,7 @@ class NodeClusterConnect(
     private val databaseRepositories = this.preparedNode.repositories
     private val tokenHandler = this.preparedNode.tokenHandler
     private val nodeModuleLoader = this.preparedNode.nodeModuleLoader
+    private val localAPI = this.preparedNode.localAPI
     private val nodeBindPort = 1670
 
     fun connect(): NodeCloudAPIImpl {
@@ -227,6 +228,7 @@ class NodeClusterConnect(
             distribution,
             errorService,
             nodeProcessOnlineStrategyService,
+            this.localAPI
         )
     }
 
@@ -234,7 +236,11 @@ class NodeClusterConnect(
         val addresses = getOtherNodesAddressesToConnectTo()
         logger.info("Connecting to {}", addresses)
         val actualPort = this.kubeAPI.getNetworkService().requestPort(this.selfPod, this.nodeBindPort)
-        return this.distributionFactory.createServer(actualPort, addresses)
+        return this.distributionFactory.createServer(
+            actualPort,
+            addresses,
+            this.nodeModuleLoader.getModuleClassLoader()
+        )
     }
 
     private fun getOtherNodesAddressesToConnectTo(): List<Address> {

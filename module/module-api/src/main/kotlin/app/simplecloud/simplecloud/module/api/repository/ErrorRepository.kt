@@ -33,6 +33,4 @@ interface ErrorRepository : Repository<UUID, ErrorConfiguration> {
 
     fun findByProcessName(processName: String): CompletableFuture<Collection<ErrorConfiguration>>
 
-    fun findResolvedErrors(): CompletableFuture<Collection<ErrorConfiguration>>
-
 }

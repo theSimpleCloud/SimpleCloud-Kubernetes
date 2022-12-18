@@ -24,25 +24,26 @@ import app.simplecloud.simplecloud.module.api.impl.LocalAPIImpl
 import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.load.ModuleHandler
 import app.simplecloud.simplecloud.module.load.ModuleHandlerImpl
+import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoaderImpl
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoader
 import app.simplecloud.simplecloud.module.load.unsafe.UnsafeModuleLoaderImpl
 import app.simplecloud.simplecloud.node.connect.LocalModuleSchedulerWatcher
 import java.io.File
 
-class NodeModuleLoader {
-
-    private val localAPI = LocalAPIImpl()
+class NodeModuleLoader(
+    private val localAPI: LocalAPIImpl,
+) {
     private val errorCreateHandler = ErrorCreateHandlerImpl()
     private val moduleHandler: ModuleHandler
 
     init {
-        val moduleFileContentLoaderImpl = ModuleFileContentLoaderImpl()
+        val moduleFileContentLoader: ModuleFileContentLoader = ModuleFileContentLoaderImpl()
         val unsafeModuleLoader: UnsafeModuleLoader = UnsafeModuleLoaderImpl()
         this.moduleHandler =
             ModuleHandlerImpl(
                 localAPI,
-                moduleFileContentLoaderImpl,
+                moduleFileContentLoader,
                 unsafeModuleLoader,
                 ModuleErrorHandler(this.errorCreateHandler)
             )
@@ -63,6 +64,10 @@ class NodeModuleLoader {
     fun startModuleSchedulerWatcher(distribution: Distribution) {
         LocalModuleSchedulerWatcher(distribution, this.localAPI.getLocalExecutorService())
             .start()
+    }
+
+    fun getModuleClassLoader(): ClassLoader {
+        return this.moduleHandler.getModuleClassLoader()
     }
 
     private fun collectModuleFiles(): Set<File> {

@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.error
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.module.api.error.ResolveFunction
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
@@ -71,14 +72,14 @@ class ErrorManagerTest : NodeAPIBaseTest() {
     @Test
     fun unresolvableErrorWillNotBeResolvedAfterCallingResolveErrors(): Unit = runBlocking {
         createDefaultUnresolvableError()
-        errorService.deleteResolvedErrors()
+        errorService.deleteResolvedErrors(this@ErrorManagerTest.cloudAPI)
         assertErrorsOnlineCount(1)
     }
 
     @Test
     fun instantResolvableErrorWillBeResolvedAfterCallingResolveErrors(): Unit = runBlocking {
         createDefaultResolvableError()
-        errorService.deleteResolvedErrors()
+        errorService.deleteResolvedErrors(this@ErrorManagerTest.cloudAPI)
         assertErrorsOnlineCount(0)
     }
 
@@ -88,11 +89,27 @@ class ErrorManagerTest : NodeAPIBaseTest() {
     }
 
     private fun createDefaultResolvableError() {
-        createError(ErrorCreateConfiguration("Test", "Long Test", "Lobby-1", ResolveFunction { true }))
+        createError(
+            ErrorCreateConfiguration(
+                "Test",
+                "Long Test",
+                "Lobby-1",
+                emptyMap(),
+                ResolveFunction { _, _ -> completedFuture(true) }
+            )
+        )
     }
 
     private fun createDefaultUnresolvableError() = runBlocking {
-        createError(ErrorCreateConfiguration("Test", "Long Test", "Lobby-1", null))
+        createError(
+            ErrorCreateConfiguration(
+                "Test",
+                "Long Test",
+                "Lobby-1",
+                emptyMap(),
+                null
+            )
+        )
     }
 
     private fun createError(errorCreateConfiguration: ErrorCreateConfiguration) = runBlocking {

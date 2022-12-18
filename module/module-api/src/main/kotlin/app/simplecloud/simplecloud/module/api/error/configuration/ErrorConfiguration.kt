@@ -34,5 +34,6 @@ class ErrorConfiguration(
     val message: String,
     val processName: String,
     val timeStamp: Long,
+    val errorData: Map<String, Any>,
     val resolveFunction: ResolveFunction?,
 ) : Serializable

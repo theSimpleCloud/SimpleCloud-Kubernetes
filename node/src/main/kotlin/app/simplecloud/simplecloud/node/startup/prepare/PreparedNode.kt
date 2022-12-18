@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
+import app.simplecloud.simplecloud.module.api.LocalAPI
 import app.simplecloud.simplecloud.node.startup.prepare.module.NodeModuleLoader
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 
@@ -32,4 +33,5 @@ data class PreparedNode(
     val repositories: DatabaseRepositories,
     val tokenHandler: TokenHandler,
     val nodeModuleLoader: NodeModuleLoader,
+    val localAPI: LocalAPI,
 )

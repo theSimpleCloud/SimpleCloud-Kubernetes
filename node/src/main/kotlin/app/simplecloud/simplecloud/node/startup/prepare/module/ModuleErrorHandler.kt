@@ -48,6 +48,7 @@ class ModuleErrorHandler(
                 throwable.message ?: "",
                 stackTraceString,
                 "Cloud",
+                emptyMap(),
                 null
             )
         )

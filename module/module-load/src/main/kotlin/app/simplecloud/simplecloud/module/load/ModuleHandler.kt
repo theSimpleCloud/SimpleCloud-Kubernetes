@@ -28,4 +28,6 @@ interface ModuleHandler : ModuleClassFinder {
 
     fun onClusterActive(clusterAPI: ClusterAPI)
 
+    fun getModuleClassLoader(): ClassLoader
+
 }

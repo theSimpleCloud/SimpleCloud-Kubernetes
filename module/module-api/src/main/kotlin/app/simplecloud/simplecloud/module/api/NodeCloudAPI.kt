@@ -34,4 +34,6 @@ interface NodeCloudAPI : CloudAPI {
 
     fun getErrorService(): ErrorService
 
+    fun getLocalAPI(): LocalAPI
+
 }

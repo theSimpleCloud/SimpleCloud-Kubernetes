@@ -18,8 +18,9 @@
 
 package app.simplecloud.simplecloud.module.api.error
 
-import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import java.io.Serializable
+import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 10.10.22
@@ -29,6 +30,6 @@ import java.io.Serializable
  */
 fun interface ResolveFunction : Serializable {
 
-    fun isResolved(configuration: ErrorConfiguration): Boolean
+    fun isResolved(error: Error, nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean>
 
 }

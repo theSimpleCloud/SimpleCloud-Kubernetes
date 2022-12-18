@@ -30,5 +30,6 @@ class ErrorCreateConfiguration(
     val shortMessage: String,
     val message: String,
     val processName: String,
+    val errorData: Map<String, Any>,
     val resolveFunction: ResolveFunction?,
 )

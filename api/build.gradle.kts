@@ -18,7 +18,7 @@
 
 
 dependencies {
-    api("app.simplecloud:distribution-api:1.0.0-SNAPSHOT")
+    api("app.simplecloud:distribution-api:1.0.4-SNAPSHOT")
     api("net.kyori:adventure-api:4.10.1")
     api(project(":event-api"))
 }

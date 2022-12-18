@@ -18,9 +18,10 @@
 
 package app.simplecloud.simplecloud.module.api.impl.error
 
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.Error
-import app.simplecloud.simplecloud.module.api.error.ResolveFunction
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
+import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 18.10.22
@@ -44,8 +45,17 @@ class ErrorImpl(
         return this.configuration.processName
     }
 
-    override fun getResolveFunction(): ResolveFunction? {
-        return this.configuration.resolveFunction
+    override fun getErrorData(): Map<String, Any> {
+        return this.configuration.errorData
+    }
+
+    override fun isResolvable(): Boolean {
+        return this.configuration.resolveFunction != null
+    }
+
+    override fun isResolved(nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean> {
+        val resolveFunction = this.configuration.resolveFunction
+        return resolveFunction?.isResolved(this, nodeCloudAPI) ?: CompletableFuture.completedFuture(false)
     }
 
     override fun toConfiguration(): ErrorConfiguration {

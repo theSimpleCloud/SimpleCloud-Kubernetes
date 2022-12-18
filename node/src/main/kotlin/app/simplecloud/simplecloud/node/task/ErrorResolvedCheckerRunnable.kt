@@ -22,8 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
-import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
+import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
 
 /**
  * Date: 18.10.22
@@ -35,19 +34,20 @@ class ErrorResolvedCheckerRunnable : Runnable, DistributionAware {
 
     @Transient
     @Volatile
-    private var cloudAPI: NodeCloudAPIImpl? = null
+    private var cloudAPI: InternalNodeCloudAPI? = null
 
     override fun run() {
         val cloudAPI = this.cloudAPI ?: return
-        deleteResolvedErrors(cloudAPI.getErrorService())
+        deleteResolvedErrors(cloudAPI)
     }
 
-    private fun deleteResolvedErrors(errorService: InternalErrorService) = CloudScope.future {
-        errorService.deleteResolvedErrors()
+    private fun deleteResolvedErrors(cloudAPI: InternalNodeCloudAPI) = CloudScope.future {
+        val errorService = cloudAPI.getErrorService()
+        errorService.deleteResolvedErrors(cloudAPI)
     }
 
     override fun setDistribution(distribution: Distribution) {
         val userContext = distribution.getUserContext()
-        this.cloudAPI = userContext["cloudAPI"] as NodeCloudAPIImpl
+        this.cloudAPI = userContext["cloudAPI"] as InternalNodeCloudAPI
     }
 }

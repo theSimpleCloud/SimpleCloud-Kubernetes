@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.module.api.internal
 
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
 import app.simplecloud.simplecloud.module.api.service.ErrorService
 
@@ -34,6 +35,6 @@ interface InternalErrorService : ErrorService {
     /**
      * Deletes all resolved errors
      */
-    suspend fun deleteResolvedErrors()
+    suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI)
 
 }

@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.AbstractDistr
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.predicate.ErrorCompareProcessNamePredicate
-import app.simplecloud.simplecloud.module.api.impl.repository.distributed.predicate.ErrorIsResolvedPredicate
 import app.simplecloud.simplecloud.module.api.repository.ErrorRepository
 import java.util.*
 import java.util.concurrent.CompletableFuture
@@ -41,10 +40,6 @@ class DistributedErrorRepository(
 
     override fun findByProcessName(processName: String): CompletableFuture<Collection<ErrorConfiguration>> {
         return executeQuery(ErrorCompareProcessNamePredicate(processName))
-    }
-
-    override fun findResolvedErrors(): CompletableFuture<Collection<ErrorConfiguration>> {
-        return executeQuery(ErrorIsResolvedPredicate())
     }
 
 }

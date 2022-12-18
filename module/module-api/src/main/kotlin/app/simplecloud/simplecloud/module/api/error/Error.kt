@@ -18,7 +18,9 @@
 
 package app.simplecloud.simplecloud.module.api.error
 
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
+import java.util.concurrent.CompletableFuture
 
 
 /**
@@ -45,16 +47,19 @@ interface Error {
     fun getProcessName(): String
 
     /**
-     * Returns whether this error can be resolved
+     * Returns custom error data
      */
-    fun isResolvable(): Boolean {
-        return getResolveFunction() != null
-    }
+    fun getErrorData(): Map<String, Any>
 
     /**
-     * Returns the function that indicates whether the error was resolved
+     * Returns whether this error can be resolved
      */
-    fun getResolveFunction(): ResolveFunction?
+    fun isResolvable(): Boolean
+
+    /**
+     * Returns whether this error has been resolved
+     */
+    fun isResolved(nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean>
 
     /**
      * Returns the configuration of this error

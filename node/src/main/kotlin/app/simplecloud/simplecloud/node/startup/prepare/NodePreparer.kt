@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerReposi
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.impl.LocalAPIImpl
 import app.simplecloud.simplecloud.node.connect.RestTokenLoader
 import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseSafeStarter
 import app.simplecloud.simplecloud.node.startup.prepare.module.NodeModuleLoader
@@ -43,6 +44,8 @@ class NodePreparer(
     private val tokenHandlerFactory: TokenHandlerFactory
 ) {
 
+    private val localAPI = LocalAPIImpl()
+
     fun prepare(): PreparedNode {
         logger.info("Starting Node...")
         val databaseRepositories = initDatabaseRepositories()
@@ -52,11 +55,11 @@ class NodePreparer(
         setupEnd()
         val nodeModuleLoader = loadModules()
         logger.info("Node Startup completed")
-        return PreparedNode(databaseRepositories, jwtTokenHandler, nodeModuleLoader)
+        return PreparedNode(databaseRepositories, jwtTokenHandler, nodeModuleLoader, this.localAPI)
     }
 
     private fun loadModules(): NodeModuleLoader {
-        val moduleLoader = NodeModuleLoader()
+        val moduleLoader = NodeModuleLoader(this.localAPI)
         moduleLoader.loadModules()
         return moduleLoader
     }

@@ -46,6 +46,7 @@ class ErrorCreateRequestImpl(
                 configuration.message,
                 configuration.processName,
                 System.currentTimeMillis(),
+                configuration.errorData,
                 configuration.resolveFunction
             )
         )
