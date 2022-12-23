@@ -16,30 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl
+package app.simplecloud.simplecloud.module.api.internal.service
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.module.api.ClusterAPI
 import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
+import app.simplecloud.simplecloud.module.api.service.ErrorService
 
 /**
- * Date: 05.10.22
- * Time: 09:49
+ * Date: 10.10.22
+ * Time: 13:05
  * @author Frederick Baier
  *
  */
-class ClusterAPIImpl(
-    private val internalNodeCloudAPI: InternalNodeCloudAPI,
-) : ClusterAPI {
+interface InternalErrorService : ErrorService {
 
-    private val distribution = this.internalNodeCloudAPI.getDistribution()
+    suspend fun createErrorInternal(configuration: ErrorConfiguration)
 
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
-    }
+    /**
+     * Deletes all resolved errors
+     */
+    suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI)
 
-    override fun getCloudAPI(): NodeCloudAPI {
-        return this.internalNodeCloudAPI
-    }
 }

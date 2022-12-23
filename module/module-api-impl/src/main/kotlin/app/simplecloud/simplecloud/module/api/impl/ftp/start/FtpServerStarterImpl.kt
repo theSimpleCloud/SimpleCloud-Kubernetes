@@ -16,30 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl
+package app.simplecloud.simplecloud.module.api.impl.ftp.start
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.module.api.ClusterAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.impl.ftp.FtpServerFactory
+import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpCreateConfiguration
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 
 /**
- * Date: 05.10.22
- * Time: 09:49
+ * Date: 21.12.22
+ * Time: 17:23
  * @author Frederick Baier
  *
  */
-class ClusterAPIImpl(
-    private val internalNodeCloudAPI: InternalNodeCloudAPI,
-) : ClusterAPI {
+class FtpServerStarterImpl(
+    private val kubeAPI: KubeAPI,
+    private val factory: FtpServerFactory,
+) : FtpServerStarter {
 
-    private val distribution = this.internalNodeCloudAPI.getDistribution()
-
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
+    override suspend fun startServer(
+        configuration: FtpCreateConfiguration,
+        service: InternalFtpServerService,
+    ): FtpServer {
+        return DirectFtpServerStarter(configuration, service, this.kubeAPI, this.factory).startServer()
     }
 
-    override fun getCloudAPI(): NodeCloudAPI {
-        return this.internalNodeCloudAPI
-    }
 }

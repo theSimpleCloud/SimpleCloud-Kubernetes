@@ -16,25 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.internal
+package app.simplecloud.simplecloud.module.api.internal.ftp.configuration
 
-import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
-import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
+import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 
 /**
- * Date: 27.03.22
- * Time: 10:10
+ * Date: 21.12.22
+ * Time: 09:23
  * @author Frederick Baier
  *
  */
-interface InternalNodeProcessOnlineCountStrategyService : NodeProcessOnlineStrategyService {
-
-    suspend fun createStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration): ProcessesOnlineCountStrategy
-
-    suspend fun deleteStrategyInternal(strategy: ProcessesOnlineCountStrategy)
-
-    suspend fun updateStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration)
-
-
-}
+class FtpCreateConfiguration(
+    val ftpServerName: String,
+    val ftpUser: String,
+    val ftpPassword: String,
+    val volumeClaim: KubeVolumeClaim,
+)

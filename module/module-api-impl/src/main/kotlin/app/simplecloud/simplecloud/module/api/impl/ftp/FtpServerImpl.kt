@@ -16,22 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.internal
+package app.simplecloud.simplecloud.module.api.impl.ftp
 
-import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-
+import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
+import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerStopRequest
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 
 /**
- * Date: 05.10.22
- * Time: 09:51
+ * Date: 21.12.22
+ * Time: 17:02
  * @author Frederick Baier
  *
  */
-interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
+class FtpServerImpl(
+    private val configuration: FtpServerConfiguration,
+    private val service: InternalFtpServerService,
+) : FtpServer {
 
-    override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService
+    override fun createStopRequest(): FtpServerStopRequest {
+        return this.service.createStopRequest(this)
+    }
 
-    override fun getErrorService(): InternalErrorService
+    override fun toConfiguration(): FtpServerConfiguration {
+        return this.configuration
+    }
 
 }

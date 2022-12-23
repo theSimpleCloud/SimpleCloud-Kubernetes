@@ -79,6 +79,14 @@ class RestServerStartTask(
         this.controllerHandler.registerController(OnlineStrategyController(this.cloudAPI.getOnlineStrategyService()))
 
         this.controllerHandler.registerController(ErrorController(this.cloudAPI.getErrorService()))
+
+        this.controllerHandler.registerController(
+            VolumeController(
+                this.cloudAPI.getFtpService(),
+                this.cloudAPI.getKubeAPI().getVolumeClaimService(),
+                this.cloudAPI.getStaticProcessTemplateService()
+            )
+        )
     }
 
 

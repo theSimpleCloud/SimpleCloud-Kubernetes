@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
-import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.module.api.request.error.ErrorCreateRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture

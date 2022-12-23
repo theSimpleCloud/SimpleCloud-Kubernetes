@@ -16,30 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl
+package app.simplecloud.simplecloud.module.api.internal.ftp
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.module.api.ClusterAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
+import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerStopRequest
 
 /**
- * Date: 05.10.22
- * Time: 09:49
+ * Date: 21.12.22
+ * Time: 09:33
  * @author Frederick Baier
  *
  */
-class ClusterAPIImpl(
-    private val internalNodeCloudAPI: InternalNodeCloudAPI,
-) : ClusterAPI {
+interface FtpServer {
 
-    private val distribution = this.internalNodeCloudAPI.getDistribution()
-
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
+    fun getName(): String {
+        return this.toConfiguration().ftpServerName
     }
 
-    override fun getCloudAPI(): NodeCloudAPI {
-        return this.internalNodeCloudAPI
+    fun getFtpUser(): String {
+        return this.toConfiguration().ftpUser
     }
+
+    fun getFtpPassword(): String {
+        return this.toConfiguration().ftpPassword
+    }
+
+    fun getPort(): Int {
+        return this.toConfiguration().port
+    }
+
+    fun createStopRequest(): FtpServerStopRequest
+
+    fun toConfiguration(): FtpServerConfiguration
+
+    companion object {
+        const val FTP_START_PORT = 30_200
+    }
+
 }

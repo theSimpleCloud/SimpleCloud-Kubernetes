@@ -44,9 +44,14 @@ import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.module.api.impl.error.ErrorFactoryImpl
+import app.simplecloud.simplecloud.module.api.impl.ftp.FtpServerFactoryImpl
+import app.simplecloud.simplecloud.module.api.impl.ftp.start.FtpServerStarterImpl
+import app.simplecloud.simplecloud.module.api.impl.ftp.stop.FtpServerStopperImpl
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
+import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedFtpServerRepository
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
-import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.impl.service.DefaultFtpServerService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
@@ -108,7 +113,8 @@ class NodeClusterConnect(
             DistributedPermissionGroupRepository(distribution),
             DistributedStaticProcessTemplateRepository(distribution),
             DistributedOnlineCountStrategyRepository(distribution),
-            DistributedErrorRepository(distribution)
+            DistributedErrorRepository(distribution),
+            DistributedFtpServerRepository(distribution),
         )
     }
 
@@ -212,6 +218,14 @@ class NodeClusterConnect(
 
         val errorService = DefaultErrorService(distributedRepositories.errorRepository, ErrorFactoryImpl())
 
+        val ftpServerFactory = FtpServerFactoryImpl()
+        val ftpService = DefaultFtpServerService(
+            distributedRepositories.ftpServerRepository,
+            ftpServerFactory,
+            FtpServerStarterImpl(this.kubeAPI, ftpServerFactory),
+            FtpServerStopperImpl(this.kubeAPI)
+        )
+
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         return NodeCloudAPIImpl(
@@ -228,7 +242,9 @@ class NodeClusterConnect(
             distribution,
             errorService,
             nodeProcessOnlineStrategyService,
-            this.localAPI
+            this.localAPI,
+            this.kubeAPI,
+            ftpService
         )
     }
 

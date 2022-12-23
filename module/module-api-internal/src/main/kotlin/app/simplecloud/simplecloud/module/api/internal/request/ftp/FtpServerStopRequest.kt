@@ -16,30 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl
+package app.simplecloud.simplecloud.module.api.internal.request.ftp
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.module.api.ClusterAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.api.utils.Request
 
 /**
- * Date: 05.10.22
- * Time: 09:49
+ * Date: 21.12.22
+ * Time: 09:32
  * @author Frederick Baier
  *
  */
-class ClusterAPIImpl(
-    private val internalNodeCloudAPI: InternalNodeCloudAPI,
-) : ClusterAPI {
-
-    private val distribution = this.internalNodeCloudAPI.getDistribution()
-
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
-    }
-
-    override fun getCloudAPI(): NodeCloudAPI {
-        return this.internalNodeCloudAPI
-    }
-}
+interface FtpServerStopRequest : Request<Unit>

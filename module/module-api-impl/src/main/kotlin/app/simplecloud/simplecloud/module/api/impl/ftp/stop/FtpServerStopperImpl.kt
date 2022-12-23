@@ -16,30 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl
+package app.simplecloud.simplecloud.module.api.impl.ftp.stop
 
-import app.simplecloud.simplecloud.distribution.api.Cache
-import app.simplecloud.simplecloud.module.api.ClusterAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
 
 /**
- * Date: 05.10.22
- * Time: 09:49
+ * Date: 21.12.22
+ * Time: 17:25
  * @author Frederick Baier
  *
  */
-class ClusterAPIImpl(
-    private val internalNodeCloudAPI: InternalNodeCloudAPI,
-) : ClusterAPI {
+class FtpServerStopperImpl(
+    private val kubeAPI: KubeAPI,
+) : FtpServerStopper {
 
-    private val distribution = this.internalNodeCloudAPI.getDistribution()
-
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
+    override suspend fun stopServer(ftpServer: FtpServer) {
+        DirectFtpServerStopper(ftpServer, this.kubeAPI).stopServer()
     }
 
-    override fun getCloudAPI(): NodeCloudAPI {
-        return this.internalNodeCloudAPI
-    }
 }

@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.api.utils.DefaultNameRequirement
-import app.simplecloud.simplecloud.module.api.internal.InternalNodeProcessOnlineCountStrategyService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
 import java.util.concurrent.CompletableFuture
 

@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.completedFuture
 import app.simplecloud.simplecloud.module.api.error.ResolveFunction
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
-import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.AfterEach

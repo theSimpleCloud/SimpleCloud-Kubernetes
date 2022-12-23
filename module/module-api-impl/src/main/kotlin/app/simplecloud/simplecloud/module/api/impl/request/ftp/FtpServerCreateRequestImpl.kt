@@ -16,31 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy
+package app.simplecloud.simplecloud.module.api.impl.request.ftp
 
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
-import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
-import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
+import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpCreateConfiguration
+import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerCreateRequest
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 import java.util.concurrent.CompletableFuture
 
 /**
- * Date: 27.03.22
- * Time: 10:08
+ * Date: 21.12.22
+ * Time: 13:56
  * @author Frederick Baier
  *
  */
-class ProcessOnlineCountStrategyDeleteRequestImpl(
-    private val strategy: ProcessesOnlineCountStrategy,
-    private val internalService: InternalNodeProcessOnlineCountStrategyService,
-) : ProcessOnlineCountStrategyDeleteRequest {
+class FtpServerCreateRequestImpl(
+    private val configuration: FtpCreateConfiguration,
+    private val internalService: InternalFtpServerService,
+) : FtpServerCreateRequest {
 
-    override fun getStrategy(): ProcessesOnlineCountStrategy {
-        return this.strategy
+    override fun submit(): CompletableFuture<FtpServer> = CloudScope.future {
+        return@future internalService.createServerInternal(configuration)
     }
 
-    override fun submit(): CompletableFuture<Unit> = CloudScope.future {
-        internalService.deleteStrategyInternal(strategy)
-    }
 }

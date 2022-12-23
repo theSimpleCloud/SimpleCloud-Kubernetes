@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
-import app.simplecloud.simplecloud.module.api.internal.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 
 /**
  * Date: 18.10.22

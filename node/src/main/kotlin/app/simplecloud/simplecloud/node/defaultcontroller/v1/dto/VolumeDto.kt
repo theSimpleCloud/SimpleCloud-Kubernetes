@@ -16,25 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.internal
-
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
-import app.simplecloud.simplecloud.module.api.service.ErrorService
+package app.simplecloud.simplecloud.node.defaultcontroller.v1.dto
 
 /**
- * Date: 10.10.22
- * Time: 13:05
+ * Date: 22.12.22
+ * Time: 17:25
  * @author Frederick Baier
  *
  */
-interface InternalErrorService : ErrorService {
-
-    suspend fun createErrorInternal(configuration: ErrorConfiguration)
-
-    /**
-     * Deletes all resolved errors
-     */
-    suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI)
-
-}
+class VolumeDto(
+    val name: String,
+    val isFtpServerOnline: Boolean,
+    val ftpUserName: String,
+    val ftpPassword: String,
+    val ftpPort: Int,
+)

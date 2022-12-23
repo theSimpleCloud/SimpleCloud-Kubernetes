@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.module.api.internal.InternalNodeProcessOnlineCountStrategyService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.CopyOnWriteArraySet

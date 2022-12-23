@@ -26,7 +26,7 @@ import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfigura
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
 import app.simplecloud.simplecloud.module.api.impl.request.error.ErrorCreateRequestImpl
-import app.simplecloud.simplecloud.module.api.internal.InternalErrorService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.module.api.request.error.ErrorCreateRequest
 import java.util.*
 import java.util.concurrent.CompletableFuture
