@@ -1,0 +1,9 @@
+FROM eclipse-temurin:17
+
+COPY bootstrap/build/libs/bootstrap-3.0.0-SNAPSHOT-all.jar /node.jar
+COPY microk8s/k3s/simplecloud-test-plugin-1.0-SNAPSHOT.jar /node/modules/simplecloud-test-plugin-1.0-SNAPSHOT.jar
+
+EXPOSE 8008
+
+WORKDIR /node/
+CMD [ "java", "-jar", "/node.jar" ]
