@@ -19,10 +19,12 @@
 plugins {
     java
     `java-test-fixtures`
+    `maven-publish`
     id ("com.github.johnrengelman.shadow") version "7.0.0"
     kotlin("kapt") version "1.7.0"
     kotlin("jvm") version "1.7.10"
 }
+
 
 allprojects {
     group = "app.simplecloud"
@@ -34,10 +36,12 @@ allprojects {
         plugin("org.jetbrains.kotlin.jvm")
         plugin("com.github.johnrengelman.shadow")
         plugin("kotlin-kapt")
+        plugin("maven-publish")
     }
 
     repositories {
         mavenCentral()
+        mavenLocal()
         maven("https://repo.thesimplecloud.eu/artifactory/list/gradle-release-local/")
         maven("https://oss.sonatype.org/content/repositories/snapshots")
         maven("https://hub.spigotmc.org/nexus/content/repositories/snapshots/")
@@ -45,7 +49,7 @@ allprojects {
         maven("https://oss.sonatype.org/content/repositories/central")
         maven("https://repo.papermc.io/repository/maven-public/")
         maven("https://jitpack.io")
-        maven("https://repo.fllip.de/snapshots")
+        maven("https://repo.fllip.dev/snapshots")
     }
 
 }
@@ -83,6 +87,18 @@ subprojects {
 
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions.jvmTarget = JavaVersion.VERSION_1_8.toString()
+    }
+
+    publishing {
+        publications {
+            create<MavenPublication>("maven") {
+                //groupId = "org.gradle.sample"
+                //artifactId = "library"
+                //version = "1.1"
+
+                from(components["java"])
+            }
+        }
     }
 
 }
