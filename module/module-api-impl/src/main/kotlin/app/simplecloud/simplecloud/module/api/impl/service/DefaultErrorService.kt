@@ -68,8 +68,7 @@ class DefaultErrorService(
 
     override suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI) {
         val allErrors = findAll().await()
-        val resolvedErrors = allErrors.forEach { deleteErrorIfResolved(it, nodeCloudAPI) }
-
+        allErrors.forEach { deleteErrorIfResolved(it, nodeCloudAPI) }
     }
 
     private suspend fun deleteErrorIfResolved(error: Error, nodeCloudAPI: NodeCloudAPI) {
