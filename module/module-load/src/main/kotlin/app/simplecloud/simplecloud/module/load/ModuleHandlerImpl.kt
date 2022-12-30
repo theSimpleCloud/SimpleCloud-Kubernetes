@@ -95,11 +95,16 @@ class ModuleHandlerImpl(
     }
 
     private fun loadModuleFileContents(list: Set<File>): List<LoadedModuleFileContent> {
-        return list.map { loadModuleFileContent(it) }
+        return list.mapNotNull { loadModuleFileContent(it) }
     }
 
-    private fun loadModuleFileContent(file: File): LoadedModuleFileContent {
-        return LoadedModuleFileContent(file, this.moduleFileContentLoader.load(file))
+    private fun loadModuleFileContent(file: File): LoadedModuleFileContent? {
+        try {
+            return LoadedModuleFileContent(file, this.moduleFileContentLoader.load(file))
+        } catch (e: Exception) {
+            this.errorHandler.invoke(e)
+        }
+        return null
     }
 
 

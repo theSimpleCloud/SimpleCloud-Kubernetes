@@ -20,9 +20,8 @@ package app.simplecloud.simplecloud.node.startup.prepare.module
 
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.impl.ModuleException
+import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.logging.log4j.LogManager
-import java.io.PrintWriter
-import java.io.StringWriter
 
 /**
  * Date: 05.10.22
@@ -42,7 +41,7 @@ class ModuleErrorHandler(
     }
 
     private fun createErrorFromThrowable(throwable: Throwable) {
-        val stackTraceString = getStackTraceStringFromException(throwable)
+        val stackTraceString = ExceptionUtils.getStackTrace(throwable)
         this.errorCreateHandler.create(
             ErrorCreateConfiguration(
                 throwable.message ?: "",
@@ -52,13 +51,6 @@ class ModuleErrorHandler(
                 null
             )
         )
-    }
-
-    private fun getStackTraceStringFromException(throwable: Throwable): String {
-        val sw = StringWriter()
-        val pw = PrintWriter(sw)
-        throwable.printStackTrace(pw)
-        return sw.toString()
     }
 
     companion object {
