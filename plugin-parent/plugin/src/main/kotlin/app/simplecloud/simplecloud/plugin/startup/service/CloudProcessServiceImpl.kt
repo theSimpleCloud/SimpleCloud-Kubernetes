@@ -69,7 +69,7 @@ class CloudProcessServiceImpl(
             .submit().await()
     }
 
-    override fun getLogs(process: CloudProcess): CompletableFuture<List<String>> = CloudScope.future {
+    override fun getLogs(process: CloudProcess): CompletableFuture<String> = CloudScope.future {
         val node = findRandomNode()
         return@future messageChannelProvider.getInternalProcessLogsMessageChannel()
             .createMessageRequest(process.getName(), node).submit().await()

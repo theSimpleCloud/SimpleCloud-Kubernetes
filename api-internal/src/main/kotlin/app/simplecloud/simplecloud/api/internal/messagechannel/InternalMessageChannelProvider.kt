@@ -57,12 +57,14 @@ interface InternalMessageChannelProvider {
 
     fun getInternalExecuteCommandChannel(): MessageChannel<ProcessExecuteCommandConfiguration, Unit>
 
-    fun getInternalProcessLogsMessageChannel(): MessageChannel<String, List<String>>
+    fun getInternalProcessLogsMessageChannel(): MessageChannel<String, String>
 
     fun getInternalGetOfflineCloudPlayerByNameChannel(): MessageChannel<String, OfflineCloudPlayerConfiguration>
 
     fun getInternalGetOfflineCloudPlayerByUUIDChannel(): MessageChannel<UUID, OfflineCloudPlayerConfiguration>
 
     fun getInternalOfflinePlayerUpdateChannel(): MessageChannel<OfflineCloudPlayerConfiguration, Unit>
+
+    fun getInternalRestartMessageChannel(): MessageChannel<Long, Unit>
 
 }

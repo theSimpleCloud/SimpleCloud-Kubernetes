@@ -103,7 +103,7 @@ interface CloudProcess : NetworkComponent, Identifiable<String> {
     /**
      * Returns the logs of the process
      */
-    fun getLogs(): CompletableFuture<List<String>>
+    fun getLogs(): CompletableFuture<String>
 
     /**
      * Returns the termination future

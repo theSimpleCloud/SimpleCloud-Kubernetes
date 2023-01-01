@@ -94,6 +94,6 @@ interface CloudProcessService : Service {
     /**
      * Returns the logs of the process
      */
-    fun getLogs(process: CloudProcess): CompletableFuture<List<String>>
+    fun getLogs(process: CloudProcess): CompletableFuture<String>
 
 }

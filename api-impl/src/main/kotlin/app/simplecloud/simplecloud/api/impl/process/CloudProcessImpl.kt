@@ -131,7 +131,7 @@ class CloudProcessImpl constructor(
         return this.processService.createExecuteCommandRequest(this, command)
     }
 
-    override fun getLogs(): CompletableFuture<List<String>> {
+    override fun getLogs(): CompletableFuture<String> {
         return this.processService.getLogs(this)
     }
 

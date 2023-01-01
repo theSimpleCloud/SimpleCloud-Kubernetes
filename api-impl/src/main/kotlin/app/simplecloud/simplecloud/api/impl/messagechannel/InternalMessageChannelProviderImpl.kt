@@ -81,7 +81,7 @@ class InternalMessageChannelProviderImpl(
         return this.messageChannelManager.getOrCreateMessageChannel("internal_process_exec")
     }
 
-    override fun getInternalProcessLogsMessageChannel(): MessageChannel<String, List<String>> {
+    override fun getInternalProcessLogsMessageChannel(): MessageChannel<String, String> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_process_logs")
     }
 
@@ -95,6 +95,10 @@ class InternalMessageChannelProviderImpl(
 
     override fun getInternalOfflinePlayerUpdateChannel(): MessageChannel<OfflineCloudPlayerConfiguration, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_oplayer_update")
+    }
+
+    override fun getInternalRestartMessageChannel(): MessageChannel<Long, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_restart")
     }
 
 

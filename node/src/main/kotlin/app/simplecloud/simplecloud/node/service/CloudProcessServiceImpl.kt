@@ -55,7 +55,7 @@ class CloudProcessServiceImpl(
         return InternalProcessCommandExecutor(configuration, this.podService).executeCommand()
     }
 
-    override fun getLogs(process: CloudProcess): CompletableFuture<List<String>> = CloudScope.future {
+    override fun getLogs(process: CloudProcess): CompletableFuture<String> = CloudScope.future {
         return@future podService.getPod(process.getName()).getLogs()
     }
 }

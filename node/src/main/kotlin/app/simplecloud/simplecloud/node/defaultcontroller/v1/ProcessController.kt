@@ -79,7 +79,7 @@ class ProcessController(
     }
 
     @RequestMapping(RequestType.GET, "{name}/logs", "web.cloud.process.logs")
-    fun handleGetLogs(@RequestPathParam("name") name: String): List<String> {
+    fun handleGetLogs(@RequestPathParam("name") name: String): String {
         val process = this.processService.findByName(name).join()
         return process.getLogs().join()
     }
