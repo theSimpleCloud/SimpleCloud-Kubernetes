@@ -224,6 +224,10 @@ class KubeNetworkTest {
             TODO("Not yet implemented")
         }
 
+        override fun isFailed(): Boolean {
+            TODO("Not yet implemented")
+        }
+
         override fun delete() {
             TODO("Not yet implemented")
         }
@@ -236,7 +240,7 @@ class KubeNetworkTest {
             TODO("Not yet implemented")
         }
 
-        override fun getLogs(): List<String> {
+        override fun getLogs(): String {
             TODO("Not yet implemented")
         }
 
