@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.module.load.testmodule
 
 import app.simplecloud.simplecloud.module.api.CloudModule
-import app.simplecloud.simplecloud.module.api.ClusterAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 
 /**
  * Date: 02.09.22
@@ -34,7 +34,7 @@ class EmptyModuleMain : CloudModule() {
 
     }
 
-    override fun onClusterActive(clusterAPI: ClusterAPI) {
+    override fun onClusterActive(cloudAPI: NodeCloudAPI) {
 
     }
 

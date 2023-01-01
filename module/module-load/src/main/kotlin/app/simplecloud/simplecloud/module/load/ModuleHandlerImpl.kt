@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.module.load
 
-import app.simplecloud.simplecloud.module.api.ClusterAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.load.classloader.ModuleClassLoader
 import app.simplecloud.simplecloud.module.load.exception.ModuleLoadException
 import app.simplecloud.simplecloud.module.load.modulefilecontent.ModuleFileContentLoader
@@ -55,9 +55,9 @@ class ModuleHandlerImpl(
         return newlyLoadedModules
     }
 
-    override fun onClusterActive(clusterAPI: ClusterAPI) {
+    override fun onClusterActive(cloudAPI: NodeCloudAPI) {
         for (loadedModule in this.loadedModules) {
-            invokeOnClusterActiveCatching(loadedModule, clusterAPI)
+            invokeOnClusterActiveCatching(loadedModule, cloudAPI)
         }
     }
 
@@ -65,9 +65,9 @@ class ModuleHandlerImpl(
         return this.unspecificModuleClassLoader
     }
 
-    private fun invokeOnClusterActiveCatching(loadedModule: LoadedModule, clusterAPI: ClusterAPI) {
+    private fun invokeOnClusterActiveCatching(loadedModule: LoadedModule, cloudAPI: NodeCloudAPI) {
         try {
-            loadedModule.cloudModule.onClusterActive(clusterAPI)
+            loadedModule.cloudModule.onClusterActive(cloudAPI)
         } catch (ex: Exception) {
             this.errorHandler.invoke(ex)
         }

@@ -30,7 +30,7 @@ abstract class CloudModule : EventRegisterer {
 
     abstract fun onEnable(localAPI: LocalAPI)
 
-    abstract fun onClusterActive(clusterAPI: ClusterAPI)
+    abstract fun onClusterActive(cloudAPI: NodeCloudAPI)
 
     abstract fun onDisable()
 

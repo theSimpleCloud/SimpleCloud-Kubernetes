@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.module.load.testmodule
 
 import app.simplecloud.simplecloud.module.api.CloudModule
-import app.simplecloud.simplecloud.module.api.ClusterAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 
 /**
  * Date: 01.09.22
@@ -34,7 +34,7 @@ class FailingModuleMain : CloudModule() {
         throw RuntimeException("FailingModuleMain: Init failed")
     }
 
-    override fun onClusterActive(clusterAPI: ClusterAPI) {
+    override fun onClusterActive(cloudAPI: NodeCloudAPI) {
         throw RuntimeException("FailingModuleMain: Cluster active failed")
     }
 

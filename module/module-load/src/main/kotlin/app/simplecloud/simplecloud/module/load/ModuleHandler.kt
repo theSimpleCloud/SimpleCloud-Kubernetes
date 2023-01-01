@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.module.load
 
-import app.simplecloud.simplecloud.module.api.ClusterAPI
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.load.util.ModuleClassFinder
 import java.io.File
 
@@ -26,7 +26,7 @@ interface ModuleHandler : ModuleClassFinder {
 
     fun load(list: Set<File>): List<LoadedModule>
 
-    fun onClusterActive(clusterAPI: ClusterAPI)
+    fun onClusterActive(clusterAPI: NodeCloudAPI)
 
     fun getModuleClassLoader(): ClassLoader
 
