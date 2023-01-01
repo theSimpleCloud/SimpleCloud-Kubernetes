@@ -16,30 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api
+package app.simplecloud.simplecloud.kubernetes.test.deployment
 
-import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeploymentService
-import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
-import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
-import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
-import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeployment
 
 /**
- * Date: 30.04.22
- * Time: 15:01
+ * Date: 28.12.22
+ * Time: 23:55
  * @author Frederick Baier
  *
  */
-interface KubeAPI {
+class TestKubeDeployment(
+    private val name: String,
+) : KubeDeployment {
+    override fun getName(): String {
+        return this.name
+    }
 
-    fun getPodService(): KubePodService
+    override fun editImage(image: String) {
 
-    fun getSecretService(): KubeSecretService
-
-    fun getNetworkService(): KubeNetworkService
-
-    fun getVolumeClaimService(): KubeVolumeClaimService
-
-    fun getDeploymentService(): KubeDeploymentService
-
+    }
 }

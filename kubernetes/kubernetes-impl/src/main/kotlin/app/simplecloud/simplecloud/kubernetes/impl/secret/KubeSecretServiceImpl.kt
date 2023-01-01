@@ -40,7 +40,7 @@ class KubeSecretServiceImpl(
     override fun createSecret(name: String, secretSpec: SecretSpec): KubeSecret {
         val secret = createSecretObj(name, secretSpec)
         try {
-            this.api.createNamespacedSecret("default", secret, null, null, null)
+            this.api.createNamespacedSecret("default", secret, null, null, null, null)
         } catch (ex: ApiException) {
             throw KubeException(ex.responseBody, ex)
         }

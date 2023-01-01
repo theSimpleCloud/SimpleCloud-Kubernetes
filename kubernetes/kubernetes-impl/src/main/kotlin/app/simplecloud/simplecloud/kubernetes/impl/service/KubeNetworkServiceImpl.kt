@@ -27,7 +27,7 @@ class KubeNetworkServiceImpl(
     override fun createService(name: String, serviceSpec: ServiceSpec): KubeService {
         val service = createServiceObj(name.lowercase(), serviceSpec)
         try {
-            this.api.createNamespacedService("default", service, null, null, null)
+            this.api.createNamespacedService("default", service, null, null, null, null)
         } catch (ex: ApiException) {
             throw KubeException(ex.responseBody, ex)
         }

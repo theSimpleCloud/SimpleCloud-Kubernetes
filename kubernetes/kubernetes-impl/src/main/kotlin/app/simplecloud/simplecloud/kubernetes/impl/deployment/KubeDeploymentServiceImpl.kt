@@ -16,30 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api
+package app.simplecloud.simplecloud.kubernetes.impl.deployment
 
+import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeployment
 import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeploymentService
-import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
-import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
-import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
-import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetes.api.exception.KubeException
+import io.kubernetes.client.openapi.apis.AppsV1Api
 
 /**
- * Date: 30.04.22
- * Time: 15:01
+ * Date: 29.12.22
+ * Time: 00:00
  * @author Frederick Baier
  *
  */
-interface KubeAPI {
+class KubeDeploymentServiceImpl(
+    private val api: AppsV1Api,
+) : KubeDeploymentService {
 
-    fun getPodService(): KubePodService
-
-    fun getSecretService(): KubeSecretService
-
-    fun getNetworkService(): KubeNetworkService
-
-    fun getVolumeClaimService(): KubeVolumeClaimService
-
-    fun getDeploymentService(): KubeDeploymentService
+    override fun getDeployment(name: String): KubeDeployment {
+        try {
+            return KubeDeploymentImpl(name.lowercase(), this.api)
+        } catch (e: KubeException) {
+            throw NoSuchElementException("Deployment '${name}' does not exist")
+        }
+    }
 
 }

@@ -35,6 +35,9 @@ class PodSpec {
     val labels = CopyOnWriteArrayList<Label>()
 
     @Volatile
+    var command: KubeCommand? = null
+
+    @Volatile
     var maxMemory: Int = -1
         private set
 
@@ -87,6 +90,11 @@ class PodSpec {
         return this
     }
 
+    fun withCommand(command: KubeCommand): PodSpec {
+        this.command = command
+        return this
+    }
+
     class EnvironmentVariable(
         val name: String,
         val value: String,
@@ -95,6 +103,11 @@ class PodSpec {
     class MountableVolume(
         val volumeClaim: KubeVolumeClaim,
         val mountPath: String,
+    )
+
+    class KubeCommand(
+        val command: List<String>,
+        val args: List<String>,
     )
 
 }

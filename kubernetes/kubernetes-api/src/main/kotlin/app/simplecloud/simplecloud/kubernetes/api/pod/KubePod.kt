@@ -49,6 +49,11 @@ interface KubePod {
     fun isActive(): Boolean
 
     /**
+     * Returns weather the pod is failed
+     */
+    fun isFailed(): Boolean
+
+    /**
      * Shuts this container down
      */
     fun delete()
@@ -66,7 +71,7 @@ interface KubePod {
     /**
      * Returns the logs saved
      */
-    fun getLogs(): List<String>
+    fun getLogs(): String
 
     /**
      * Returns the labels of this pod

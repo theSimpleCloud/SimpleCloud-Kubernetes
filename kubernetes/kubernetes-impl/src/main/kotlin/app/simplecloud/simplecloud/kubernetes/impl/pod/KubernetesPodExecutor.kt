@@ -30,11 +30,11 @@ import io.kubernetes.client.PodLogs
 import io.kubernetes.client.openapi.ApiException
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.openapi.models.V1Pod
-import kotlinx.coroutines.runBlocking
+import io.kubernetes.client.util.Streams
 import java.io.BufferedReader
+import java.io.InputStream
 import java.io.InputStreamReader
 import java.nio.charset.StandardCharsets
-import java.util.concurrent.CopyOnWriteArrayList
 
 
 class KubernetesPodExecutor(
@@ -98,26 +98,11 @@ class KubernetesPodExecutor(
         }
     }
 
-    fun getLogs(): List<String> {
-        val logs = PodLogs(this.api.apiClient)
+    fun getLogs(): String {
         val pod: V1Pod = fetchThisPod()
-        val inputStream = logs.streamNamespacedPodLog(pod)
-        val bufferedReader = BufferedReader(InputStreamReader(inputStream))
-
-        val list = readLinesBlocking(bufferedReader)
-        inputStream.close()
-        return list
-    }
-
-    private fun readLinesBlocking(bufferedReader: BufferedReader): List<String> {
-        val list = CopyOnWriteArrayList<String>()
-        runBlocking {
-            while (true) {
-                val line = readSingleLine(bufferedReader) ?: break
-                list.add(line)
-            }
-        }
-        return list
+        val logs = PodLogs()
+        val inputStream: InputStream = logs.streamNamespacedPodLog(pod)
+        return Streams.toString(InputStreamReader(inputStream))
     }
 
     private suspend fun readSingleLine(bufferedReader: BufferedReader): String? {

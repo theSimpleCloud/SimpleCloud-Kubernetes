@@ -16,23 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
-
-import app.simplecloud.simplecloud.distribution.api.Cache
+package app.simplecloud.simplecloud.kubernetes.api.deployment
 
 /**
- * Date: 03.10.22
- * Time: 19:31
+ * Date: 28.12.22
+ * Time: 23:44
  * @author Frederick Baier
  *
  */
-interface ClusterAPI {
+interface KubeDeployment {
 
-    /**
-     * Creates a distributed key value store
-     */
-    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
+    fun getName(): String
 
-    fun getCloudAPI(): NodeCloudAPI
+    fun editImage(image: String)
 
 }

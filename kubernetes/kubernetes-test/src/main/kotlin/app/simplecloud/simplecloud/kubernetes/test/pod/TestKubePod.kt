@@ -65,7 +65,11 @@ class TestKubePod(
         return this.isRunning
     }
 
-    override fun getLogs(): List<String> {
+    override fun isFailed(): Boolean {
+        return false
+    }
+
+    override fun getLogs(): String {
         TODO("Not yet implemented")
     }
 

@@ -28,7 +28,7 @@ import io.kubernetes.client.openapi.models.*
 class KubernetesPodStarter(
     private val containerName: String,
     private val containerSpec: PodSpec,
-    private val api: CoreV1Api
+    private val api: CoreV1Api,
 ) {
 
     fun startContainer() {
@@ -44,6 +44,32 @@ class KubernetesPodStarter(
 
         val image = containerSpec.image
         require(image != null) { "Image must be not null" }
+        val container = V1Container()
+            .name("simplecloud-process")
+            .image(image.lowercase())
+            .env(environmentVariables)
+            .stdin(true)
+            .tty(true)
+            .resources(
+                V1ResourceRequirements()
+                    .requests(
+                        hashMapOf(
+                            "memory" to Quantity.fromString("${this.containerSpec.maxMemory}Mi")
+                        )
+                    )
+            ).volumeMounts(
+                volumeMounts
+            )
+
+        if (containerPort != null)
+            container.ports(listOf(containerPort))
+
+        val kubeCommand = containerSpec.command
+        if (kubeCommand != null) {
+            container.command(kubeCommand.command)
+            container.args(kubeCommand.args)
+        }
+
         val pod = V1Pod()
             .metadata(
                 V1ObjectMeta()
@@ -53,23 +79,7 @@ class KubernetesPodStarter(
                 V1PodSpec()
                     .containers(
                         listOf(
-                            V1Container()
-                                .name("simplecloud-process")
-                                .image(image.lowercase())
-                                .ports(listOf(containerPort))
-                                .env(environmentVariables)
-                                .stdin(true)
-                                .tty(true)
-                                .resources(
-                                    V1ResourceRequirements()
-                                        .requests(
-                                            hashMapOf(
-                                                "memory" to Quantity.fromString("${this.containerSpec.maxMemory}Mi")
-                                            )
-                                        )
-                                ).volumeMounts(
-                                    volumeMounts
-                                )
+                            container
                         )
                     ).volumes(
                         volumes
@@ -80,7 +90,7 @@ class KubernetesPodStarter(
 
     private fun createNamespacedPod(pod: V1Pod) {
         try {
-            this.api.createNamespacedPod("default", pod, null, null, null)
+            this.api.createNamespacedPod("default", pod, null, null, null, null)
         } catch (ex: ApiException) {
             throw KubeException(ex.responseBody, ex)
         }
@@ -106,7 +116,9 @@ class KubernetesPodStarter(
         }
     }
 
-    private fun createContainerPort(): V1ContainerPort {
+    private fun createContainerPort(): V1ContainerPort? {
+        if (this.containerSpec.containerPort == -1)
+            return null
         return V1ContainerPort()
             .containerPort(this.containerSpec.containerPort)
     }

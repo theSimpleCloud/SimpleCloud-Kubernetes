@@ -65,7 +65,12 @@ class KubePodImpl(
         return phase == "Pending" || phase == "Running"
     }
 
-    override fun getLogs(): List<String> {
+    override fun isFailed(): Boolean {
+        val phase = this.executor.getPhase()
+        return phase == "Failed"
+    }
+
+    override fun getLogs(): String {
         return this.executor.getLogs()
     }
 

@@ -19,9 +19,11 @@
 package app.simplecloud.simplecloud.kubernetes.test
 
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeploymentService
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetes.test.deployment.TestKubeDeploymentService
 import app.simplecloud.simplecloud.kubernetes.test.pod.TestKubePodService
 import app.simplecloud.simplecloud.kubernetes.test.secret.TestKubeSecretService
 import app.simplecloud.simplecloud.kubernetes.test.service.TestKubeNetworkService
@@ -43,6 +45,8 @@ class KubeTestAPI : KubeAPI {
 
     private val volumeClaimService = TestKubeVolumeClaimService()
 
+    private val deploymentService = TestKubeDeploymentService()
+
     override fun getPodService(): TestKubePodService {
         return this.podService
     }
@@ -57,5 +61,9 @@ class KubeTestAPI : KubeAPI {
 
     override fun getVolumeClaimService(): KubeVolumeClaimService {
         return this.volumeClaimService
+    }
+
+    override fun getDeploymentService(): KubeDeploymentService {
+        return this.deploymentService
     }
 }

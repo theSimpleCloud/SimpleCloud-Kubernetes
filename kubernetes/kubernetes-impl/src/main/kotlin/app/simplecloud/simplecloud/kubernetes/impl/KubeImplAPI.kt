@@ -19,15 +19,18 @@
 package app.simplecloud.simplecloud.kubernetes.impl
 
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeploymentService
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.service.KubeNetworkService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
+import app.simplecloud.simplecloud.kubernetes.impl.deployment.KubeDeploymentServiceImpl
 import app.simplecloud.simplecloud.kubernetes.impl.pod.KubePodServiceImpl
 import app.simplecloud.simplecloud.kubernetes.impl.secret.KubeSecretServiceImpl
 import app.simplecloud.simplecloud.kubernetes.impl.service.KubeNetworkServiceImpl
 import app.simplecloud.simplecloud.kubernetes.impl.volume.KubeVolumeClaimServiceImpl
 import io.kubernetes.client.openapi.Configuration
+import io.kubernetes.client.openapi.apis.AppsV1Api
 import io.kubernetes.client.openapi.apis.CoreV1Api
 import io.kubernetes.client.util.Config
 
@@ -39,19 +42,27 @@ import io.kubernetes.client.util.Config
  */
 class KubeImplAPI() : KubeAPI {
 
-    private val api = createKubernetesApi()
+    private val coreApi = createKubernetesCoreApi()
+    private val appsApi = createKubernetesAppsApi()
 
-    private val podService = KubePodServiceImpl(this.api)
+    private val podService = KubePodServiceImpl(this.coreApi)
 
-    private val secretService = KubeSecretServiceImpl(this.api)
+    private val secretService = KubeSecretServiceImpl(this.coreApi)
 
-    private val networkService = KubeNetworkServiceImpl(this.api)
+    private val networkService = KubeNetworkServiceImpl(this.coreApi)
 
-    private val volumeClaimService = KubeVolumeClaimServiceImpl(this.api)
+    private val volumeClaimService = KubeVolumeClaimServiceImpl(this.coreApi)
 
-    private fun createKubernetesApi(): CoreV1Api {
+    private val kubeDeploymentService = KubeDeploymentServiceImpl(this.appsApi)
+
+    private fun createKubernetesCoreApi(): CoreV1Api {
         Configuration.setDefaultApiClient(Config.defaultClient())
         return CoreV1Api()
+    }
+
+    private fun createKubernetesAppsApi(): AppsV1Api {
+        Configuration.setDefaultApiClient(Config.defaultClient())
+        return AppsV1Api()
     }
 
     override fun getPodService(): KubePodService {
@@ -68,5 +79,9 @@ class KubeImplAPI() : KubeAPI {
 
     override fun getVolumeClaimService(): KubeVolumeClaimService {
         return this.volumeClaimService
+    }
+
+    override fun getDeploymentService(): KubeDeploymentService {
+        return this.kubeDeploymentService
     }
 }
