@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.startup.prepare.module
 
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.module.api.impl.ClusterAPIImpl
 import app.simplecloud.simplecloud.module.api.impl.LocalAPIImpl
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.load.ModuleHandler
@@ -57,8 +56,7 @@ class NodeModuleLoader(
 
     fun onClusterActive(internalNodeCloudAPI: InternalNodeCloudAPI) {
         this.errorCreateHandler.setErrorService(internalNodeCloudAPI.getErrorService())
-        val clusterAPI = ClusterAPIImpl(internalNodeCloudAPI)
-        this.moduleHandler.onClusterActive(clusterAPI)
+        this.moduleHandler.onClusterActive(internalNodeCloudAPI)
     }
 
     fun startModuleSchedulerWatcher(distribution: Distribution) {

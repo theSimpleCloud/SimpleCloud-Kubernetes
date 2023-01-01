@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.prepare.setup
 
+import app.simplecloud.simplecloud.api.impl.env.VirtualEnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryDatabaseFactory
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
@@ -55,7 +56,13 @@ abstract class AbstractNodePrepareTest {
 
     protected fun prepareNode() {
         val nodePreparer =
-            NodePreparer(this.databaseFactory, this.kubeAPI, this.restSetupManager, TestTokenHandlerFactory())
+            NodePreparer(
+                this.databaseFactory,
+                this.kubeAPI,
+                this.restSetupManager,
+                TestTokenHandlerFactory(),
+                VirtualEnvironmentVariables(emptyMap())
+            )
         try {
             nodePreparer.prepare()
         } catch (e: Exception) {

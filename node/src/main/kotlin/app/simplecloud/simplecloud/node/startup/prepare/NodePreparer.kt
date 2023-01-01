@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
@@ -41,7 +42,8 @@ class NodePreparer(
     private val databaseFactory: DatabaseFactory,
     private val kubeApi: KubeAPI,
     private val restSetupManager: RestSetupManager,
-    private val tokenHandlerFactory: TokenHandlerFactory
+    private val tokenHandlerFactory: TokenHandlerFactory,
+    private val environmentVariables: EnvironmentVariables,
 ) {
 
     private val localAPI = LocalAPIImpl()
@@ -55,7 +57,13 @@ class NodePreparer(
         setupEnd()
         val nodeModuleLoader = loadModules()
         logger.info("Node Startup completed")
-        return PreparedNode(databaseRepositories, jwtTokenHandler, nodeModuleLoader, this.localAPI)
+        return PreparedNode(
+            databaseRepositories,
+            jwtTokenHandler,
+            nodeModuleLoader,
+            this.localAPI,
+            this.environmentVariables
+        )
     }
 
     private fun loadModules(): NodeModuleLoader {

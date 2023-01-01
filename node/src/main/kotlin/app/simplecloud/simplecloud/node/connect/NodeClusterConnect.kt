@@ -121,7 +121,8 @@ class NodeClusterConnect(
     private fun registerMessageChannels(nodeCloudAPI: NodeCloudAPIImpl) {
         MessageChannelsInitializer(
             nodeCloudAPI,
-            InternalMessageChannelProviderImpl(nodeCloudAPI.getMessageChannelManager())
+            nodeCloudAPI.getInternalMessageChannelProvider(),
+            this.preparedNode.environmentVariables
         ).initializeMessageChannels()
     }
 
@@ -147,7 +148,8 @@ class NodeClusterConnect(
             nodeCloudAPI,
             this.restServerConfig.controllerHandlerFactory,
             this.restServerConfig.restServer,
-            authService
+            authService,
+            this.preparedNode.environmentVariables
         ).run()
     }
 
@@ -244,7 +246,8 @@ class NodeClusterConnect(
             nodeProcessOnlineStrategyService,
             this.localAPI,
             this.kubeAPI,
-            ftpService
+            ftpService,
+            InternalMessageChannelProviderImpl(messageChannelManager)
         )
     }
 

@@ -18,13 +18,15 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.node.messagechannel.*
 
 class MessageChannelsInitializer(
-    private val cloudAPI: InternalCloudAPI,
-    private val internalMessageChannelProvider: InternalMessageChannelProvider
+    private val cloudAPI: InternalNodeCloudAPI,
+    private val internalMessageChannelProvider: InternalMessageChannelProvider,
+    private val environmentVariables: EnvironmentVariables,
 ) {
 
     fun initializeMessageChannels() {
@@ -42,6 +44,13 @@ class MessageChannelsInitializer(
         registerGetOfflinePlayerByNameMessageChannel()
         registerGetOfflinePlayerByUUIDMessageChannel()
         registerUpdateOfflinePlayerMessageChannel()
+        registerRestartMessageChannel()
+    }
+
+    private fun registerRestartMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalRestartMessageChannel()
+        val messageHandler = RestartMessageHandler(this.cloudAPI.getKubeAPI(), this.environmentVariables)
+        messageChannel.setMessageHandler(messageHandler)
     }
 
     private fun registerGetOfflinePlayerByNameMessageChannel() {

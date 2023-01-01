@@ -16,34 +16,33 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.internal.service
+package app.simplecloud.simplecloud.node.update
 
-import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
-import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import java.util.concurrent.TimeUnit
 
 /**
- * Date: 05.10.22
- * Time: 09:51
+ * Date: 01.01.23
+ * Time: 16:30
  * @author Frederick Baier
  *
  */
-interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
+class NodeRestarter(
+    private val cloudAPI: InternalNodeCloudAPI,
+    private val messageChannelProvider: InternalMessageChannelProvider,
+) {
 
-    override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService
+    fun canPerformRestart(): Boolean {
+        return !cloudAPI.isDisabledMode().get()
+    }
 
-    override fun getErrorService(): InternalErrorService
-
-    fun getKubeAPI(): KubeAPI
-
-    fun getFtpService(): InternalFtpServerService
-
-    fun getInternalMessageChannelProvider(): InternalMessageChannelProvider
-
-    fun setDisabledMode(boolean: Boolean) {
-        return getOrCreateSingletonCache<Boolean>("cloud-disabled").setValue(boolean)
+    fun restartNodes() {
+        NodeDisabler(this.cloudAPI).disableNodes()
+        val restartMessageChannel = this.messageChannelProvider.getInternalRestartMessageChannel()
+        //send time to stop node
+        restartMessageChannel.createMessageRequestToAll(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3))
+            .submit()
     }
 
 }

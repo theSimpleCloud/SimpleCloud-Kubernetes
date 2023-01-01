@@ -19,24 +19,36 @@
 package app.simplecloud.simplecloud.node.messagechannel
 
 import app.simplecloud.simplecloud.api.future.CloudScope
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.future
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.messagechannel.handler.MessageHandler
-import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.NetworkComponent
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
 
-class ProcessLogsMessageHandler(
-    private val service: CloudProcessService,
-) : MessageHandler<String, String> {
+class RestartMessageHandler(
+    private val kubeAPI: KubeAPI,
+    private val environmentVariables: EnvironmentVariables,
+) : MessageHandler<Long, Unit> {
 
     override fun handleMessage(
-        message: String,
+        message: Long,
         sender: NetworkComponent,
-    ): CompletableFuture<String> = CloudScope.future {
-        val process = service.findByName(message).await()
-        return@future process.getLogs().await()
+    ): CompletableFuture<Unit> = CloudScope.future {
+        logger.info("Restarting cloud...")
+        while (true) {
+            if (message <= System.currentTimeMillis()) {
+                kubeAPI.getPodService().getPod(environmentVariables.get("HOSTNAME")).delete()
+                return@future
+            }
+            Thread.sleep(10)
+        }
     }
 
+    companion object {
+        private val logger =
+            LogManager.getLogger(RestartMessageHandler::class.java)
+    }
 
 }

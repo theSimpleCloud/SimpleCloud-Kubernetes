@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
 import app.simplecloud.simplecloud.restserver.api.RestServer
@@ -35,6 +36,7 @@ class RestServerStartTask(
     private val controllerHandlerFactory: ControllerHandlerFactory,
     private val restServer: RestServer,
     private val authService: AuthService,
+    private val environmentVariables: EnvironmentVariables,
 ) {
 
     private val controllerHandler = this.controllerHandlerFactory.create(restServer)
@@ -82,9 +84,24 @@ class RestServerStartTask(
 
         this.controllerHandler.registerController(
             VolumeController(
+                this.cloudAPI,
                 this.cloudAPI.getFtpService(),
                 this.cloudAPI.getKubeAPI().getVolumeClaimService(),
                 this.cloudAPI.getStaticProcessTemplateService()
+            )
+        )
+
+        this.controllerHandler.registerController(
+            UpdateController(
+                this.cloudAPI,
+                this.environmentVariables
+            )
+        )
+
+        this.controllerHandler.registerController(
+            RestartController(
+                this.cloudAPI,
+                this.cloudAPI.getInternalMessageChannelProvider()
             )
         )
     }

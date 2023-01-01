@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node
 
+import app.simplecloud.simplecloud.api.impl.env.VirtualEnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distribution.test.TestDistributionFactoryImpl
@@ -87,7 +88,8 @@ class NodeStartTestTemplate {
             TestDistributionFactoryImpl(),
             this.kubeAPI,
             selfPod,
-            restServerConfig
+            restServerConfig,
+            VirtualEnvironmentVariables(emptyMap())
         ).start()
     }
 

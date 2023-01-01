@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.module.api.impl
 
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
+import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
@@ -55,6 +56,7 @@ class NodeCloudAPIImpl(
     private val localAPI: LocalAPI,
     private val kubeAPI: KubeAPI,
     private val ftpService: InternalFtpServerService,
+    private val messageChannelProvider: InternalMessageChannelProvider,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -89,5 +91,8 @@ class NodeCloudAPIImpl(
         return this.ftpService
     }
 
+    override fun getInternalMessageChannelProvider(): InternalMessageChannelProvider {
+        return this.messageChannelProvider
+    }
 
 }

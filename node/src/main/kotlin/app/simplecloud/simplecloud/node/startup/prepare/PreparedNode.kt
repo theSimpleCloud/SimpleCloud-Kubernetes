@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.module.api.LocalAPI
 import app.simplecloud.simplecloud.node.startup.prepare.module.NodeModuleLoader
@@ -34,4 +35,5 @@ data class PreparedNode(
     val tokenHandler: TokenHandler,
     val nodeModuleLoader: NodeModuleLoader,
     val localAPI: LocalAPI,
+    val environmentVariables: EnvironmentVariables,
 )

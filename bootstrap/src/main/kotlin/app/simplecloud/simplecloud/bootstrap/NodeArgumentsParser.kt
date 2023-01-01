@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.bootstrap
 
+import app.simplecloud.simplecloud.api.impl.env.RealEnvironmentVariables
 import app.simplecloud.simplecloud.database.mongo.factory.MongoDatabaseFactory
 import app.simplecloud.simplecloud.distribution.hazelcast.HazelcastDistributionFactory
 import app.simplecloud.simplecloud.kubernetes.impl.KubeImplAPI
@@ -53,7 +54,8 @@ class NodeArgumentsParser : CliktCommand() {
                 JwtTokenHandlerFactory(),
                 ControllerHandlerFactoryImpl(),
                 RestSetupManagerImpl(restServer)
-            )
+            ),
+            RealEnvironmentVariables()
         ).start()
     }
 
