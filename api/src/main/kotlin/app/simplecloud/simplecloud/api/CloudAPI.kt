@@ -18,10 +18,13 @@
 
 package app.simplecloud.simplecloud.api
 
+import app.simplecloud.simplecloud.api.cache.SingletonCache
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.*
+import app.simplecloud.simplecloud.distribution.api.Cache
 import app.simplecloud.simplecloud.eventapi.EventManager
+import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 07.05.22
@@ -50,5 +53,17 @@ interface CloudAPI {
     fun getEventManager(): EventManager
 
     fun getPermissionFactory(): Permission.Factory
+
+    /**
+     * Creates a distributed key value store
+     */
+    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
+
+    /**
+     * Returns a distributed single value cache
+     */
+    fun <T> getOrCreateSingletonCache(name: String): SingletonCache<T>
+
+    fun isDisabledMode(): CompletableFuture<Boolean>
 
 }
