@@ -61,6 +61,14 @@ class NodeUpdateTest : NodeAPIBaseTest() {
         assertPodExists("updater")
     }
 
+    @Test
+    fun cloudAlreadyDisabled_executeUpdater_willFail() {
+        this.cloudAPI.setDisabledMode(true)
+        Assertions.assertThrows(NodeDisabler.AlreadyDisabledException::class.java) {
+            executeUpdater()
+        }
+    }
+
     private fun executeUpdater() {
         val nodeUpdater =
             NodeUpdater(emptyList(), "simplecloud-base", "buildkit.addr", "simplecloud-dest", this.cloudAPI)
