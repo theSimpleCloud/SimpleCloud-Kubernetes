@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.defaultcontroller.v1
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
@@ -48,7 +47,7 @@ class VolumeController(
 ) : Controller {
 
     private val volumeHandler =
-        StaticProcessVolumeHandler(ftpServerService, kubeVolumeClaimService, staticTemplateService)
+        StaticProcessVolumeHandler(cloudAPI, ftpServerService, kubeVolumeClaimService, staticTemplateService)
 
     @RequestMapping(RequestType.GET, "", "web.cloud.volume.get")
     fun handleGetAll(): List<VolumeDto> {
@@ -60,9 +59,6 @@ class VolumeController(
     @RequestMapping(RequestType.POST, "start", "web.cloud.volume.start")
     fun handleStart(@RequestBody body: VolumeFtpServerStartDto): VolumeDto {
         return runBlocking {
-            if (cloudAPI.isDisabledMode().await()) {
-                throw UnableToStartServerException()
-            }
             return@runBlocking volumeHandler.startFtpServer(body.staticProcessName)
         }
     }
@@ -74,7 +70,5 @@ class VolumeController(
             return@runBlocking true
         }
     }
-
-    class UnableToStartServerException() : Exception("Unable to start ftp server")
 
 }

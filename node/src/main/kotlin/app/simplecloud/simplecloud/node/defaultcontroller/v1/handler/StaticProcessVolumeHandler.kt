@@ -18,9 +18,11 @@
 
 package app.simplecloud.simplecloud.node.defaultcontroller.v1.handler
 
+import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.api.template.static.StaticProcessTemplate
+import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
 import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
 import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpCreateConfiguration
@@ -35,6 +37,7 @@ import org.apache.commons.lang3.RandomStringUtils
  *
  */
 class StaticProcessVolumeHandler(
+    private val cloudAPI: CloudAPI,
     private val ftpServerService: InternalFtpServerService,
     private val kubeVolumeClaimService: KubeVolumeClaimService,
     private val staticTemplateService: StaticProcessTemplateService,
@@ -50,10 +53,8 @@ class StaticProcessVolumeHandler(
     }
 
     suspend fun startFtpServer(staticProcessName: String): VolumeDto {
-        val claimName = createVolumeClaimNameFromTemplateName(staticProcessName)
-        if (!doesVolumeClaimExist(claimName))
-            throw FtpServerException("Requested volume does not exist")
-        val volumeClaim = kubeVolumeClaimService.getClaim(claimName)
+        checkCloudDisabled()
+        val volumeClaim = getVolumeClaimForStaticProcess(staticProcessName)
         val ftpServerName = createFtpServerNameFromTemplateName(staticProcessName)
         if (doesFtpServerExist(ftpServerName))
             throw FtpServerException("Ftp Server is already running")
@@ -74,6 +75,20 @@ class StaticProcessVolumeHandler(
             ftpServer.getPort()
         )
     }
+
+    private fun getVolumeClaimForStaticProcess(staticProcessName: String): KubeVolumeClaim {
+        val claimName = createVolumeClaimNameFromTemplateName(staticProcessName)
+        if (!doesVolumeClaimExist(claimName))
+            throw FtpServerException("Requested volume does not exist")
+        return kubeVolumeClaimService.getClaim(claimName)
+    }
+
+    private suspend fun checkCloudDisabled() {
+        if (cloudAPI.isDisabledMode().await()) {
+            throw FtpServerException("Unable to perform action. Cloud is disabled.")
+        }
+    }
+
 
     private suspend fun doesFtpServerExist(ftpServerName: String): Boolean {
         try {
