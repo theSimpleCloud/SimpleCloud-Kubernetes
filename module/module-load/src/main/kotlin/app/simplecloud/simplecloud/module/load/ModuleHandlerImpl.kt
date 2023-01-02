@@ -70,6 +70,8 @@ class ModuleHandlerImpl(
             loadedModule.cloudModule.onClusterActive(cloudAPI)
         } catch (ex: Exception) {
             this.errorHandler.invoke(ex)
+        } catch (ex: AbstractMethodError) {
+            this.errorHandler.invoke(ex)
         }
     }
 
@@ -81,17 +83,20 @@ class ModuleHandlerImpl(
         try {
             enableModule(loadedModule)
         } catch (ex: Exception) {
-            this.errorHandler.invoke(ex)
+            handleLoadException(loadedModule, ex)
+        } catch (ex: AbstractMethodError) {
+            handleLoadException(loadedModule, ex)
         }
     }
 
+    private fun handleLoadException(loadedModule: LoadedModule, ex: Throwable) {
+        val moduleName = loadedModule.fileContent.name
+        val loadException = ModuleLoadException("An error occurred while enabling module '${moduleName}':", ex)
+        this.errorHandler.invoke(loadException)
+    }
+
     private fun enableModule(loadedModule: LoadedModule) {
-        try {
-            loadedModule.cloudModule.onEnable(this.localAPI)
-        } catch (ex: Exception) {
-            val moduleName = loadedModule.fileContent.name
-            throw ModuleLoadException("An error occurred while enabling module '${moduleName}':", ex)
-        }
+        loadedModule.cloudModule.onEnable(this.localAPI)
     }
 
     private fun loadModuleFileContents(list: Set<File>): List<LoadedModuleFileContent> {

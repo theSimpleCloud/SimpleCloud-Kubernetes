@@ -24,7 +24,7 @@ package app.simplecloud.simplecloud.module.load.exception
  * @author Frederick Baier
  *
  */
-class ModuleLoadException(moduleName: String, ex: Exception?) :
+class ModuleLoadException(moduleName: String, ex: Throwable?) :
     Exception("An error occurred while loading module: $moduleName", ex) {
 
     constructor(moduleName: String) : this(moduleName, null)
