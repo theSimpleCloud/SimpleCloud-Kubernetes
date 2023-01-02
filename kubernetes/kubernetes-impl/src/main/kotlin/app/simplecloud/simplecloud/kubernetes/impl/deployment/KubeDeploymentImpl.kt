@@ -40,7 +40,8 @@ class KubeDeploymentImpl(
 
     private val name: String = name.lowercase()
 
-    private val deployment = readNamespacedDeployment()
+    @Volatile
+    private var deployment = readNamespacedDeployment()
 
     private fun readNamespacedDeployment(): V1Deployment {
         try {
@@ -80,10 +81,15 @@ class KubeDeploymentImpl(
         } catch (e: ApiException) {
             throw KubeException(e.responseBody, e)
         }
+        this.deployment = readNamespacedDeployment()
+    }
+
+    override fun getImageName(): String {
+        return this.deployment.spec!!.template!!.spec!!.containers.first().image!!
     }
 
     private fun generateImageUpdateJson(imageName: String): String {
-        return "{\"spec\": {\"template\": {\"spec\": {\"containers\": [{\"name\": \"simplecloud\",\"image\": \"${imageName}\"}]}}}}"
+        return "{\"spec\": {\"template\": {\"spec\": {\"containers\": [{\"name\": \"default\",\"image\": \"${imageName}\"}]}}}}"
     }
 
 }

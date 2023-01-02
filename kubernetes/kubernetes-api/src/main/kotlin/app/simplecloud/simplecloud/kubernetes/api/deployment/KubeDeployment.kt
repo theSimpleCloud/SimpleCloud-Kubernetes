@@ -30,4 +30,6 @@ interface KubeDeployment {
 
     fun editImage(image: String)
 
+    fun getImageName(): String
+
 }

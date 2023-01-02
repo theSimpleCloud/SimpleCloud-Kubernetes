@@ -29,11 +29,20 @@ import app.simplecloud.simplecloud.kubernetes.api.deployment.KubeDeployment
 class TestKubeDeployment(
     private val name: String,
 ) : KubeDeployment {
+
+    @Volatile
+    private var imageName: String = "${name}:latest"
+
     override fun getName(): String {
         return this.name
     }
 
     override fun editImage(image: String) {
-
+        this.imageName = image
     }
+
+    override fun getImageName(): String {
+        return this.imageName
+    }
+
 }
