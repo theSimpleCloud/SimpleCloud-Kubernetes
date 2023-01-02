@@ -19,10 +19,8 @@
 package app.simplecloud.simplecloud.node.update
 
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
-import org.junit.jupiter.api.AfterEach
-import org.junit.jupiter.api.Assertions
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.*
+import java.util.concurrent.TimeUnit
 
 /**
  * Date: 02.01.23
@@ -62,6 +60,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun cloudAlreadyDisabled_executeUpdater_willFail() {
         this.cloudAPI.setDisabledMode(true)
         Assertions.assertThrows(NodeDisabler.AlreadyDisabledException::class.java) {
