@@ -41,6 +41,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun dontExecuteUpdater_updatePodWillNotExist() {
         Assertions.assertThrows(NoSuchElementException::class.java) {
             this.kubeAPI.getPodService().getPod("updater")
@@ -48,12 +49,14 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun executeUpdater_cloudWillBeInDisableMode() {
         executeUpdater()
         Assertions.assertTrue(this.cloudAPI.isDisabledMode().get())
     }
 
     @Test
+    @Timeout(1, unit = TimeUnit.SECONDS)
     fun executeUpdater_updaterPodWillBeStarted() {
         executeUpdater()
         assertPodExists("updater")
