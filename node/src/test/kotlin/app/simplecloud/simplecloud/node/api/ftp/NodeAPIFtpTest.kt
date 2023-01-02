@@ -44,6 +44,7 @@ class NodeAPIFtpTest : NodeAPIBaseTest(), TestProcessProvider {
     override fun setUp() {
         super.setUp()
         this.staticProcessVolumeHandler = StaticProcessVolumeHandler(
+            this.cloudAPI,
             this.cloudAPI.getFtpService(),
             this.cloudAPI.getKubeAPI().getVolumeClaimService(),
             this.cloudAPI.getStaticProcessTemplateService()
@@ -84,6 +85,40 @@ class NodeAPIFtpTest : NodeAPIBaseTest(), TestProcessProvider {
         }
         assertNotFtpServerByName("ftp-server-static-staticlobby")
         assertNotFtpService("ftp-service-static-staticlobby")
+    }
+
+    @Test
+    fun startFtpServerTwice_secondStartWillFail() {
+        givenStaticLobbyTemplate("StaticLobby")
+        runBlocking {
+            staticProcessVolumeHandler.startFtpServer("StaticLobby")
+        }
+        Assertions.assertThrows(StaticProcessVolumeHandler.FtpServerException::class.java) {
+            runBlocking {
+                staticProcessVolumeHandler.startFtpServer("StaticLobby")
+            }
+        }
+    }
+
+    @Test
+    fun stopNotStartedFtpServer_willFail() {
+        givenStaticLobbyTemplate("StaticLobby")
+        Assertions.assertThrows(StaticProcessVolumeHandler.FtpServerException::class.java) {
+            runBlocking {
+                staticProcessVolumeHandler.stopFtpServer("StaticLobby")
+            }
+        }
+    }
+
+    @Test
+    fun startFtpServerWhenCloudDisabled_willFail() {
+        givenStaticLobbyTemplate("StaticLobby")
+        this.cloudAPI.setDisabledMode(true)
+        Assertions.assertThrows(StaticProcessVolumeHandler.FtpServerException::class.java) {
+            runBlocking {
+                staticProcessVolumeHandler.startFtpServer("StaticLobby")
+            }
+        }
     }
 
     private fun assertNotFtpService(name: String) {
