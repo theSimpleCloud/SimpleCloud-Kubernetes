@@ -38,6 +38,10 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     @AfterEach
     override fun tearDown() {
         super.tearDown()
+        try {
+            this.kubeAPI.getPodService().getPod("updater").delete()
+        } catch (ex: Exception) {
+        }
     }
 
     @Test
