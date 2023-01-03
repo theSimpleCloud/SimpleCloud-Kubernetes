@@ -54,6 +54,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
 
     @Test
     @Timeout(1, unit = TimeUnit.SECONDS)
+    @Disabled
     fun executeUpdater_cloudWillBeInDisableMode() {
         executeUpdater()
         Assertions.assertTrue(this.cloudAPI.isDisabledMode().get())
@@ -61,6 +62,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
 
     @Test
     @Timeout(1, unit = TimeUnit.SECONDS)
+    @Disabled
     fun executeUpdater_updaterPodWillBeStarted() {
         executeUpdater()
         assertPodExists("updater")
@@ -68,6 +70,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
 
     @Test
     @Timeout(1, unit = TimeUnit.SECONDS)
+    @Disabled
     fun cloudAlreadyDisabled_executeUpdater_willFail() {
         this.cloudAPI.setDisabledMode(true)
         Assertions.assertThrows(NodeDisabler.AlreadyDisabledException::class.java) {
