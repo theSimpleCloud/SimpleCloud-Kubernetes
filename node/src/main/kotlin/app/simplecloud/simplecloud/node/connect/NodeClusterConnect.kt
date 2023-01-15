@@ -53,7 +53,6 @@ import app.simplecloud.simplecloud.module.api.impl.repository.distributed.Distri
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
-import app.simplecloud.simplecloud.node.image.ImageHandlerImpl
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
@@ -254,7 +253,6 @@ class NodeClusterConnect(
             ftpService,
             InternalMessageChannelProviderImpl(messageChannelManager),
             controllerHandler,
-            ImageHandlerImpl(errorService, this.preparedNode.environmentVariables, cacheHandler)
         )
     }
 

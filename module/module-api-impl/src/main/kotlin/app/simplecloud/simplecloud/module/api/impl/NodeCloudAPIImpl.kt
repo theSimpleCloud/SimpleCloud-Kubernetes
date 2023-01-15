@@ -29,7 +29,6 @@ import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
-import app.simplecloud.simplecloud.module.api.image.ImageHandler
 import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
@@ -62,7 +61,6 @@ class NodeCloudAPIImpl(
     private val ftpService: InternalFtpServerService,
     private val messageChannelProvider: InternalMessageChannelProvider,
     private val controllerHandler: ControllerHandler,
-    private val imageHandler: ImageHandler,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -108,10 +106,6 @@ class NodeCloudAPIImpl(
 
     override fun getWebControllerHandler(): ControllerHandler {
         return this.controllerHandler
-    }
-
-    override fun getImageHandler(): ImageHandler {
-        return this.imageHandler
     }
 
 }

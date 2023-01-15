@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.module.api
 
 import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.module.api.image.ImageHandler
 import app.simplecloud.simplecloud.module.api.service.ErrorService
 import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
@@ -39,7 +38,5 @@ interface NodeCloudAPI : CloudAPI {
     fun getLocalAPI(): LocalAPI
 
     fun getWebControllerHandler(): ControllerHandler
-
-    fun getImageHandler(): ImageHandler
 
 }
