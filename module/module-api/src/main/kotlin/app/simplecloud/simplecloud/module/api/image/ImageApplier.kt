@@ -16,30 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
+package app.simplecloud.simplecloud.module.api.image
 
-import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.module.api.image.ImageHandler
-import app.simplecloud.simplecloud.module.api.service.ErrorService
-import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
+import app.simplecloud.simplecloud.api.template.ProcessTemplate
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 06.01.23
+ * Time: 23:46
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+interface ImageApplier {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
-
-    fun getErrorService(): ErrorService
-
-    fun getLocalAPI(): LocalAPI
-
-    fun getWebControllerHandler(): ControllerHandler
-
-    fun getImageHandler(): ImageHandler
+    /**
+     * Applies the given image to the given group
+     */
+    fun applyImage(template: ProcessTemplate, imageName: String)
 
 }

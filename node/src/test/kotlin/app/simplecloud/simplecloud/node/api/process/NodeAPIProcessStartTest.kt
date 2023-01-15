@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.image.ImageImpl
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import kotlinx.coroutines.runBlocking
 import org.apache.commons.lang3.RandomStringUtils

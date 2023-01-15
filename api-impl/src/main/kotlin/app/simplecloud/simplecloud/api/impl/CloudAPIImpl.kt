@@ -18,14 +18,12 @@
 
 package app.simplecloud.simplecloud.api.impl
 
-import app.simplecloud.simplecloud.api.cache.SingletonCache
-import app.simplecloud.simplecloud.api.impl.cache.SingletonCacheImpl
+import app.simplecloud.simplecloud.api.cache.CacheHandler
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.distribution.api.Cache
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
 import java.util.concurrent.CompletableFuture
@@ -48,6 +46,7 @@ open class CloudAPIImpl(
     private val eventManager: EventManager,
     private val permissionFactory: Permission.Factory,
     private val distribution: Distribution,
+    private val cacheHandler: CacheHandler,
 ) : InternalCloudAPI {
 
     override fun getLocalNetworkComponentName(): String {
@@ -90,16 +89,13 @@ open class CloudAPIImpl(
         return this.permissionFactory
     }
 
-    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
-        return this.distribution.getOrCreateCache(name)
-    }
-
-    override fun <T> getOrCreateSingletonCache(name: String): SingletonCache<T> {
-        return SingletonCacheImpl(name, this)
+    override fun getCacheHandler(): CacheHandler {
+        return this.cacheHandler
     }
 
     override fun isDisabledMode(): CompletableFuture<Boolean> {
-        return getOrCreateSingletonCache<Boolean>("cloud-disabled").getValue().exceptionally { false }
+        return getCacheHandler().getOrCreateSingletonCache<Boolean>("cloud-disabled")
+            .getValue().exceptionally { false }
     }
 
     override fun getDistribution(): Distribution {

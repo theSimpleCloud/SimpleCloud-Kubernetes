@@ -16,25 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.impl.image
+package app.simplecloud.simplecloud.api.cache
 
-import app.simplecloud.simplecloud.api.image.Image
+import app.simplecloud.simplecloud.distribution.api.Cache
 
-class ImageImpl(
-    private val name: String
-) : Image {
+/**
+ * Date: 07.01.23
+ * Time: 12:45
+ * @author Frederick Baier
+ *
+ */
+interface CacheHandler {
 
-    override fun getName(): String {
-        return this.name
-    }
+    /**
+     * Creates a distributed key value store
+     */
+    fun <K, V> getOrCreateCache(name: String): Cache<K, V>
 
-    companion object {
-
-        fun fromName(name: String?): ImageImpl? {
-            if (name == null) return null
-            return ImageImpl(name)
-        }
-
-    }
+    /**
+     * Returns a distributed single value cache
+     */
+    fun <T> getOrCreateSingletonCache(name: String): SingletonCache<T>
 
 }

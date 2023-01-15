@@ -18,8 +18,6 @@
 
 package app.simplecloud.simplecloud.restserver.api.controller
 
-import app.simplecloud.simplecloud.restserver.api.RestServer
-
 /**
  * Created by IntelliJ IDEA.
  * Date: 23.06.2021
@@ -27,8 +25,6 @@ import app.simplecloud.simplecloud.restserver.api.RestServer
  * @author Frederick Baier
  */
 interface ControllerHandler {
-
-    fun getRestServer(): RestServer
 
     fun registerController(controller: Controller)
 

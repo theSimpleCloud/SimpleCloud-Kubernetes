@@ -31,4 +31,12 @@ interface Image {
      */
     fun getName(): String
 
+    companion object {
+
+        fun of(imageName: String): Image {
+            return ImageImpl(imageName)
+        }
+
+    }
+
 }

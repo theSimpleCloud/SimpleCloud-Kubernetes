@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.template
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.image.ImageImpl
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration

@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.api.impl.process
 
 import app.simplecloud.simplecloud.api.image.Image
-import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.image.ImageImpl
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.CloudProcessConfiguration
 import app.simplecloud.simplecloud.api.process.state.ProcessState

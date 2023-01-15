@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.plugin.startup
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.impl.cache.CacheHandlerImpl
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
@@ -139,7 +140,8 @@ class CloudPlugin(
             messageChannelManager,
             eventManager,
             permissionFactory,
-            distribution
+            distribution,
+            CacheHandlerImpl(this.distribution)
         )
     }
 

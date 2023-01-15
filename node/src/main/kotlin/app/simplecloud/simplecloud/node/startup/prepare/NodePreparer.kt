@@ -41,9 +41,9 @@ import org.apache.logging.log4j.LogManager
 class NodePreparer(
     private val databaseFactory: DatabaseFactory,
     private val kubeApi: KubeAPI,
+    private val environmentVariables: EnvironmentVariables,
     private val restSetupManager: RestSetupManager,
     private val tokenHandlerFactory: TokenHandlerFactory,
-    private val environmentVariables: EnvironmentVariables,
 ) {
 
     private val localAPI = LocalAPIImpl()

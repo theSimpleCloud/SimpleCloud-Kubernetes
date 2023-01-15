@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.api.impl.cache
 
-import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.cache.CacheHandler
 import app.simplecloud.simplecloud.api.cache.SingletonCache
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.distribution.api.Cache
@@ -32,7 +32,7 @@ import java.util.concurrent.CompletableFuture
  */
 class SingletonCacheImpl<T>(
     private val name: String,
-    private val cloudAPI: CloudAPI,
+    private val cacheHandler: CacheHandler,
 ) : SingletonCache<T> {
 
     private val cacheName: String = "single-${this.name}"
@@ -50,7 +50,7 @@ class SingletonCacheImpl<T>(
     }
 
     private fun getCache(): Cache<String, T> {
-        return this.cloudAPI.getOrCreateCache(this.cacheName)
+        return this.cacheHandler.getOrCreateCache(this.cacheName)
     }
 
 }

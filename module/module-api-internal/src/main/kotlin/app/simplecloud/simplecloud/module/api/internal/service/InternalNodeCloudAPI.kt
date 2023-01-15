@@ -42,8 +42,6 @@ interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
 
     fun getInternalMessageChannelProvider(): InternalMessageChannelProvider
 
-    fun setDisabledMode(boolean: Boolean) {
-        return getOrCreateSingletonCache<Boolean>("cloud-disabled").setValue(boolean)
-    }
+    fun setDisabledMode(boolean: Boolean)
 
 }

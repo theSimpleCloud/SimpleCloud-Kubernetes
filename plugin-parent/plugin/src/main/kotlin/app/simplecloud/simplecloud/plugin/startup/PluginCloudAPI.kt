@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.plugin.startup
 
+import app.simplecloud.simplecloud.api.cache.CacheHandler
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
 import app.simplecloud.simplecloud.api.internal.service.*
 import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelManager
@@ -44,6 +45,7 @@ class PluginCloudAPI(
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
     distribution: Distribution,
+    cacheHandler: CacheHandler,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     internalProcessGroupService,
@@ -55,5 +57,6 @@ class PluginCloudAPI(
     messageChannelManager,
     eventManager,
     permissionFactory,
-    distribution
+    distribution,
+    cacheHandler
 )

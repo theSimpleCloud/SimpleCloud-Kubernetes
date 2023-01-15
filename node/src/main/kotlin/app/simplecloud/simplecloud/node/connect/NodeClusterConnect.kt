@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.CloudAPI
+import app.simplecloud.simplecloud.api.impl.cache.CacheHandlerImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.InternalMessageChannelProviderImpl
 import app.simplecloud.simplecloud.api.impl.messagechannel.MessageChannelManagerImpl
 import app.simplecloud.simplecloud.api.impl.permission.PermissionFactoryImpl
@@ -52,13 +53,14 @@ import app.simplecloud.simplecloud.module.api.impl.repository.distributed.Distri
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.node.image.ImageHandlerImpl
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.service.*
+import app.simplecloud.simplecloud.node.startup.prepare.ControllerRegisterer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
-import app.simplecloud.simplecloud.node.startup.prepare.RestServerStartTask
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
 import org.apache.logging.log4j.LogManager
 
@@ -82,7 +84,7 @@ class NodeClusterConnect(
         val distributedRepositories = initializeDistributedRepositories(distribution)
         val nodeCloudAPI = initializeServices(distribution, distributedRepositories)
         injectUserContextIntoDistribution(distribution, nodeCloudAPI, distributedRepositories)
-        startRestServer(nodeCloudAPI)
+        registerWebControllers(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories)
         handleClusterActive(nodeCloudAPI)
@@ -139,24 +141,25 @@ class NodeClusterConnect(
         }
     }
 
-    private fun startRestServer(nodeCloudAPI: NodeCloudAPIImpl) {
+    private fun registerWebControllers(nodeCloudAPI: NodeCloudAPIImpl) {
+        val restServer = this.restServerConfig.restServer
         val authService = RestAuthServiceImpl(
             nodeCloudAPI.getCloudPlayerService(),
             this.tokenHandler
         )
-        return RestServerStartTask(
+        restServer.setAuthService(authService)
+        return ControllerRegisterer(
             nodeCloudAPI,
-            this.restServerConfig.controllerHandlerFactory,
-            this.restServerConfig.restServer,
             authService,
             this.preparedNode.environmentVariables
-        ).run()
+        ).registerControllers()
     }
 
     private fun initializeServices(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories,
     ): NodeCloudAPIImpl {
+        val controllerHandler = this.restServerConfig.controllerHandlerFactory.create(this.restServerConfig.restServer)
         val eventManager = DefaultEventManager()
         val nodeService = NodeServiceImpl(distribution)
         val universalGroupFactory = UniversalCloudProcessGroupFactory(
@@ -230,6 +233,7 @@ class NodeClusterConnect(
 
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
+        val cacheHandler = CacheHandlerImpl(distribution)
         return NodeCloudAPIImpl(
             selfComponent.getName(),
             cloudProcessGroupService,
@@ -242,12 +246,15 @@ class NodeClusterConnect(
             eventManager,
             permissionFactory,
             distribution,
+            cacheHandler,
             errorService,
             nodeProcessOnlineStrategyService,
             this.localAPI,
             this.kubeAPI,
             ftpService,
-            InternalMessageChannelProviderImpl(messageChannelManager)
+            InternalMessageChannelProviderImpl(messageChannelManager),
+            controllerHandler,
+            ImageHandlerImpl(errorService, this.preparedNode.environmentVariables, cacheHandler)
         )
     }
 

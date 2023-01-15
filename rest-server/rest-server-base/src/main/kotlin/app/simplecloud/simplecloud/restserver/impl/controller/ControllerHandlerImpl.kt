@@ -43,7 +43,4 @@ class ControllerHandlerImpl constructor(
         TODO("Not yet implemented")
     }
 
-    override fun getRestServer(): RestServer {
-        return this.restServer
-    }
 }

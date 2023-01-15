@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.module.api.impl
 
+import app.simplecloud.simplecloud.api.cache.CacheHandler
 import app.simplecloud.simplecloud.api.impl.CloudAPIImpl
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.internal.service.*
@@ -28,10 +29,12 @@ import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
+import app.simplecloud.simplecloud.module.api.image.ImageHandler
 import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
+import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
 
 /**
  * Date: 07.05.22
@@ -51,12 +54,15 @@ class NodeCloudAPIImpl(
     eventManager: EventManager,
     permissionFactory: Permission.Factory,
     distribution: Distribution,
+    cacheHandler: CacheHandler,
     private val errorService: InternalErrorService,
     private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
     private val localAPI: LocalAPI,
     private val kubeAPI: KubeAPI,
     private val ftpService: InternalFtpServerService,
     private val messageChannelProvider: InternalMessageChannelProvider,
+    private val controllerHandler: ControllerHandler,
+    private val imageHandler: ImageHandler,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -68,7 +74,8 @@ class NodeCloudAPIImpl(
     messageChannelManager,
     eventManager,
     permissionFactory,
-    distribution
+    distribution,
+    cacheHandler
 ), InternalNodeCloudAPI {
 
     override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
@@ -93,6 +100,18 @@ class NodeCloudAPIImpl(
 
     override fun getInternalMessageChannelProvider(): InternalMessageChannelProvider {
         return this.messageChannelProvider
+    }
+
+    override fun setDisabledMode(boolean: Boolean) {
+        return getCacheHandler().getOrCreateSingletonCache<Boolean>("cloud-disabled").setValue(boolean)
+    }
+
+    override fun getWebControllerHandler(): ControllerHandler {
+        return this.controllerHandler
+    }
+
+    override fun getImageHandler(): ImageHandler {
+        return this.imageHandler
     }
 
 }

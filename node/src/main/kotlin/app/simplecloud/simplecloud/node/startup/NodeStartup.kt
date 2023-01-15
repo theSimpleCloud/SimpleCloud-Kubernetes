@@ -49,9 +49,9 @@ class NodeStartup(
         val nodePreparer = NodePreparer(
             this.databaseFactory,
             this.kubeAPI,
+            this.environmentVariables,
             this.restServerConfig.setupManager,
-            this.restServerConfig.tokenHandlerFactory,
-            this.environmentVariables
+            this.restServerConfig.tokenHandlerFactory
         )
         val preparedNode = nodePreparer.prepare()
         return executeClusterConnect(preparedNode)

@@ -21,9 +21,7 @@ package app.simplecloud.simplecloud.node.startup.prepare
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
-import app.simplecloud.simplecloud.restserver.api.RestServer
 import app.simplecloud.simplecloud.restserver.api.auth.AuthService
-import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFactory
 
 /**
  * Created by IntelliJ IDEA.
@@ -31,25 +29,15 @@ import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFa
  * Time: 11:22
  * @author Frederick Baier
  */
-class RestServerStartTask(
+class ControllerRegisterer(
     private val cloudAPI: NodeCloudAPIImpl,
-    private val controllerHandlerFactory: ControllerHandlerFactory,
-    private val restServer: RestServer,
     private val authService: AuthService,
     private val environmentVariables: EnvironmentVariables,
 ) {
 
-    private val controllerHandler = this.controllerHandlerFactory.create(restServer)
+    private val controllerHandler = this.cloudAPI.getWebControllerHandler()
 
-    init {
-        this.restServer.setAuthService(authService)
-    }
-
-    fun run() {
-        registerController()
-    }
-
-    private fun registerController() {
+    fun registerControllers() {
         this.controllerHandler.registerController(LoginController(this.authService))
 
         this.controllerHandler.registerController(ProcessGroupController(this.cloudAPI.getProcessGroupService()))

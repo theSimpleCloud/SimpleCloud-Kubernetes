@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.defaultcontroller.v1.handler
 
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.impl.image.ImageImpl
+import app.simplecloud.simplecloud.api.image.ImageImpl
 import app.simplecloud.simplecloud.api.request.template.ProcessLobbyTemplateUpdateRequest
 import app.simplecloud.simplecloud.api.request.template.ProcessProxyTemplateUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate

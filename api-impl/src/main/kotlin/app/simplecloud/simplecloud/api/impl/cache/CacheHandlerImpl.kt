@@ -16,30 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
+package app.simplecloud.simplecloud.api.impl.cache
 
-import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.module.api.image.ImageHandler
-import app.simplecloud.simplecloud.module.api.service.ErrorService
-import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
+import app.simplecloud.simplecloud.api.cache.CacheHandler
+import app.simplecloud.simplecloud.api.cache.SingletonCache
+import app.simplecloud.simplecloud.distribution.api.Cache
+import app.simplecloud.simplecloud.distribution.api.Distribution
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 07.01.23
+ * Time: 12:46
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
+class CacheHandlerImpl(
+    private val distribution: Distribution,
+) : CacheHandler {
 
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
+    override fun <K, V> getOrCreateCache(name: String): Cache<K, V> {
+        return this.distribution.getOrCreateCache(name)
+    }
 
-    fun getErrorService(): ErrorService
-
-    fun getLocalAPI(): LocalAPI
-
-    fun getWebControllerHandler(): ControllerHandler
-
-    fun getImageHandler(): ImageHandler
+    override fun <T> getOrCreateSingletonCache(name: String): SingletonCache<T> {
+        return SingletonCacheImpl(name, this)
+    }
 
 }

@@ -59,9 +59,9 @@ abstract class AbstractNodePrepareTest {
             NodePreparer(
                 this.databaseFactory,
                 this.kubeAPI,
+                VirtualEnvironmentVariables(emptyMap()),
                 this.restSetupManager,
                 TestTokenHandlerFactory(),
-                VirtualEnvironmentVariables(emptyMap())
             )
         try {
             nodePreparer.prepare()

@@ -16,30 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api
+package app.simplecloud.simplecloud.node.image.functions
 
-import app.simplecloud.simplecloud.api.CloudAPI
-import app.simplecloud.simplecloud.module.api.image.ImageHandler
-import app.simplecloud.simplecloud.module.api.service.ErrorService
-import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
-import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
+import app.simplecloud.simplecloud.module.api.error.Error
+import app.simplecloud.simplecloud.module.api.error.ResolveFunction
+import java.util.concurrent.CompletableFuture
 
 /**
- * Date: 24.08.22
- * Time: 09:51
+ * Date: 07.01.23
+ * Time: 11:04
  * @author Frederick Baier
  *
  */
-interface NodeCloudAPI : CloudAPI {
-
-    fun getOnlineStrategyService(): NodeProcessOnlineStrategyService
-
-    fun getErrorService(): ErrorService
-
-    fun getLocalAPI(): LocalAPI
-
-    fun getWebControllerHandler(): ControllerHandler
-
-    fun getImageHandler(): ImageHandler
-
+class NoImageProvidersResolvedFunction : ResolveFunction {
+    override fun isResolved(error: Error, nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean> {
+        return CompletableFuture.completedFuture(
+            nodeCloudAPI.getImageHandler().getRegisteredImageProviderNames().isNotEmpty()
+        )
+    }
 }
