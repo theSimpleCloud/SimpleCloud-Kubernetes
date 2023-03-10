@@ -32,4 +32,5 @@ data class DatabaseRepositories(
     val onlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
     val permissionGroupRepository: DatabasePermissionGroupRepository,
     val staticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
+    val resourceRepository: DatabaseResourceRepository,
 )

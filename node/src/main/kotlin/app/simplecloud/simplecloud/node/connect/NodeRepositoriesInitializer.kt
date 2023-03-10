@@ -21,22 +21,30 @@ package app.simplecloud.simplecloud.node.connect
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedStaticProcessTemplateRepository
-import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
-import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
-import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
-import app.simplecloud.simplecloud.database.api.DatabaseStaticProcessTemplateRepository
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
+import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1LobbyGroupSpec
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1ProxyGroupSpec
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1ServerGroupSpec
+import app.simplecloud.simplecloud.node.resource.onlinestrategy.V1Beta1ProcessOnlineCountStrategySpec
+import app.simplecloud.simplecloud.node.resource.permissiongroup.V1Beta1PermissionGroupSpec
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticLobbySpec
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticProxySpec
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticServerSpec
 import org.apache.logging.log4j.LogManager
 
 class NodeRepositoriesInitializer(
+    private val requestHandler: ResourceRequestHandler,
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
-    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
     private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,
-    private val databasePermissionGroupRepository: DatabasePermissionGroupRepository,
     private val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
-    private val databaseOnlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
     private val distributedStaticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
-    private val databaseStaticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
 ) {
 
     fun initializeRepositories() {
@@ -44,19 +52,17 @@ class NodeRepositoriesInitializer(
         initGroups()
         initPermissionGroups()
         initOnlineCountStrategies()
-        initStaticTemplate()
-    }
-
-    private fun initStaticTemplate() {
-        val configurations = this.databaseStaticProcessTemplateRepository.findAll().join()
-        logger.info("Found Static Templates: {}", configurations.map { it.name })
-        for (config in configurations) {
-            this.distributedStaticProcessTemplateRepository.save(config.name, config)
-        }
+        initStaticTemplates()
     }
 
     private fun initOnlineCountStrategies() {
-        val configurations = this.databaseOnlineCountStrategyRepository.findAll().join()
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1ProcessOnlineCountStrategySpec>(
+            "core",
+            "ProcessOnlineCountStrategy",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertProcessOnlineCountSpecToConfig(it.getName(), it.getSpec()) }
+
         logger.info("Found OnlineCountStrategies: {}", configurations.map { it.name })
         for (config in configurations) {
             this.distributedOnlineCountStrategyRepository.save(config.name, config).join()
@@ -64,19 +70,257 @@ class NodeRepositoriesInitializer(
     }
 
     private fun initPermissionGroups() {
-        val configurations = this.databasePermissionGroupRepository.findAll().join()
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1PermissionGroupSpec>(
+            "core",
+            "PermissionGroup",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertPermissionGroupSpecToConfig(it.getName(), it.getSpec()) }
+
         logger.info("Found PermissionGroups: {}", configurations.map { it.name })
         for (config in configurations) {
             this.distributedPermissionGroupRepository.save(config.name, config).join()
         }
     }
 
+    private fun initStaticTemplates() {
+        initStaticLobbies()
+        initStaticProxies()
+        initStaticServers()
+    }
+
     private fun initGroups() {
-        val configurations = this.databaseCloudProcessGroupRepository.findAll().join()
-        logger.info("Found Groups: {}", configurations.map { it.name })
+        initLobbyGroups()
+        initProxyGroups()
+        initServerGroups()
+    }
+
+    private fun initStaticLobbies() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1StaticLobbySpec>(
+            "core",
+            "StaticLobby",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertStaticLobbySpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Static Lobbies: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedStaticProcessTemplateRepository.save(config.name, config).join()
+        }
+    }
+
+    private fun initStaticProxies() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1StaticProxySpec>(
+            "core",
+            "StaticProxy",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertStaticProxySpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Static Proxies: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedStaticProcessTemplateRepository.save(config.name, config).join()
+        }
+    }
+
+    private fun initStaticServers() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1StaticServerSpec>(
+            "core",
+            "StaticServer",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertStaticServerSpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Static Servers: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedStaticProcessTemplateRepository.save(config.name, config).join()
+        }
+    }
+
+    private fun convertProcessOnlineCountSpecToConfig(
+        name: String,
+        spec: V1Beta1ProcessOnlineCountStrategySpec,
+    ): ProcessOnlineCountStrategyConfiguration {
+        return ProcessOnlineCountStrategyConfiguration(
+            name,
+            spec.className,
+            spec.targetGroupNames.toSet(),
+            createMap(spec.dataKeys, spec.dataValues)
+        )
+    }
+
+    private fun createMap(keys: Array<String>, values: Array<String>): Map<String, String> {
+        val map = mutableMapOf<String, String>()
+        for (index in keys.indices) {
+            map[keys[0]] = values[0]
+        }
+        return map
+    }
+
+    private fun convertPermissionGroupSpecToConfig(
+        name: String,
+        spec: V1Beta1PermissionGroupSpec,
+    ): PermissionGroupConfiguration {
+        return PermissionGroupConfiguration(
+            name,
+            spec.priority,
+            spec.permissions.map {
+                PermissionConfiguration(
+                    it.permissionString,
+                    it.active,
+                    it.expiresAtTimestamp,
+                    it.targetProcessGroup
+                )
+            }
+        )
+    }
+
+    private fun convertStaticServerSpecToConfig(
+        name: String,
+        spec: V1Beta1StaticServerSpec,
+    ): ServerProcessTemplateConfiguration {
+        return ServerProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active
+        )
+    }
+
+    private fun convertStaticLobbySpecToConfig(
+        name: String,
+        spec: V1Beta1StaticLobbySpec,
+    ): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active,
+            spec.lobbyPriority
+        )
+    }
+
+    private fun convertStaticProxySpecToConfig(
+        name: String,
+        spec: V1Beta1StaticProxySpec,
+    ): ProxyProcessTemplateConfiguration {
+        return ProxyProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active,
+            spec.startPort
+        )
+    }
+
+    private fun initServerGroups() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1ServerGroupSpec>(
+            "core",
+            "ServerGroup",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertServerGroupSpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Server Groups: {}", configurations.map { it.name })
         for (config in configurations) {
             this.distributedGroupRepository.save(config.name, config).join()
         }
+    }
+
+    private fun initProxyGroups() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1ProxyGroupSpec>(
+            "core",
+            "ProxyGroup",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertProxyGroupSpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Proxy Groups: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedGroupRepository.save(config.name, config).join()
+        }
+    }
+
+    private fun initLobbyGroups() {
+        val specResults = this.requestHandler.handleGetAllSpec<V1Beta1LobbyGroupSpec>(
+            "core",
+            "LobbyGroup",
+            "v1beta1"
+        )
+        val configurations = specResults.map { convertLobbyGroupSpecToConfig(it.getName(), it.getSpec()) }
+
+        logger.info("Found Lobby Groups: {}", configurations.map { it.name })
+        for (config in configurations) {
+            this.distributedGroupRepository.save(config.name, config).join()
+        }
+    }
+
+    private fun convertServerGroupSpecToConfig(
+        name: String,
+        spec: V1Beta1ServerGroupSpec,
+    ): ServerProcessTemplateConfiguration {
+        return ServerProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active
+        )
+    }
+
+    private fun convertLobbyGroupSpecToConfig(
+        name: String,
+        spec: V1Beta1LobbyGroupSpec,
+    ): LobbyProcessTemplateConfiguration {
+        return LobbyProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active,
+            spec.lobbyPriority
+        )
+    }
+
+    private fun convertProxyGroupSpecToConfig(
+        name: String,
+        spec: V1Beta1ProxyGroupSpec,
+    ): ProxyProcessTemplateConfiguration {
+        return ProxyProcessTemplateConfiguration(
+            name,
+            spec.maxMemory,
+            spec.maxPlayers,
+            spec.maintenance,
+            spec.imageName,
+            spec.stateUpdating,
+            spec.startPriority,
+            spec.joinPermission,
+            spec.active,
+            spec.startPort
+        )
     }
 
     companion object {

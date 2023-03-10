@@ -53,6 +53,10 @@ class InternalMessageChannelProviderImpl(
         return this.messageChannelManager.getOrCreateMessageChannel("internal_process_start")
     }
 
+    override fun getInternalCreateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_group_create")
+    }
+
     override fun getInternalUpdateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_group_update")
     }
@@ -61,12 +65,20 @@ class InternalMessageChannelProviderImpl(
         return this.messageChannelManager.getOrCreateMessageChannel("internal_group_delete")
     }
 
+    override fun getInternalCreateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_static_create")
+    }
+
     override fun getInternalUpdateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_static_update")
     }
 
     override fun getInternalDeleteStaticTemplateChannel(): MessageChannel<String, Unit> {
         return this.messageChannelManager.getOrCreateMessageChannel("internal_static_delete")
+    }
+
+    override fun getInternalCreatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit> {
+        return this.messageChannelManager.getOrCreateMessageChannel("internal_permission_group_create")
     }
 
     override fun getInternalUpdatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit> {

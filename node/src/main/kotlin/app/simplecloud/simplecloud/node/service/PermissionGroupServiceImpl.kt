@@ -18,13 +18,14 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractPermissionGroupService
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.permission.PermissionGroup
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.permissiongroup.V1Beta1PermissionConfiguration
+import app.simplecloud.simplecloud.node.resource.permissiongroup.V1Beta1PermissionGroupSpec
 
 /**
  * Date: 20.03.22
@@ -33,28 +34,48 @@ import app.simplecloud.simplecloud.database.api.DatabasePermissionGroupRepositor
  *
  */
 class PermissionGroupServiceImpl(
-    private val databaseRepository: DatabasePermissionGroupRepository,
     private val distributedRepository: DistributedPermissionGroupRepository,
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
+    private val requestHandler: ResourceRequestHandler,
 ) : AbstractPermissionGroupService(distributedRepository, groupFactory, permissionFactory) {
 
-    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
-        this.distributedRepository.save(configuration.name, configuration).await()
-        saveToDatabase(configuration)
+    override suspend fun createGroupInternal0(configuration: PermissionGroupConfiguration) {
+        this.requestHandler.handleCreate(
+            "core",
+            "PermissionGroup",
+            "v1beta1",
+            configuration.name,
+            convertConfigurationToSpec(configuration)
+        )
     }
 
-    private fun saveToDatabase(configuration: PermissionGroupConfiguration) {
-        this.databaseRepository.save(configuration.name, configuration)
+    override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
+        this.requestHandler.handleUpdate(
+            "core",
+            "PermissionGroup",
+            "v1beta1",
+            configuration.name,
+            convertConfigurationToSpec(configuration)
+        )
     }
 
     override suspend fun deleteGroupInternal(group: PermissionGroup) {
-        this.distributedRepository.remove(group.getName())
-        deleteGroupFromDatabase(group)
+        this.requestHandler.handleDelete("core", "PermissionGroup", "v1beta1", group.getName())
     }
 
-    private fun deleteGroupFromDatabase(group: PermissionGroup) {
-        this.databaseRepository.remove(group.getName())
+    private fun convertConfigurationToSpec(configuration: PermissionGroupConfiguration): V1Beta1PermissionGroupSpec {
+        return V1Beta1PermissionGroupSpec(
+            configuration.priority,
+            configuration.permissions.map {
+                V1Beta1PermissionConfiguration(
+                    it.permissionString,
+                    it.active,
+                    it.expiresAtTimestamp,
+                    it.targetProcessGroup
+                )
+            }.toTypedArray()
+        )
     }
 
 }

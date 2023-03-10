@@ -36,6 +36,7 @@ class InMemoryRepositorySafeDatabaseFactory : DatabaseFactory {
     val onlineCountStrategyRepository = MemoryDatabaseOnlineCountStrategyRepository()
     val permissionGroupRepository = MemoryDatabasePermissionGroupRepository()
     val staticProcessTemplateRepository = MemoryDatabaseStaticProcessTemplateRepository()
+    val resourceRepository = MemoryDatabaseResourceRepository()
 
     override fun create(connectionString: String): DatabaseRepositories {
         return DatabaseRepositories(
@@ -43,7 +44,8 @@ class InMemoryRepositorySafeDatabaseFactory : DatabaseFactory {
             offlineCloudPlayerRepository,
             onlineCountStrategyRepository,
             permissionGroupRepository,
-            staticProcessTemplateRepository
+            staticProcessTemplateRepository,
+            resourceRepository,
         )
     }
 }

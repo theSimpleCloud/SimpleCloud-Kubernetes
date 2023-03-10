@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.Univ
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.api.node.Node
 import app.simplecloud.simplecloud.api.service.NodeService
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.static.StaticProcessTemplate
 
 /**
@@ -44,22 +45,33 @@ class StaticProcessTemplateServiceImpl(
 
     private val updateMessageChannel = internalMessageChannelProvider.getInternalUpdateStaticTemplateChannel()
 
-    override suspend fun updateGroupInternal0(template: StaticProcessTemplate) {
+    private val createChannel = internalMessageChannelProvider.getInternalCreateStaticTemplateChannel()
+
+    override suspend fun createGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
         val node = this.nodeService.findFirst().await()
-        sendUpdateRequestToNode(template, node)
+        sendCreateRequestToNode(configuration, node)
+    }
+
+    override suspend fun updateGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
+        val node = this.nodeService.findFirst().await()
+        sendUpdateRequestToNode(configuration, node)
     }
 
     override suspend fun deleteStaticTemplateInternal(template: StaticProcessTemplate) {
         val node = this.nodeService.findFirst().await()
-        sendDeleteRequestToNode(template, node)
+        sendDeleteRequestToNode(template.toConfiguration(), node)
     }
 
-    private suspend fun sendUpdateRequestToNode(template: StaticProcessTemplate, node: Node) {
-        this.updateMessageChannel.createMessageRequest(template.toConfiguration(), node).submit().await()
+    private suspend fun sendUpdateRequestToNode(configuration: AbstractProcessTemplateConfiguration, node: Node) {
+        this.updateMessageChannel.createMessageRequest(configuration, node).submit().await()
     }
 
-    private suspend fun sendDeleteRequestToNode(template: StaticProcessTemplate, node: Node) {
-        this.deleteMessageChannel.createMessageRequest(template.getName(), node).submit().await()
+    private suspend fun sendDeleteRequestToNode(configuration: AbstractProcessTemplateConfiguration, node: Node) {
+        this.deleteMessageChannel.createMessageRequest(configuration.name, node).submit().await()
+    }
+
+    private suspend fun sendCreateRequestToNode(configuration: AbstractProcessTemplateConfiguration, node: Node) {
+        this.createChannel.createMessageRequest(configuration, node).submit().await()
     }
 
 

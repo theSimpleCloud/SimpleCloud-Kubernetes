@@ -31,6 +31,9 @@ dependencies {
     implementation("org.apache.logging.log4j:log4j-core:2.18.0")
     implementation("org.apache.logging.log4j:log4j-api:2.18.0")
 
+    api("eu.thesimplecloud.jsonlib:json-lib:1.0.8")
+    implementation("org.yaml:snakeyaml:1.33")
+
     testFixturesApi(project(":module:module-api-impl"))
     testFixturesApi(project(":kubernetes:kubernetes-test"))
     testFixturesApi(project(":database:database-inmemory"))

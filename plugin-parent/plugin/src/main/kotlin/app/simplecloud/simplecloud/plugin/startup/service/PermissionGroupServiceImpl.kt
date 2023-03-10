@@ -39,13 +39,20 @@ class PermissionGroupServiceImpl(
     private val groupFactory: PermissionGroup.Factory,
     private val permissionFactory: Permission.Factory,
     internalMessageChannelProvider: InternalMessageChannelProvider,
-    private val nodeService: NodeService
+    private val nodeService: NodeService,
 ) : AbstractPermissionGroupService(distributedRepository, groupFactory, permissionFactory) {
 
 
     private val deleteMessageChannel = internalMessageChannelProvider.getInternalDeletePermissionGroupChannel()
 
     private val updateMessageChannel = internalMessageChannelProvider.getInternalUpdatePermissionGroupChannel()
+
+    private val createMessageChannel = internalMessageChannelProvider.getInternalCreatePermissionGroupChannel()
+
+    override suspend fun createGroupInternal0(configuration: PermissionGroupConfiguration) {
+        val node = this.nodeService.findFirst().await()
+        sendCreateRequestToNode(configuration, node)
+    }
 
     override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
         val node = this.nodeService.findFirst().await()
@@ -55,6 +62,10 @@ class PermissionGroupServiceImpl(
     override suspend fun deleteGroupInternal(group: PermissionGroup) {
         val node = this.nodeService.findFirst().await()
         sendDeleteRequestToNode(group, node)
+    }
+
+    private suspend fun sendCreateRequestToNode(configuration: PermissionGroupConfiguration, node: Node) {
+        this.createMessageChannel.createMessageRequest(configuration, node).submit().await()
     }
 
     private suspend fun sendUpdateRequestToNode(configuration: PermissionGroupConfiguration, node: Node) {

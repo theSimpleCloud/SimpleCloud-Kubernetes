@@ -22,6 +22,9 @@ import app.simplecloud.simplecloud.restserver.api.ParameterType
 import app.simplecloud.simplecloud.restserver.api.route.RouteMethod
 import app.simplecloud.simplecloud.restserver.api.route.RouteMethodBuilder
 import app.simplecloud.simplecloud.restserver.api.vmethod.VirtualMethod
+import app.simplecloud.simplecloud.restserver.base.parameter.PathParamParameterType
+import app.simplecloud.simplecloud.restserver.base.parameter.RequestingEntityParameterType
+import app.simplecloud.simplecloud.restserver.base.parameter.SimpleBodyParameterType
 import app.simplecloud.simplecloud.restserver.base.route.RouteMethodImpl
 
 /**
@@ -48,6 +51,18 @@ class RouteMethodBuilderImpl : RouteMethodBuilder {
     override fun build(): RouteMethod {
         check(this.virtualMethod != null)
         return RouteMethodImpl(this.virtualMethod!!, this.parameters)
+    }
+
+    override fun addPathParameterType(name: String) {
+        addParameter(PathParamParameterType(name))
+    }
+
+    override fun addBodyParameterType() {
+        addParameter(SimpleBodyParameterType())
+    }
+
+    override fun addRequestingEntityParameterType() {
+        addParameter(RequestingEntityParameterType())
     }
 
 }

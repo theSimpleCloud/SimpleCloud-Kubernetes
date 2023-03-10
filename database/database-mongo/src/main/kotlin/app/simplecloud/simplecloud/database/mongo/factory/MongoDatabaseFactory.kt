@@ -34,7 +34,9 @@ import java.net.ConnectException
 class MongoDatabaseFactory : DatabaseFactory {
 
     override fun create(connectionString: String): DatabaseRepositories {
-        val datastore = MongoClientStarter(connectionString).startClient()
+        val mongoClientStarter = MongoClientStarter(connectionString)
+        val datastore = mongoClientStarter.getDatastore()
+        val mongoDatabase = mongoClientStarter.getDatabase()
         if (!isConnectedToDatabase(datastore))
             throw ConnectException("Failed to connect to mongodb")
 
@@ -43,7 +45,8 @@ class MongoDatabaseFactory : DatabaseFactory {
             MongoDatabaseOfflineCloudPlayerRepositoryAdapter(datastore),
             MongoDatabaseOnlineCountStrategyRepositoryAdapter(datastore),
             MongoDatabasePermissionGroupRepositoryAdapter(datastore),
-            MongoDatabaseStaticProcessTemplateRepositoryAdapter(datastore)
+            MongoDatabaseStaticProcessTemplateRepositoryAdapter(datastore),
+            MongoDatabaseResourceRepository(mongoDatabase)
         )
     }
 

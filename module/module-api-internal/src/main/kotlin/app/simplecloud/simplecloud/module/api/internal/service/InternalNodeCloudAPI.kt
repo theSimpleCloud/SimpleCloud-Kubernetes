@@ -22,6 +22,7 @@ import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.module.api.NodeCloudAPI
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 
 
 /**
@@ -41,6 +42,8 @@ interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
     fun getFtpService(): InternalFtpServerService
 
     fun getInternalMessageChannelProvider(): InternalMessageChannelProvider
+
+    fun getResourceRequestHandler(): ResourceRequestHandler
 
     fun setDisabledMode(boolean: Boolean)
 

@@ -53,10 +53,14 @@ import app.simplecloud.simplecloud.module.api.impl.repository.distributed.Distri
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
 import app.simplecloud.simplecloud.module.api.impl.service.DefaultFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.node.resource.ResourceDefinitionRegisterer
+import app.simplecloud.simplecloud.node.resourcedefinition.handler.ResourceRequestHandlerImpl
+import app.simplecloud.simplecloud.node.resourcedefinition.web.ResourceDefinitionRouteRegisterer
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.prepare.ControllerRegisterer
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
@@ -85,7 +89,7 @@ class NodeClusterConnect(
         injectUserContextIntoDistribution(distribution, nodeCloudAPI, distributedRepositories)
         registerWebControllers(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
-        checkForFirstNodeInCluster(distribution, distributedRepositories)
+        checkForFirstNodeInCluster(distribution, distributedRepositories, nodeCloudAPI.getResourceRequestHandler())
         handleClusterActive(nodeCloudAPI)
         return nodeCloudAPI
     }
@@ -130,12 +134,13 @@ class NodeClusterConnect(
     private fun checkForFirstNodeInCluster(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories,
+        resourceRequestHandler: ResourceRequestHandler,
     ) {
         if (distribution.getServers().size == 1) {
             ClusterInitializer(
                 distribution,
                 distributedRepositories,
-                this.databaseRepositories
+                resourceRequestHandler
             ).initialize()
         }
     }
@@ -147,17 +152,29 @@ class NodeClusterConnect(
             this.tokenHandler
         )
         restServer.setAuthService(authService)
-        return ControllerRegisterer(
+        ControllerRegisterer(
             nodeCloudAPI,
             authService,
             this.preparedNode.environmentVariables
         ).registerControllers()
+
+        ResourceDefinitionRouteRegisterer(
+            this.restServerConfig.restServer,
+            nodeCloudAPI.getResourceDefinitionService(),
+            nodeCloudAPI.getResourceRequestHandler()
+        ).registerRoutes()
     }
 
     private fun initializeServices(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories,
     ): NodeCloudAPIImpl {
+        val resourceDefinitionService = ResourceDefinitionServiceImpl()
+        val requestHandler = ResourceRequestHandlerImpl(
+            this.databaseRepositories.resourceRepository,
+            resourceDefinitionService
+        )
+
         val controllerHandler = this.restServerConfig.controllerHandlerFactory.create(this.restServerConfig.restServer)
         val eventManager = DefaultEventManager()
         val nodeService = NodeServiceImpl(distribution)
@@ -174,19 +191,19 @@ class NodeClusterConnect(
 
         val nodeProcessOnlineStrategyService = NodeProcessOnlineStrategyServiceImpl(
             distributedRepositories.distributedOnlineCountStrategyRepository,
-            databaseRepositories.onlineCountStrategyRepository,
-            UniversalProcessOnlineCountStrategyFactory()
+            UniversalProcessOnlineCountStrategyFactory(),
+            requestHandler
         )
         val cloudProcessGroupService = CloudProcessGroupServiceImpl(
             universalGroupFactory,
             distributedRepositories.cloudProcessGroupRepository,
-            databaseRepositories.cloudProcessGroupRepository
+            requestHandler
         )
 
         val staticProcessTemplateService = StaticProcessTemplateServiceImpl(
             universalStaticProcessTemplateFactory,
             distributedRepositories.staticProcessTemplateRepository,
-            databaseRepositories.staticProcessTemplateRepository
+            requestHandler
         )
 
         val processFactory = CloudProcessFactoryImpl()
@@ -204,10 +221,10 @@ class NodeClusterConnect(
         val permissionFactory = PermissionFactoryImpl()
         val permissionGroupFactory = PermissionGroupFactoryImpl(permissionFactory)
         val permissionGroupService = PermissionGroupServiceImpl(
-            this.databaseRepositories.permissionGroupRepository,
             distributedRepositories.permissionGroupRepository,
             permissionGroupFactory,
-            permissionFactory
+            permissionFactory,
+            requestHandler
         )
 
         val permissionPlayerFactory = PermissionPlayerFactoryImpl(permissionGroupService, permissionFactory)
@@ -233,6 +250,9 @@ class NodeClusterConnect(
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         val cacheHandler = CacheHandlerImpl(distribution)
+
+        ResourceDefinitionRegisterer(resourceDefinitionService, distributedRepositories).registerDefinitions()
+
         return NodeCloudAPIImpl(
             selfComponent.getName(),
             cloudProcessGroupService,
@@ -253,6 +273,8 @@ class NodeClusterConnect(
             ftpService,
             InternalMessageChannelProviderImpl(messageChannelManager),
             controllerHandler,
+            resourceDefinitionService,
+            requestHandler
         )
     }
 

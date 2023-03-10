@@ -18,12 +18,17 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedStaticProcessTemplateRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractStaticProcessTemplateService
 import app.simplecloud.simplecloud.api.impl.template.statictemplate.factory.UniversalStaticProcessTemplateFactory
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.static.StaticProcessTemplate
-import app.simplecloud.simplecloud.database.api.DatabaseStaticProcessTemplateRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticLobbySpec
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticProxySpec
+import app.simplecloud.simplecloud.node.resource.staticserver.V1Beta1StaticServerSpec
 
 /**
  * Date: 17.08.22
@@ -33,27 +38,73 @@ import app.simplecloud.simplecloud.database.api.DatabaseStaticProcessTemplateRep
  */
 class StaticProcessTemplateServiceImpl(
     staticTemplateFactory: UniversalStaticProcessTemplateFactory,
-    private val distributedRepository: DistributedStaticProcessTemplateRepository,
-    private val databaseRepository: DatabaseStaticProcessTemplateRepository,
+    distributedRepository: DistributedStaticProcessTemplateRepository,
+    private val resourceRequestHandler: ResourceRequestHandler,
 ) : AbstractStaticProcessTemplateService(distributedRepository, staticTemplateFactory) {
 
-    override suspend fun updateGroupInternal0(template: StaticProcessTemplate) {
-        this.distributedRepository.save(template.getName(), template.toConfiguration()).await()
-        saveToDatabase(template)
+    override suspend fun createGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
+        val kind = getKindFromTemplateConfiguration(configuration)
+        val spec = convertConfigurationToSpec(configuration)
+        this.resourceRequestHandler.handleCreate("core", kind, "v1beta1", configuration.name, spec)
     }
 
-    private fun saveToDatabase(template: StaticProcessTemplate) {
-        this.databaseRepository.save(template.getName(), template.toConfiguration())
+    override suspend fun updateGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
+        val kind = getKindFromTemplateConfiguration(configuration)
+        val spec = convertConfigurationToSpec(configuration)
+        this.resourceRequestHandler.handleUpdate("core", kind, "v1beta1", configuration.name, spec)
     }
 
     override suspend fun deleteStaticTemplateInternal(template: StaticProcessTemplate) {
-        this.distributedRepository.remove(template.getName()).await()
-        deleteTemplateFromDatabase(template)
+        val kind = getKindFromTemplateConfiguration(template.toConfiguration())
+        this.resourceRequestHandler.handleDelete("core", kind, "v1beta1", template.getName())
     }
 
-    private fun deleteTemplateFromDatabase(template: StaticProcessTemplate) {
-        this.databaseRepository.remove(template.getName())
+
+    private fun getKindFromTemplateConfiguration(configuration: AbstractProcessTemplateConfiguration): String {
+        return when (configuration) {
+            is LobbyProcessTemplateConfiguration -> "StaticLobby"
+            is ProxyProcessTemplateConfiguration -> "StaticProxy"
+            else -> "StaticServer"
+        }
     }
 
+    private fun convertConfigurationToSpec(configuration: AbstractProcessTemplateConfiguration): Any {
+        return when (configuration) {
+            is LobbyProcessTemplateConfiguration -> V1Beta1StaticLobbySpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active,
+                configuration.lobbyPriority
+            )
+
+            is ProxyProcessTemplateConfiguration -> V1Beta1StaticProxySpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active,
+                configuration.startPort
+            )
+
+            else -> V1Beta1StaticServerSpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active
+            )
+        }
+    }
 
 }

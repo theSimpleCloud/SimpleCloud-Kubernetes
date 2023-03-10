@@ -43,16 +43,17 @@ abstract class AbstractStaticProcessTemplateService(
 
     override suspend fun createStaticTemplateInternal(configuration: AbstractProcessTemplateConfiguration): StaticProcessTemplate {
         val staticTemplate = this.staticTemplateFactory.create(configuration, this)
-        updateGroupInternal0(staticTemplate)
+        createGroupInternal0(configuration)
         return staticTemplate
     }
 
+    abstract suspend fun createGroupInternal0(configuration: AbstractProcessTemplateConfiguration)
+
     override suspend fun updateStaticTemplateInternal(configuration: AbstractProcessTemplateConfiguration) {
-        val staticTemplate = this.staticTemplateFactory.create(configuration, this)
-        updateGroupInternal0(staticTemplate)
+        updateGroupInternal0(configuration)
     }
 
-    abstract suspend fun updateGroupInternal0(template: StaticProcessTemplate)
+    abstract suspend fun updateGroupInternal0(configuration: AbstractProcessTemplateConfiguration)
 
     override fun findByName(name: String): CompletableFuture<StaticProcessTemplate> {
         val completableFuture = this.distributedRepository.find(name)

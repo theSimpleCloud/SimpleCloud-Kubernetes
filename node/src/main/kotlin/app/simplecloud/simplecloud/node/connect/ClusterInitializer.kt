@@ -18,8 +18,8 @@
 
 package app.simplecloud.simplecloud.node.connect
 
-import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterRunnable
 import app.simplecloud.simplecloud.node.task.ErrorResolvedCheckerRunnable
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessCheckerRunnable
@@ -33,8 +33,8 @@ import java.util.concurrent.TimeUnit
  */
 class ClusterInitializer(
     private val distribution: Distribution,
-    private val distributedRepositories: app.simplecloud.simplecloud.node.connect.DistributedRepositories,
-    private val databaseRepositories: DatabaseRepositories,
+    private val distributedRepositories: DistributedRepositories,
+    private val resourceRequestHandler: ResourceRequestHandler,
 ) {
     fun initialize() {
         initializeRepositories()
@@ -49,15 +49,12 @@ class ClusterInitializer(
     }
 
     private fun initializeRepositories() {
-        val nodeRepositoriesInitializer = app.simplecloud.simplecloud.node.connect.NodeRepositoriesInitializer(
+        val nodeRepositoriesInitializer = NodeRepositoriesInitializer(
+            this.resourceRequestHandler,
             distributedRepositories.cloudProcessGroupRepository,
-            this.databaseRepositories.cloudProcessGroupRepository,
             distributedRepositories.permissionGroupRepository,
-            this.databaseRepositories.permissionGroupRepository,
             distributedRepositories.distributedOnlineCountStrategyRepository,
-            this.databaseRepositories.onlineCountStrategyRepository,
-            distributedRepositories.staticProcessTemplateRepository,
-            this.databaseRepositories.staticProcessTemplateRepository
+            distributedRepositories.staticProcessTemplateRepository
         )
         nodeRepositoriesInitializer.initializeRepositories()
     }

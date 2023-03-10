@@ -30,10 +30,13 @@ class MessageChannelsInitializer(
 ) {
 
     fun initializeMessageChannels() {
+        registerPermissionGroupCreateMessageChannel()
         registerPermissionGroupDeleteMessageChannel()
         registerPermissionGroupUpdateMessageChannel()
+        registerGroupCreateMessageChannel()
         registerGroupDeleteMessageChannel()
         registerGroupUpdateMessageChannel()
+        registerStaticTemplateCreateMessageChannel()
         registerStaticTemplateDeleteMessageChannel()
         registerStaticTemplateUpdateMessageChannel()
         registerStartProcessMessageChannel()
@@ -77,6 +80,12 @@ class MessageChannelsInitializer(
         messageChannel.setMessageHandler(messageHandler)
     }
 
+    private fun registerStaticTemplateCreateMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalCreateStaticTemplateChannel()
+        val messageHandler = CreateStaticTemplateMessageHandler(this.cloudAPI.getStaticProcessTemplateService())
+        messageChannel.setMessageHandler(messageHandler)
+    }
+
     private fun registerStaticTemplateDeleteMessageChannel() {
         val messageChannel = this.internalMessageChannelProvider.getInternalDeleteStaticTemplateChannel()
         val messageHandler = DeleteStaticTemplateMessageHandler(this.cloudAPI.getStaticProcessTemplateService())
@@ -114,6 +123,12 @@ class MessageChannelsInitializer(
         messageChannel.setMessageHandler(startProcessMessageHandler)
     }
 
+    private fun registerGroupCreateMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalCreateGroupChannel()
+        val createGroupMessageHandler = CreateGroupMessageHandler(this.cloudAPI.getProcessGroupService())
+        messageChannel.setMessageHandler(createGroupMessageHandler)
+    }
+
     private fun registerGroupUpdateMessageChannel() {
         val messageChannel = this.internalMessageChannelProvider.getInternalUpdateGroupChannel()
         val updateGroupMessageHandler = UpdateGroupMessageHandler(this.cloudAPI.getProcessGroupService())
@@ -124,6 +139,12 @@ class MessageChannelsInitializer(
         val messageChannel = this.internalMessageChannelProvider.getInternalDeleteGroupChannel()
         val deleteGroupMessageHandler = DeleteGroupMessageHandler(this.cloudAPI.getProcessGroupService())
         messageChannel.setMessageHandler(deleteGroupMessageHandler)
+    }
+
+    private fun registerPermissionGroupCreateMessageChannel() {
+        val messageChannel = this.internalMessageChannelProvider.getInternalCreatePermissionGroupChannel()
+        val createGroupMessageHandler = CreatePermissionGroupMessageHandler(this.cloudAPI.getPermissionGroupService())
+        messageChannel.setMessageHandler(createGroupMessageHandler)
     }
 
     private fun registerPermissionGroupUpdateMessageChannel() {

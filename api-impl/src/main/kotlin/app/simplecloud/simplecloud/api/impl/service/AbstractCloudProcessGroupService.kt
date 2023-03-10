@@ -65,15 +65,18 @@ abstract class AbstractCloudProcessGroupService(
     }
 
     override suspend fun updateGroupInternal(configuration: AbstractProcessTemplateConfiguration) {
-        val group = this.processGroupFactory.create(configuration, this)
-        updateGroupInternal0(group)
+        updateGroupInternal0(configuration)
     }
 
-    abstract suspend fun updateGroupInternal0(group: CloudProcessGroup)
+    abstract suspend fun updateGroupInternal0(configuration: AbstractProcessTemplateConfiguration)
 
     override suspend fun createGroupInternal(configuration: AbstractProcessTemplateConfiguration): CloudProcessGroup {
         val group = this.processGroupFactory.create(configuration, this)
-        updateGroupInternal0(group)
+        createGroupInternal0(configuration)
         return group
     }
+
+
+    abstract suspend fun createGroupInternal0(configuration: AbstractProcessTemplateConfiguration)
+
 }

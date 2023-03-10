@@ -33,6 +33,8 @@ import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorServ
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
 
 /**
@@ -61,6 +63,8 @@ class NodeCloudAPIImpl(
     private val ftpService: InternalFtpServerService,
     private val messageChannelProvider: InternalMessageChannelProvider,
     private val controllerHandler: ControllerHandler,
+    private val resourceDefinitionService: ResourceDefinitionService,
+    private val resourceRequestHandler: ResourceRequestHandler,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -106,6 +110,14 @@ class NodeCloudAPIImpl(
 
     override fun getWebControllerHandler(): ControllerHandler {
         return this.controllerHandler
+    }
+
+    override fun getResourceDefinitionService(): ResourceDefinitionService {
+        return this.resourceDefinitionService
+    }
+
+    override fun getResourceRequestHandler(): ResourceRequestHandler {
+        return this.resourceRequestHandler
     }
 
 }

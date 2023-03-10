@@ -18,37 +18,88 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.impl.service.AbstractCloudProcessGroupService
 import app.simplecloud.simplecloud.api.impl.template.group.factory.UniversalCloudProcessGroupFactory
+import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
-import app.simplecloud.simplecloud.database.api.DatabaseCloudProcessGroupRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1LobbyGroupSpec
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1ProxyGroupSpec
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1ServerGroupSpec
 
 class CloudProcessGroupServiceImpl(
     processGroupFactory: UniversalCloudProcessGroupFactory,
-    private val distributedRepository: DistributedCloudProcessGroupRepository,
-    private val databaseCloudProcessGroupRepository: DatabaseCloudProcessGroupRepository
+    distributedRepository: DistributedCloudProcessGroupRepository,
+    private val resourceRequestHandler: ResourceRequestHandler,
 ) : AbstractCloudProcessGroupService(
     distributedRepository, processGroupFactory
 ) {
 
-    override suspend fun updateGroupInternal0(group: CloudProcessGroup) {
-        this.distributedRepository.save(group.getName(), group.toConfiguration()).await()
-        saveToDatabase(group)
+    override suspend fun createGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
+        val kind = getKindFromTemplateConfiguration(configuration)
+        val spec = convertConfigurationToSpec(configuration)
+        this.resourceRequestHandler.handleCreate("core", kind, "v1beta1", configuration.name, spec)
+    }
+
+    override suspend fun updateGroupInternal0(configuration: AbstractProcessTemplateConfiguration) {
+        val kind = getKindFromTemplateConfiguration(configuration)
+        val spec = convertConfigurationToSpec(configuration)
+        this.resourceRequestHandler.handleUpdate("core", kind, "v1beta1", configuration.name, spec)
     }
 
     override suspend fun deleteGroupInternal(group: CloudProcessGroup) {
-        this.distributedRepository.remove(group.getName()).await()
-        deleteGroupFromDatabase(group)
+        val kind = getKindFromTemplateConfiguration(group.toConfiguration())
+        this.resourceRequestHandler.handleDelete("core", kind, "v1beta1", group.getName())
     }
 
-    private fun deleteGroupFromDatabase(group: CloudProcessGroup) {
-        this.databaseCloudProcessGroupRepository.remove(group.getName())
+    private fun getKindFromTemplateConfiguration(configuration: AbstractProcessTemplateConfiguration): String {
+        return when (configuration) {
+            is LobbyProcessTemplateConfiguration -> "LobbyGroup"
+            is ProxyProcessTemplateConfiguration -> "ProxyGroup"
+            else -> "ServerGroup"
+        }
     }
 
-    private fun saveToDatabase(group: CloudProcessGroup) {
-        this.databaseCloudProcessGroupRepository.save(group.getName(), group.toConfiguration())
+    private fun convertConfigurationToSpec(configuration: AbstractProcessTemplateConfiguration): Any {
+        return when (configuration) {
+            is LobbyProcessTemplateConfiguration -> V1Beta1LobbyGroupSpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active,
+                configuration.lobbyPriority
+            )
+
+            is ProxyProcessTemplateConfiguration -> V1Beta1ProxyGroupSpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active,
+                configuration.startPort
+            )
+
+            else -> V1Beta1ServerGroupSpec(
+                configuration.maxMemory,
+                configuration.maxPlayers,
+                configuration.maintenance,
+                configuration.imageName,
+                configuration.stateUpdating,
+                configuration.startPriority,
+                configuration.joinPermission,
+                configuration.active
+            )
+        }
     }
 
 

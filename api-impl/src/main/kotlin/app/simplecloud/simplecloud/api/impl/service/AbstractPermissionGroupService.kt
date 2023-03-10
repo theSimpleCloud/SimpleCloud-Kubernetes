@@ -67,9 +67,11 @@ abstract class AbstractPermissionGroupService(
 
     override suspend fun createGroupInternal(configuration: PermissionGroupConfiguration): PermissionGroup {
         val permissionGroup = this.groupFactory.create(configuration, this)
-        updateGroupInternal(configuration)
+        createGroupInternal0(configuration)
         return permissionGroup
     }
+
+    abstract suspend fun createGroupInternal0(configuration: PermissionGroupConfiguration)
 
 
 }

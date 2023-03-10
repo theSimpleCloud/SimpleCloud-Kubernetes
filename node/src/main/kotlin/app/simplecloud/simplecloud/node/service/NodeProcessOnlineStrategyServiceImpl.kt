@@ -24,7 +24,6 @@ import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
-import app.simplecloud.simplecloud.database.api.DatabaseOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequestImpl
 import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequestImpl
 import app.simplecloud.simplecloud.module.api.impl.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequestImpl
@@ -32,8 +31,10 @@ import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProce
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
+import app.simplecloud.simplecloud.node.resource.onlinestrategy.V1Beta1ProcessOnlineCountStrategySpec
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -44,8 +45,8 @@ import java.util.concurrent.CompletableFuture
  */
 class NodeProcessOnlineStrategyServiceImpl(
     private val distributedRepository: DistributedOnlineCountStrategyRepository,
-    private val databaseRepository: DatabaseOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory,
+    private val requestHandler: ResourceRequestHandler,
 ) : InternalNodeProcessOnlineCountStrategyService {
 
     override fun findByName(name: String): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
@@ -80,28 +81,47 @@ class NodeProcessOnlineStrategyServiceImpl(
 
     override suspend fun createStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration): ProcessesOnlineCountStrategy {
         val permissionGroup = this.factory.create(configuration)
-        updateStrategyInternal(configuration)
+        createStrategyInternal0(configuration)
         return permissionGroup
     }
 
+    private fun createStrategyInternal0(configuration: ProcessOnlineCountStrategyConfiguration) {
+        this.requestHandler.handleCreate(
+            "core",
+            "ProcessOnlineCountStrategy",
+            "v1beta1",
+            configuration.name,
+            V1Beta1ProcessOnlineCountStrategySpec(
+                configuration.className,
+                configuration.targetGroupNames.toTypedArray(),
+                configuration.dataMap.keys.toTypedArray(),
+                configuration.dataMap.values.toTypedArray()
+            )
+        )
+    }
+
     override suspend fun updateStrategyInternal(configuration: ProcessOnlineCountStrategyConfiguration) {
-        this.distributedRepository.save(configuration.name, configuration).await()
-        saveToDatabase(configuration)
-        //checkProcessOnlineCount() TODO
+        this.requestHandler.handleUpdate(
+            "core",
+            "ProcessOnlineCountStrategy",
+            "v1beta1",
+            configuration.name,
+            V1Beta1ProcessOnlineCountStrategySpec(
+                configuration.className,
+                configuration.targetGroupNames.toTypedArray(),
+                configuration.dataMap.keys.toTypedArray(),
+                configuration.dataMap.values.toTypedArray()
+            )
+        )
     }
 
     override suspend fun deleteStrategyInternal(strategy: ProcessesOnlineCountStrategy) {
-        this.distributedRepository.remove(strategy.getName())
-        deleteStrategyFromDatabase(strategy)
-        //checkProcessOnlineCount() TODO
-    }
-
-    private fun deleteStrategyFromDatabase(strategy: ProcessesOnlineCountStrategy) {
-        this.databaseRepository.remove(strategy.getName())
-    }
-
-    private fun saveToDatabase(configuration: ProcessOnlineCountStrategyConfiguration) {
-        this.databaseRepository.save(configuration.name, configuration)
+        this.requestHandler.handleDelete(
+            "core",
+            "ProcessOnlineCountStrategy",
+            "v1beta1",
+            strategy.getName(),
+        )
     }
 
     object DefaultProcessesOnlineCountStrategy : ProcessesOnlineCountStrategy {

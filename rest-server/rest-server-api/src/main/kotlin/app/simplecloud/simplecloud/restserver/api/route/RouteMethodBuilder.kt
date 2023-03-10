@@ -35,6 +35,10 @@ interface RouteMethodBuilder {
 
     fun build(): RouteMethod
 
+    fun addPathParameterType(name: String)
 
+    fun addBodyParameterType()
+
+    fun addRequestingEntityParameterType()
 
 }

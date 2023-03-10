@@ -21,7 +21,9 @@ package app.simplecloud.simplecloud.database.mongo.start
 import app.simplecloud.simplecloud.database.mongo.start.codec.*
 import com.mongodb.ConnectionString
 import com.mongodb.MongoClientSettings
+import com.mongodb.client.MongoClient
 import com.mongodb.client.MongoClients
+import com.mongodb.client.MongoDatabase
 import dev.morphia.Datastore
 import dev.morphia.Morphia
 import org.bson.UuidRepresentation
@@ -40,11 +42,24 @@ class MongoClientStarter(
 ) {
 
     private val connectionString = ConnectionString(connectionString)
+    private val mongoClient: MongoClient = createMongoClient()
+    private val datastore: Datastore = createDatastore()
 
-    fun startClient(): Datastore {
+    private fun createDatastore(): Datastore {
+        return Morphia.createDatastore(this.mongoClient, this.connectionString.database!!)
+    }
+
+    private fun createMongoClient(): MongoClient {
         println(connectionString.toString())
-        val mongoClient = MongoClients.create(createClientSettings())
-        return Morphia.createDatastore(mongoClient, this.connectionString.database!!)
+        return MongoClients.create(createClientSettings())
+    }
+
+    fun getDatabase(): MongoDatabase {
+        return this.mongoClient.getDatabase(this.connectionString.database!!)
+    }
+
+    fun getDatastore(): Datastore {
+        return this.datastore
     }
 
     private fun createClientSettings(): MongoClientSettings {

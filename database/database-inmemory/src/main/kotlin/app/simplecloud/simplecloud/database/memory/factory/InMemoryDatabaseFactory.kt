@@ -36,7 +36,8 @@ class InMemoryDatabaseFactory : DatabaseFactory {
             MemoryDatabaseOfflineCloudPlayerRepository(),
             MemoryDatabaseOnlineCountStrategyRepository(),
             MemoryDatabasePermissionGroupRepository(),
-            MemoryDatabaseStaticProcessTemplateRepository()
+            MemoryDatabaseStaticProcessTemplateRepository(),
+            MemoryDatabaseResourceRepository(),
         )
     }
 }

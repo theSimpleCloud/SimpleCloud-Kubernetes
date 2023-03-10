@@ -43,13 +43,19 @@ interface InternalMessageChannelProvider {
 
     fun getInternalStartProcessChannel(): MessageChannel<ProcessStartConfiguration, CloudProcessConfiguration>
 
+    fun getInternalCreateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
+
     fun getInternalUpdateGroupChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
 
     fun getInternalDeleteGroupChannel(): MessageChannel<String, Unit>
 
+    fun getInternalCreateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
+
     fun getInternalUpdateStaticTemplateChannel(): MessageChannel<AbstractProcessTemplateConfiguration, Unit>
 
     fun getInternalDeleteStaticTemplateChannel(): MessageChannel<String, Unit>
+
+    fun getInternalCreatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit>
 
     fun getInternalUpdatePermissionGroupChannel(): MessageChannel<PermissionGroupConfiguration, Unit>
 
