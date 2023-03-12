@@ -83,7 +83,7 @@ class InternalRequestGetHandler(
         return JsonLib.empty()
             .append("name", resourceVersion.getName())
             .append("specSchema", resourceVersion.getSpecSchema())
-            .append("statusSchema", resourceVersion.getStatusClass())
+            .append("statusSchema", resourceVersion.getStatusSchema())
             .append("actions", convertActionsToJson(resourceVersion.getActions()))
     }
 

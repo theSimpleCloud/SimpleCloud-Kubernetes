@@ -231,10 +231,10 @@ class NodeClusterConnect(
         val cloudPlayerService = CloudPlayerServiceImpl(
             distributedRepositories.cloudPlayerRepository,
             CloudPlayerFactoryImpl(cloudProcessService, permissionFactory, permissionPlayerFactory),
-            this.databaseRepositories.offlineCloudPlayerRepository,
             OfflineCloudPlayerFactoryImpl(permissionFactory, permissionPlayerFactory),
             cloudProcessService,
-            cloudProcessGroupService
+            cloudProcessGroupService,
+            requestHandler
         )
 
         val errorService = DefaultErrorService(distributedRepositories.errorRepository, ErrorFactoryImpl())

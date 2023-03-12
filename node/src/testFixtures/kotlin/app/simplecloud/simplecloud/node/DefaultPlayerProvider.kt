@@ -23,8 +23,9 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
 import java.util.*
 
 /**
@@ -39,35 +40,37 @@ object DefaultPlayerProvider {
 
     val DEFAULT_PLAYER_UUID = UUID.randomUUID()
 
-    fun insertPlayerWithPermission(databaseFactory: InMemoryRepositorySafeDatabaseFactory, permissionString: String) {
+    fun insertPlayerWithPermission(resourceRequestHandler: ResourceRequestHandler, permissionString: String) {
         insertPlayerInDatabase(
-            databaseFactory,
+            resourceRequestHandler,
             createOfflineDefaultPlayer(
                 listOf(createPermission(permissionString))
             )
         )
     }
 
-    fun insertPlayerInDatabase(databaseFactory: InMemoryRepositorySafeDatabaseFactory) {
+    fun insertPlayerInDatabase(resourceRequestHandler: ResourceRequestHandler) {
         insertPlayerInDatabase(
-            databaseFactory,
+            resourceRequestHandler,
             createOfflineDefaultPlayer(emptyList())
         )
     }
 
     private fun insertPlayerInDatabase(
-        databaseFactory: InMemoryRepositorySafeDatabaseFactory,
+        resourceRequestHandler: ResourceRequestHandler,
         player: OfflineCloudPlayerConfiguration,
     ) {
-        val offlineCloudPlayerRepository = databaseFactory.offlineCloudPlayerRepository
-        offlineCloudPlayerRepository.save(
-            player.uniqueId,
-            player
+        resourceRequestHandler.handleCreate(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            player.uniqueId.toString(),
+            V1Beta1CloudPlayerSpec.fromConfig(player)
         )
     }
 
     private fun createOfflineDefaultPlayer(
-        permissionList: List<PermissionConfiguration> = emptyList()
+        permissionList: List<PermissionConfiguration> = emptyList(),
     ): OfflineCloudPlayerConfiguration {
         return OfflineCloudPlayerConfiguration(
             DEFAULT_PLAYER_NAME,

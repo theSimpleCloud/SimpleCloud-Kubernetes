@@ -35,7 +35,8 @@ class RequestGetOneHandler(
     private val group: String,
     private val version: String,
     private val kind: String,
-    private val name: String,
+    private val fieldName: String,
+    private val fieldValue: String,
     private val resourceDefinitionService: ResourceDefinitionService,
     private val databaseResourceRepository: DatabaseResourceRepository,
 ) {
@@ -59,14 +60,15 @@ class RequestGetOneHandler(
 
     private fun handlePreProcessor(): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<Any> {
         val preProcessor = this.requestedVersion.getPreProcessor()
-        return preProcessor.processGetOne(this.group, this.version, this.kind, this.name)
+        return preProcessor.processGetOne(this.group, this.version, this.kind, this.fieldName, this.fieldValue)
     }
 
     private fun loadResource(): Resource? {
         return this.databaseResourceRepository.load(
             "${this.group}/${this.defaultVersion.getName()}",
             this.kind,
-            this.name
+            this.fieldName,
+            this.fieldValue
         )
     }
 

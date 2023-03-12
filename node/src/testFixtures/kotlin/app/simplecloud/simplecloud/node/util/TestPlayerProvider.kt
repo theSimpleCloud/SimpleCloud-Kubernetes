@@ -24,7 +24,7 @@ import app.simplecloud.simplecloud.api.internal.configutation.PlayerLoginConfigu
 import app.simplecloud.simplecloud.api.player.CloudPlayer
 import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import kotlinx.coroutines.runBlocking
 
@@ -36,16 +36,16 @@ import kotlinx.coroutines.runBlocking
  */
 interface TestPlayerProvider {
 
-    fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory
+    fun getResourceRequestHandler(): ResourceRequestHandler
 
     fun getCloudAPI(): InternalCloudAPI
 
     fun insertPlayerInDatabase() {
-        DefaultPlayerProvider.insertPlayerInDatabase(getInMemoryDatabaseFactory())
+        DefaultPlayerProvider.insertPlayerInDatabase(getResourceRequestHandler())
     }
 
     fun insertPlayerInDatabaseWithPermission(permissionString: String) {
-        DefaultPlayerProvider.insertPlayerWithPermission(getInMemoryDatabaseFactory(), permissionString)
+        DefaultPlayerProvider.insertPlayerWithPermission(getResourceRequestHandler(), permissionString)
     }
 
     fun executeLoginOnProxy1WithDefaultPlayer(): CloudPlayer {

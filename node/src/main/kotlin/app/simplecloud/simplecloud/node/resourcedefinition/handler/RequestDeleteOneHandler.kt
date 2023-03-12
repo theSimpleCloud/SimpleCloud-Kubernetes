@@ -45,7 +45,7 @@ class RequestDeleteOneHandler(
 
         handleDeletePreProcessor()
         val apiVersion = this.group + "/" + this.defaultVersion.getName()
-        if (this.databaseResourceRepository.load(apiVersion, this.kind, this.name) == null) {
+        if (this.databaseResourceRepository.load(apiVersion, this.kind, "name", this.name) == null) {
             throw NoSuchElementException("Resource not found")
         }
         this.databaseResourceRepository.delete(apiVersion, this.kind, this.name)

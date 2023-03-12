@@ -31,16 +31,17 @@ import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfigura
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
 import org.apache.logging.log4j.LogManager
 
 class CloudPlayerLoginHandler(
     private val configuration: PlayerLoginConfiguration,
     private val playerFactory: CloudPlayerFactory,
-    private val databasePlayerRepository: DatabaseOfflineCloudPlayerRepository,
     private val playerService: InternalCloudPlayerService,
     private val processService: CloudProcessService,
-    private val groupService: CloudProcessGroupService
+    private val groupService: CloudProcessGroupService,
+    private val requestHandler: ResourceRequestHandler,
 ) {
 
     suspend fun handleLogin(): CloudPlayerConfiguration {
@@ -52,7 +53,6 @@ class CloudPlayerLoginHandler(
         )
         checkPlayerAlreadyConnected()
         val player = createPlayer()
-        savePlayerToDatabase(player)
         checkJoinPermission(player)
         player.createUpdateRequest().submit().await()
         return player.toConfiguration()
@@ -84,17 +84,20 @@ class CloudPlayerLoginHandler(
         }.isSuccess
     }
 
-    private fun savePlayerToDatabase(player: CloudPlayer) {
-        val configuration = player.toConfiguration()
-        this.databasePlayerRepository.save(configuration.uniqueId, configuration)
-    }
-
     private suspend fun createPlayer(): CloudPlayer {
         try {
             val loadedPlayerConfiguration = loadPlayerFromDatabase()
             return createPlayerFromConfiguration(loadedPlayerConfiguration)
         } catch (e: NoSuchElementException) {
-            return createNewCloudPlayer()
+            val newPlayer = createNewCloudPlayer()
+            this.requestHandler.handleCreate(
+                "core",
+                "CloudPlayer",
+                "v1beta1",
+                newPlayer.getUniqueId().toString(),
+                V1Beta1CloudPlayerSpec.fromConfig(newPlayer.toConfiguration())
+            )
+            return newPlayer
         }
     }
 
@@ -142,7 +145,13 @@ class CloudPlayerLoginHandler(
     }
 
     private suspend fun loadPlayerFromDatabase(): OfflineCloudPlayerConfiguration {
-        return this.databasePlayerRepository.find(this.configuration.connectionConfiguration.uniqueId).await()
+        val playerUniqueId = this.configuration.connectionConfiguration.uniqueId
+        return this.requestHandler.handleGetOneSpec<V1Beta1CloudPlayerSpec>(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            playerUniqueId.toString()
+        ).getSpec().toOfflineCloudPlayerConfig(playerUniqueId)
     }
 
     companion object {

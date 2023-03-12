@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
 import app.simplecloud.simplecloud.api.internal.service.InternalCloudPlayerService
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import app.simplecloud.simplecloud.node.util.TestPlayerProvider
 import app.simplecloud.simplecloud.node.util.TestProcessProvider
@@ -55,8 +55,8 @@ open class NodeAPIPlayerTest : NodeAPIBaseTest(), TestProcessProvider, TestPlaye
         super.tearDown()
     }
 
-    override fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory {
-        return this.databaseFactory
+    override fun getResourceRequestHandler(): ResourceRequestHandler {
+        return this.cloudAPI.getResourceRequestHandler()
     }
 
     override fun getCloudAPI(): InternalCloudAPI {

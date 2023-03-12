@@ -34,4 +34,24 @@ class PermissionGroupConfiguration(
 
     private constructor() : this("", -1, emptyList())
 
+    override fun hashCode(): Int {
+        var result = name.hashCode()
+        result = 31 * result + priority
+        result = 31 * result + permissions.hashCode()
+        return result
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PermissionGroupConfiguration
+
+        if (name != other.name) return false
+        if (priority != other.priority) return false
+        if (permissions != other.permissions) return false
+
+        return true
+    }
+
 }

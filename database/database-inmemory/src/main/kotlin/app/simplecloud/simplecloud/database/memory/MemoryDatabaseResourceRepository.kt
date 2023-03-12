@@ -40,8 +40,16 @@ class MemoryDatabaseResourceRepository : DatabaseResourceRepository {
         this.resources.add(resource)
     }
 
-    override fun load(apiVersion: String, kind: String, name: String): Resource? {
-        return this.resources.firstOrNull { it.kind == kind && it.apiVersion == apiVersion && it.name == name }
+    override fun load(apiVersion: String, kind: String, fieldName: String, fieldValue: String): Resource? {
+        this.resources.forEach { it.spec }
+        if (fieldName == "name") {
+            return this.resources.firstOrNull { it.kind == kind && it.apiVersion == apiVersion && it.name == fieldValue }
+        }
+        if (fieldName.startsWith("spec.")) {
+            val propertyName = fieldName.replaceFirst("spec.", "")
+            return this.resources.firstOrNull { it.kind == kind && it.apiVersion == apiVersion && it.spec[propertyName].toString() == fieldValue }
+        }
+        throw IllegalArgumentException("Invalid FieldName: $fieldName")
     }
 
     override fun loadAll(apiVersion: String, kind: String): List<Resource> {

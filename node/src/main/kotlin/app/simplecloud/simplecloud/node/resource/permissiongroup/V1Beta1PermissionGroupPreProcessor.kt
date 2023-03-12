@@ -43,7 +43,7 @@ class V1Beta1PermissionGroupPreProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToConfig(name, spec)
-        )
+        ).join()
         return RequestPreProcessorResult.continueNormally()
     }
 
@@ -54,7 +54,7 @@ class V1Beta1PermissionGroupPreProcessor(
         name: String,
         spec: V1Beta1PermissionGroupSpec,
     ): RequestPreProcessorResult<V1Beta1PermissionGroupSpec> {
-        this.distributedGroupRepository.save(name, convertSpecToConfig(name, spec))
+        this.distributedGroupRepository.save(name, convertSpecToConfig(name, spec)).join()
         return RequestPreProcessorResult.continueNormally()
     }
 
@@ -64,7 +64,7 @@ class V1Beta1PermissionGroupPreProcessor(
         kind: String,
         name: String,
     ): RequestPreProcessorResult<Any> {
-        this.distributedGroupRepository.remove(name)
+        this.distributedGroupRepository.remove(name).join()
         return RequestPreProcessorResult.continueNormally()
     }
 

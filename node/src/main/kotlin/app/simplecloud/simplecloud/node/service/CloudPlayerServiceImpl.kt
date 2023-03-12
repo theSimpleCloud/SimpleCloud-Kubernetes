@@ -18,9 +18,7 @@
 
 package app.simplecloud.simplecloud.node.service
 
-import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
 import app.simplecloud.simplecloud.api.future.await
-import app.simplecloud.simplecloud.api.future.flatten
 import app.simplecloud.simplecloud.api.future.isCompletedNormally
 import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactory
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactory
@@ -32,9 +30,11 @@ import app.simplecloud.simplecloud.api.player.OfflineCloudPlayer
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
-import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginHandler
 import app.simplecloud.simplecloud.node.player.CloudPlayerLogoutHandler
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerStatus
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -47,57 +47,76 @@ import java.util.concurrent.CompletableFuture
 class CloudPlayerServiceImpl(
     distributedRepository: DistributedCloudPlayerRepository,
     private val playerFactory: CloudPlayerFactory,
-    private val databaseCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
     private val offlineCloudPlayerFactory: OfflineCloudPlayerFactory,
     private val cloudProcessService: CloudProcessService,
     private val cloudProcessGroupService: CloudProcessGroupService,
+    private val requestHandler: ResourceRequestHandler,
 ) : AbstractCloudPlayerService(distributedRepository, playerFactory) {
 
     override fun findOfflinePlayerByName(name: String): CompletableFuture<OfflineCloudPlayer> {
         val onlinePlayerFuture = findOnlinePlayerByName(name)
-        return onlinePlayerFuture.handle { _, _ -> findOfflinePlayerByName0(name, onlinePlayerFuture) }.flatten()
+        return onlinePlayerFuture.handle { _, _ -> findOfflinePlayerByName0(name, onlinePlayerFuture) }
     }
 
     private fun findOfflinePlayerByName0(
         name: String,
-        completedOnlinePlayerFuture: CompletableFuture<CloudPlayer>
-    ): CompletableFuture<OfflineCloudPlayer> {
+        completedOnlinePlayerFuture: CompletableFuture<CloudPlayer>,
+    ): OfflineCloudPlayer {
         if (completedOnlinePlayerFuture.isCompletedNormally) {
-            return CloudCompletableFuture.completedFuture(completedOnlinePlayerFuture.get())
+            return completedOnlinePlayerFuture.get()
         }
-        val playerEntityFuture = this.databaseCloudPlayerRepository.findByName(name)
-        return playerEntityFuture.thenApply { convertPlayerEntityToOfflineCloudPlayer(it) }
+        val specAndStatus =
+            this.requestHandler.handleGetOneSpecAndStatus<V1Beta1CloudPlayerSpec, V1Beta1CloudPlayerStatus>(
+                "core",
+                "CloudPlayer",
+                "v1beta1",
+                "spec.name",
+                name
+            )
+        return convertPlayerEntityToOfflineCloudPlayer(
+            specAndStatus.getSpec().toOfflineCloudPlayerConfig(UUID.fromString(specAndStatus.getName()))
+        )
     }
 
     override fun findOfflinePlayerByUniqueId(uniqueId: UUID): CompletableFuture<OfflineCloudPlayer> {
         val onlinePlayerFuture = findOnlinePlayerByUniqueId(uniqueId)
         return onlinePlayerFuture.handle { _, _ -> findOfflinePlayerByUniqueId0(uniqueId, onlinePlayerFuture) }
-            .flatten()
     }
 
     private fun findOfflinePlayerByUniqueId0(
         uniqueId: UUID,
-        completedOnlinePlayerFuture: CompletableFuture<CloudPlayer>
-    ): CompletableFuture<OfflineCloudPlayer> {
+        completedOnlinePlayerFuture: CompletableFuture<CloudPlayer>,
+    ): OfflineCloudPlayer {
         if (completedOnlinePlayerFuture.isCompletedNormally) {
-            return CloudCompletableFuture.completedFuture(completedOnlinePlayerFuture.get())
+            return completedOnlinePlayerFuture.get()
         }
-        val playerEntityFuture = this.databaseCloudPlayerRepository.find(uniqueId)
-        return playerEntityFuture.thenApply { convertPlayerEntityToOfflineCloudPlayer(it) }
+        val specResult = this.requestHandler.handleGetOneSpec<V1Beta1CloudPlayerSpec>(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            uniqueId.toString()
+        )
+        return convertPlayerEntityToOfflineCloudPlayer(specResult.getSpec().toOfflineCloudPlayerConfig(uniqueId))
     }
 
     override suspend fun updateOfflinePlayerInternal(configuration: OfflineCloudPlayerConfiguration) {
-        this.databaseCloudPlayerRepository.save(configuration.uniqueId, configuration).await()
+        this.requestHandler.handleUpdate(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            configuration.uniqueId.toString(),
+            V1Beta1CloudPlayerSpec.fromConfig(configuration)
+        )
     }
 
     override suspend fun loginPlayer(configuration: PlayerLoginConfiguration): CloudPlayer {
         val playerConfiguration = CloudPlayerLoginHandler(
             configuration,
             this.playerFactory,
-            this.databaseCloudPlayerRepository,
             this,
             this.cloudProcessService,
-            this.cloudProcessGroupService
+            this.cloudProcessGroupService,
+            this.requestHandler
         ).handleLogin()
         return this.playerFactory.create(playerConfiguration, this)
     }
@@ -107,7 +126,7 @@ class CloudPlayerServiceImpl(
         CloudPlayerLogoutHandler(
             onlinePlayer,
             this.distributedRepository,
-            this.databaseCloudPlayerRepository
+            this.requestHandler
         ).handleLogout()
     }
 

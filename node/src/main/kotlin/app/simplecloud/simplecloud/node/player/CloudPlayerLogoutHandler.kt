@@ -21,7 +21,8 @@ package app.simplecloud.simplecloud.node.player
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.CloudPlayer
-import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -33,16 +34,25 @@ import org.apache.logging.log4j.LogManager
 class CloudPlayerLogoutHandler(
     private val onlinePlayer: CloudPlayer,
     private val distributedRepository: DistributedCloudPlayerRepository,
-    private val databaseOfflineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository
+    private val requestHandler: ResourceRequestHandler,
 ) {
 
     suspend fun handleLogout() {
-        val offlineCloudPlayerConfiguration = this.onlinePlayer.toOfflinePlayer().toConfiguration()
-        this.databaseOfflineCloudPlayerRepository.save(this.onlinePlayer.getUniqueId(), offlineCloudPlayerConfiguration)
+        updatePlayer()
         this.distributedRepository.remove(this.onlinePlayer.getUniqueId()).await()
         logger.info(
             "Player {} logged out",
             this.onlinePlayer.getName()
+        )
+    }
+
+    private fun updatePlayer() {
+        this.requestHandler.handleUpdate(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            this.onlinePlayer.getUniqueId().toString(),
+            V1Beta1CloudPlayerSpec.fromConfig(this.onlinePlayer.toOfflinePlayer().toConfiguration())
         )
     }
 

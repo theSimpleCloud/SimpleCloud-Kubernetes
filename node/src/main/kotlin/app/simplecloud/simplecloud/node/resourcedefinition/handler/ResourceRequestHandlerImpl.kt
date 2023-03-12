@@ -62,16 +62,31 @@ class ResourceRequestHandlerImpl(
         group: String,
         kind: String,
         version: String,
-        name: String,
+        fieldName: String,
+        fieldValue: String,
     ): RequestSpecAndStatusResult<SPEC, STATUS> {
         return RequestGetOneHandler(
             group,
             version,
             kind,
-            name,
+            fieldName,
+            fieldValue,
             this.resourceDefinitionService,
             this.databaseResourceRepository
         ).handleGetOne() as RequestSpecAndStatusResult<SPEC, STATUS>
+    }
+
+    override fun <SPEC : Any, STATUS : Any> handleGetOneSpecAndStatus(
+        group: String,
+        kind: String,
+        version: String,
+        name: String,
+    ): RequestSpecAndStatusResult<SPEC, STATUS> {
+        if (!name.contains(":")) {
+            return handleGetOneSpecAndStatus(group, kind, version, "name", name)
+        }
+        val (innerFieldName, innerFieldValue) = name.split(":")
+        return handleGetOneSpecAndStatus(group, kind, version, "spec.$innerFieldName", innerFieldValue)
     }
 
     override fun <S : Any> handleGetOneSpec(

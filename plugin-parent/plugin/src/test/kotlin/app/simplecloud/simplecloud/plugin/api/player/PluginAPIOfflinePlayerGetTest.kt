@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.plugin.api.player
 
 import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
-import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.api.player.OfflinePlayerGetTest
 import app.simplecloud.simplecloud.plugin.proxy.ProxyPluginBaseTest
 import org.junit.jupiter.api.AfterEach
@@ -50,7 +50,7 @@ class PluginAPIOfflinePlayerGetTest : OfflinePlayerGetTest() {
         return proxyPluginBaseTest.pluginCloudAPI
     }
 
-    override fun getInMemoryDatabaseFactory(): InMemoryRepositorySafeDatabaseFactory {
-        return this.proxyPluginBaseTest.nodeAPIBaseTest.databaseFactory
+    override fun getResourceRequestHandler(): ResourceRequestHandler {
+        return this.proxyPluginBaseTest.nodeAPIBaseTest.cloudAPI.getResourceRequestHandler()
     }
 }

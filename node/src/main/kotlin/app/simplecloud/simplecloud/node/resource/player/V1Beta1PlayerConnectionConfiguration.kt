@@ -16,26 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.api
+package app.simplecloud.simplecloud.node.resource.player
 
-import app.simplecloud.simplecloud.api.resourcedefinition.Resource
+import java.util.*
 
 /**
- * Date: 15.01.23
- * Time: 12:56
+ * Date: 10.03.23
+ * Time: 17:41
  * @author Frederick Baier
  *
  */
-interface DatabaseResourceRepository {
-
-    fun save(resource: Resource)
-
-    fun update(resource: Resource)
-
-    fun load(apiVersion: String, kind: String, fieldName: String, fieldValue: String): Resource?
-
-    fun loadAll(apiVersion: String, kind: String): List<Resource>
-
-    fun delete(apiVersion: String, kind: String, name: String)
-
-}
+class V1Beta1PlayerConnectionConfiguration(
+    val uniqueId: UUID,
+    val numericalClientVersion: Int,
+    val name: String,
+    val addressHost: String,
+    val addressPort: Int,
+    val onlineMode: Boolean,
+)

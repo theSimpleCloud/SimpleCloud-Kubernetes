@@ -46,7 +46,6 @@ class RestAuthServiceImpl constructor(
     override suspend fun authenticate(usernameAndPasswordCredentials: UsernameAndPasswordCredentials): String {
         val offlineCloudPlayer = this.playerService.findOfflinePlayerByName(usernameAndPasswordCredentials.username)
             .await()
-
         val hashedPassword = hashPassword(usernameAndPasswordCredentials.password)
 
         if (hashedPassword != offlineCloudPlayer.getWebConfig().password) {

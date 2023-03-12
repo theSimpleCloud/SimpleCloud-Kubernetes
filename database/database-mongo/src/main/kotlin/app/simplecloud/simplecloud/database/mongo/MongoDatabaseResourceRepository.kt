@@ -37,14 +37,14 @@ class MongoDatabaseResourceRepository(
 ) : DatabaseResourceRepository {
 
     override fun save(resource: Resource) {
-        if (load(resource.apiVersion, resource.kind, resource.name) != null)
+        if (load(resource.apiVersion, resource.kind, "name", resource.name) != null)
             throw IllegalStateException("Resource already exists")
         val collection = database.getCollection(resource.apiVersion + "/" + resource.kind)
         collection.insertOne(JsonLib.fromObject(resource).getObject(Document::class.java))
     }
 
     override fun update(resource: Resource) {
-        if (load(resource.apiVersion, resource.kind, resource.name) == null)
+        if (load(resource.apiVersion, resource.kind, "name", resource.name) == null)
             throw IllegalStateException("Resource does not exist")
         val collection = database.getCollection(resource.apiVersion + "/" + resource.kind)
         val updateObj = BasicDBObject()
@@ -52,9 +52,9 @@ class MongoDatabaseResourceRepository(
         collection.updateOne(Filters.eq("name", resource.name), updateObj)
     }
 
-    override fun load(apiVersion: String, kind: String, name: String): Resource? {
+    override fun load(apiVersion: String, kind: String, fieldName: String, fieldValue: String): Resource? {
         val collection = database.getCollection("$apiVersion/$kind")
-        val document = collection.find(Filters.eq("name", name)).first() ?: return null
+        val document = collection.find(Filters.eq(fieldName, fieldValue)).first() ?: return null
         return JsonLib.fromObject(document).getObject(Resource::class.java)
     }
 

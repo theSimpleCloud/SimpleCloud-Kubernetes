@@ -36,4 +36,27 @@ class PermissionConfiguration(
 
     private constructor() : this("", false, 0L, null)
 
+
+    override fun hashCode(): Int {
+        var result = active.hashCode()
+        result = 31 * result + expiresAtTimestamp.hashCode()
+        result = 31 * result + (targetProcessGroup?.hashCode() ?: 0)
+        result = 31 * result + permissionString.hashCode()
+        return result
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (this === other) return true
+        if (javaClass != other?.javaClass) return false
+
+        other as PermissionConfiguration
+
+        if (active != other.active) return false
+        if (expiresAtTimestamp != other.expiresAtTimestamp) return false
+        if (targetProcessGroup != other.targetProcessGroup) return false
+        if (permissionString != other.permissionString) return false
+
+        return true
+    }
+
 }

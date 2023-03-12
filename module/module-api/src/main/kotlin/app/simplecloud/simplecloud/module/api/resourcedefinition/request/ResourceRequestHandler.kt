@@ -78,6 +78,19 @@ interface ResourceRequestHandler {
     ): RequestSpecAndStatusResult<SPEC, STATUS>
 
     /**
+     * Returns the resource or
+     * @throws NoSuchResourceDefinitionException if the ResourceDefinition cannot be found
+     * @throws NoSuchElementException if the resource cannot be found
+     */
+    fun <SPEC : Any, STATUS : Any> handleGetOneSpecAndStatus(
+        group: String,
+        kind: String,
+        version: String,
+        fieldName: String,
+        fieldValue: String,
+    ): RequestSpecAndStatusResult<SPEC, STATUS>
+
+    /**
      * Creates the resource and saves it
      * @throws NoSuchResourceDefinitionException if the ResourceDefinition cannot be found
      * @throws ResourceAlreadyExistsException if the Resource that shall be created does already exist

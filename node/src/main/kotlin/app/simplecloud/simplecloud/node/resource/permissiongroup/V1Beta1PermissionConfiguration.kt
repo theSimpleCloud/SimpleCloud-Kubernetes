@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.resource.permissiongroup
 
+import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.Optional
 import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.StringMinLength
 
@@ -38,5 +39,9 @@ class V1Beta1PermissionConfiguration(
 
     @StringMinLength(3)
     val permissionString: String = permissionString.lowercase()
+
+    fun toConfiguration(): PermissionConfiguration {
+        return PermissionConfiguration(permissionString, active, expiresAtTimestamp, targetProcessGroup)
+    }
 
 }

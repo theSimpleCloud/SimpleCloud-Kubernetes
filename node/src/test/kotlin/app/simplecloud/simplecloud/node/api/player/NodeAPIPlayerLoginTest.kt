@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.api.internal.exception.UnknownProxyProcessExc
 import app.simplecloud.simplecloud.api.permission.Permissions
 import app.simplecloud.simplecloud.node.DefaultPlayerProvider
 import app.simplecloud.simplecloud.node.player.CloudPlayerLoginJoinPermissionChecker
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.Test
@@ -151,9 +152,11 @@ class NodeAPIPlayerLoginTest : NodeAPIPlayerTest() {
     }
 
     private fun assertDefaultPlayerInDatabase() {
-        val repository = this.databaseFactory.offlineCloudPlayerRepository
-        runBlocking {
-            Assertions.assertTrue(repository.doesExist(DefaultPlayerProvider.DEFAULT_PLAYER_UUID).await())
-        }
+        this.getResourceRequestHandler().handleGetOneSpec<V1Beta1CloudPlayerSpec>(
+            "core",
+            "CloudPlayer",
+            "v1beta1",
+            DefaultPlayerProvider.DEFAULT_PLAYER_UUID.toString()
+        )
     }
 }

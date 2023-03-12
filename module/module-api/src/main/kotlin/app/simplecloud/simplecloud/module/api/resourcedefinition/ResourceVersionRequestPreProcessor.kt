@@ -28,7 +28,13 @@ package app.simplecloud.simplecloud.module.api.resourcedefinition
  */
 open class ResourceVersionRequestPreProcessor<S> {
 
-    open fun processGetOne(group: String, version: String, kind: String, name: String): RequestPreProcessorResult<Any> {
+    open fun processGetOne(
+        group: String,
+        version: String,
+        kind: String,
+        fieldName: String,
+        fieldValue: String,
+    ): RequestPreProcessorResult<Any> {
         return RequestPreProcessorResult.continueNormally()
     }
 

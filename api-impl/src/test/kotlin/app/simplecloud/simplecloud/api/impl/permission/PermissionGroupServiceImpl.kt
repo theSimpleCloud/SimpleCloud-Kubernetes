@@ -38,11 +38,15 @@ class PermissionGroupServiceImpl(
     private val permissionFactory: Permission.Factory
 ) : AbstractPermissionGroupService(repository, groupFactory, permissionFactory), InternalPermissionGroupService {
 
+    override suspend fun createGroupInternal0(configuration: PermissionGroupConfiguration) {
+        this.repository.save(configuration.name, configuration).await()
+    }
+
     override suspend fun updateGroupInternal(configuration: PermissionGroupConfiguration) {
         this.repository.save(configuration.name, configuration).await()
     }
 
     override suspend fun deleteGroupInternal(group: PermissionGroup) {
-        TODO("Not yet implemented")
+        this.repository.remove(group.getName()).await()
     }
 }

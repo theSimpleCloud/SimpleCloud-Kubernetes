@@ -46,7 +46,10 @@ open class ProxyPluginPlayerBaseTest : ProxyPluginBaseTest() {
     }
 
     protected fun insertPlayerWithPermissionInDatabase(permissionString: String) {
-        DefaultPlayerProvider.insertPlayerWithPermission(this.databaseFactory, permissionString)
+        DefaultPlayerProvider.insertPlayerWithPermission(
+            this.nodeCloudAPI.getResourceRequestHandler(),
+            permissionString
+        )
     }
 
     protected fun executePlayerLogin() = runBlocking {

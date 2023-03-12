@@ -21,8 +21,10 @@ package app.simplecloud.simplecloud.module.api.impl.resourcedefinition.schema
 import app.simplecloud.simplecloud.api.resourcedefinition.Definition
 import app.simplecloud.simplecloud.api.resourcedefinition.limitation.*
 import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.*
+import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.Optional
 import app.simplecloud.simplecloud.api.utils.getEnumValues
 import java.lang.reflect.Field
+import java.util.*
 
 
 /**
@@ -144,6 +146,7 @@ class SchemaCreator(
             Long::class.javaPrimitiveType!!,
             Float::class.javaPrimitiveType!!,
             Double::class.javaPrimitiveType!!,
+            UUID::class.java,
         )
         return primitiveTypes.contains(this.clazz)
     }
