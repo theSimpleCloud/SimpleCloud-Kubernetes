@@ -86,12 +86,10 @@ class RequestCreateAndUpdateHandler(
         when (preProcessorResult) {
             is ResourceVersionRequestPreProcessor.ContinueResult -> {}
             is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            //is ResourceVersionRequestPreProcessor.CompleteRequestResult -> {
-            //    val specToOverwriteWith = preProcessorResult.result
-            //    if (specToOverwriteWith.javaClass != this.requestedVersion.getSpecClass())
-            //        throw IllegalArgumentException("Returned spec of pre processor must be of type '${this.requestedVersion.getSpecClass().name}' but was '${specToOverwriteWith.javaClass.name}'")
-            //    return createResourceFromRequestedSpecObj(specToOverwriteWith)
-            //}
+            is ResourceVersionRequestPreProcessor.BlockResult -> {}
+            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {
+                return createResourceFromRequestedSpecObj(preProcessorResult.spec)
+            }
         }
         return createResourceFromRequestedSpecObj(this.specObj)
     }
@@ -101,12 +99,10 @@ class RequestCreateAndUpdateHandler(
         when (preProcessorResult) {
             is ResourceVersionRequestPreProcessor.ContinueResult -> {}
             is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            //is ResourceVersionRequestPreProcessor.CompleteRequestResult -> {
-            //    val specToOverwriteWith = preProcessorResult.result
-            //    if (specToOverwriteWith.javaClass != this.requestedVersion.getSpecClass())
-            //        throw IllegalArgumentException("Returned spec of pre processor must be of type '${this.requestedVersion.getSpecClass().name}' but was '${specToOverwriteWith.javaClass.name}'")
-            //    return createResourceFromRequestedSpecObj(specToOverwriteWith)
-            //}
+            is ResourceVersionRequestPreProcessor.BlockResult -> {}
+            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {
+                return createResourceFromRequestedSpecObj(preProcessorResult.spec)
+            }
         }
         return createResourceFromRequestedSpecObj(specObj)
     }

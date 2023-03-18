@@ -52,6 +52,8 @@ class RequestGetOneHandler(
         when (preProcessorResult) {
             is ResourceVersionRequestPreProcessor.ContinueResult -> {}
             is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw UnsupportedRequestException()
+            is ResourceVersionRequestPreProcessor.BlockResult -> {}
+            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
         }
         val resource = loadResource() ?: throw NoSuchElementException("Resource not found")
         val requestedSpec = requestGetUtil.convertDefaultSpecToRequestedSpec(resource)

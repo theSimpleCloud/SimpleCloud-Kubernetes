@@ -45,6 +45,37 @@ class ResourceDefinitionRouteRegisterer(
         restServer.registerRoute(createUpdateRoute())
         restServer.registerRoute(createGetOneRoute())
         restServer.registerRoute(createGetAllRoute())
+
+        restServer.registerRoute(createCustomActionRoute())
+    }
+
+    private fun createCustomActionRoute(): Route {
+        val routeBuilder = restServer.newRouteBuilder()
+        routeBuilder.setRequestType(RequestType.POST)
+        routeBuilder.setPath("api/custom/{group}/{version}/{kind}/{name}/{action}")
+        val routeMethodBuilder = routeBuilder.newRouteMethodBuilder()
+        routeMethodBuilder.setVirtualMethod(
+            VirtualMethod.fromRealMethod(
+                this@ResourceDefinitionRouteRegisterer::class.java.getDeclaredMethod(
+                    "handleCustomAction",
+                    String::class.java,
+                    String::class.java,
+                    String::class.java,
+                    String::class.java,
+                    String::class.java,
+                    String::class.java
+                ),
+                this@ResourceDefinitionRouteRegisterer
+            )
+        )
+        routeMethodBuilder.addPathParameterType("group")
+        routeMethodBuilder.addPathParameterType("version")
+        routeMethodBuilder.addPathParameterType("kind")
+        routeMethodBuilder.addPathParameterType("name")
+        routeMethodBuilder.addPathParameterType("action")
+        routeMethodBuilder.addBodyParameterType()
+        routeBuilder.setMethod(routeMethodBuilder.build())
+        return routeBuilder.build()
     }
 
     private fun createDeleteRoute(): Route {
@@ -177,6 +208,17 @@ class ResourceDefinitionRouteRegisterer(
 
     fun handleDeleteOne(group: String, version: String, kind: String, name: String): Any {
         return this.webRequestHandler.handleDeleteOne(group, version, kind, name)
+    }
+
+    fun handleCustomAction(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        action: String,
+        body: String,
+    ): Any {
+        return this.webRequestHandler.handleCustomAction(group, version, kind, name, action, body)
     }
 
 }

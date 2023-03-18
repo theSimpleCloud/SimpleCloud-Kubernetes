@@ -50,6 +50,8 @@ class RequestGetAllHandler(
         when (preProcessorResult) {
             is ResourceVersionRequestPreProcessor.ContinueResult -> {}
             is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPreProcessor.BlockResult -> {}
+            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
         }
         val defaultVersionResources = loadDefaultVersionResources()
         return defaultVersionResources.map { this.requestGetUtil.convertDefaultVersionToRequestVersion(it) }

@@ -19,10 +19,7 @@
 package app.simplecloud.simplecloud.node.resourcedefinition.web.handler
 
 import app.simplecloud.simplecloud.api.resourcedefinition.ResourceDto
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
+import app.simplecloud.simplecloud.module.api.resourcedefinition.*
 import eu.thesimplecloud.jsonlib.JsonLib
 
 /**
@@ -95,6 +92,18 @@ class InternalRequestGetHandler(
             .append("createActionName", actions.getCreateActionName())
             .append("updateActionName", actions.getUpdateActionName())
             .append("deleteActionName", actions.getDeleteActionName())
+            .append("custom", convertCustomActionsToJson(actions))
+    }
+
+    private fun convertCustomActionsToJson(actions: ResourceVersionActions): List<JsonLib> {
+        val customActions = actions.getCustomActions()
+        return customActions.map { convertOneCustomActionToJson(it) }
+    }
+
+    private fun convertOneCustomActionToJson(customAction: ResourceCustomAction<*>): JsonLib {
+        return JsonLib.empty()
+            .append("name", customAction.getName())
+            .append("bodySchema", customAction.getBodySchema())
     }
 
     fun handleGetAll(): List<ResourceDto> {

@@ -16,34 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.internal.configutation
+package app.simplecloud.simplecloud.module.api.resourcedefinition
 
-import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.resourcedefinition.Definition
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 13:47
+ * Date: 14.03.23
+ * Time: 13:17
  * @author Frederick Baier
+ *
  */
-data class ProcessStartConfiguration(
-    val processTemplateName: String,
-    val processNumber: Int,
-    val imageName: String,
-    val maxMemory: Int,
-    val maxPlayers: Int,
-    val templateType: ProcessTemplateType,
-    val isStatic: Boolean,
-) {
+interface ResourceCustomAction<T> {
 
-    fun isProcessNumberSet(): Boolean {
-        return this.processNumber != -1
-    }
+    fun getName(): String
 
-    fun getNewProcessName(): String {
-        if (this.isStatic)
-            return this.processTemplateName
-        return this.processTemplateName + "-" + this.processNumber
-    }
+    fun getBodyClass(): Class<T>
+
+    fun getBodySchema(): Definition
+
+    fun getResourceCustomActionHandler(): ResourceCustomActionHandler<T>
 
 }

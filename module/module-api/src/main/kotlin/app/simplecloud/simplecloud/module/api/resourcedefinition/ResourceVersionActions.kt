@@ -38,4 +38,8 @@ interface ResourceVersionActions {
 
     fun getDeleteActionName(): String
 
+    fun getCustomActions(): List<ResourceCustomAction<*>>
+
+    fun getCustomActionByName(name: String): ResourceCustomAction<*>
+
 }

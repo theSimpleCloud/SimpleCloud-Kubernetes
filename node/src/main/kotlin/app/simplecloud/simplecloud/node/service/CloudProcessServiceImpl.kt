@@ -28,27 +28,26 @@ import app.simplecloud.simplecloud.api.internal.configutation.ProcessStartConfig
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
-import app.simplecloud.simplecloud.node.process.*
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.process.InternalProcessCommandExecutor
+import app.simplecloud.simplecloud.node.process.InternalProcessStartRequestSender
 import java.util.concurrent.CompletableFuture
 
 class CloudProcessServiceImpl(
     processFactory: CloudProcessFactory,
     distributedRepository: DistributedCloudProcessRepository,
     eventManager: EventManager,
-    private val processStarterFactory: ProcessStarter.Factory,
-    private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
-    private val podService: KubePodService
+    private val podService: KubePodService,
+    private val requestHandler: ResourceRequestHandler,
 ) : AbstractCloudProcessService(
     processFactory, distributedRepository, eventManager
 ) {
     override suspend fun startNewProcessInternal(configuration: ProcessStartConfiguration): CloudProcess {
-        return InternalProcessStartHandler(configuration, this, this.processStarterFactory)
-            .startProcess()
+        return InternalProcessStartRequestSender(configuration, this, this.requestHandler).sendStartRequest()
     }
 
     override suspend fun shutdownProcessInternal(process: CloudProcess) {
-        return InternalProcessShutdownHandler(process, this.processShutdownHandlerFactory)
-            .shutdownProcess()
+        this.requestHandler.handleDelete("core", "CloudProcess", "v1beta1", process.getName())
     }
 
     override suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration) {

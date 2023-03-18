@@ -84,11 +84,26 @@ open class ResourceVersionRequestPreProcessor<S> {
             fun <T> unsupportedRequest(): RequestPreProcessorResult<T> {
                 return UnsupportedRequest()
             }
+
+            @JvmStatic
+            fun <T> overwriteSpec(spec: T): RequestPreProcessorResult<T> {
+                return OverwriteSpec(spec)
+            }
+
+            /**
+             * Blocks the database action silently
+             */
+            @JvmStatic
+            fun <T> blockSilently(): RequestPreProcessorResult<T> {
+                return BlockResult()
+            }
         }
 
     }
 
     class ContinueResult<T>() : RequestPreProcessorResult<T>
+    class OverwriteSpec<T>(val spec: T) : RequestPreProcessorResult<T>
+    class BlockResult<T>() : RequestPreProcessorResult<T>
     class UnsupportedRequest<T>() : RequestPreProcessorResult<T>
 
     class ConstraintViolationException(msg: String) : Exception(msg)

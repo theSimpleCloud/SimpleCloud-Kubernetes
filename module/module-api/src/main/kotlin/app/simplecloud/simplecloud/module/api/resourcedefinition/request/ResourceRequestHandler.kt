@@ -109,4 +109,9 @@ interface ResourceRequestHandler {
      */
     fun handleDelete(group: String, kind: String, version: String, name: String)
 
+    /**
+     * Handles a custom action
+     */
+    fun handleCustomAction(group: String, kind: String, version: String, name: String, action: String, body: Any)
+
 }

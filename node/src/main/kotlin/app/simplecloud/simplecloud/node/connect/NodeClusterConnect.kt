@@ -211,11 +211,8 @@ class NodeClusterConnect(
             processFactory,
             distributedRepositories.cloudProcessRepository,
             eventManager,
-            ProcessStarterFactoryImpl(processFactory, this.kubeAPI),
-            ProcessShutdownHandlerFactoryImpl(
-                this.kubeAPI.getPodService()
-            ),
-            this.kubeAPI.getPodService()
+            this.kubeAPI.getPodService(),
+            requestHandler,
         )
 
         val permissionFactory = PermissionFactoryImpl()
@@ -251,7 +248,17 @@ class NodeClusterConnect(
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         val cacheHandler = CacheHandlerImpl(distribution)
 
-        ResourceDefinitionRegisterer(resourceDefinitionService, distributedRepositories).registerDefinitions()
+        ResourceDefinitionRegisterer(
+            resourceDefinitionService,
+            cloudProcessGroupService,
+            staticProcessTemplateService,
+            cloudProcessService,
+            ProcessStarterFactoryImpl(processFactory, this.kubeAPI),
+            ProcessShutdownHandlerFactoryImpl(
+                this.kubeAPI.getPodService()
+            ),
+            distributedRepositories
+        ).registerDefinitions()
 
         return NodeCloudAPIImpl(
             selfComponent.getName(),

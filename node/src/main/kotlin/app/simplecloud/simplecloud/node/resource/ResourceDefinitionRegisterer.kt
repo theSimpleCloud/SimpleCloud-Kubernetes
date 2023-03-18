@@ -18,8 +18,13 @@
 
 package app.simplecloud.simplecloud.node.resource
 
+import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.node.connect.DistributedRepositories
+import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
+import app.simplecloud.simplecloud.node.process.ProcessStarter
 import app.simplecloud.simplecloud.node.resource.group.*
 import app.simplecloud.simplecloud.node.resource.onlinestrategy.V1Beta1OnlineCountStrategyPreProcessor
 import app.simplecloud.simplecloud.node.resource.onlinestrategy.V1Beta1ProcessOnlineCountStrategySpec
@@ -29,6 +34,10 @@ import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerPrePro
 import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
 import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerStatus
 import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerStatusGeneration
+import app.simplecloud.simplecloud.node.resource.process.V1Beta1CloudProcessPreProcessor
+import app.simplecloud.simplecloud.node.resource.process.V1Beta1CloudProcessSpec
+import app.simplecloud.simplecloud.node.resource.process.V1Beta1CloudProcessStatus
+import app.simplecloud.simplecloud.node.resource.process.V1Beta1CloudProcessStatusGeneration
 import app.simplecloud.simplecloud.node.resource.staticserver.*
 
 /**
@@ -39,6 +48,11 @@ import app.simplecloud.simplecloud.node.resource.staticserver.*
  */
 class ResourceDefinitionRegisterer(
     private val resourceDefinitionService: ResourceDefinitionService,
+    private val groupService: CloudProcessGroupService,
+    private val staticService: StaticProcessTemplateService,
+    private val processService: CloudProcessService,
+    private val processStarterFactory: ProcessStarter.Factory,
+    private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
     private val distributedRepositories: DistributedRepositories,
 ) {
 
@@ -55,6 +69,38 @@ class ResourceDefinitionRegisterer(
         registerOnlineCountStrategyDefinition()
 
         registerCloudPlayerDefinition()
+        registerProcessDefinition()
+    }
+
+    private fun registerProcessDefinition() {
+        val resourceBuilder = this.resourceDefinitionService.newResourceDefinitionBuilder()
+        resourceBuilder.setGroup("core")
+        resourceBuilder.setKind("CloudProcess")
+
+        val v1VersionBuilder = resourceBuilder.newResourceVersionBuilder()
+        v1VersionBuilder.setName("v1beta1")
+        v1VersionBuilder.setSpecSchemaClass(V1Beta1CloudProcessSpec::class.java)
+        v1VersionBuilder.setStatusSchemaClass(V1Beta1CloudProcessStatus::class.java)
+        v1VersionBuilder.setStatusGenerationFunction(V1Beta1CloudProcessStatusGeneration(this.distributedRepositories.cloudProcessRepository))
+        v1VersionBuilder.setPreProcessor(
+            V1Beta1CloudProcessPreProcessor(
+                this.groupService,
+                this.staticService,
+                this.processService,
+                this.processStarterFactory,
+                this.processShutdownHandlerFactory
+            )
+        )
+
+        v1VersionBuilder.setActions(
+            v1VersionBuilder.newActionsBuilder()
+                .setCreateActionName("start")
+                .setDeleteActionName("stop")
+                .build()
+        )
+
+        resourceBuilder.addVersionAsDefaultVersion(v1VersionBuilder.build())
+        this.resourceDefinitionService.createResource(resourceBuilder.build())
     }
 
     private fun registerCloudPlayerDefinition() {

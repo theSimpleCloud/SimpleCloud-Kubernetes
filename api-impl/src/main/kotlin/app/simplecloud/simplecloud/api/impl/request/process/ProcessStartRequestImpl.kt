@@ -46,9 +46,6 @@ class ProcessStartRequestImpl(
     private var maxMemory: Int = this.processTemplate.getMaxMemory()
 
     @Volatile
-    private var processNumber: Int = -1
-
-    @Volatile
     private var image: Image = this.processTemplate.getImage()
 
     override fun getProcessTemplate(): ProcessTemplate {
@@ -72,12 +69,6 @@ class ProcessStartRequestImpl(
         return this
     }
 
-    override fun setProcessNumber(number: Int): ProcessStartRequest {
-        require(number > 0) { "The port must be positive" }
-        this.processNumber = number
-        return this
-    }
-
     override fun submit(): CompletableFuture<CloudProcess> {
         return startProcess()
     }
@@ -85,7 +76,7 @@ class ProcessStartRequestImpl(
     private fun startProcess(): CompletableFuture<CloudProcess> = CloudScope.future {
         val startConfiguration = ProcessStartConfiguration(
             processTemplate.getName(),
-            processNumber,
+            -1,
             image.getName(),
             maxMemory,
             maxPlayers,
@@ -94,4 +85,5 @@ class ProcessStartRequestImpl(
         )
         return@future internalService.startNewProcessInternal(startConfiguration)
     }
+
 }

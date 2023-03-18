@@ -136,4 +136,24 @@ class ResourceRequestHandlerImpl(
             databaseResourceRepository
         ).handleDeleteOne()
     }
+
+    override fun handleCustomAction(
+        group: String,
+        kind: String,
+        version: String,
+        name: String,
+        action: String,
+        body: Any,
+    ) {
+        RequestCustomActionHandler(
+            group,
+            kind,
+            version,
+            name,
+            action,
+            body,
+            this.resourceDefinitionService,
+            this
+        ).handleCustomAction()
+    }
 }

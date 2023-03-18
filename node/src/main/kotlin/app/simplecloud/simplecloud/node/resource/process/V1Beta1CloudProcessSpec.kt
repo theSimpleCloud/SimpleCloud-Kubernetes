@@ -16,34 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.api.internal.configutation
+package app.simplecloud.simplecloud.node.resource.process
 
-import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.Optional
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 04.04.2021
- * Time: 13:47
+ * Date: 15.03.23
+ * Time: 20:49
  * @author Frederick Baier
+ *
  */
-data class ProcessStartConfiguration(
-    val processTemplateName: String,
-    val processNumber: Int,
-    val imageName: String,
-    val maxMemory: Int,
-    val maxPlayers: Int,
-    val templateType: ProcessTemplateType,
-    val isStatic: Boolean,
-) {
-
-    fun isProcessNumberSet(): Boolean {
-        return this.processNumber != -1
-    }
-
-    fun getNewProcessName(): String {
-        if (this.isStatic)
-            return this.processTemplateName
-        return this.processTemplateName + "-" + this.processNumber
-    }
-
-}
+class V1Beta1CloudProcessSpec(
+    @Optional
+    val maxMemory: Int?,
+    @Optional
+    val maxPlayers: Int?,
+    @Optional
+    val imageName: String?,
+)

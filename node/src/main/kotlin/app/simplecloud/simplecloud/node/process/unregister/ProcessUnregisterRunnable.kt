@@ -18,12 +18,12 @@
 
 package app.simplecloud.simplecloud.node.process.unregister
 
-import app.simplecloud.simplecloud.api.CloudAPI
 import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessRepository
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.node.connect.DistributedRepositories
 import kotlinx.coroutines.launch
 import java.io.Serializable
@@ -42,7 +42,7 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
 
     @Transient
     @Volatile
-    private var cloudAPI: CloudAPI? = null
+    private var cloudAPI: InternalNodeCloudAPI? = null
 
     @Transient
     @Volatile
@@ -57,7 +57,8 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
             ProcessUnregisterExecutor(
                 kubeAPI,
                 cloudAPI,
-                distributedCloudProcessRepository
+                distributedCloudProcessRepository,
+                cloudAPI.getResourceRequestHandler()
             ).compareProcessesWithKubeAndUnregister()
         }
     }
@@ -65,7 +66,7 @@ class ProcessUnregisterRunnable : Runnable, Serializable, DistributionAware {
     override fun setDistribution(distribution: Distribution) {
         val userContext = distribution.getUserContext()
         this.kubeAPI = userContext["kubeAPI"] as KubeAPI
-        this.cloudAPI = userContext["cloudAPI"] as CloudAPI
+        this.cloudAPI = userContext["cloudAPI"] as InternalNodeCloudAPI
         val distributedRepositories =
             userContext["distributedRepositories"] as DistributedRepositories
         this.distributedCloudProcessRepository = distributedRepositories.cloudProcessRepository

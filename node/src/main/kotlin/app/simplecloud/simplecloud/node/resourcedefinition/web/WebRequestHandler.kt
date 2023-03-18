@@ -24,6 +24,7 @@ import app.simplecloud.simplecloud.module.api.resourcedefinition.request.Request
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.InternalRequestGetHandler
 import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.WebRequestCreateAndUpdateHandler
+import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.WebRequestCustomActionHandler
 
 /**
  * Date: 15.01.23
@@ -75,6 +76,27 @@ class WebRequestHandler(
             requestResult.getSpec(),
             requestResult.getStatus()
         )
+    }
+
+    fun handleCustomAction(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        action: String,
+        body: String,
+    ): Any {
+        WebRequestCustomActionHandler(
+            group,
+            version,
+            kind,
+            name,
+            action,
+            body,
+            this.resourceDefinitionService,
+            this.resourceRequestHandler
+        ).handleCustomAction()
+        return true
     }
 
 }

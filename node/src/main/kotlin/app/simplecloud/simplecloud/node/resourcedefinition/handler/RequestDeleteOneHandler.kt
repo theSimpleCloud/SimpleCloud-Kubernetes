@@ -43,7 +43,10 @@ class RequestDeleteOneHandler(
             throw IllegalStateException("Delete Requests are disabled")
         }
 
-        handleDeletePreProcessor()
+        val continueWithResult = handleDeletePreProcessor()
+        if (!continueWithResult)
+            return true
+
         val apiVersion = this.group + "/" + this.defaultVersion.getName()
         if (this.databaseResourceRepository.load(apiVersion, this.kind, "name", this.name) == null) {
             throw NoSuchElementException("Resource not found")
@@ -57,12 +60,15 @@ class RequestDeleteOneHandler(
             throw IllegalArgumentException("Cannot create internal resource")
     }
 
-    private fun handleDeletePreProcessor() {
+    private fun handleDeletePreProcessor(): Boolean {
         val preProcessorResult = callDeletePreProcessor()
         when (preProcessorResult) {
             is ResourceVersionRequestPreProcessor.ContinueResult -> {}
             is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPreProcessor.BlockResult -> return false
+            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
         }
+        return true
     }
 
     private fun callDeletePreProcessor(): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<Any> {

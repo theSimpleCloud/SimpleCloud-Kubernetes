@@ -63,8 +63,12 @@ open class NodeAPIProcessTest : NodeAPIBaseTest() {
             distribution.getUserContext()["distributedRepositories"] as DistributedRepositories
 
         runBlocking {
-            ProcessUnregisterExecutor(kubeAPI, cloudAPI, distributedRepositories.cloudProcessRepository)
-                .compareProcessesWithKubeAndUnregister()
+            ProcessUnregisterExecutor(
+                kubeAPI,
+                cloudAPI,
+                distributedRepositories.cloudProcessRepository,
+                cloudAPI.getResourceRequestHandler()
+            ).compareProcessesWithKubeAndUnregister()
         }
 
     }

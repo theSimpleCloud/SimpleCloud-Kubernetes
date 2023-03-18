@@ -18,9 +18,13 @@
 
 package app.simplecloud.simplecloud.module.api.impl.resourcedefinition.builder
 
+import app.simplecloud.simplecloud.module.api.impl.resourcedefinition.ResourceCustomActionImpl
 import app.simplecloud.simplecloud.module.api.impl.resourcedefinition.ResourceVersionActionsImpl
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomAction
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomActionHandler
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
 import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceVersionActionsBuilder
+import java.util.concurrent.CopyOnWriteArrayList
 
 /**
  * Date: 10.02.23
@@ -47,6 +51,8 @@ class ResourceVersionActionBuilderImpl : ResourceVersionActionsBuilder {
 
     @Volatile
     private var deleteActionName: String = "delete"
+
+    private val customActions = CopyOnWriteArrayList<ResourceCustomAction<*>>()
 
     override fun disableCreate(): ResourceVersionActionsBuilder {
         this.isCreateDisabled = true
@@ -78,6 +84,15 @@ class ResourceVersionActionBuilderImpl : ResourceVersionActionsBuilder {
         return this
     }
 
+    override fun <T> registerCustomAction(
+        name: String,
+        bodyClass: Class<T>,
+        handler: ResourceCustomActionHandler<T>,
+    ): ResourceVersionActionsBuilder {
+        this.customActions.add(ResourceCustomActionImpl(name, bodyClass, handler))
+        return this
+    }
+
     override fun build(): ResourceVersionActions {
         return ResourceVersionActionsImpl(
             this.isUpdateDisabled,
@@ -85,7 +100,8 @@ class ResourceVersionActionBuilderImpl : ResourceVersionActionsBuilder {
             this.isDeleteDisabled,
             this.updateActionName,
             this.createActionName,
-            this.deleteActionName
+            this.deleteActionName,
+            this.customActions
         )
     }
 

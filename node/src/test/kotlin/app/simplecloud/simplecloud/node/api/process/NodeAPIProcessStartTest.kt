@@ -69,39 +69,6 @@ class NodeAPIProcessStartTest : NodeAPIProcessTest() {
     }
 
     @Test
-    fun startProcessWithCustomProcessNumber() {
-        val process = this.processService.createStartRequest(this.defaultGroup)
-            .setProcessNumber(14)
-            .submit().join()
-        assertEquals(14, process.getProcessNumber())
-    }
-
-    @Test
-    fun startProcessWithTooLowProcessNumber_willFail() {
-        assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                processService.createStartRequest(defaultGroup)
-                    .setProcessNumber(0)
-                    .submit().await()
-            }
-        }
-    }
-
-    @Test
-    fun startWithSameProcessNumberTwice_SecondWillFail() {
-        processService.createStartRequest(defaultGroup)
-            .setProcessNumber(5)
-            .submit().join()
-        assertThrows(IllegalArgumentException::class.java) {
-            runBlocking {
-                processService.createStartRequest(defaultGroup)
-                    .setProcessNumber(5)
-                    .submit().await()
-            }
-        }
-    }
-
-    @Test
     fun startProcessWithCustomMaxMemory() {
         val customMemory = 3423
         val process = this.processService.createStartRequest(this.defaultGroup)

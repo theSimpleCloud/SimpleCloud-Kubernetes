@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.module.api.impl.resourcedefinition
 
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomAction
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
 
 /**
@@ -33,6 +34,7 @@ class ResourceVersionActionsImpl(
     private val updateActionName: String,
     private val createActionName: String,
     private val deleteActionName: String,
+    private val customActions: List<ResourceCustomAction<*>>,
 ) : ResourceVersionActions {
 
     override fun isUpdateDisabled(): Boolean {
@@ -58,4 +60,14 @@ class ResourceVersionActionsImpl(
     override fun getDeleteActionName(): String {
         return this.deleteActionName
     }
+
+    override fun getCustomActions(): List<ResourceCustomAction<*>> {
+        return this.customActions
+    }
+
+    override fun getCustomActionByName(name: String): ResourceCustomAction<*> {
+        return this.customActions.firstOrNull { it.getName().equals(name, true) }
+            ?: throw NoSuchElementException("Cannot find action by name: $name")
+    }
+
 }

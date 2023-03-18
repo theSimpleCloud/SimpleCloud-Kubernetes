@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.module.api.resourcedefinition.builder
 
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomActionHandler
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
 
 /**
@@ -39,6 +40,12 @@ interface ResourceVersionActionsBuilder {
     fun setUpdateActionName(name: String): ResourceVersionActionsBuilder
 
     fun setDeleteActionName(name: String): ResourceVersionActionsBuilder
+
+    fun <T> registerCustomAction(
+        name: String,
+        bodyClass: Class<T>,
+        handler: ResourceCustomActionHandler<T>,
+    ): ResourceVersionActionsBuilder
 
     fun build(): ResourceVersionActions
 

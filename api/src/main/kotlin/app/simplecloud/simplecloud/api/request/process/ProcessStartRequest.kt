@@ -52,13 +52,6 @@ interface ProcessStartRequest : Request<CloudProcess> {
     fun setMaxMemory(memory: Int): ProcessStartRequest
 
     /**
-     * Sets the number of the new process
-     * e.g: Lobby-2 -> 2 is the process number
-     * @return this
-     */
-    fun setProcessNumber(number: Int): ProcessStartRequest
-
-    /**
      * Sets the image for the new process
      * @return this
      */

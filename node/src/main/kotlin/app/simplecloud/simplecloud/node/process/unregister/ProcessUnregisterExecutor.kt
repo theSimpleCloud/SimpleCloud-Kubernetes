@@ -25,6 +25,7 @@ import app.simplecloud.simplecloud.api.internal.request.process.InternalProcessU
 import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.api.process.state.ProcessState
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -37,6 +38,7 @@ class ProcessUnregisterExecutor(
     private val kubeAPI: KubeAPI,
     private val cloudAPI: CloudAPI,
     private val distributedCloudProcessRepository: DistributedCloudProcessRepository,
+    private val requestHandler: ResourceRequestHandler,
 ) {
 
     suspend fun compareProcessesWithKubeAndUnregister() {
@@ -65,7 +67,12 @@ class ProcessUnregisterExecutor(
     private suspend fun deleteProcessFromCluster(process: CloudProcess) {
         updateStateToClosed(process)
         deleteProcessInCluster(process)
+        deleteProcessInDatabase(process)
         logger.info("Unregistered process {}", process.getName())
+    }
+
+    private fun deleteProcessInDatabase(process: CloudProcess) {
+        this.requestHandler.handleDelete("core", "CloudProcess", "v1beta1", process.getName())
     }
 
     private suspend fun updateStateToClosed(process: CloudProcess) {
