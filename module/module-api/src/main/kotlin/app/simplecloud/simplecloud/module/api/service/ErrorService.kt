@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.module.api.service
 
 import app.simplecloud.simplecloud.api.service.Service
 import app.simplecloud.simplecloud.module.api.error.Error
+import app.simplecloud.simplecloud.module.api.error.ErrorTypeFixedChecker
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.request.error.ErrorCreateRequest
 import java.util.*
@@ -52,5 +53,10 @@ interface ErrorService : Service {
      * Creates a request to create a new error
      */
     fun createCreateRequest(errorConfiguration: ErrorCreateConfiguration): ErrorCreateRequest
+
+    /**
+     *  Registers an error type and it's checker to determine weather an error of that type has been fixed
+     */
+    fun registerErrorType(errorTye: Int, checker: ErrorTypeFixedChecker)
 
 }

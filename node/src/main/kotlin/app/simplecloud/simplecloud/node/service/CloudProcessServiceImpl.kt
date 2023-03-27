@@ -29,8 +29,8 @@ import app.simplecloud.simplecloud.api.process.CloudProcess
 import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePodService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
-import app.simplecloud.simplecloud.node.process.InternalProcessCommandExecutor
 import app.simplecloud.simplecloud.node.process.InternalProcessStartRequestSender
+import app.simplecloud.simplecloud.node.resource.process.execute.V1Beta1CloudProcessExecuteBody
 import java.util.concurrent.CompletableFuture
 
 class CloudProcessServiceImpl(
@@ -51,7 +51,14 @@ class CloudProcessServiceImpl(
     }
 
     override suspend fun executeCommandInternal(configuration: ProcessExecuteCommandConfiguration) {
-        return InternalProcessCommandExecutor(configuration, this.podService).executeCommand()
+        this.requestHandler.handleCustomAction(
+            "core",
+            "CloudProcess",
+            "v1beta1",
+            configuration.processName,
+            "execute",
+            V1Beta1CloudProcessExecuteBody(configuration.command)
+        )
     }
 
     override fun getLogs(process: CloudProcess): CompletableFuture<String> = CloudScope.future {

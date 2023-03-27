@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.update
 
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.*
 import java.util.concurrent.TimeUnit
@@ -44,7 +45,7 @@ class NodeRestartTest : NodeAPIBaseTest() {
     @Timeout(1, unit = TimeUnit.SECONDS)
     fun nodeRestart_cloudWillBeDisabled() {
         executeRestart()
-        Assertions.assertTrue(this.cloudAPI.isDisabledMode().get())
+        Assertions.assertTrue(this.cloudAPI.getCloudStateService().getCloudState().get() == CloudState.DISABLED)
     }
 
     private fun executeRestart() {

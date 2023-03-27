@@ -23,7 +23,7 @@ import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import eu.thesimplecloud.jsonlib.JsonLib
 
 /**
@@ -51,9 +51,25 @@ class RequestCreateAndUpdateHandler(
         if (this.requestedVersion.getActions().isCreateDisabled()) {
             throw IllegalStateException("Create Requests are disabled")
         }
-
+        checkResourceAlreadyExists()
         val resourceToSave = createCreateResourceToSave()
         this.databaseResourceRepository.save(resourceToSave)
+        handlePostCreate()
+    }
+
+    private fun loadCurrentResourceFromDefaultVersion(): Resource? {
+        return this.databaseResourceRepository.load(
+            "${this.group}/${this.defaultVersion.getName()}",
+            this.kind,
+            "name",
+            this.name
+        )
+    }
+
+    private fun checkResourceAlreadyExists() {
+        if (loadCurrentResourceFromDefaultVersion() != null) {
+            throw IllegalStateException("Resource already exists")
+        }
     }
 
     fun handleUpdate() {
@@ -61,9 +77,16 @@ class RequestCreateAndUpdateHandler(
         if (this.requestedVersion.getActions().isUpdateDisabled()) {
             throw IllegalStateException("Update Requests are disabled")
         }
-
+        checkResourceNotExists()
         val resourceToSave = createUpdateResourceToSave()
         this.databaseResourceRepository.update(resourceToSave)
+        handlePostUpdate()
+    }
+
+    private fun checkResourceNotExists() {
+        if (loadCurrentResourceFromDefaultVersion() == null) {
+            throw IllegalStateException("Resource does not exist")
+        }
     }
 
     private fun checkGroupNotInternal() {
@@ -71,23 +94,37 @@ class RequestCreateAndUpdateHandler(
             throw IllegalArgumentException("Cannot create internal resource")
     }
 
-    private fun <S> handleUpdatePreProcessor(specObj: S): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<S> {
-        val preProcessor = this.requestedVersion.getPreProcessor() as ResourceVersionRequestPreProcessor<S>
-        return preProcessor.processUpdate(this.group, this.requestedVersion.getName(), this.kind, this.name, specObj)
+    private fun handlePostCreate() {
+        val preProcessor = getPreProcessor<Any>()
+        preProcessor.postCreate(this.group, this.version, this.kind, this.name, this.specObj)
     }
 
-    private fun <S> handleCreatePreProcessor(specObj: S): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<S> {
-        val preProcessor = this.requestedVersion.getPreProcessor() as ResourceVersionRequestPreProcessor<S>
-        return preProcessor.processCreate(this.group, this.requestedVersion.getName(), this.kind, this.name, specObj)
+    private fun handlePostUpdate() {
+        val preProcessor = getPreProcessor<Any>()
+        preProcessor.postUpdate(this.group, this.version, this.kind, this.name, this.specObj)
+    }
+
+    private fun <S> getPreProcessor(): ResourceVersionRequestPrePostProcessor<S> {
+        return this.requestedVersion.getPreProcessor() as ResourceVersionRequestPrePostProcessor<S>
+    }
+
+    private fun <S> handleUpdatePreProcessor(specObj: S): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<S> {
+        val preProcessor = getPreProcessor<S>()
+        return preProcessor.preUpdate(this.group, this.requestedVersion.getName(), this.kind, this.name, specObj)
+    }
+
+    private fun <S> handleCreatePreProcessor(specObj: S): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<S> {
+        val preProcessor = getPreProcessor<S>()
+        return preProcessor.preCreate(this.group, this.requestedVersion.getName(), this.kind, this.name, specObj)
     }
 
     private fun createUpdateResourceToSave(): Resource {
         val preProcessorResult = handleUpdatePreProcessor(this.specObj)
         when (preProcessorResult) {
-            is ResourceVersionRequestPreProcessor.ContinueResult -> {}
-            is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            is ResourceVersionRequestPreProcessor.BlockResult -> {}
-            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {
+            is ResourceVersionRequestPrePostProcessor.ContinueResult -> {}
+            is ResourceVersionRequestPrePostProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPrePostProcessor.BlockResult -> {}
+            is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {
                 return createResourceFromRequestedSpecObj(preProcessorResult.spec)
             }
         }
@@ -97,10 +134,10 @@ class RequestCreateAndUpdateHandler(
     private fun createCreateResourceToSave(): Resource {
         val preProcessorResult = handleCreatePreProcessor(this.specObj)
         when (preProcessorResult) {
-            is ResourceVersionRequestPreProcessor.ContinueResult -> {}
-            is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            is ResourceVersionRequestPreProcessor.BlockResult -> {}
-            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {
+            is ResourceVersionRequestPrePostProcessor.ContinueResult -> {}
+            is ResourceVersionRequestPrePostProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPrePostProcessor.BlockResult -> {}
+            is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {
                 return createResourceFromRequestedSpecObj(preProcessorResult.spec)
             }
         }

@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.module.api.error.configuration
 
-import app.simplecloud.simplecloud.module.api.error.ResolveFunction
 import java.io.Serializable
 import java.util.*
 
@@ -30,10 +29,10 @@ import java.util.*
  */
 class ErrorConfiguration(
     val id: UUID,
+    val errorType: Int,
     val shortMessage: String,
     val message: String,
     val processName: String,
     val timeStamp: Long,
-    val errorData: Map<String, Any>,
-    val resolveFunction: ResolveFunction?,
+    val errorData: Map<String, String>,
 ) : Serializable

@@ -46,6 +46,7 @@ class PluginCloudAPI(
     permissionFactory: Permission.Factory,
     distribution: Distribution,
     cacheHandler: CacheHandler,
+    cloudStateService: InternalCloudStateService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     internalProcessGroupService,
@@ -58,5 +59,6 @@ class PluginCloudAPI(
     eventManager,
     permissionFactory,
     distribution,
-    cacheHandler
+    cacheHandler,
+    cloudStateService
 )

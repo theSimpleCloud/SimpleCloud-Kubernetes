@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.service.CloudProcessGroupService
 import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.service.StaticProcessTemplateService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.node.process.InternalProcessShutdownHandler
 import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
 import app.simplecloud.simplecloud.node.process.ProcessStarter
@@ -34,15 +34,15 @@ import kotlinx.coroutines.runBlocking
  * @author Frederick Baier
  *
  */
-class V1Beta1CloudProcessPreProcessor(
+class V1Beta1CloudProcessPrePostProcessor(
     private val groupService: CloudProcessGroupService,
     private val staticService: StaticProcessTemplateService,
     private val processService: CloudProcessService,
     private val processStarterFactory: ProcessStarter.Factory,
     private val processShutdownHandlerFactory: ProcessShutdownHandler.Factory,
-) : ResourceVersionRequestPreProcessor<V1Beta1CloudProcessSpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1CloudProcessSpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
@@ -60,7 +60,7 @@ class V1Beta1CloudProcessPreProcessor(
         return@runBlocking RequestPreProcessorResult.overwriteSpec(editedSpec)
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,

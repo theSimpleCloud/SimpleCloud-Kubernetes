@@ -30,6 +30,7 @@ import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImp
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.api.impl.service.DefaultCloudStateService
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
@@ -129,6 +130,8 @@ class CloudPlugin(
         )
 
         val selfComponent = findSelfProcess(cloudProcessService)
+        val cacheHandler = CacheHandlerImpl(this.distribution)
+        val cloudStateService = DefaultCloudStateService(cacheHandler)
         return PluginCloudAPI(
             selfComponent.getName(),
             cloudProcessGroupService,
@@ -141,7 +144,8 @@ class CloudPlugin(
             eventManager,
             permissionFactory,
             distribution,
-            CacheHandlerImpl(this.distribution)
+            cacheHandler,
+            cloudStateService
         )
     }
 

@@ -30,5 +30,6 @@ class FtpCreateConfiguration(
     val ftpServerName: String,
     val ftpUser: String,
     val ftpPassword: String,
+    val port: Int,
     val volumeClaim: KubeVolumeClaim,
 )

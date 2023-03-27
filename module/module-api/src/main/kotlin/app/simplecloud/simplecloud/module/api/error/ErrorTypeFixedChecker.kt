@@ -16,32 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.volume
+package app.simplecloud.simplecloud.module.api.error
 
-interface KubeVolumeClaimService {
+import java.util.concurrent.CompletableFuture
 
+/**
+ * Date: 18.03.23
+ * Time: 16:33
+ * @author Frederick Baier
+ *
+ */
+interface ErrorTypeFixedChecker {
 
-    fun getAllClaims(): List<KubeVolumeClaim>
-
-    fun createVolumeClaim(name: String, volumeSpec: KubeVolumeSpec): KubeVolumeClaim
-
-    fun getClaim(name: String): KubeVolumeClaim
-
-    fun doesClaimExist(name: String): Boolean {
-        try {
-            getClaim(name)
-            return true
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    class VolumeClaimAlreadyExistException : Exception {
-
-        constructor() : super()
-
-        constructor(cause: Exception) : super(cause)
-
-    }
+    fun isErrorFixed(error: Error): CompletableFuture<Boolean>
 
 }

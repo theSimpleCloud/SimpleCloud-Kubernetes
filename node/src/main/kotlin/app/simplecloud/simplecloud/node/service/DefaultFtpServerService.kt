@@ -16,13 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl.service
+package app.simplecloud.simplecloud.node.service
 
+import app.simplecloud.simplecloud.api.future.CloudScope
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.future.future
 import app.simplecloud.simplecloud.module.api.impl.ftp.FtpServerFactory
-import app.simplecloud.simplecloud.module.api.impl.ftp.start.FtpServerStarter
-import app.simplecloud.simplecloud.module.api.impl.ftp.stop.FtpServerStopper
-import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedFtpServerRepository
 import app.simplecloud.simplecloud.module.api.impl.request.ftp.FtpServerCreateRequestImpl
 import app.simplecloud.simplecloud.module.api.impl.request.ftp.FtpServerStopRequestImpl
 import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
@@ -30,6 +29,8 @@ import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpCrea
 import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerCreateRequest
 import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerStopRequest
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.ftp.V1Beta1FtpSpec
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -39,10 +40,8 @@ import java.util.concurrent.CompletableFuture
  *
  */
 class DefaultFtpServerService(
-    private val repository: DistributedFtpServerRepository,
     private val factory: FtpServerFactory,
-    private val ftpServerStarter: FtpServerStarter,
-    private val ftpServerStopper: FtpServerStopper,
+    private val requestHandler: ResourceRequestHandler,
 ) : InternalFtpServerService {
 
     override fun createCreateRequest(createConfiguration: FtpCreateConfiguration): FtpServerCreateRequest {
@@ -53,23 +52,37 @@ class DefaultFtpServerService(
         return FtpServerStopRequestImpl(ftpServer, this)
     }
 
-    override fun findByName(name: String): CompletableFuture<FtpServer> {
-        return this.repository.find(name).thenApply { this.factory.create(it, this) }
+    override fun findByName(name: String): CompletableFuture<FtpServer> = CloudScope.future {
+        val spec = requestHandler.handleGetOneSpec<V1Beta1FtpSpec>(
+            "core",
+            "FtpServer",
+            "v1beta1",
+            name
+        ).getSpec()
+        val ftpServerConfiguration = spec.toConfig(name)
+        return@future factory.create(ftpServerConfiguration, this@DefaultFtpServerService)
     }
 
-    override fun findAll(): CompletableFuture<List<FtpServer>> {
-        return this.repository.findAll().thenApply { list -> list.map { this.factory.create(it, this) } }
+    override fun findAll(): CompletableFuture<List<FtpServer>> = CloudScope.future {
+        val ftpServerServerResults = requestHandler.handleGetAllSpec<V1Beta1FtpSpec>("core", "FtpServer", "v1beta1")
+        val ftpServerConfigurations = ftpServerServerResults.map { it.getSpec().toConfig(it.getName()) }
+        return@future ftpServerConfigurations.map { factory.create(it, this@DefaultFtpServerService) }
     }
 
     override suspend fun createServerInternal(createConfiguration: FtpCreateConfiguration): FtpServer {
-        val ftpServer = this.ftpServerStarter.startServer(createConfiguration, this)
-        this.repository.save(ftpServer.getName(), ftpServer.toConfiguration()).await()
-        return ftpServer
+        requestHandler.handleCreate(
+            "core", "FtpServer", "v1beta1", createConfiguration.ftpServerName, V1Beta1FtpSpec(
+                createConfiguration.volumeClaim.getName(),
+                createConfiguration.ftpUser,
+                createConfiguration.ftpPassword,
+                createConfiguration.port
+            )
+        )
+        return findByName(createConfiguration.ftpServerName).await()
     }
 
     override suspend fun stopServerInternal(ftpServer: FtpServer) {
-        this.ftpServerStopper.stopServer(ftpServer)
-        this.repository.remove(ftpServer.getName()).await()
+        requestHandler.handleDelete("core", "FtpServer", "v1beta1", ftpServer.getName())
     }
 
 

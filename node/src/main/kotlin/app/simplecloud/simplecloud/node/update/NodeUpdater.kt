@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.update
 
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
@@ -49,7 +50,7 @@ class NodeUpdater(
     private val deploymentService = this.cloudAPI.getKubeAPI().getDeploymentService()
 
     fun canPerformUpdate(): Boolean {
-        return !cloudAPI.isDisabledMode().get()
+        return cloudAPI.getCloudStateService().getCloudState().get() != CloudState.DISABLED
     }
 
     @Synchronized
@@ -85,11 +86,11 @@ class NodeUpdater(
         logger.error("Rebuild failed")
         this.errorService.createCreateRequest(
             ErrorCreateConfiguration(
+                -1,
                 "Rebuild failed: Update pod failed",
                 buildResult.logString,
                 "Cloud",
-                emptyMap(),
-                null
+                emptyMap()
             )
         ).submit()
     }
@@ -111,11 +112,11 @@ class NodeUpdater(
         val stacktrace = ExceptionUtils.getStackTrace(e)
         this.errorService.createCreateRequest(
             ErrorCreateConfiguration(
+                -1,
                 "Rebuild failed: Failed to update deployment",
                 stacktrace,
                 "Cloud",
-                emptyMap(),
-                null
+                emptyMap()
             )
         ).submit()
     }

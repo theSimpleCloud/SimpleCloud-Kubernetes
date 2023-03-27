@@ -26,7 +26,6 @@ import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.NodeService
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 07.05.22
@@ -47,6 +46,7 @@ open class CloudAPIImpl(
     private val permissionFactory: Permission.Factory,
     private val distribution: Distribution,
     private val cacheHandler: CacheHandler,
+    private val cloudStateService: InternalCloudStateService,
 ) : InternalCloudAPI {
 
     override fun getLocalNetworkComponentName(): String {
@@ -93,9 +93,8 @@ open class CloudAPIImpl(
         return this.cacheHandler
     }
 
-    override fun isDisabledMode(): CompletableFuture<Boolean> {
-        return getCacheHandler().getOrCreateSingletonCache<Boolean>("cloud-disabled")
-            .getValue().exceptionally { false }
+    override fun getCloudStateService(): InternalCloudStateService {
+        return this.cloudStateService
     }
 
     override fun getDistribution(): Distribution {

@@ -56,6 +56,7 @@ class NodeCloudAPIImpl(
     permissionFactory: Permission.Factory,
     distribution: Distribution,
     cacheHandler: CacheHandler,
+    cloudStateService: InternalCloudStateService,
     private val errorService: InternalErrorService,
     private val onlineStrategyService: InternalNodeProcessOnlineCountStrategyService,
     private val localAPI: LocalAPI,
@@ -77,7 +78,8 @@ class NodeCloudAPIImpl(
     eventManager,
     permissionFactory,
     distribution,
-    cacheHandler
+    cacheHandler,
+    cloudStateService
 ), InternalNodeCloudAPI {
 
     override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService {
@@ -102,10 +104,6 @@ class NodeCloudAPIImpl(
 
     override fun getInternalMessageChannelProvider(): InternalMessageChannelProvider {
         return this.messageChannelProvider
-    }
-
-    override fun setDisabledMode(boolean: Boolean) {
-        return getCacheHandler().getOrCreateSingletonCache<Boolean>("cloud-disabled").setValue(boolean)
     }
 
     override fun getWebControllerHandler(): ControllerHandler {

@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.module.api.impl.resourcedefinition.builder
 import app.simplecloud.simplecloud.module.api.impl.resourcedefinition.ResourceVersionImpl
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.module.api.resourcedefinition.StatusGenerationFunction
 import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceVersionActionsBuilder
 import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceVersionBuilder
@@ -50,7 +50,7 @@ class ResourceVersionBuilderImpl : ResourceVersionBuilder {
     private var actions: ResourceVersionActions = newActionsBuilder().build()
 
     @Volatile
-    private var preProcessor: ResourceVersionRequestPreProcessor<*> = ResourceVersionRequestPreProcessor<Any>()
+    private var preProcessor: ResourceVersionRequestPrePostProcessor<*> = ResourceVersionRequestPrePostProcessor<Any>()
 
     override fun setName(name: String): ResourceVersionBuilder {
         this.name = name
@@ -72,7 +72,7 @@ class ResourceVersionBuilderImpl : ResourceVersionBuilder {
         return this
     }
 
-    override fun setPreProcessor(preProcessor: ResourceVersionRequestPreProcessor<*>): ResourceVersionBuilder {
+    override fun setPreProcessor(preProcessor: ResourceVersionRequestPrePostProcessor<*>): ResourceVersionBuilder {
         this.preProcessor = preProcessor
         return this
     }

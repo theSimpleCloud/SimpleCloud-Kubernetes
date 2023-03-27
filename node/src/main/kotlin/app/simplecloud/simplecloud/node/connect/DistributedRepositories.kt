@@ -20,7 +20,6 @@ package app.simplecloud.simplecloud.node.connect
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
-import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedFtpServerRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 
 
@@ -38,5 +37,4 @@ data class DistributedRepositories(
     val staticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
     val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
     val errorRepository: DistributedErrorRepository,
-    val ftpServerRepository: DistributedFtpServerRepository,
 )

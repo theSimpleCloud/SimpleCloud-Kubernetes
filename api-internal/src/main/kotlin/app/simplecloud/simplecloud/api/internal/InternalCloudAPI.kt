@@ -40,6 +40,8 @@ interface InternalCloudAPI : CloudAPI {
 
     override fun getPermissionGroupService(): InternalPermissionGroupService
 
+    override fun getCloudStateService(): InternalCloudStateService
+
     fun getDistribution(): Distribution
 
 }

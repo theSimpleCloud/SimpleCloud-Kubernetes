@@ -36,7 +36,7 @@ interface ResourceVersion {
 
     fun getStatusGenerationFunction(): StatusGenerationFunction<Any>
 
-    fun getPreProcessor(): ResourceVersionRequestPreProcessor<Any>
+    fun getPreProcessor(): ResourceVersionRequestPrePostProcessor<Any>
 
     fun getSpecSchema(): Definition
 

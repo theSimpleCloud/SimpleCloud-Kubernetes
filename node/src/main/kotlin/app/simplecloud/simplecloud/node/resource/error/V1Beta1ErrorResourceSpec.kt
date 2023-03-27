@@ -16,32 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.volume
+package app.simplecloud.simplecloud.node.resource.error
 
-interface KubeVolumeClaimService {
-
-
-    fun getAllClaims(): List<KubeVolumeClaim>
-
-    fun createVolumeClaim(name: String, volumeSpec: KubeVolumeSpec): KubeVolumeClaim
-
-    fun getClaim(name: String): KubeVolumeClaim
-
-    fun doesClaimExist(name: String): Boolean {
-        try {
-            getClaim(name)
-            return true
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    class VolumeClaimAlreadyExistException : Exception {
-
-        constructor() : super()
-
-        constructor(cause: Exception) : super(cause)
-
-    }
-
-}
+/**
+ * Date: 18.03.23
+ * Time: 12:55
+ * @author Frederick Baier
+ *
+ */
+class V1Beta1ErrorResourceSpec(
+    val errorType: Int,
+    val shortMessage: String,
+    val message: String,
+    val processName: String,
+    val timeStamp: Long,
+    val dataKeys: Array<String>,
+    val dataValues: Array<String>,
+)

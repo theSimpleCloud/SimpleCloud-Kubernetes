@@ -41,7 +41,6 @@ class MemoryDatabaseResourceRepository : DatabaseResourceRepository {
     }
 
     override fun load(apiVersion: String, kind: String, fieldName: String, fieldValue: String): Resource? {
-        this.resources.forEach { it.spec }
         if (fieldName == "name") {
             return this.resources.firstOrNull { it.kind == kind && it.apiVersion == apiVersion && it.name == fieldValue }
         }

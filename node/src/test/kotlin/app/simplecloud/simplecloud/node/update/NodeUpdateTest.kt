@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.node.update
 
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.*
 import java.util.concurrent.TimeUnit
@@ -30,9 +32,12 @@ import java.util.concurrent.TimeUnit
  */
 class NodeUpdateTest : NodeAPIBaseTest() {
 
+    private lateinit var cloudStateService: InternalCloudStateService
+
     @BeforeEach
     override fun setUp() {
         super.setUp()
+        this.cloudStateService = this.cloudAPI.getCloudStateService()
     }
 
     @AfterEach
@@ -57,7 +62,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     @Disabled
     fun executeUpdater_cloudWillBeInDisableMode() {
         executeUpdater()
-        Assertions.assertTrue(this.cloudAPI.isDisabledMode().get())
+        Assertions.assertTrue(this.cloudStateService.getCloudState().get() == CloudState.DISABLED)
     }
 
     @Test
@@ -72,7 +77,7 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     @Timeout(1, unit = TimeUnit.SECONDS)
     @Disabled
     fun cloudAlreadyDisabled_executeUpdater_willFail() {
-        this.cloudAPI.setDisabledMode(true)
+        this.cloudStateService.setCloudState(CloudState.DISABLED)
         Assertions.assertThrows(NodeDisabler.AlreadyDisabledException::class.java) {
             executeUpdater()
         }

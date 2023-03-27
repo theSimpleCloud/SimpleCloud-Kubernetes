@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.resourcedefinition.Definition
 import app.simplecloud.simplecloud.module.api.impl.resourcedefinition.schema.SchemaCreator
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.module.api.resourcedefinition.StatusGenerationFunction
 
 /**
@@ -37,7 +37,7 @@ class ResourceVersionImpl(
     private val statusClass: Class<*>?,
     private val actions: ResourceVersionActions,
     private val statusGenerationFunction: StatusGenerationFunction<*>?,
-    private val preProcessor: ResourceVersionRequestPreProcessor<*>,
+    private val preProcessor: ResourceVersionRequestPrePostProcessor<*>,
 ) : ResourceVersion {
 
     private val specSchema = SchemaCreator(specClass, false, emptyList()).createSchema()
@@ -61,8 +61,8 @@ class ResourceVersionImpl(
             ?: StatusGenerationFunction<Any> { _, _ -> null }
     }
 
-    override fun getPreProcessor(): ResourceVersionRequestPreProcessor<Any> {
-        return this.preProcessor as ResourceVersionRequestPreProcessor<Any>
+    override fun getPreProcessor(): ResourceVersionRequestPrePostProcessor<Any> {
+        return this.preProcessor as ResourceVersionRequestPrePostProcessor<Any>
     }
 
     override fun getSpecSchema(): Definition {

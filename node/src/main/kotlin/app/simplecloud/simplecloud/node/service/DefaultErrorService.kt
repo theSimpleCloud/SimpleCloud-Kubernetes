@@ -16,18 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl.service
+package app.simplecloud.simplecloud.node.service
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.Error
 import app.simplecloud.simplecloud.module.api.error.ErrorFactory
+import app.simplecloud.simplecloud.module.api.error.ErrorTypeFixedChecker
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
 import app.simplecloud.simplecloud.module.api.impl.request.error.ErrorCreateRequestImpl
 import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.module.api.request.error.ErrorCreateRequest
+import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.resource.error.V1Beta1ErrorResourceSpec
+import com.google.common.collect.Maps
 import java.util.*
 import java.util.concurrent.CompletableFuture
 
@@ -40,10 +44,27 @@ import java.util.concurrent.CompletableFuture
 class DefaultErrorService(
     private val repository: DistributedErrorRepository,
     private val factory: ErrorFactory,
+    private val requestHandler: ResourceRequestHandler,
 ) : InternalErrorService {
 
+    private val errorTypeToChecker = Maps.newConcurrentMap<Int, ErrorTypeFixedChecker>()
 
     override suspend fun createErrorInternal(configuration: ErrorConfiguration) {
+        this.requestHandler.handleCreate(
+            "core",
+            "Error",
+            "v1beta1",
+            configuration.id.toString(),
+            V1Beta1ErrorResourceSpec(
+                configuration.errorType,
+                configuration.shortMessage,
+                configuration.message,
+                configuration.processName,
+                configuration.timeStamp,
+                configuration.errorData.keys.toTypedArray(),
+                configuration.errorData.values.toTypedArray()
+            )
+        )
         this.repository.save(configuration.id, configuration).await()
     }
 
@@ -68,18 +89,23 @@ class DefaultErrorService(
 
     override suspend fun deleteResolvedErrors(nodeCloudAPI: NodeCloudAPI) {
         val allErrors = findAll().await()
-        allErrors.forEach { deleteErrorIfResolved(it, nodeCloudAPI) }
+        allErrors.forEach { deleteErrorIfResolved(it) }
     }
 
-    private suspend fun deleteErrorIfResolved(error: Error, nodeCloudAPI: NodeCloudAPI) {
-        val isResolved = error.isResolved(nodeCloudAPI).await()
-        if (isResolved) {
-            this.repository.remove(error.toConfiguration().id).await()
+    private suspend fun deleteErrorIfResolved(error: Error) {
+        val checker = this.errorTypeToChecker[error.getErrorType()] ?: return
+        val isFixed = checker.isErrorFixed(error).await()
+        if (isFixed) {
+            this.requestHandler.handleDelete("core", "Error", "v1beta1", error.getId().toString())
         }
     }
 
     private fun mapConfigurationListToError(list: Collection<ErrorConfiguration>): List<Error> {
         return list.map { this.factory.create(it) }
+    }
+
+    override fun registerErrorType(errorTye: Int, checker: ErrorTypeFixedChecker) {
+        this.errorTypeToChecker[errorTye] = checker
     }
 
 }

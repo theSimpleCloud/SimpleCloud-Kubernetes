@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.module.api.impl.ftp.stop
 
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
 
 /**
  * Date: 21.12.22
@@ -31,8 +31,8 @@ class FtpServerStopperImpl(
     private val kubeAPI: KubeAPI,
 ) : FtpServerStopper {
 
-    override suspend fun stopServer(ftpServer: FtpServer) {
-        DirectFtpServerStopper(ftpServer, this.kubeAPI).stopServer()
+    override suspend fun stopServer(ftpServerConfiguration: FtpServerConfiguration) {
+        DirectFtpServerStopper(ftpServerConfiguration, this.kubeAPI).stopServer()
     }
 
 }

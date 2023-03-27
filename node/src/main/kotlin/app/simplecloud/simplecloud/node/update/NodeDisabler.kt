@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node.update
 
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 
 /**
@@ -31,10 +32,11 @@ class NodeDisabler(
 ) {
 
     fun disableNodes() {
-        if (this.cloudAPI.isDisabledMode().get()) {
+        val stateService = this.cloudAPI.getCloudStateService()
+        if (stateService.getCloudState().get() == CloudState.DISABLED) {
             throw AlreadyDisabledException()
         }
-        this.cloudAPI.setDisabledMode(true)
+        stateService.setCloudState(CloudState.DISABLED)
         stopAllProcesses()
         stopAllFtpServers()
     }

@@ -16,32 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.kubernetes.api.volume
+package app.simplecloud.simplecloud.api.service
 
-interface KubeVolumeClaimService {
+import app.simplecloud.simplecloud.api.utils.CloudState
+import java.util.concurrent.CompletableFuture
 
+/**
+ * Date: 23.03.23
+ * Time: 11:55
+ * @author Frederick Baier
+ *
+ */
+interface CloudStateService {
 
-    fun getAllClaims(): List<KubeVolumeClaim>
-
-    fun createVolumeClaim(name: String, volumeSpec: KubeVolumeSpec): KubeVolumeClaim
-
-    fun getClaim(name: String): KubeVolumeClaim
-
-    fun doesClaimExist(name: String): Boolean {
-        try {
-            getClaim(name)
-            return true
-        } catch (e: Exception) {
-            return false
-        }
-    }
-
-    class VolumeClaimAlreadyExistException : Exception {
-
-        constructor() : super()
-
-        constructor(cause: Exception) : super(cause)
-
-    }
+    fun getCloudState(): CompletableFuture<CloudState>
 
 }

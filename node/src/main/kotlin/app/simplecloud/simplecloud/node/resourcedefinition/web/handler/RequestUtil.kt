@@ -32,7 +32,7 @@ import eu.thesimplecloud.jsonlib.JsonLib
  * @author Frederick Baier
  *
  */
-class RequestGetUtil(
+class RequestUtil(
     private val resourceDefinition: ResourceDefinition,
     private val requestedVersion: ResourceVersion,
 ) {

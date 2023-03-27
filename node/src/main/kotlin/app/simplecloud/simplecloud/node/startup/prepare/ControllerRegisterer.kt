@@ -71,15 +71,6 @@ class ControllerRegisterer(
         this.controllerHandler.registerController(ErrorController(this.cloudAPI.getErrorService()))
 
         this.controllerHandler.registerController(
-            VolumeController(
-                this.cloudAPI,
-                this.cloudAPI.getFtpService(),
-                this.cloudAPI.getKubeAPI().getVolumeClaimService(),
-                this.cloudAPI.getStaticProcessTemplateService()
-            )
-        )
-
-        this.controllerHandler.registerController(
             UpdateController(
                 this.cloudAPI,
                 this.environmentVariables

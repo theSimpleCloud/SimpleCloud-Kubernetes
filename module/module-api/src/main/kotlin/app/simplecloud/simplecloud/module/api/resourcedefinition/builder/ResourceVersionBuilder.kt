@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.module.api.resourcedefinition.builder
 
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.module.api.resourcedefinition.StatusGenerationFunction
 
 /**
@@ -39,7 +39,7 @@ interface ResourceVersionBuilder {
 
     fun setStatusGenerationFunction(function: StatusGenerationFunction<*>): ResourceVersionBuilder
 
-    fun setPreProcessor(preProcessor: ResourceVersionRequestPreProcessor<*>): ResourceVersionBuilder
+    fun setPreProcessor(preProcessor: ResourceVersionRequestPrePostProcessor<*>): ResourceVersionBuilder
 
     fun setActions(actions: ResourceVersionActions): ResourceVersionBuilder
 

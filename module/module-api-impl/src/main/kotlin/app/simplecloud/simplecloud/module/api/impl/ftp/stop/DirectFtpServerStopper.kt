@@ -19,10 +19,10 @@
 package app.simplecloud.simplecloud.module.api.impl.ftp.stop
 
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
 
 class DirectFtpServerStopper(
-    private val ftpServer: FtpServer,
+    private val configuration: FtpServerConfiguration,
     private val kubeAPI: KubeAPI,
 ) {
 
@@ -32,11 +32,10 @@ class DirectFtpServerStopper(
     private val podService = this.kubeAPI.getPodService()
 
     suspend fun stopServer() {
-        val configuration = this.ftpServer.toConfiguration()
-        this.networkService.getService("ftp-service-${configuration.ftpServerName}".lowercase())
+        this.networkService.getService("ftp-service-${this.configuration.ftpServerName}".lowercase())
             .delete()
 
-        this.podService.getPod("ftp-server-${configuration.ftpServerName}".lowercase())
+        this.podService.getPod("ftp-server-${this.configuration.ftpServerName}".lowercase())
             .delete()
     }
 

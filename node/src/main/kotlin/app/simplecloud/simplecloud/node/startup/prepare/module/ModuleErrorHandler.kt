@@ -44,11 +44,11 @@ class ModuleErrorHandler(
         val stackTraceString = ExceptionUtils.getStackTrace(throwable)
         this.errorCreateHandler.create(
             ErrorCreateConfiguration(
+                -1,
                 throwable.message ?: "",
                 stackTraceString,
                 "Cloud",
                 emptyMap(),
-                null
             )
         )
     }

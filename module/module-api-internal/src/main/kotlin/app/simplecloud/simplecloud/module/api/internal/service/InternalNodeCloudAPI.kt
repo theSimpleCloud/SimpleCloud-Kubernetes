@@ -45,6 +45,4 @@ interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
 
     fun getResourceRequestHandler(): ResourceRequestHandler
 
-    fun setDisabledMode(boolean: Boolean)
-
 }

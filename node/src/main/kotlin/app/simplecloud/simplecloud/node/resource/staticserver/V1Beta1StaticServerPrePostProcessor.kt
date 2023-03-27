@@ -19,8 +19,8 @@
 package app.simplecloud.simplecloud.node.resource.staticserver
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedStaticProcessTemplateRepository
-import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 
 /**
  * Date: 07.03.23
@@ -28,36 +28,36 @@ import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
  * @author Frederick Baier
  *
  */
-class V1Beta1StaticLobbyPreProcessor(
+class V1Beta1StaticServerPrePostProcessor(
     private val distributedStaticRepository: DistributedStaticProcessTemplateRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1StaticLobbySpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1StaticServerSpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
         name: String,
-        spec: V1Beta1StaticLobbySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticLobbySpec> {
+        spec: V1Beta1StaticServerSpec,
+    ): RequestPreProcessorResult<V1Beta1StaticServerSpec> {
         this.distributedStaticRepository.save(
             name,
-            convertSpecToLobbyConfig(name, spec)
+            convertSpecToServerConfig(name, spec)
         )
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
         name: String,
-        spec: V1Beta1StaticLobbySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticLobbySpec> {
-        this.distributedStaticRepository.save(name, convertSpecToLobbyConfig(name, spec))
+        spec: V1Beta1StaticServerSpec,
+    ): RequestPreProcessorResult<V1Beta1StaticServerSpec> {
+        this.distributedStaticRepository.save(name, convertSpecToServerConfig(name, spec))
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,
@@ -67,11 +67,11 @@ class V1Beta1StaticLobbyPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    private fun convertSpecToLobbyConfig(
+    private fun convertSpecToServerConfig(
         name: String,
-        spec: V1Beta1StaticLobbySpec,
-    ): LobbyProcessTemplateConfiguration {
-        return LobbyProcessTemplateConfiguration(
+        spec: V1Beta1StaticServerSpec,
+    ): ServerProcessTemplateConfiguration {
+        return ServerProcessTemplateConfiguration(
             name,
             spec.maxMemory,
             spec.maxPlayers,
@@ -80,8 +80,7 @@ class V1Beta1StaticLobbyPreProcessor(
             spec.stateUpdating,
             spec.startPriority,
             spec.joinPermission,
-            spec.active,
-            spec.lobbyPriority
+            spec.active
         )
     }
 

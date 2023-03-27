@@ -18,7 +18,7 @@
 
 package app.simplecloud.simplecloud.module.api.impl.ftp.stop
 
-import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
+import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
 
 /**
  * Date: 21.12.22
@@ -28,6 +28,6 @@ import app.simplecloud.simplecloud.module.api.internal.ftp.FtpServer
  */
 interface FtpServerStopper {
 
-    suspend fun stopServer(ftpServer: FtpServer)
+    suspend fun stopServer(ftpServerConfiguration: FtpServerConfiguration)
 
 }

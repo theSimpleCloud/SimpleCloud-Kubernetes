@@ -42,12 +42,12 @@ class ErrorCreateRequestImpl(
         internalService.createErrorInternal(
             ErrorConfiguration(
                 UUID.randomUUID(),
+                configuration.errorType,
                 configuration.shortMessage,
                 configuration.message,
                 configuration.processName,
                 System.currentTimeMillis(),
-                configuration.errorData,
-                configuration.resolveFunction
+                configuration.errorData
             )
         )
     }

@@ -87,6 +87,7 @@ class KubernetesPodExecutor(
         output.write(command.toByteArray(StandardCharsets.UTF_8))
         output.write('\n'.code)
         output.flush()
+        output.close()
     }
 
     private fun attachPod(): Attach.AttachResult {

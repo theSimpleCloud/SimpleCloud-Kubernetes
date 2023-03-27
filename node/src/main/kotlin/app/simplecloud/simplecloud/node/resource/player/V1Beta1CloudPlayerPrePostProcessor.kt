@@ -22,7 +22,7 @@ import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import kotlinx.coroutines.runBlocking
 import java.util.*
 
@@ -32,15 +32,15 @@ import java.util.*
  * @author Frederick Baier
  *
  */
-class V1Beta1CloudPlayerPreProcessor(
+class V1Beta1CloudPlayerPrePostProcessor(
     private val distributedPlayerRepository: DistributedCloudPlayerRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1CloudPlayerSpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1CloudPlayerSpec>() {
 
-    override fun processGetAll(group: String, version: String, kind: String): RequestPreProcessorResult<Any> {
+    override fun preGetAll(group: String, version: String, kind: String): RequestPreProcessorResult<Any> {
         return RequestPreProcessorResult.unsupportedRequest()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
@@ -58,7 +58,7 @@ class V1Beta1CloudPlayerPreProcessor(
         return@runBlocking RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,

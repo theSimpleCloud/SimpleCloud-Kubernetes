@@ -40,6 +40,11 @@ interface TestPlayerProvider {
 
     fun getCloudAPI(): InternalCloudAPI
 
+    fun insertPlayerInDatabaseIfNotExist() {
+        if (runCatching { findDefaultOfflinePlayer() }.isFailure)
+            DefaultPlayerProvider.insertPlayerInDatabase(getResourceRequestHandler())
+    }
+
     fun insertPlayerInDatabase() {
         DefaultPlayerProvider.insertPlayerInDatabase(getResourceRequestHandler())
     }

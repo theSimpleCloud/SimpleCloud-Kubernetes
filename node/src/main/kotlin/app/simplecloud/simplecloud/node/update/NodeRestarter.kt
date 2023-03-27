@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.update
 
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import java.util.concurrent.TimeUnit
 
@@ -34,7 +35,7 @@ class NodeRestarter(
 ) {
 
     fun canPerformRestart(): Boolean {
-        return !cloudAPI.isDisabledMode().get()
+        return cloudAPI.getCloudStateService().getCloudState().get() != CloudState.DISABLED
     }
 
     fun restartNodes() {

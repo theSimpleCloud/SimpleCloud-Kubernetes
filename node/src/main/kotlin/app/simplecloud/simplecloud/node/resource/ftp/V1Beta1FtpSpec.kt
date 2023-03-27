@@ -16,41 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.internal.ftp
+package app.simplecloud.simplecloud.node.resource.ftp
 
+import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.MaxValue
+import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.MinValue
+import app.simplecloud.simplecloud.api.resourcedefinition.limitation.annotation.StringMinLength
 import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
-import app.simplecloud.simplecloud.module.api.internal.request.ftp.FtpServerStopRequest
 
 /**
- * Date: 21.12.22
- * Time: 09:33
+ * Date: 22.03.23
+ * Time: 19:00
  * @author Frederick Baier
  *
  */
-interface FtpServer {
+class V1Beta1FtpSpec(
+    val volumeClaimName: String,
+    @StringMinLength(3)
+    val ftpUser: String,
+    @StringMinLength(3)
+    val ftpPassword: String,
+    @MinValue(30200)
+    @MaxValue(30300)
+    val port: Int,
+) {
 
-    fun getName(): String {
-        return this.toConfiguration().ftpServerName
-    }
-
-    fun getFtpUser(): String {
-        return this.toConfiguration().ftpUser
-    }
-
-    fun getFtpPassword(): String {
-        return this.toConfiguration().ftpPassword
-    }
-
-    fun getPort(): Int {
-        return this.toConfiguration().port
-    }
-
-    fun createStopRequest(): FtpServerStopRequest
-
-    fun toConfiguration(): FtpServerConfiguration
-
-    companion object {
-        val FTP_PORT_RANGE = 30_200..30_300
+    fun toConfig(name: String): FtpServerConfiguration {
+        return FtpServerConfiguration(name, ftpUser, ftpPassword, volumeClaimName, port)
     }
 
 }

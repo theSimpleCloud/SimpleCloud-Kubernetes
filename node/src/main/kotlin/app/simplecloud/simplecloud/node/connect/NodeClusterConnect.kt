@@ -29,6 +29,7 @@ import app.simplecloud.simplecloud.api.impl.player.factory.CloudPlayerFactoryImp
 import app.simplecloud.simplecloud.api.impl.player.factory.OfflineCloudPlayerFactoryImpl
 import app.simplecloud.simplecloud.api.impl.process.factory.CloudProcessFactoryImpl
 import app.simplecloud.simplecloud.api.impl.repository.distributed.*
+import app.simplecloud.simplecloud.api.impl.service.DefaultCloudStateService
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudLobbyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudProxyGroupFactoryImpl
 import app.simplecloud.simplecloud.api.impl.template.group.factory.CloudServerGroupFactoryImpl
@@ -49,11 +50,7 @@ import app.simplecloud.simplecloud.module.api.impl.ftp.FtpServerFactoryImpl
 import app.simplecloud.simplecloud.module.api.impl.ftp.start.FtpServerStarterImpl
 import app.simplecloud.simplecloud.module.api.impl.ftp.stop.FtpServerStopperImpl
 import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedErrorRepository
-import app.simplecloud.simplecloud.module.api.impl.repository.distributed.DistributedFtpServerRepository
-import app.simplecloud.simplecloud.module.api.impl.service.DefaultErrorService
-import app.simplecloud.simplecloud.module.api.impl.service.DefaultFtpServerService
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
-import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
@@ -89,7 +86,7 @@ class NodeClusterConnect(
         injectUserContextIntoDistribution(distribution, nodeCloudAPI, distributedRepositories)
         registerWebControllers(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
-        checkForFirstNodeInCluster(distribution, distributedRepositories, nodeCloudAPI.getResourceRequestHandler())
+        checkForFirstNodeInCluster(distribution, distributedRepositories, nodeCloudAPI)
         handleClusterActive(nodeCloudAPI)
         return nodeCloudAPI
     }
@@ -119,7 +116,6 @@ class NodeClusterConnect(
             DistributedStaticProcessTemplateRepository(distribution),
             DistributedOnlineCountStrategyRepository(distribution),
             DistributedErrorRepository(distribution),
-            DistributedFtpServerRepository(distribution),
         )
     }
 
@@ -134,13 +130,14 @@ class NodeClusterConnect(
     private fun checkForFirstNodeInCluster(
         distribution: Distribution,
         distributedRepositories: DistributedRepositories,
-        resourceRequestHandler: ResourceRequestHandler,
+        cloudAPI: InternalNodeCloudAPI,
     ) {
         if (distribution.getServers().size == 1) {
             ClusterInitializer(
                 distribution,
                 distributedRepositories,
-                resourceRequestHandler
+                cloudAPI.getResourceRequestHandler(),
+                cloudAPI.getCloudStateService()
             ).initialize()
         }
     }
@@ -234,30 +231,42 @@ class NodeClusterConnect(
             requestHandler
         )
 
-        val errorService = DefaultErrorService(distributedRepositories.errorRepository, ErrorFactoryImpl())
+        val errorService = DefaultErrorService(
+            distributedRepositories.errorRepository,
+            ErrorFactoryImpl(),
+            requestHandler
+        )
 
         val ftpServerFactory = FtpServerFactoryImpl()
+        val ftpServerStarter = FtpServerStarterImpl(this.kubeAPI, ftpServerFactory)
+        val ftpServerStopper = FtpServerStopperImpl(this.kubeAPI)
         val ftpService = DefaultFtpServerService(
-            distributedRepositories.ftpServerRepository,
             ftpServerFactory,
-            FtpServerStarterImpl(this.kubeAPI, ftpServerFactory),
-            FtpServerStopperImpl(this.kubeAPI)
+            requestHandler
         )
 
         val messageChannelManager = MessageChannelManagerImpl(nodeService, cloudProcessService, distribution)
         val selfComponent = nodeService.findByDistributionComponent(distribution.getSelfComponent()).join()
         val cacheHandler = CacheHandlerImpl(distribution)
 
+        val cloudStateService = DefaultCloudStateService(cacheHandler)
+
+
+
         ResourceDefinitionRegisterer(
             resourceDefinitionService,
+            cloudStateService,
             cloudProcessGroupService,
             staticProcessTemplateService,
             cloudProcessService,
+            ftpService,
             ProcessStarterFactoryImpl(processFactory, this.kubeAPI),
-            ProcessShutdownHandlerFactoryImpl(
-                this.kubeAPI.getPodService()
-            ),
-            distributedRepositories
+            ProcessShutdownHandlerFactoryImpl(this.kubeAPI.getPodService()),
+            ftpServerStarter,
+            ftpServerStopper,
+            this.kubeAPI.getPodService(),
+            this.kubeAPI.getVolumeClaimService(),
+            distributedRepositories,
         ).registerDefinitions()
 
         return NodeCloudAPIImpl(
@@ -273,6 +282,7 @@ class NodeClusterConnect(
             permissionFactory,
             distribution,
             cacheHandler,
+            cloudStateService,
             errorService,
             nodeProcessOnlineStrategyService,
             this.localAPI,

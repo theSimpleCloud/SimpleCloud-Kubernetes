@@ -21,7 +21,7 @@ package app.simplecloud.simplecloud.node.resource.permissiongroup
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedPermissionGroupRepository
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionConfiguration
 import app.simplecloud.simplecloud.api.permission.configuration.PermissionGroupConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 
 /**
  * Date: 07.03.23
@@ -29,11 +29,11 @@ import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
  * @author Frederick Baier
  *
  */
-class V1Beta1PermissionGroupPreProcessor(
+class V1Beta1PermissionGroupPrePostProcessor(
     private val distributedGroupRepository: DistributedPermissionGroupRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1PermissionGroupSpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1PermissionGroupSpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
@@ -47,7 +47,7 @@ class V1Beta1PermissionGroupPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
@@ -58,7 +58,7 @@ class V1Beta1PermissionGroupPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,

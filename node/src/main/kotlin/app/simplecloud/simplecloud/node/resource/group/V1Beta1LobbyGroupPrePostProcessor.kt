@@ -20,7 +20,7 @@ package app.simplecloud.simplecloud.node.resource.group
 
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 
 /**
  * Date: 07.03.23
@@ -28,11 +28,11 @@ import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
  * @author Frederick Baier
  *
  */
-class V1Beta1LobbyGroupPreProcessor(
+class V1Beta1LobbyGroupPrePostProcessor(
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1LobbyGroupSpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1LobbyGroupSpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
@@ -46,7 +46,7 @@ class V1Beta1LobbyGroupPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
@@ -57,7 +57,7 @@ class V1Beta1LobbyGroupPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,

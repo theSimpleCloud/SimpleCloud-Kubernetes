@@ -22,7 +22,8 @@ import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
+import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.RequestUtil
 
 class RequestDeleteOneHandler(
     private val group: String,
@@ -37,6 +38,8 @@ class RequestDeleteOneHandler(
     private val defaultVersion = resourceDefinition.getDefaultVersion()
     private val requestedVersion = getResourceVersion()
 
+    private val requestUtil = RequestUtil(this.resourceDefinition, this.requestedVersion)
+
     fun handleDeleteOne(): Any {
         checkGroupNotInternal()
         if (this.requestedVersion.getActions().isDeleteDisabled()) {
@@ -48,11 +51,17 @@ class RequestDeleteOneHandler(
             return true
 
         val apiVersion = this.group + "/" + this.defaultVersion.getName()
-        if (this.databaseResourceRepository.load(apiVersion, this.kind, "name", this.name) == null) {
-            throw NoSuchElementException("Resource not found")
-        }
+        val resource = this.databaseResourceRepository.load(apiVersion, this.kind, "name", this.name)
+            ?: throw NoSuchElementException("Resource not found")
+        val requestedSpec = this.requestUtil.convertDefaultSpecToRequestedSpec(resource)
         this.databaseResourceRepository.delete(apiVersion, this.kind, this.name)
+        handlePostDelete(requestedSpec)
         return true
+    }
+
+    private fun handlePostDelete(requestedSpec: Any) {
+        val preProcessor = this.requestedVersion.getPreProcessor()
+        preProcessor.postDelete(this.group, this.version, this.kind, this.name, requestedSpec)
     }
 
     private fun checkGroupNotInternal() {
@@ -63,17 +72,17 @@ class RequestDeleteOneHandler(
     private fun handleDeletePreProcessor(): Boolean {
         val preProcessorResult = callDeletePreProcessor()
         when (preProcessorResult) {
-            is ResourceVersionRequestPreProcessor.ContinueResult -> {}
-            is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            is ResourceVersionRequestPreProcessor.BlockResult -> return false
-            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
+            is ResourceVersionRequestPrePostProcessor.ContinueResult -> {}
+            is ResourceVersionRequestPrePostProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPrePostProcessor.BlockResult -> return false
+            is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {}
         }
         return true
     }
 
-    private fun callDeletePreProcessor(): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<Any> {
+    private fun callDeletePreProcessor(): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<Any> {
         val preProcessor = this.requestedVersion.getPreProcessor()
-        return preProcessor.processDelete(this.group, this.requestedVersion.getName(), this.kind, this.name)
+        return preProcessor.preDelete(this.group, this.requestedVersion.getName(), this.kind, this.name)
     }
 
 

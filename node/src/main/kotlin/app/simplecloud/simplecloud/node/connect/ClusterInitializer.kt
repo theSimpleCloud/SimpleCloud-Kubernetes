@@ -18,6 +18,8 @@
 
 package app.simplecloud.simplecloud.node.connect
 
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
 import app.simplecloud.simplecloud.node.process.unregister.ProcessUnregisterRunnable
@@ -35,10 +37,16 @@ class ClusterInitializer(
     private val distribution: Distribution,
     private val distributedRepositories: DistributedRepositories,
     private val resourceRequestHandler: ResourceRequestHandler,
+    private val stateService: InternalCloudStateService,
 ) {
     fun initialize() {
         initializeRepositories()
         initializeSchedulers()
+        initializeCloudState()
+    }
+
+    private fun initializeCloudState() {
+        this.stateService.setCloudState(CloudState.NORMAL)
     }
 
     private fun initializeSchedulers() {

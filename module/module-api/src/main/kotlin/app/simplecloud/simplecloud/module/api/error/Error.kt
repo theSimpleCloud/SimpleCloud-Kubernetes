@@ -18,9 +18,8 @@
 
 package app.simplecloud.simplecloud.module.api.error
 
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorConfiguration
-import java.util.concurrent.CompletableFuture
+import java.util.*
 
 
 /**
@@ -30,6 +29,13 @@ import java.util.concurrent.CompletableFuture
  *
  */
 interface Error {
+
+    fun getId(): UUID
+
+    /**
+     * Returns the error type
+     */
+    fun getErrorType(): Int
 
     /**
      * Returns a short description of the error
@@ -50,16 +56,6 @@ interface Error {
      * Returns custom error data
      */
     fun getErrorData(): Map<String, Any>
-
-    /**
-     * Returns whether this error can be resolved
-     */
-    fun isResolvable(): Boolean
-
-    /**
-     * Returns whether this error has been resolved
-     */
-    fun isResolved(nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean>
 
     /**
      * Returns the configuration of this error

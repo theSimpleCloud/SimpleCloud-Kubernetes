@@ -23,7 +23,6 @@ import app.simplecloud.simplecloud.api.messagechannel.manager.MessageChannelMana
 import app.simplecloud.simplecloud.api.permission.Permission
 import app.simplecloud.simplecloud.api.service.*
 import app.simplecloud.simplecloud.eventapi.EventManager
-import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 07.05.22
@@ -55,6 +54,6 @@ interface CloudAPI {
 
     fun getCacheHandler(): CacheHandler
 
-    fun isDisabledMode(): CompletableFuture<Boolean>
+    fun getCloudStateService(): CloudStateService
 
 }

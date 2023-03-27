@@ -56,7 +56,7 @@ abstract class OfflinePlayerUpdateTest : PermissionEntityUpdateBaseTest(), TestP
     @BeforeEach
     override fun setUp() {
         this.playerService = getCloudAPI().getCloudPlayerService()
-        insertPlayerInDatabase()
+        insertPlayerInDatabaseIfNotExist()
         super.setUp()
     }
 

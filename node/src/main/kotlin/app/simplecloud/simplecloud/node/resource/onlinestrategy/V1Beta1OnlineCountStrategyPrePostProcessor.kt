@@ -19,7 +19,7 @@
 package app.simplecloud.simplecloud.node.resource.onlinestrategy
 
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 
 /**
@@ -28,11 +28,11 @@ import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnline
  * @author Frederick Baier
  *
  */
-class V1Beta1OnlineCountStrategyPreProcessor(
+class V1Beta1OnlineCountStrategyPrePostProcessor(
     private val distributedStrategyRepository: DistributedOnlineCountStrategyRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1ProcessOnlineCountStrategySpec>() {
+) : ResourceVersionRequestPrePostProcessor<V1Beta1ProcessOnlineCountStrategySpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
@@ -46,7 +46,7 @@ class V1Beta1OnlineCountStrategyPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
@@ -57,7 +57,7 @@ class V1Beta1OnlineCountStrategyPreProcessor(
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,

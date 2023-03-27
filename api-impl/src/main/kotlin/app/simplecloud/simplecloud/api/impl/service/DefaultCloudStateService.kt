@@ -16,21 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.impl.repository.distributed
+package app.simplecloud.simplecloud.api.impl.service
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.AbstractDistributedRepository
-import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.module.api.internal.ftp.configuration.FtpServerConfiguration
-import app.simplecloud.simplecloud.module.api.internal.repository.FtpServerRepository
+import app.simplecloud.simplecloud.api.cache.CacheHandler
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.utils.CloudState
+import java.util.concurrent.CompletableFuture
 
 /**
- * Date: 21.12.22
- * Time: 12:14
+ * Date: 23.03.23
+ * Time: 13:22
  * @author Frederick Baier
  *
  */
-class DistributedFtpServerRepository(
-    private val distribution: Distribution,
-) : AbstractDistributedRepository<String, FtpServerConfiguration>(
-    distribution.getOrCreateCache("cloud-ftp-server")
-), FtpServerRepository
+class DefaultCloudStateService(
+    private val cacheHandler: CacheHandler,
+) : InternalCloudStateService {
+
+    private val singletonCache = cacheHandler.getOrCreateSingletonCache<CloudState>("cloud-state")
+
+    override fun setCloudState(state: CloudState) {
+        return this.singletonCache.setValue(state)
+    }
+
+    override fun getCloudState(): CompletableFuture<CloudState> {
+        return this.singletonCache.getValue()
+    }
+}

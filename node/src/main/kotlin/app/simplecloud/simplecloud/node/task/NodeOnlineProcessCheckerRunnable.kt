@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.node.task
 
 import app.simplecloud.simplecloud.api.future.await
+import app.simplecloud.simplecloud.api.utils.CloudState
 import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.distribution.api.DistributionAware
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
@@ -40,7 +41,7 @@ class NodeOnlineProcessCheckerRunnable : Runnable, DistributionAware {
         val cloudAPI = this.cloudAPI ?: return
 
         runBlocking {
-            if (cloudAPI.isDisabledMode().await())
+            if (cloudAPI.getCloudStateService().getCloudState().await() == CloudState.DISABLED)
                 return@runBlocking
             NodeOnlineProcessHandler(cloudAPI).handleProcesses()
         }

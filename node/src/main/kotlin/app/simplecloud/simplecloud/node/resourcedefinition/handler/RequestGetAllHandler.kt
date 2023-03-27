@@ -21,9 +21,9 @@ package app.simplecloud.simplecloud.node.resourcedefinition.handler
 import app.simplecloud.simplecloud.api.resourcedefinition.Resource
 import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestSpecAndStatusResult
-import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.RequestGetUtil
+import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.RequestUtil
 
 /**
  * Date: 03.02.23
@@ -43,23 +43,23 @@ class RequestGetAllHandler(
     private val defaultVersion = this.resourceDefinition.getDefaultVersion()
     private val requestedVersion = resourceDefinition.getVersionByName(this.version)
 
-    private val requestGetUtil = RequestGetUtil(this.resourceDefinition, this.requestedVersion)
+    private val requestUtil = RequestUtil(this.resourceDefinition, this.requestedVersion)
 
     fun handleGetAll(): List<RequestSpecAndStatusResult<*, *>> {
         val preProcessorResult = handlePreProcessor()
         when (preProcessorResult) {
-            is ResourceVersionRequestPreProcessor.ContinueResult -> {}
-            is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
-            is ResourceVersionRequestPreProcessor.BlockResult -> {}
-            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
+            is ResourceVersionRequestPrePostProcessor.ContinueResult -> {}
+            is ResourceVersionRequestPrePostProcessor.UnsupportedRequest -> throw RequestGetOneHandler.UnsupportedRequestException()
+            is ResourceVersionRequestPrePostProcessor.BlockResult -> {}
+            is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {}
         }
         val defaultVersionResources = loadDefaultVersionResources()
-        return defaultVersionResources.map { this.requestGetUtil.convertDefaultVersionToRequestVersion(it) }
+        return defaultVersionResources.map { this.requestUtil.convertDefaultVersionToRequestVersion(it) }
     }
 
-    private fun handlePreProcessor(): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<Any> {
+    private fun handlePreProcessor(): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<Any> {
         val preProcessor = this.requestedVersion.getPreProcessor()
-        return preProcessor.processGetAll(this.group, this.version, this.kind)
+        return preProcessor.preGetAll(this.group, this.version, this.kind)
     }
 
     private fun loadDefaultVersionResources(): List<Resource> {

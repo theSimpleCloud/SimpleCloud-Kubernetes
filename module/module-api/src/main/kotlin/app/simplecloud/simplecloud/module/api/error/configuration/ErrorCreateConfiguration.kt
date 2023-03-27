@@ -18,8 +18,6 @@
 
 package app.simplecloud.simplecloud.module.api.error.configuration
 
-import app.simplecloud.simplecloud.module.api.error.ResolveFunction
-
 /**
  * Date: 21.10.22
  * Time: 17:49
@@ -27,9 +25,9 @@ import app.simplecloud.simplecloud.module.api.error.ResolveFunction
  *
  */
 class ErrorCreateConfiguration(
+    val errorType: Int,
     val shortMessage: String,
     val message: String,
     val processName: String,
-    val errorData: Map<String, Any>,
-    val resolveFunction: ResolveFunction?,
+    val errorData: Map<String, String>,
 )

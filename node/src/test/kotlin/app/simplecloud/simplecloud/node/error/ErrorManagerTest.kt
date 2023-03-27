@@ -20,7 +20,8 @@ package app.simplecloud.simplecloud.node.error
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.future.completedFuture
-import app.simplecloud.simplecloud.module.api.error.ResolveFunction
+import app.simplecloud.simplecloud.module.api.error.Error
+import app.simplecloud.simplecloud.module.api.error.ErrorTypeFixedChecker
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
 import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
@@ -29,6 +30,7 @@ import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Assertions
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import java.util.concurrent.CompletableFuture
 
 /**
  * Date: 10.10.22
@@ -50,6 +52,7 @@ class ErrorManagerTest : NodeAPIBaseTest() {
     override fun tearDown() {
         super.tearDown()
     }
+
 
     @Test
     fun createError_willNotFail(): Unit = runBlocking {
@@ -89,25 +92,33 @@ class ErrorManagerTest : NodeAPIBaseTest() {
     }
 
     private fun createDefaultResolvableError() {
+        this.errorService.registerErrorType(3, InstantFixedErrorTypeFixedChecker())
         createError(
             ErrorCreateConfiguration(
+                3,
                 "Test",
                 "Long Test",
                 "Lobby-1",
                 emptyMap(),
-                ResolveFunction { _, _ -> completedFuture(true) }
             )
         )
+    }
+
+    class InstantFixedErrorTypeFixedChecker : ErrorTypeFixedChecker {
+        override fun isErrorFixed(error: Error): CompletableFuture<Boolean> {
+            return completedFuture(true)
+        }
+
     }
 
     private fun createDefaultUnresolvableError() = runBlocking {
         createError(
             ErrorCreateConfiguration(
+                -1,
                 "Test",
                 "Long Test",
                 "Lobby-1",
-                emptyMap(),
-                null
+                emptyMap()
             )
         )
     }

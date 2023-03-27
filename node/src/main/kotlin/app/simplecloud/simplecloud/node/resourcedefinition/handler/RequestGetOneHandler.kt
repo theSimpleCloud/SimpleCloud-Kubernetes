@@ -21,9 +21,9 @@ package app.simplecloud.simplecloud.node.resourcedefinition.handler
 import app.simplecloud.simplecloud.api.resourcedefinition.Resource
 import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestSpecAndStatusResult
-import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.RequestGetUtil
+import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.RequestUtil
 
 /**
  * Date: 04.02.23
@@ -45,24 +45,24 @@ class RequestGetOneHandler(
     private val defaultVersion = this.resourceDefinition.getDefaultVersion()
     private val requestedVersion = this.resourceDefinition.getVersionByName(this.version)
 
-    private val requestGetUtil = RequestGetUtil(this.resourceDefinition, this.requestedVersion)
+    private val requestUtil = RequestUtil(this.resourceDefinition, this.requestedVersion)
 
     fun handleGetOne(): RequestSpecAndStatusResult<*, *> {
         val preProcessorResult = handlePreProcessor()
         when (preProcessorResult) {
-            is ResourceVersionRequestPreProcessor.ContinueResult -> {}
-            is ResourceVersionRequestPreProcessor.UnsupportedRequest -> throw UnsupportedRequestException()
-            is ResourceVersionRequestPreProcessor.BlockResult -> {}
-            is ResourceVersionRequestPreProcessor.OverwriteSpec -> {}
+            is ResourceVersionRequestPrePostProcessor.ContinueResult -> {}
+            is ResourceVersionRequestPrePostProcessor.UnsupportedRequest -> throw UnsupportedRequestException()
+            is ResourceVersionRequestPrePostProcessor.BlockResult -> {}
+            is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {}
         }
         val resource = loadResource() ?: throw NoSuchElementException("Resource not found")
-        val requestedSpec = requestGetUtil.convertDefaultSpecToRequestedSpec(resource)
-        return requestGetUtil.generateResourceDtoFromSpec(resource, requestedSpec)
+        val requestedSpec = requestUtil.convertDefaultSpecToRequestedSpec(resource)
+        return requestUtil.generateResourceDtoFromSpec(resource, requestedSpec)
     }
 
-    private fun handlePreProcessor(): ResourceVersionRequestPreProcessor.RequestPreProcessorResult<Any> {
+    private fun handlePreProcessor(): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<Any> {
         val preProcessor = this.requestedVersion.getPreProcessor()
-        return preProcessor.processGetOne(this.group, this.version, this.kind, this.fieldName, this.fieldValue)
+        return preProcessor.preGetOne(this.group, this.version, this.kind, this.fieldName, this.fieldValue)
     }
 
     private fun loadResource(): Resource? {

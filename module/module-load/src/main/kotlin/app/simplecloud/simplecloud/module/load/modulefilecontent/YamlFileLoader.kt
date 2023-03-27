@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.module.load.modulefilecontent
 
+import org.yaml.snakeyaml.LoaderOptions
 import org.yaml.snakeyaml.Yaml
 import org.yaml.snakeyaml.constructor.Constructor
 import java.io.File
@@ -36,7 +37,7 @@ class YamlFileLoader<T>(
     private val targetClass: Class<T>,
 ) {
 
-    private val yaml = Yaml(Constructor(this.targetClass))
+    private val yaml = Yaml(Constructor(this.targetClass, LoaderOptions()))
 
     fun load(): T {
         try {

@@ -26,9 +26,9 @@ package app.simplecloud.simplecloud.module.api.resourcedefinition
  * @param S spec type
  * The methods below can be overwritten and used to change the behaviour for requests
  */
-open class ResourceVersionRequestPreProcessor<S> {
+open class ResourceVersionRequestPrePostProcessor<S> {
 
-    open fun processGetOne(
+    open fun preGetOne(
         group: String,
         version: String,
         kind: String,
@@ -38,11 +38,11 @@ open class ResourceVersionRequestPreProcessor<S> {
         return RequestPreProcessorResult.continueNormally()
     }
 
-    open fun processGetAll(group: String, version: String, kind: String): RequestPreProcessorResult<Any> {
+    open fun preGetAll(group: String, version: String, kind: String): RequestPreProcessorResult<Any> {
         return RequestPreProcessorResult.continueNormally()
     }
 
-    open fun processUpdate(
+    open fun preUpdate(
         group: String,
         version: String,
         kind: String,
@@ -52,7 +52,7 @@ open class ResourceVersionRequestPreProcessor<S> {
         return RequestPreProcessorResult.continueNormally()
     }
 
-    open fun processCreate(
+    open fun preCreate(
         group: String,
         version: String,
         kind: String,
@@ -62,9 +62,29 @@ open class ResourceVersionRequestPreProcessor<S> {
         return RequestPreProcessorResult.continueNormally()
     }
 
-    open fun processDelete(group: String, version: String, kind: String, name: String): RequestPreProcessorResult<Any> {
+    open fun preDelete(group: String, version: String, kind: String, name: String): RequestPreProcessorResult<Any> {
         return RequestPreProcessorResult.continueNormally()
     }
+
+    open fun postCreate(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        spec: S,
+    ) {
+    }
+
+    open fun postUpdate(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        spec: S,
+    ) {
+    }
+
+    open fun postDelete(group: String, version: String, kind: String, name: String, deletedSpec: S) {}
 
     fun checkConstraint(value: Boolean, message: String) {
         if (!value) {

@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.module.api.impl.ftp.start
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.Label
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
@@ -41,7 +40,7 @@ class DirectFtpServerStarter(
     private val label = Label("cloud-ftp-server", this.configuration.ftpServerName.lowercase())
 
     suspend fun startServer(): FtpServer {
-        val port = getNextVacantFtpPort()
+        val port = configuration.port
         createService(port)
         createFtpServerPod()
         return factory.create(
@@ -98,21 +97,6 @@ class DirectFtpServerStarter(
             .withContainerPort(22)
             .withClusterPort(22)
             .withPublicPort(port)
-    }
-
-    private suspend fun getNextVacantFtpPort(): Int {
-        val ftpServers = getAllFtpServers()
-        val usedFtpServerPorts = ftpServers.map { it.toConfiguration().port }
-
-        var startPort = FtpServer.FTP_START_PORT
-        while (usedFtpServerPorts.contains(startPort)) {
-            startPort++
-        }
-        return startPort
-    }
-
-    private suspend fun getAllFtpServers(): List<FtpServer> {
-        return this.ftpService.findAll().await()
     }
 
 }

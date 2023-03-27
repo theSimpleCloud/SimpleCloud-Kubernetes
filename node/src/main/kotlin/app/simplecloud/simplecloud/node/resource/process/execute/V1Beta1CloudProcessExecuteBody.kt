@@ -16,20 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.error
-
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import java.io.Serializable
-import java.util.concurrent.CompletableFuture
+package app.simplecloud.simplecloud.node.resource.process.execute
 
 /**
- * Date: 10.10.22
- * Time: 12:43
+ * Date: 18.03.23
+ * Time: 10:19
  * @author Frederick Baier
  *
  */
-fun interface ResolveFunction : Serializable {
-
-    fun isResolved(error: Error, nodeCloudAPI: NodeCloudAPI): CompletableFuture<Boolean>
-
-}
+class V1Beta1CloudProcessExecuteBody(
+    val command: String,
+)

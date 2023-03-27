@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.resource.staticserver
+package app.simplecloud.simplecloud.node.resource.group
 
-import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedStaticProcessTemplateRepository
-import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPreProcessor
+import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudProcessGroupRepository
+import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
 
 /**
  * Date: 07.03.23
@@ -28,50 +28,50 @@ import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
  * @author Frederick Baier
  *
  */
-class V1Beta1StaticProxyPreProcessor(
-    private val distributedStaticRepository: DistributedStaticProcessTemplateRepository,
-) : ResourceVersionRequestPreProcessor<V1Beta1StaticProxySpec>() {
+class V1Beta1ServerGroupPrePostProcessor(
+    private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
+) : ResourceVersionRequestPrePostProcessor<V1Beta1ServerGroupSpec>() {
 
-    override fun processCreate(
+    override fun preCreate(
         group: String,
         version: String,
         kind: String,
         name: String,
-        spec: V1Beta1StaticProxySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticProxySpec> {
-        this.distributedStaticRepository.save(
+        spec: V1Beta1ServerGroupSpec,
+    ): RequestPreProcessorResult<V1Beta1ServerGroupSpec> {
+        this.distributedGroupRepository.save(
             name,
-            convertSpecToProxyConfig(name, spec)
+            convertSpecToServerConfig(name, spec)
         )
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processUpdate(
+    override fun preUpdate(
         group: String,
         version: String,
         kind: String,
         name: String,
-        spec: V1Beta1StaticProxySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticProxySpec> {
-        this.distributedStaticRepository.save(name, convertSpecToProxyConfig(name, spec))
+        spec: V1Beta1ServerGroupSpec,
+    ): RequestPreProcessorResult<V1Beta1ServerGroupSpec> {
+        this.distributedGroupRepository.save(name, convertSpecToServerConfig(name, spec))
         return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun processDelete(
+    override fun preDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
     ): RequestPreProcessorResult<Any> {
-        this.distributedStaticRepository.remove(name)
+        this.distributedGroupRepository.remove(name)
         return RequestPreProcessorResult.continueNormally()
     }
 
-    private fun convertSpecToProxyConfig(
+    private fun convertSpecToServerConfig(
         name: String,
-        spec: V1Beta1StaticProxySpec,
-    ): ProxyProcessTemplateConfiguration {
-        return ProxyProcessTemplateConfiguration(
+        spec: V1Beta1ServerGroupSpec,
+    ): ServerProcessTemplateConfiguration {
+        return ServerProcessTemplateConfiguration(
             name,
             spec.maxMemory,
             spec.maxPlayers,
@@ -80,8 +80,7 @@ class V1Beta1StaticProxyPreProcessor(
             spec.stateUpdating,
             spec.startPriority,
             spec.joinPermission,
-            spec.active,
-            spec.startPort
+            spec.active
         )
     }
 
