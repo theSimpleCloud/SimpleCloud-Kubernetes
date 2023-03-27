@@ -2,7 +2,7 @@ FROM eclipse-temurin:17 AS build
 COPY . /build/
 WORKDIR /build/
 RUN chmod +x gradlew
-RUN ./gradlew test --stacktrace && ./gradlew shadowJar --stacktrace
+RUN ./gradlew test --stacktrace --info && ./gradlew shadowJar --stacktrace --info
 
 FROM eclipse-temurin:17
 
