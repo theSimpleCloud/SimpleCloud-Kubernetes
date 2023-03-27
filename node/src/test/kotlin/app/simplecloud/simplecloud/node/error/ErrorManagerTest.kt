@@ -62,31 +62,31 @@ class ErrorManagerTest : NodeAPIBaseTest() {
     @Test
     fun createError_errorWillBeInCache(): Unit = runBlocking {
         createDefaultUnresolvableError()
-        assertErrorsOnlineCount(1)
+        assertErrorsCount(1)
     }
 
     @Test
     fun createSameErrorTwice_errorCountWillBe2(): Unit = runBlocking {
         createDefaultUnresolvableError()
         createDefaultUnresolvableError()
-        assertErrorsOnlineCount(2)
+        assertErrorsCount(2)
     }
 
     @Test
     fun unresolvableErrorWillNotBeResolvedAfterCallingResolveErrors(): Unit = runBlocking {
         createDefaultUnresolvableError()
         errorService.deleteResolvedErrors(this@ErrorManagerTest.cloudAPI)
-        assertErrorsOnlineCount(1)
+        assertErrorsCount(1)
     }
 
     @Test
     fun instantResolvableErrorWillBeResolvedAfterCallingResolveErrors(): Unit = runBlocking {
         createDefaultResolvableError()
         errorService.deleteResolvedErrors(this@ErrorManagerTest.cloudAPI)
-        assertErrorsOnlineCount(0)
+        assertErrorsCount(0)
     }
 
-    private fun assertErrorsOnlineCount(count: Int) = runBlocking {
+    private fun assertErrorsCount(count: Int) = runBlocking {
         val errors = errorService.findAll().await()
         Assertions.assertEquals(count, errors.size)
     }
