@@ -36,11 +36,11 @@ class V1Beta1StaticProxyPrePostProcessor(
         this.distributedStaticRepository.save(
             name,
             convertSpecToProxyConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticProxySpec) {
-        this.distributedStaticRepository.save(name, convertSpecToProxyConfig(name, spec))
+        this.distributedStaticRepository.save(name, convertSpecToProxyConfig(name, spec)).join()
     }
 
     override fun postDelete(
@@ -50,7 +50,7 @@ class V1Beta1StaticProxyPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1StaticProxySpec,
     ) {
-        this.distributedStaticRepository.remove(name)
+        this.distributedStaticRepository.remove(name).join()
     }
 
     private fun convertSpecToProxyConfig(

@@ -36,11 +36,11 @@ class V1Beta1LobbyGroupPrePostProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToLobbyConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1LobbyGroupSpec) {
-        this.distributedGroupRepository.save(name, convertSpecToLobbyConfig(name, spec))
+        this.distributedGroupRepository.save(name, convertSpecToLobbyConfig(name, spec)).join()
     }
 
     override fun postDelete(
@@ -50,7 +50,7 @@ class V1Beta1LobbyGroupPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1LobbyGroupSpec,
     ) {
-        this.distributedGroupRepository.remove(name)
+        this.distributedGroupRepository.remove(name).join()
     }
 
     private fun convertSpecToLobbyConfig(name: String, spec: V1Beta1LobbyGroupSpec): LobbyProcessTemplateConfiguration {

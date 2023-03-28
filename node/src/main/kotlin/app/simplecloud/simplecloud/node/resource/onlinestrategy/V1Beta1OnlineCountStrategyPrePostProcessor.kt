@@ -42,7 +42,7 @@ class V1Beta1OnlineCountStrategyPrePostProcessor(
         this.distributedStrategyRepository.save(
             name,
             convertSpecToConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(
@@ -52,7 +52,7 @@ class V1Beta1OnlineCountStrategyPrePostProcessor(
         name: String,
         spec: V1Beta1ProcessOnlineCountStrategySpec,
     ) {
-        this.distributedStrategyRepository.save(name, convertSpecToConfig(name, spec))
+        this.distributedStrategyRepository.save(name, convertSpecToConfig(name, spec)).join()
     }
 
     override fun postDelete(
@@ -62,7 +62,7 @@ class V1Beta1OnlineCountStrategyPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1ProcessOnlineCountStrategySpec,
     ) {
-        this.distributedStrategyRepository.remove(name)
+        this.distributedStrategyRepository.remove(name).join()
     }
 
     private fun convertSpecToConfig(

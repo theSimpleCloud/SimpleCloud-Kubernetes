@@ -36,7 +36,7 @@ class V1Beta1ServerGroupPrePostProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToServerConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1ServerGroupSpec) {
@@ -50,7 +50,7 @@ class V1Beta1ServerGroupPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1ServerGroupSpec,
     ) {
-        this.distributedGroupRepository.remove(name)
+        this.distributedGroupRepository.remove(name).join()
     }
 
     private fun convertSpecToServerConfig(

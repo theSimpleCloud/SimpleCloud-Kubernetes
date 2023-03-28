@@ -36,11 +36,11 @@ class V1Beta1StaticLobbyPrePostProcessor(
         this.distributedStaticRepository.save(
             name,
             convertSpecToLobbyConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticLobbySpec) {
-        this.distributedStaticRepository.save(name, convertSpecToLobbyConfig(name, spec))
+        this.distributedStaticRepository.save(name, convertSpecToLobbyConfig(name, spec)).join()
     }
 
     override fun postDelete(
@@ -50,7 +50,7 @@ class V1Beta1StaticLobbyPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1StaticLobbySpec,
     ) {
-        this.distributedStaticRepository.remove(name)
+        this.distributedStaticRepository.remove(name).join()
     }
 
     private fun convertSpecToLobbyConfig(

@@ -22,7 +22,6 @@ import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCl
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
-import kotlinx.coroutines.runBlocking
 import java.util.*
 
 /**
@@ -39,25 +38,25 @@ class V1Beta1CloudPlayerPrePostProcessor(
         return RequestPreProcessorResult.unsupportedRequest()
     }
 
-    override fun preUpdate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1CloudPlayerSpec,
-    ): RequestPreProcessorResult<V1Beta1CloudPlayerSpec> = runBlocking {
-
-        return@runBlocking RequestPreProcessorResult.continueNormally()
+    override fun postCreate(group: String, version: String, kind: String, name: String, spec: V1Beta1CloudPlayerSpec) {
+        writePlayerToClusterCacheIfOnline(name, spec)
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1CloudPlayerSpec) {
+        writePlayerToClusterCacheIfOnline(name, spec)
+    }
+
+    private fun writePlayerToClusterCacheIfOnline(
+        name: String,
+        spec: V1Beta1CloudPlayerSpec,
+    ) {
         val playerUniqueId = UUID.fromString(name)
         val isPlayerOnline = isPlayerOnline(playerUniqueId)
         if (isPlayerOnline) {
             val onlinePlayer = getOnlinePlayer(playerUniqueId)
             val newOnlinePlayer =
                 createOnlinePlayerConfig(onlinePlayer, spec.toOfflineCloudPlayerConfig(playerUniqueId))
-            distributedPlayerRepository.save(playerUniqueId, newOnlinePlayer)
+            distributedPlayerRepository.save(playerUniqueId, newOnlinePlayer).join()
         }
     }
 

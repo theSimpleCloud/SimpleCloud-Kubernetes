@@ -70,7 +70,7 @@ abstract class OfflinePlayerGetTest : TestProcessProvider, TestPlayerProvider {
     }
 
     @Test
-    fun playerLoginAndLogout_finOfflinePlayer_willReturnNormalOfflinePlayer(): Unit = runBlocking {
+    fun playerLoginAndLogout_findOfflinePlayer_willReturnNormalOfflinePlayer(): Unit = runBlocking {
         givenProxyGroup("Proxy")
         givenOnlineGroupProcesses("Proxy", 1)
         executeLoginOnProxy1WithDefaultPlayer()

@@ -43,7 +43,7 @@ class V1Beta1PermissionGroupPrePostProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(
@@ -56,7 +56,7 @@ class V1Beta1PermissionGroupPrePostProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postDelete(
@@ -66,7 +66,7 @@ class V1Beta1PermissionGroupPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1PermissionGroupSpec,
     ) {
-        this.distributedGroupRepository.remove(name)
+        this.distributedGroupRepository.remove(name).join()
     }
 
     private fun convertSpecToConfig(

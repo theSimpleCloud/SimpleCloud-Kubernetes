@@ -36,7 +36,7 @@ class V1Beta1ProxyGroupPrePostProcessor(
         this.distributedGroupRepository.save(
             name,
             convertSpecToProxyConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1ProxyGroupSpec) {
@@ -50,7 +50,7 @@ class V1Beta1ProxyGroupPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1ProxyGroupSpec,
     ) {
-        this.distributedGroupRepository.remove(name)
+        this.distributedGroupRepository.remove(name).join()
     }
 
     private fun convertSpecToProxyConfig(name: String, spec: V1Beta1ProxyGroupSpec): ProxyProcessTemplateConfiguration {

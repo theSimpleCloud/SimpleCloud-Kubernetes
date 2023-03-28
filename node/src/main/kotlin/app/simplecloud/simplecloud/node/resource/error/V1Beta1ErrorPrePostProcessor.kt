@@ -63,7 +63,7 @@ class V1Beta1ErrorPrePostProcessor(
                 spec.timeStamp,
                 createMap(spec.dataKeys, spec.dataValues)
             )
-        )
+        ).join()
     }
 
     private fun isUUID(string: String): Boolean {
@@ -93,7 +93,7 @@ class V1Beta1ErrorPrePostProcessor(
         deletedSpec: V1Beta1ErrorResourceSpec,
     ) {
         val uuid = UUID.fromString(name)
-        repository.remove(uuid)
+        repository.remove(uuid).join()
     }
 
     private fun createMap(keys: Array<String>, values: Array<String>): Map<String, String> {

@@ -36,11 +36,11 @@ class V1Beta1StaticServerPrePostProcessor(
         this.distributedStaticRepository.save(
             name,
             convertSpecToServerConfig(name, spec)
-        )
+        ).join()
     }
 
     override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticServerSpec) {
-        this.distributedStaticRepository.save(name, convertSpecToServerConfig(name, spec))
+        this.distributedStaticRepository.save(name, convertSpecToServerConfig(name, spec)).join()
     }
 
     override fun postDelete(
@@ -50,7 +50,7 @@ class V1Beta1StaticServerPrePostProcessor(
         name: String,
         deletedSpec: V1Beta1StaticServerSpec,
     ) {
-        this.distributedStaticRepository.remove(name)
+        this.distributedStaticRepository.remove(name).join()
     }
 
     private fun convertSpecToServerConfig(
