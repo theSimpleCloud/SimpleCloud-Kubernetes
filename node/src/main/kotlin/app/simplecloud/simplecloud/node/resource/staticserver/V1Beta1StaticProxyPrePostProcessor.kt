@@ -32,39 +32,25 @@ class V1Beta1StaticProxyPrePostProcessor(
     private val distributedStaticRepository: DistributedStaticProcessTemplateRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1StaticProxySpec>() {
 
-    override fun preCreate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticProxySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticProxySpec> {
+    override fun postCreate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticProxySpec) {
         this.distributedStaticRepository.save(
             name,
             convertSpecToProxyConfig(name, spec)
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preUpdate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticProxySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticProxySpec> {
+    override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticProxySpec) {
         this.distributedStaticRepository.save(name, convertSpecToProxyConfig(name, spec))
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
+        deletedSpec: V1Beta1StaticProxySpec,
+    ) {
         this.distributedStaticRepository.remove(name)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun convertSpecToProxyConfig(

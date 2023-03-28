@@ -110,6 +110,8 @@ class ResourceDefinitionRegisterer(
             )
         )
 
+        v1VersionBuilder.setActions(v1VersionBuilder.newActionsBuilder().disableUpdate().build())
+
         resourceBuilder.addVersionAsDefaultVersion(v1VersionBuilder.build())
         this.resourceDefinitionService.createResource(resourceBuilder.build())
     }

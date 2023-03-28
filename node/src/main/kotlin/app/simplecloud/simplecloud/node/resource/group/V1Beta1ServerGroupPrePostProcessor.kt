@@ -32,39 +32,25 @@ class V1Beta1ServerGroupPrePostProcessor(
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1ServerGroupSpec>() {
 
-    override fun preCreate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1ServerGroupSpec,
-    ): RequestPreProcessorResult<V1Beta1ServerGroupSpec> {
+    override fun postCreate(group: String, version: String, kind: String, name: String, spec: V1Beta1ServerGroupSpec) {
         this.distributedGroupRepository.save(
             name,
             convertSpecToServerConfig(name, spec)
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preUpdate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1ServerGroupSpec,
-    ): RequestPreProcessorResult<V1Beta1ServerGroupSpec> {
+    override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1ServerGroupSpec) {
         this.distributedGroupRepository.save(name, convertSpecToServerConfig(name, spec))
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
+        deletedSpec: V1Beta1ServerGroupSpec,
+    ) {
         this.distributedGroupRepository.remove(name)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun convertSpecToServerConfig(

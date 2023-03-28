@@ -18,7 +18,6 @@
 
 package app.simplecloud.simplecloud.node.resource.player
 
-import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.impl.repository.distributed.DistributedCloudPlayerRepository
 import app.simplecloud.simplecloud.api.player.configuration.CloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
@@ -47,15 +46,19 @@ class V1Beta1CloudPlayerPrePostProcessor(
         name: String,
         spec: V1Beta1CloudPlayerSpec,
     ): RequestPreProcessorResult<V1Beta1CloudPlayerSpec> = runBlocking {
+
+        return@runBlocking RequestPreProcessorResult.continueNormally()
+    }
+
+    override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1CloudPlayerSpec) {
         val playerUniqueId = UUID.fromString(name)
         val isPlayerOnline = isPlayerOnline(playerUniqueId)
         if (isPlayerOnline) {
             val onlinePlayer = getOnlinePlayer(playerUniqueId)
             val newOnlinePlayer =
                 createOnlinePlayerConfig(onlinePlayer, spec.toOfflineCloudPlayerConfig(playerUniqueId))
-            distributedPlayerRepository.save(playerUniqueId, newOnlinePlayer).await()
+            distributedPlayerRepository.save(playerUniqueId, newOnlinePlayer)
         }
-        return@runBlocking RequestPreProcessorResult.continueNormally()
     }
 
     override fun preDelete(

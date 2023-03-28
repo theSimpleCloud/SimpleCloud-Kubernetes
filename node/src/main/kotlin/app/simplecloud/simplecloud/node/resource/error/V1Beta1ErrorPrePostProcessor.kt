@@ -41,6 +41,16 @@ class V1Beta1ErrorPrePostProcessor(
         spec: V1Beta1ErrorResourceSpec,
     ): RequestPreProcessorResult<V1Beta1ErrorResourceSpec> {
         checkConstraint(isUUID(name), "Name must be a uuid")
+        return RequestPreProcessorResult.continueNormally()
+    }
+
+    override fun postCreate(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        spec: V1Beta1ErrorResourceSpec,
+    ) {
         val uuid = UUID.fromString(name)
         repository.save(
             uuid,
@@ -54,7 +64,6 @@ class V1Beta1ErrorPrePostProcessor(
                 createMap(spec.dataKeys, spec.dataValues)
             )
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun isUUID(string: String): Boolean {
@@ -73,9 +82,18 @@ class V1Beta1ErrorPrePostProcessor(
         name: String,
     ): RequestPreProcessorResult<Any> {
         checkConstraint(isUUID(name), "Name must be a uuid")
+        return RequestPreProcessorResult.continueNormally()
+    }
+
+    override fun postDelete(
+        group: String,
+        version: String,
+        kind: String,
+        name: String,
+        deletedSpec: V1Beta1ErrorResourceSpec,
+    ) {
         val uuid = UUID.fromString(name)
         repository.remove(uuid)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun createMap(keys: Array<String>, values: Array<String>): Map<String, String> {

@@ -32,39 +32,37 @@ class V1Beta1OnlineCountStrategyPrePostProcessor(
     private val distributedStrategyRepository: DistributedOnlineCountStrategyRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1ProcessOnlineCountStrategySpec>() {
 
-    override fun preCreate(
+    override fun postCreate(
         group: String,
         version: String,
         kind: String,
         name: String,
         spec: V1Beta1ProcessOnlineCountStrategySpec,
-    ): RequestPreProcessorResult<V1Beta1ProcessOnlineCountStrategySpec> {
+    ) {
         this.distributedStrategyRepository.save(
             name,
             convertSpecToConfig(name, spec)
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preUpdate(
+    override fun postUpdate(
         group: String,
         version: String,
         kind: String,
         name: String,
         spec: V1Beta1ProcessOnlineCountStrategySpec,
-    ): RequestPreProcessorResult<V1Beta1ProcessOnlineCountStrategySpec> {
+    ) {
         this.distributedStrategyRepository.save(name, convertSpecToConfig(name, spec))
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
+        deletedSpec: V1Beta1ProcessOnlineCountStrategySpec,
+    ) {
         this.distributedStrategyRepository.remove(name)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun convertSpecToConfig(

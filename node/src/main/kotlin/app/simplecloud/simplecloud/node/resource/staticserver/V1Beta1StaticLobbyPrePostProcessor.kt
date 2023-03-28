@@ -32,39 +32,25 @@ class V1Beta1StaticLobbyPrePostProcessor(
     private val distributedStaticRepository: DistributedStaticProcessTemplateRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1StaticLobbySpec>() {
 
-    override fun preCreate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticLobbySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticLobbySpec> {
+    override fun postCreate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticLobbySpec) {
         this.distributedStaticRepository.save(
             name,
             convertSpecToLobbyConfig(name, spec)
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preUpdate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticLobbySpec,
-    ): RequestPreProcessorResult<V1Beta1StaticLobbySpec> {
+    override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticLobbySpec) {
         this.distributedStaticRepository.save(name, convertSpecToLobbyConfig(name, spec))
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
+        deletedSpec: V1Beta1StaticLobbySpec,
+    ) {
         this.distributedStaticRepository.remove(name)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun convertSpecToLobbyConfig(

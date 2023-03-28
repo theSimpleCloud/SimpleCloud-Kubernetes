@@ -32,39 +32,25 @@ class V1Beta1StaticServerPrePostProcessor(
     private val distributedStaticRepository: DistributedStaticProcessTemplateRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1StaticServerSpec>() {
 
-    override fun preCreate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticServerSpec,
-    ): RequestPreProcessorResult<V1Beta1StaticServerSpec> {
+    override fun postCreate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticServerSpec) {
         this.distributedStaticRepository.save(
             name,
             convertSpecToServerConfig(name, spec)
         )
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preUpdate(
-        group: String,
-        version: String,
-        kind: String,
-        name: String,
-        spec: V1Beta1StaticServerSpec,
-    ): RequestPreProcessorResult<V1Beta1StaticServerSpec> {
+    override fun postUpdate(group: String, version: String, kind: String, name: String, spec: V1Beta1StaticServerSpec) {
         this.distributedStaticRepository.save(name, convertSpecToServerConfig(name, spec))
-        return RequestPreProcessorResult.continueNormally()
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
+        deletedSpec: V1Beta1StaticServerSpec,
+    ) {
         this.distributedStaticRepository.remove(name)
-        return RequestPreProcessorResult.continueNormally()
     }
 
     private fun convertSpecToServerConfig(

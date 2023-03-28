@@ -33,39 +33,40 @@ class V1Beta1PermissionGroupPrePostProcessor(
     private val distributedGroupRepository: DistributedPermissionGroupRepository,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1PermissionGroupSpec>() {
 
-    override fun preCreate(
+    override fun postCreate(
         group: String,
         version: String,
         kind: String,
         name: String,
         spec: V1Beta1PermissionGroupSpec,
-    ): RequestPreProcessorResult<V1Beta1PermissionGroupSpec> {
+    ) {
         this.distributedGroupRepository.save(
             name,
             convertSpecToConfig(name, spec)
-        ).join()
-        return RequestPreProcessorResult.continueNormally()
+        )
     }
 
-    override fun preUpdate(
+    override fun postUpdate(
         group: String,
         version: String,
         kind: String,
         name: String,
         spec: V1Beta1PermissionGroupSpec,
-    ): RequestPreProcessorResult<V1Beta1PermissionGroupSpec> {
-        this.distributedGroupRepository.save(name, convertSpecToConfig(name, spec)).join()
-        return RequestPreProcessorResult.continueNormally()
+    ) {
+        this.distributedGroupRepository.save(
+            name,
+            convertSpecToConfig(name, spec)
+        )
     }
 
-    override fun preDelete(
+    override fun postDelete(
         group: String,
         version: String,
         kind: String,
         name: String,
-    ): RequestPreProcessorResult<Any> {
-        this.distributedGroupRepository.remove(name).join()
-        return RequestPreProcessorResult.continueNormally()
+        deletedSpec: V1Beta1PermissionGroupSpec,
+    ) {
+        this.distributedGroupRepository.remove(name)
     }
 
     private fun convertSpecToConfig(
