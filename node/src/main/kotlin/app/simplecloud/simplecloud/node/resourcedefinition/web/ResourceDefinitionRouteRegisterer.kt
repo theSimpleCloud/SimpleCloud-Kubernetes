@@ -18,8 +18,9 @@
 
 package app.simplecloud.simplecloud.node.resourcedefinition.web
 
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalLinkService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import app.simplecloud.simplecloud.restserver.api.RestServer
 import app.simplecloud.simplecloud.restserver.api.route.RequestType
 import app.simplecloud.simplecloud.restserver.api.route.Route
@@ -35,9 +36,10 @@ class ResourceDefinitionRouteRegisterer(
     private val restServer: RestServer,
     private val resourceDefinitionService: ResourceDefinitionService,
     private val resourceRequestHandler: ResourceRequestHandler,
+    private val linkService: InternalLinkService,
 ) {
 
-    private val webRequestHandler = WebRequestHandler(resourceDefinitionService, resourceRequestHandler)
+    private val webRequestHandler = WebRequestHandler(resourceDefinitionService, resourceRequestHandler, linkService)
 
     fun registerRoutes() {
         restServer.registerRoute(createCreateRoute())
@@ -47,6 +49,87 @@ class ResourceDefinitionRouteRegisterer(
         restServer.registerRoute(createGetAllRoute())
 
         restServer.registerRoute(createCustomActionRoute())
+
+        restServer.registerRoute(createCreateLinkRoute())
+        restServer.registerRoute(createGetLinkDefinitionsRoute())
+        restServer.registerRoute(createGetLinksByTypeRoute())
+        restServer.registerRoute(createDeleteLinkRoute())
+    }
+
+    private fun createDeleteLinkRoute(): Route {
+        val routeBuilder = restServer.newRouteBuilder()
+        routeBuilder.setRequestType(RequestType.DELETE)
+        routeBuilder.setPath("api/link/{type}/{oneResourceName}")
+        val routeMethodBuilder = routeBuilder.newRouteMethodBuilder()
+        routeMethodBuilder.setVirtualMethod(
+            VirtualMethod.fromRealMethod(
+                this@ResourceDefinitionRouteRegisterer::class.java.getDeclaredMethod(
+                    "handleDeleteLink",
+                    String::class.java,
+                    String::class.java
+                ),
+                this@ResourceDefinitionRouteRegisterer
+            )
+        )
+        routeMethodBuilder.addPathParameterType("type")
+        routeMethodBuilder.addPathParameterType("oneResourceName")
+        routeBuilder.setMethod(routeMethodBuilder.build())
+        return routeBuilder.build()
+    }
+
+    private fun createGetLinksByTypeRoute(): Route {
+        val routeBuilder = restServer.newRouteBuilder()
+        routeBuilder.setRequestType(RequestType.GET)
+        routeBuilder.setPath("api/link/{type}")
+        val routeMethodBuilder = routeBuilder.newRouteMethodBuilder()
+        routeMethodBuilder.setVirtualMethod(
+            VirtualMethod.fromRealMethod(
+                this@ResourceDefinitionRouteRegisterer::class.java.getDeclaredMethod(
+                    "handleGetLinksByType",
+                    String::class.java
+                ),
+                this@ResourceDefinitionRouteRegisterer
+            )
+        )
+        routeMethodBuilder.addPathParameterType("type")
+        routeBuilder.setMethod(routeMethodBuilder.build())
+        return routeBuilder.build()
+    }
+
+    private fun createGetLinkDefinitionsRoute(): Route {
+        val routeBuilder = restServer.newRouteBuilder()
+        routeBuilder.setRequestType(RequestType.GET)
+        routeBuilder.setPath("api/link")
+        val routeMethodBuilder = routeBuilder.newRouteMethodBuilder()
+        routeMethodBuilder.setVirtualMethod(
+            VirtualMethod.fromRealMethod(
+                this@ResourceDefinitionRouteRegisterer::class.java.getDeclaredMethod(
+                    "handleGetLinkDefinitions",
+                ),
+                this@ResourceDefinitionRouteRegisterer
+            )
+        )
+        routeBuilder.setMethod(routeMethodBuilder.build())
+        return routeBuilder.build()
+    }
+
+    private fun createCreateLinkRoute(): Route {
+        val routeBuilder = restServer.newRouteBuilder()
+        routeBuilder.setRequestType(RequestType.POST)
+        routeBuilder.setPath("api/link")
+        val routeMethodBuilder = routeBuilder.newRouteMethodBuilder()
+        routeMethodBuilder.setVirtualMethod(
+            VirtualMethod.fromRealMethod(
+                this@ResourceDefinitionRouteRegisterer::class.java.getDeclaredMethod(
+                    "handleLinkCreate",
+                    String::class.java,
+                ),
+                this@ResourceDefinitionRouteRegisterer
+            )
+        )
+        routeMethodBuilder.addBodyParameterType()
+        routeBuilder.setMethod(routeMethodBuilder.build())
+        return routeBuilder.build()
     }
 
     private fun createCustomActionRoute(): Route {
@@ -219,6 +302,24 @@ class ResourceDefinitionRouteRegisterer(
         body: String,
     ): Any {
         return this.webRequestHandler.handleCustomAction(group, version, kind, name, action, body)
+    }
+
+    fun handleLinkCreate(
+        body: String,
+    ): Any {
+        return this.webRequestHandler.handleLinkCreate(body)
+    }
+
+    fun handleGetLinkDefinitions(): Any {
+        return this.webRequestHandler.handleGetLinkDefinitions()
+    }
+
+    fun handleGetLinksByType(type: String): Any {
+        return this.webRequestHandler.handleGetLinksByType(type)
+    }
+
+    fun handleDeleteLink(type: String, oneResourceName: String): Any {
+        return this.webRequestHandler.handleDeleteLink(type, oneResourceName)
     }
 
 }

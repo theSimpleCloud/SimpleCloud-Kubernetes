@@ -26,7 +26,6 @@ package app.simplecloud.simplecloud.node.resource.onlinestrategy
  */
 class V1Beta1ProcessOnlineCountStrategySpec(
     val className: String,
-    val targetGroupNames: Array<String>,
     val dataKeys: Array<String>,
     val dataValues: Array<String>,
 )

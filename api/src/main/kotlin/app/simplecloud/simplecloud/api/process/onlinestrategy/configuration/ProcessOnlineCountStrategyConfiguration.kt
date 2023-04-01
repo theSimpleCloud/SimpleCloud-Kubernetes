@@ -27,10 +27,9 @@ package app.simplecloud.simplecloud.api.process.onlinestrategy.configuration
 class ProcessOnlineCountStrategyConfiguration(
     val name: String,
     val className: String,
-    val targetGroupNames: Set<String>,
     val dataMap: Map<String, String>,
 ) : java.io.Serializable {
 
-    private constructor() : this("", "", emptySet(), emptyMap())
+    private constructor() : this("", "", emptyMap())
 
 }

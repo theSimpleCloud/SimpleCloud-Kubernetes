@@ -54,6 +54,7 @@ import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloud
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.process.factory.ProcessShutdownHandlerFactoryImpl
 import app.simplecloud.simplecloud.node.process.factory.ProcessStarterFactoryImpl
+import app.simplecloud.simplecloud.node.repository.distributed.DistributedLinkRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.resource.ResourceDefinitionRegisterer
 import app.simplecloud.simplecloud.node.resourcedefinition.handler.ResourceRequestHandlerImpl
@@ -116,6 +117,7 @@ class NodeClusterConnect(
             DistributedStaticProcessTemplateRepository(distribution),
             DistributedOnlineCountStrategyRepository(distribution),
             DistributedErrorRepository(distribution),
+            DistributedLinkRepository(distribution)
         )
     }
 
@@ -136,6 +138,7 @@ class NodeClusterConnect(
             ClusterInitializer(
                 distribution,
                 distributedRepositories,
+                this.databaseRepositories.linkRepository,
                 cloudAPI.getResourceRequestHandler(),
                 cloudAPI.getCloudStateService()
             ).initialize()
@@ -158,7 +161,8 @@ class NodeClusterConnect(
         ResourceDefinitionRouteRegisterer(
             this.restServerConfig.restServer,
             nodeCloudAPI.getResourceDefinitionService(),
-            nodeCloudAPI.getResourceRequestHandler()
+            nodeCloudAPI.getResourceRequestHandler(),
+            nodeCloudAPI.getLinkService()
         ).registerRoutes()
     }
 
@@ -170,6 +174,13 @@ class NodeClusterConnect(
         val requestHandler = ResourceRequestHandlerImpl(
             this.databaseRepositories.resourceRepository,
             resourceDefinitionService
+        )
+
+        val linkService = LinkServiceImpl(
+            distributedRepositories.linkRepository,
+            this.databaseRepositories.linkRepository,
+            resourceDefinitionService,
+            requestHandler
         )
 
         val controllerHandler = this.restServerConfig.controllerHandlerFactory.create(this.restServerConfig.restServer)
@@ -189,6 +200,7 @@ class NodeClusterConnect(
         val nodeProcessOnlineStrategyService = NodeProcessOnlineStrategyServiceImpl(
             distributedRepositories.distributedOnlineCountStrategyRepository,
             UniversalProcessOnlineCountStrategyFactory(),
+            linkService,
             requestHandler
         )
         val cloudProcessGroupService = CloudProcessGroupServiceImpl(
@@ -266,6 +278,7 @@ class NodeClusterConnect(
             ftpServerStopper,
             this.kubeAPI.getPodService(),
             this.kubeAPI.getVolumeClaimService(),
+            linkService,
             distributedRepositories,
         ).registerDefinitions()
 
@@ -291,7 +304,8 @@ class NodeClusterConnect(
             InternalMessageChannelProviderImpl(messageChannelManager),
             controllerHandler,
             resourceDefinitionService,
-            requestHandler
+            requestHandler,
+            linkService
         )
     }
 

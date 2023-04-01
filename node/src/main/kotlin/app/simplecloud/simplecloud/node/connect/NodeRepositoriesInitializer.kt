@@ -27,7 +27,9 @@ import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.Proc
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.ServerProcessTemplateConfiguration
+import app.simplecloud.simplecloud.database.api.DatabaseLinkRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.node.repository.distributed.DistributedLinkRepository
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.resource.group.V1Beta1LobbyGroupSpec
 import app.simplecloud.simplecloud.node.resource.group.V1Beta1ProxyGroupSpec
@@ -41,18 +43,34 @@ import org.apache.logging.log4j.LogManager
 
 class NodeRepositoriesInitializer(
     private val requestHandler: ResourceRequestHandler,
+    private val databaseLinkRepository: DatabaseLinkRepository,
     private val distributedGroupRepository: DistributedCloudProcessGroupRepository,
     private val distributedPermissionGroupRepository: DistributedPermissionGroupRepository,
     private val distributedOnlineCountStrategyRepository: DistributedOnlineCountStrategyRepository,
     private val distributedStaticProcessTemplateRepository: DistributedStaticProcessTemplateRepository,
+    private val distributedLinkRepository: DistributedLinkRepository,
 ) {
 
     fun initializeRepositories() {
         logger.info("Initializing Distributed Repositories")
+        initLinks()
         initGroups()
         initPermissionGroups()
         initOnlineCountStrategies()
         initStaticTemplates()
+    }
+
+    private fun initLinks() {
+        val linkConfigurations = databaseLinkRepository.loadAll()
+        logger.info(
+            "Found Links: {}",
+            linkConfigurations.map { it.oneResourceName + " " + it.linkType + " " + it.manyResourceName })
+        for (linkConfiguration in linkConfigurations) {
+            this.distributedLinkRepository.save(
+                linkConfiguration.linkType + "/" + linkConfiguration.oneResourceName,
+                linkConfiguration
+            )
+        }
     }
 
     private fun initOnlineCountStrategies() {
@@ -144,7 +162,6 @@ class NodeRepositoriesInitializer(
         return ProcessOnlineCountStrategyConfiguration(
             name,
             spec.className,
-            spec.targetGroupNames.toSet(),
             createMap(spec.dataKeys, spec.dataValues)
         )
     }

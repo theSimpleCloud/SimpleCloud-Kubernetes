@@ -25,7 +25,6 @@ import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.Proc
 import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import java.util.concurrent.CompletableFuture
-import java.util.concurrent.CopyOnWriteArraySet
 
 /**
  * Date: 27.03.22
@@ -38,29 +37,12 @@ class ProcessOnlineCountStrategyUpdateRequestImpl(
     private val internalService: InternalNodeProcessOnlineCountStrategyService,
 ) : ProcessOnlineCountStrategyUpdateRequest {
 
-    private val targetGroupNames = CopyOnWriteArraySet(this.strategy.getTargetGroupNames())
-
 
     @Volatile
     private var dataMap = this.strategy.toConfiguration().dataMap
 
     override fun getStrategy(): ProcessesOnlineCountStrategy {
         return this.strategy
-    }
-
-    override fun clearTargetGroups(): ProcessOnlineCountStrategyUpdateRequest {
-        this.targetGroupNames.clear()
-        return this
-    }
-
-    override fun addTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest {
-        this.targetGroupNames.add(name)
-        return this
-    }
-
-    override fun removeTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest {
-        this.targetGroupNames.remove(name)
-        return this
     }
 
     override fun setData(dataMap: Map<String, String>): ProcessOnlineCountStrategyUpdateRequest {
@@ -72,7 +54,6 @@ class ProcessOnlineCountStrategyUpdateRequestImpl(
         val configuration = ProcessOnlineCountStrategyConfiguration(
             strategy.getName(),
             strategy.toConfiguration().className,
-            targetGroupNames,
             dataMap
         )
         internalService.updateStrategyInternal(configuration)

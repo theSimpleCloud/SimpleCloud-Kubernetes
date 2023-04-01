@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.module.api.service
 
 import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyCreateRequest
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
@@ -44,9 +45,9 @@ interface NodeProcessOnlineStrategyService {
     fun findAll(): CompletableFuture<List<ProcessesOnlineCountStrategy>>
 
     /**
-     * Returns the [ProcessesOnlineCountStrategy] found by the specified [name] or a default config
+     * Returns the [ProcessesOnlineCountStrategy] found for the specified [processGroup] or a default config
      */
-    fun findByProcessGroupName(name: String): CompletableFuture<ProcessesOnlineCountStrategy>
+    fun findByProcessGroup(processGroup: CloudProcessGroup): CompletableFuture<ProcessesOnlineCountStrategy>
 
     /**
      * Returns a request to create a new [ProcessesOnlineCountStrategy]

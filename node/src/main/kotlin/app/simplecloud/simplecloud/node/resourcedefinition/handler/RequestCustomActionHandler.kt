@@ -18,9 +18,13 @@
 
 package app.simplecloud.simplecloud.node.resourcedefinition.handler
 
-import app.simplecloud.simplecloud.module.api.resourcedefinition.*
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomAction
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomActionHandler
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestResult
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 
 class RequestCustomActionHandler(
     private val group: String,

@@ -19,8 +19,11 @@
 package app.simplecloud.simplecloud.node.api.process
 
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
 import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 import app.simplecloud.simplecloud.node.task.NodeOnlineProcessHandler
+import app.simplecloud.simplecloud.node.util.Links
 import kotlinx.coroutines.runBlocking
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
@@ -45,7 +48,7 @@ class NodeAPIProcessStartWithOnlineStrategyTest : NodeAPIProcessTest() {
 
     @Test
     fun groupWithOnlineConfig_willStartOne() = runBlocking {
-        createStartOneOnlineConfigWithGroupAsTarget(defaultGroup)
+        createStartOneOnlineConfigWithLinkedGroup(defaultGroup)
 
         nodeOnlineProcessHandler.handleProcesses()
 
@@ -54,7 +57,7 @@ class NodeAPIProcessStartWithOnlineStrategyTest : NodeAPIProcessTest() {
 
     @Test
     fun inactiveGroupWithOnlineConfig_noProcessWilStart() = runBlocking {
-        createStartOneOnlineConfigWithGroupAsTarget(defaultGroup)
+        createStartOneOnlineConfigWithLinkedGroup(defaultGroup)
         disableGroup(defaultGroup)
 
         nodeOnlineProcessHandler.handleProcesses()
@@ -68,18 +71,32 @@ class NodeAPIProcessStartWithOnlineStrategyTest : NodeAPIProcessTest() {
             .submit().join()
     }
 
-    private fun createStartOneOnlineConfigWithGroupAsTarget(group: CloudProcessGroup) {
+    private fun createStartOneOnlineConfigWithLinkedGroup(group: CloudProcessGroup) {
         val onlineStrategyService = this.cloudAPI.getOnlineStrategyService()
-        onlineStrategyService.createCreateRequest(createOnlineCountStrategy(group.getName())).submit()
-            .join()
+        val onlineCountStrategy = onlineStrategyService.createCreateRequest(
+            createOnlineCountStrategy()
+        ).submit().join()
+        //add link to group, need to add definition first
+        val linkType = determineLinkType(group)
+        val linkService = this.cloudAPI.getLinkService()
+        runBlocking {
+            linkService.createLinkInternal(LinkConfiguration(linkType, group.getName(), onlineCountStrategy.getName()))
+        }
+    }
+
+    private fun determineLinkType(group: CloudProcessGroup): String {
+        return when (group.getProcessTemplateType()) {
+            ProcessTemplateType.PROXY -> Links.ONLINE_COUNT_PROXY_LINK
+            ProcessTemplateType.LOBBY -> Links.ONLINE_COUNT_LOBBY_LINK
+            ProcessTemplateType.SERVER -> Links.ONLINE_COUNT_SERVER_LINK
+        }
     }
 
 
-    private fun createOnlineCountStrategy(targetGroupName: String): ProcessOnlineCountStrategyConfiguration {
+    private fun createOnlineCountStrategy(): ProcessOnlineCountStrategyConfiguration {
         return ProcessOnlineCountStrategyConfiguration(
             "default",
             "app.simplecloud.simplecloud.node.onlinestrategy.MinOnlineStrategy",
-            setOf(targetGroupName),
             mapOf(
                 "min" to "1"
             )

@@ -31,9 +31,6 @@ import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 class TestOnlineCountStrategy(
     private val configuration: ProcessOnlineCountStrategyConfiguration,
 ) : ProcessesOnlineCountStrategy {
-    override fun getTargetGroupNames(): Set<String> {
-        return this.configuration.targetGroupNames
-    }
 
     override fun calculateOnlineCount(group: CloudProcessGroup): Int {
         return 1

@@ -18,33 +18,19 @@
 
 package app.simplecloud.simplecloud.module.api.internal.service
 
-import app.simplecloud.simplecloud.api.internal.InternalCloudAPI
-import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
-import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
-import app.simplecloud.simplecloud.module.api.NodeCloudAPI
-import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
-
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
+import app.simplecloud.simplecloud.module.api.service.LinkService
 
 /**
- * Date: 05.10.22
- * Time: 09:51
+ * Date: 29.03.23
+ * Time: 21:48
  * @author Frederick Baier
  *
  */
-interface InternalNodeCloudAPI : NodeCloudAPI, InternalCloudAPI {
+interface InternalLinkService : LinkService {
 
-    override fun getOnlineStrategyService(): InternalNodeProcessOnlineCountStrategyService
+    suspend fun createLinkInternal(configuration: LinkConfiguration)
 
-    override fun getErrorService(): InternalErrorService
-
-    fun getKubeAPI(): KubeAPI
-
-    fun getFtpService(): InternalFtpServerService
-
-    fun getInternalMessageChannelProvider(): InternalMessageChannelProvider
-
-    fun getResourceRequestHandler(): ResourceRequestHandler
-
-    override fun getLinkService(): InternalLinkService
+    suspend fun deleteLinkInternal(type: String, oneResourceName: String)
 
 }

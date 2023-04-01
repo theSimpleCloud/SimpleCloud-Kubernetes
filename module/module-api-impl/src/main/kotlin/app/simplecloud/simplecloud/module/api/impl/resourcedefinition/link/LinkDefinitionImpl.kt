@@ -16,31 +16,41 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.api.onlinestrategy
+package app.simplecloud.simplecloud.module.api.impl.resourcedefinition.link
 
-import app.simplecloud.simplecloud.api.process.onlinestrategy.ProcessesOnlineCountStrategy
-import org.junit.jupiter.api.BeforeEach
+import app.simplecloud.simplecloud.module.api.resourcedefinition.link.LinkDefinition
 
 /**
- * Date: 23.08.22
- * Time: 11:00
+ * Date: 29.03.23
+ * Time: 10:43
  * @author Frederick Baier
  *
  */
-class NodeAPIOnlineStrategyUpdateTest : NodeAPIOnlineStrategyBaseTest() {
+class LinkDefinitionImpl(
+    private val name: String,
+    private val oneResourceGroup: String,
+    private val oneResourceKind: String,
+    private val manyResourceGroup: String,
+    private val manyResourceKind: String,
+) : LinkDefinition {
 
-    private lateinit var existingStrategy: ProcessesOnlineCountStrategy
-
-    @BeforeEach
-    override fun setUp() {
-        super.setUp()
-        this.existingStrategy = this.onlineStrategyService.createCreateRequest(createStrategyConfigWithName("TestN"))
-            .submit().join()
+    override fun getName(): String {
+        return this.name
     }
 
-    private fun fetchExistingStrategy(): ProcessesOnlineCountStrategy {
-        return this.onlineStrategyService.findByName(this.existingStrategy.getName()).join()
+    override fun getOneResourceGroup(): String {
+        return this.oneResourceGroup
     }
 
+    override fun getOneResourceKind(): String {
+        return this.oneResourceKind
+    }
 
+    override fun getManyResourceGroup(): String {
+        return this.manyResourceGroup
+    }
+
+    override fun getManyResourceKind(): String {
+        return this.manyResourceKind
+    }
 }

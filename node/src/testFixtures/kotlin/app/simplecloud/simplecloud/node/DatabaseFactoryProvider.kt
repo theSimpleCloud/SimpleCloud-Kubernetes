@@ -89,7 +89,6 @@ class DatabaseFactoryProvider {
         val configuration = ProcessOnlineCountStrategyConfiguration(
             "Min",
             "app.simplecloud.simplecloud.node.onlinestrategy.MinOnlineStrategy",
-            setOf(targetGroup),
             mapOf("min" to number.toString())
         )
         strategyRepository.save(configuration.name, configuration)

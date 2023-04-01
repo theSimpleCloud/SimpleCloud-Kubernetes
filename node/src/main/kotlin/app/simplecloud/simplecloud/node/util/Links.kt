@@ -16,29 +16,29 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.memory.factory
+package app.simplecloud.simplecloud.node.util
 
-import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
-import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.*
+import app.simplecloud.simplecloud.api.template.ProcessTemplateType
+import app.simplecloud.simplecloud.api.template.group.CloudProcessGroup
 
 /**
- * Date: 24.04.22
- * Time: 11:54
+ * Date: 31.03.23
+ * Time: 18:58
  * @author Frederick Baier
  *
  */
-class InMemoryDatabaseFactory : DatabaseFactory {
+object Links {
 
-    override fun create(connectionString: String): DatabaseRepositories {
-        return DatabaseRepositories(
-            MemoryDatabaseCloudProcessGroupRepository(),
-            MemoryDatabaseOfflineCloudPlayerRepository(),
-            MemoryDatabaseOnlineCountStrategyRepository(),
-            MemoryDatabasePermissionGroupRepository(),
-            MemoryDatabaseStaticProcessTemplateRepository(),
-            MemoryDatabaseResourceRepository(),
-            MemoryDatabaseLinkRepository()
-        )
+    const val ONLINE_COUNT_PROXY_LINK = "OnlineCountProxyLink"
+    const val ONLINE_COUNT_LOBBY_LINK = "OnlineCountLobbyLink"
+    const val ONLINE_COUNT_SERVER_LINK = "OnlineCountServerLink"
+
+    fun getOnlineCountLinkTypeByGroup(group: CloudProcessGroup): String {
+        return when (group.getProcessTemplateType()) {
+            ProcessTemplateType.PROXY -> ONLINE_COUNT_PROXY_LINK
+            ProcessTemplateType.LOBBY -> ONLINE_COUNT_LOBBY_LINK
+            ProcessTemplateType.SERVER -> ONLINE_COUNT_SERVER_LINK
+        }
     }
+
 }

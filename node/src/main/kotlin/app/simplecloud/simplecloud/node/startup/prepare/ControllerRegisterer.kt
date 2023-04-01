@@ -20,7 +20,9 @@ package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
-import app.simplecloud.simplecloud.node.defaultcontroller.v1.*
+import app.simplecloud.simplecloud.node.defaultcontroller.v1.LoginController
+import app.simplecloud.simplecloud.node.defaultcontroller.v1.RestartController
+import app.simplecloud.simplecloud.node.defaultcontroller.v1.UpdateController
 import app.simplecloud.simplecloud.restserver.api.auth.AuthService
 
 /**
@@ -39,37 +41,6 @@ class ControllerRegisterer(
 
     fun registerControllers() {
         this.controllerHandler.registerController(LoginController(this.authService))
-
-        this.controllerHandler.registerController(ProcessGroupController(this.cloudAPI.getProcessGroupService()))
-        this.controllerHandler.registerController(StaticTemplateController(this.cloudAPI.getStaticProcessTemplateService()))
-
-        this.controllerHandler.registerController(
-            ProcessController(
-                this.cloudAPI.getProcessService(),
-                this.cloudAPI.getProcessGroupService()
-            )
-        )
-
-        this.controllerHandler.registerController(NodeController(this.cloudAPI.getNodeService()))
-
-        this.controllerHandler.registerController(
-            PermissionGroupController(
-                this.cloudAPI.getPermissionGroupService(),
-                this.cloudAPI.getPermissionFactory()
-            )
-        )
-
-        this.controllerHandler.registerController(
-            PlayerController(
-                this.cloudAPI.getCloudPlayerService(),
-                this.cloudAPI.getPermissionFactory()
-            )
-        )
-
-        this.controllerHandler.registerController(OnlineStrategyController(this.cloudAPI.getOnlineStrategyService()))
-
-        this.controllerHandler.registerController(ErrorController(this.cloudAPI.getErrorService()))
-
         this.controllerHandler.registerController(
             UpdateController(
                 this.cloudAPI,

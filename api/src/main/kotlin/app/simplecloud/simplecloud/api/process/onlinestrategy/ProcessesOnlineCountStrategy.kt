@@ -35,11 +35,6 @@ import app.simplecloud.simplecloud.api.utils.Nameable
 interface ProcessesOnlineCountStrategy : Nameable, Identifiable<String> {
 
     /**
-     * Returns the names of the groups to which this strategy should be applied
-     */
-    fun getTargetGroupNames(): Set<String>
-
-    /**
      * Returns the amount of processes that should be online at the moment the method gets called
      * According to the returned value processes will be stopped or started
      */

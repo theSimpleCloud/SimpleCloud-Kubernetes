@@ -35,25 +35,6 @@ interface ProcessOnlineCountStrategyUpdateRequest : Request<Unit> {
     fun getStrategy(): ProcessesOnlineCountStrategy
 
     /**
-     * Clears the groups this strategy was linked to
-     * @return this
-     */
-    fun clearTargetGroups(): ProcessOnlineCountStrategyUpdateRequest
-
-    /**
-     * Links a group to this strategy.
-     * The given group now uses this strategy if no other strategy points to the specified group.
-     * @return this
-     */
-    fun addTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest
-
-    /**
-     *  Removes a group from the strategy
-     * @return this
-     */
-    fun removeTargetGroup(name: String): ProcessOnlineCountStrategyUpdateRequest
-
-    /**
      * Sets the data this strategy needs
      * @return this
      */

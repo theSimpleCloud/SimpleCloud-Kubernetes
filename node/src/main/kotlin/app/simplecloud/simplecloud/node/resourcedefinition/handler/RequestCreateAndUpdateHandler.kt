@@ -21,9 +21,9 @@ package app.simplecloud.simplecloud.node.resourcedefinition.handler
 import app.simplecloud.simplecloud.api.resourcedefinition.Resource
 import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import eu.thesimplecloud.jsonlib.JsonLib
 
 /**

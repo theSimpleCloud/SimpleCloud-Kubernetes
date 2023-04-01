@@ -16,22 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.api.factory
-
-import app.simplecloud.simplecloud.database.api.*
+package app.simplecloud.simplecloud.api.resourcedefinition.link
 
 /**
- * Date: 24.04.22
- * Time: 11:49
+ * Date: 29.03.23
+ * Time: 16:09
  * @author Frederick Baier
  *
  */
-data class DatabaseRepositories(
-    val cloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
-    val offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    val onlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
-    val permissionGroupRepository: DatabasePermissionGroupRepository,
-    val staticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
-    val resourceRepository: DatabaseResourceRepository,
-    val linkRepository: DatabaseLinkRepository,
+class LinkConfiguration(
+    val linkType: String,
+    val oneResourceName: String,
+    val manyResourceName: String,
 )

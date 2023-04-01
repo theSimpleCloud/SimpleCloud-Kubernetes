@@ -19,12 +19,12 @@
 package app.simplecloud.simplecloud.node.resourcedefinition.web
 
 import app.simplecloud.simplecloud.api.resourcedefinition.ResourceDto
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalLinkService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestResult
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
-import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.InternalRequestGetHandler
-import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.WebRequestCreateAndUpdateHandler
-import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.WebRequestCustomActionHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
+import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.*
+import kotlinx.coroutines.runBlocking
 
 /**
  * Date: 15.01.23
@@ -35,6 +35,7 @@ import app.simplecloud.simplecloud.node.resourcedefinition.web.handler.WebReques
 class WebRequestHandler(
     private val resourceDefinitionService: ResourceDefinitionService,
     private val resourceRequestHandler: ResourceRequestHandler,
+    private val linkService: InternalLinkService,
 ) {
 
     fun handleCreate(body: String): Boolean {
@@ -96,6 +97,29 @@ class WebRequestHandler(
             this.resourceDefinitionService,
             this.resourceRequestHandler
         ).handleCustomAction()
+        return true
+    }
+
+    fun handleLinkCreate(body: String): Any {
+        WebRequestLinkCreateHandler(
+            body,
+            this.linkService
+        ).handleCreate()
+        return true
+    }
+
+    fun handleGetLinkDefinitions(): Any {
+        return WebRequestLinkDefinitionsGetHandler(this.linkService).handleGet()
+    }
+
+    fun handleGetLinksByType(type: String): Any {
+        return this.linkService.findLinksByDefinitionName(type).join().map { it.toConfiguration() }
+    }
+
+    fun handleDeleteLink(type: String, oneResourceName: String): Any {
+        runBlocking {
+            linkService.deleteLinkInternal(type, oneResourceName)
+        }
         return true
     }
 

@@ -46,7 +46,8 @@ class MongoDatabaseFactory : DatabaseFactory {
             MongoDatabaseOnlineCountStrategyRepositoryAdapter(datastore),
             MongoDatabasePermissionGroupRepositoryAdapter(datastore),
             MongoDatabaseStaticProcessTemplateRepositoryAdapter(datastore),
-            MongoDatabaseResourceRepository(mongoDatabase)
+            MongoDatabaseResourceRepository(mongoDatabase),
+            MongoDatabaseLinkRepository(mongoDatabase)
         )
     }
 

@@ -20,8 +20,8 @@ package app.simplecloud.simplecloud.node.service
 
 import app.simplecloud.simplecloud.module.api.impl.resourcedefinition.builder.ResourceDefinitionBuilderImpl
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceDefinitionBuilder
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import java.util.concurrent.CopyOnWriteArrayList
 
 /**

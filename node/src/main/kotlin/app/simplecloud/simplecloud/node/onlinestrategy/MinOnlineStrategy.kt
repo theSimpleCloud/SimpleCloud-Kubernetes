@@ -38,10 +38,6 @@ class MinOnlineStrategy(
         return this.configuration.name
     }
 
-    override fun getTargetGroupNames(): Set<String> {
-        return this.configuration.targetGroupNames
-    }
-
     override fun calculateOnlineCount(group: CloudProcessGroup): Int {
         return this.minCount
     }

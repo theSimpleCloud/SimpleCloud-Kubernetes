@@ -16,24 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.module.api.resourcedefinition
+package app.simplecloud.simplecloud.module.api.resourcedefinition.link
 
-import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceDefinitionBuilder
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
 
 /**
- * Date: 19.01.23
- * Time: 13:04
+ * Date: 29.03.23
+ * Time: 10:14
  * @author Frederick Baier
  *
  */
-interface ResourceDefinitionService {
+interface Link {
 
-    fun findAll(): List<ResourceDefinition>
+    /**
+     * Returns the definition name
+     */
+    fun getLinkType(): String
 
-    fun findResourceDefinition(group: String, kind: String): ResourceDefinition
+    fun getOneResourceName(): String
 
-    fun createResource(resourceDefinition: ResourceDefinition)
+    fun getManyResourceName(): String
 
-    fun newResourceDefinitionBuilder(): ResourceDefinitionBuilder
+    fun toConfiguration(): LinkConfiguration
 
 }

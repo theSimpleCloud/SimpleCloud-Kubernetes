@@ -33,17 +33,15 @@ class OnlineCountStrategyEntity(
     @Id
     val name: String,
     val className: String,
-    val targetGroupNames: Set<String>,
     val data: Map<String, String>
 ) {
 
-    private constructor() : this("", "", emptySet(), emptyMap())
+    private constructor() : this("", "", emptyMap())
 
     fun toConfiguration(): ProcessOnlineCountStrategyConfiguration {
         return ProcessOnlineCountStrategyConfiguration(
             this.name,
             this.className,
-            this.targetGroupNames,
             this.data
         )
     }
@@ -54,7 +52,6 @@ class OnlineCountStrategyEntity(
             return OnlineCountStrategyEntity(
                 configuration.name,
                 configuration.className,
-                configuration.targetGroupNames,
                 configuration.dataMap
             )
         }

@@ -41,9 +41,12 @@ class NodeOnlineProcessHandler(
             cloudAPI.getStaticProcessTemplateService(),
             cloudAPI.getProcessService()
         )
-
-        nodeGroupOnlineProcessesHandler.handleProcesses()
-        nodeStaticOnlineProcessesHandler.handleProcesses()
+        try {
+            nodeGroupOnlineProcessesHandler.handleProcesses()
+            nodeStaticOnlineProcessesHandler.handleProcesses()
+        } catch (ex: Exception) {
+            ex.printStackTrace()
+        }
     }
 
 }

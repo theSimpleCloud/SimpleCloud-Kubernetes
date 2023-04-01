@@ -21,8 +21,6 @@ package app.simplecloud.simplecloud.node.repository.distributed
 import app.simplecloud.simplecloud.api.impl.repository.distributed.AbstractDistributedRepository
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.distribution.api.Distribution
-import app.simplecloud.simplecloud.node.repository.distributed.predicate.OnlineCountCompareTargetGroupPredicate
-import java.util.concurrent.CompletableFuture
 
 /**
  * Created by IntelliJ IDEA.
@@ -35,13 +33,4 @@ class DistributedOnlineCountStrategyRepository(
     distribution: Distribution
 ) : AbstractDistributedRepository<String, ProcessOnlineCountStrategyConfiguration>(
     distribution.getOrCreateCache("cloud-online-strategy")
-) {
-
-    /**
-     * Returns the process group names that are using the specified strategy
-     */
-    fun findByTargetProcessGroup(groupName: String): CompletableFuture<Collection<ProcessOnlineCountStrategyConfiguration>> {
-        return executeQuery(OnlineCountCompareTargetGroupPredicate(groupName))
-    }
-
-}
+)

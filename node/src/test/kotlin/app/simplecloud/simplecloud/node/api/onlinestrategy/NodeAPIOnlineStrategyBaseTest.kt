@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.api.onlinestrategy
 
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
+import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
 import app.simplecloud.simplecloud.module.api.service.NodeProcessOnlineStrategyService
 import app.simplecloud.simplecloud.node.api.NodeAPIBaseTest
 import org.junit.jupiter.api.AfterEach
@@ -35,11 +36,14 @@ open class NodeAPIOnlineStrategyBaseTest {
 
     private val nodeAPIBaseTest = NodeAPIBaseTest()
 
+    protected lateinit var cloudAPI: InternalNodeCloudAPI
+
     protected lateinit var onlineStrategyService: NodeProcessOnlineStrategyService
 
     @BeforeEach
     open fun setUp() {
         this.nodeAPIBaseTest.setUp()
+        this.cloudAPI = this.nodeAPIBaseTest.cloudAPI
         this.onlineStrategyService = this.nodeAPIBaseTest.cloudAPI.getOnlineStrategyService()
     }
 
@@ -53,14 +57,14 @@ open class NodeAPIOnlineStrategyBaseTest {
         return ProcessOnlineCountStrategyConfiguration(
             name,
             "app.simplecloud.simplecloud.node.api.onlinestrategy.TestOnlineCountStrategy",
-            emptySet(),
             emptyMap()
         )
     }
 
     protected suspend fun createStrategy(configuration: ProcessOnlineCountStrategyConfiguration) {
-        this.onlineStrategyService.createCreateRequest(configuration)
-            .submit().await()
+        this.onlineStrategyService.createCreateRequest(
+            configuration
+        ).submit().await()
     }
 
 }

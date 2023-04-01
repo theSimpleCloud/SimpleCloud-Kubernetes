@@ -19,7 +19,11 @@
 package app.simplecloud.simplecloud.node.resourcedefinition.web.handler
 
 import app.simplecloud.simplecloud.api.resourcedefinition.ResourceDto
-import app.simplecloud.simplecloud.module.api.resourcedefinition.*
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomAction
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersion
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionActions
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import eu.thesimplecloud.jsonlib.JsonLib
 
 /**

@@ -54,7 +54,6 @@ class NodeAPIOnlineStrategyCreateTest : NodeAPIOnlineStrategyBaseTest() {
         val configuration = ProcessOnlineCountStrategyConfiguration(
             "Test",
             "test.NotExistingClass",
-            emptySet(),
             emptyMap()
         )
         Assertions.assertThrows(IllegalArgumentException::class.java) {

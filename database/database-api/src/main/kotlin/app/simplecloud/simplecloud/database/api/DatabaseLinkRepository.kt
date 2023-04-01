@@ -16,22 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.repository.distributed.predicate
+package app.simplecloud.simplecloud.database.api
 
-import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.distribution.api.Predicate
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 30.05.2021
- * Time: 13:13
+ * Date: 29.03.23
+ * Time: 16:33
  * @author Frederick Baier
+ *
  */
-class OnlineCountCompareTargetGroupPredicate(
-    private val compareName: String
-) : Predicate<String, ProcessOnlineCountStrategyConfiguration> {
+interface DatabaseLinkRepository {
 
-    override fun apply(name: String, configuration: ProcessOnlineCountStrategyConfiguration): Boolean {
-        return configuration.targetGroupNames.contains(compareName)
-    }
+    fun loadAll(): List<LinkConfiguration>
+
+    fun loadAll(linkType: String): List<LinkConfiguration>
+
+    fun save(configuration: LinkConfiguration)
+
+    fun delete(linkType: String, oneResourceName: String)
+
 }

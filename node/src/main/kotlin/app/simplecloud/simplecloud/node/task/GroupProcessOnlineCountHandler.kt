@@ -55,7 +55,7 @@ class GroupProcessOnlineCountHandler(
     }
 
     private suspend fun calculateExpectedOnlineCount(): Int {
-        val config = this.nodeProcessOnlineStrategyService.findByProcessGroupName(this.group.getName()).await()
+        val config = this.nodeProcessOnlineStrategyService.findByProcessGroup(this.group).await()
         return config.calculateOnlineCount(this.group)
     }
 

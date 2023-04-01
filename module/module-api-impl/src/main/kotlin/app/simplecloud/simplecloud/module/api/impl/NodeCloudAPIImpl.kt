@@ -29,12 +29,9 @@ import app.simplecloud.simplecloud.distribution.api.Distribution
 import app.simplecloud.simplecloud.eventapi.EventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.module.api.LocalAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalErrorService
-import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeProcessOnlineCountStrategyService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
+import app.simplecloud.simplecloud.module.api.internal.service.*
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandler
 
 /**
@@ -66,6 +63,7 @@ class NodeCloudAPIImpl(
     private val controllerHandler: ControllerHandler,
     private val resourceDefinitionService: ResourceDefinitionService,
     private val resourceRequestHandler: ResourceRequestHandler,
+    private val linkService: InternalLinkService,
 ) : CloudAPIImpl(
     localNetworkComponentName,
     processGroupService,
@@ -116,6 +114,10 @@ class NodeCloudAPIImpl(
 
     override fun getResourceRequestHandler(): ResourceRequestHandler {
         return this.resourceRequestHandler
+    }
+
+    override fun getLinkService(): InternalLinkService {
+        return this.linkService
     }
 
 }

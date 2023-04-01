@@ -16,22 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.api.factory
+package app.simplecloud.simplecloud.module.api.service
 
-import app.simplecloud.simplecloud.database.api.*
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
+import app.simplecloud.simplecloud.module.api.resourcedefinition.builder.ResourceDefinitionBuilder
 
 /**
- * Date: 24.04.22
- * Time: 11:49
+ * Date: 19.01.23
+ * Time: 13:04
  * @author Frederick Baier
  *
  */
-data class DatabaseRepositories(
-    val cloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
-    val offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    val onlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
-    val permissionGroupRepository: DatabasePermissionGroupRepository,
-    val staticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
-    val resourceRepository: DatabaseResourceRepository,
-    val linkRepository: DatabaseLinkRepository,
-)
+interface ResourceDefinitionService {
+
+    fun findAll(): List<ResourceDefinition>
+
+    fun findResourceDefinition(group: String, kind: String): ResourceDefinition
+
+    fun createResource(resourceDefinition: ResourceDefinition)
+
+    fun newResourceDefinitionBuilder(): ResourceDefinitionBuilder
+
+}

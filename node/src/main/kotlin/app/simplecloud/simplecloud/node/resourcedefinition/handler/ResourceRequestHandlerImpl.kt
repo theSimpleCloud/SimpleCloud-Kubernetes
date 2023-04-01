@@ -19,11 +19,11 @@
 package app.simplecloud.simplecloud.node.resourcedefinition.handler
 
 import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestResult
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestSpecAndStatusResult
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.RequestSpecResult
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 
 /**
  * Date: 08.03.23

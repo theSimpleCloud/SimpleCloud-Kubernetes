@@ -27,7 +27,8 @@ import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaimService
 import app.simplecloud.simplecloud.module.api.impl.ftp.start.FtpServerStarter
 import app.simplecloud.simplecloud.module.api.impl.ftp.stop.FtpServerStopper
 import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
+import app.simplecloud.simplecloud.module.api.service.LinkService
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import app.simplecloud.simplecloud.node.connect.DistributedRepositories
 import app.simplecloud.simplecloud.node.process.ProcessShutdownHandler
 import app.simplecloud.simplecloud.node.process.ProcessStarter
@@ -51,6 +52,7 @@ import app.simplecloud.simplecloud.node.resource.process.V1Beta1CloudProcessStat
 import app.simplecloud.simplecloud.node.resource.process.execute.V1Beta1CloudProcessExecuteBody
 import app.simplecloud.simplecloud.node.resource.process.execute.V1Beta1CloudProcessExecuteHandler
 import app.simplecloud.simplecloud.node.resource.staticserver.*
+import app.simplecloud.simplecloud.node.util.Links
 
 /**
  * Date: 07.03.23
@@ -71,6 +73,7 @@ class ResourceDefinitionRegisterer(
     private val ftpServerStopper: FtpServerStopper,
     private val podService: KubePodService,
     private val volumeClaimService: KubeVolumeClaimService,
+    private val linkService: LinkService,
     private val distributedRepositories: DistributedRepositories,
 ) {
 
@@ -90,6 +93,40 @@ class ResourceDefinitionRegisterer(
         registerProcessDefinition()
         registerErrorDefinition()
         registerFtpServerDefinition()
+
+        registerOnlineStrategyProxyLink()
+        registerOnlineStrategyLobbyLink()
+        registerOnlineStrategyServerLink()
+    }
+
+    private fun registerOnlineStrategyServerLink() {
+        val definitionBuilder = this.linkService.newLinkDefinitionBuilder()
+        definitionBuilder.setName(Links.ONLINE_COUNT_SERVER_LINK)
+        definitionBuilder.setOneResourceGroup("core")
+        definitionBuilder.setOneResourceKind("ServerGroup")
+        definitionBuilder.setManyResourceGroup("core")
+        definitionBuilder.setManyResourceKind("ProcessOnlineCountStrategy")
+        this.linkService.createLink(definitionBuilder.build())
+    }
+
+    private fun registerOnlineStrategyProxyLink() {
+        val definitionBuilder = this.linkService.newLinkDefinitionBuilder()
+        definitionBuilder.setName(Links.ONLINE_COUNT_LOBBY_LINK)
+        definitionBuilder.setOneResourceGroup("core")
+        definitionBuilder.setOneResourceKind("LobbyGroup")
+        definitionBuilder.setManyResourceGroup("core")
+        definitionBuilder.setManyResourceKind("ProcessOnlineCountStrategy")
+        this.linkService.createLink(definitionBuilder.build())
+    }
+
+    private fun registerOnlineStrategyLobbyLink() {
+        val definitionBuilder = this.linkService.newLinkDefinitionBuilder()
+        definitionBuilder.setName(Links.ONLINE_COUNT_PROXY_LINK)
+        definitionBuilder.setOneResourceGroup("core")
+        definitionBuilder.setOneResourceKind("ProxyGroup")
+        definitionBuilder.setManyResourceGroup("core")
+        definitionBuilder.setManyResourceKind("ProcessOnlineCountStrategy")
+        this.linkService.createLink(definitionBuilder.build())
     }
 
     private fun registerFtpServerDefinition() {
@@ -197,7 +234,10 @@ class ResourceDefinitionRegisterer(
         v1VersionBuilder.setName("v1beta1")
         v1VersionBuilder.setSpecSchemaClass(V1Beta1ProcessOnlineCountStrategySpec::class.java)
         v1VersionBuilder.setPreProcessor(
-            V1Beta1OnlineCountStrategyPrePostProcessor(this.distributedRepositories.distributedOnlineCountStrategyRepository)
+            V1Beta1OnlineCountStrategyPrePostProcessor(
+                this.distributedRepositories.distributedOnlineCountStrategyRepository,
+                this.linkService
+            )
         )
 
         resourceBuilder.addVersionAsDefaultVersion(v1VersionBuilder.build())

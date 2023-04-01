@@ -16,29 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.memory.factory
+package app.simplecloud.simplecloud.node.repository.distributed
 
-import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
-import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.*
+import app.simplecloud.simplecloud.api.impl.repository.distributed.AbstractDistributedRepository
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
+import app.simplecloud.simplecloud.distribution.api.Distribution
+import app.simplecloud.simplecloud.node.repository.distributed.predicate.LinkCompareDefinitionNamePredicate
+import java.util.concurrent.CompletableFuture
 
 /**
- * Date: 24.04.22
- * Time: 11:54
+ * Date: 29.03.23
+ * Time: 16:02
  * @author Frederick Baier
  *
  */
-class InMemoryDatabaseFactory : DatabaseFactory {
+class DistributedLinkRepository(
+    distribution: Distribution,
+) : AbstractDistributedRepository<String, LinkConfiguration>(
+    distribution.getOrCreateCache("cloud-links")
+) {
 
-    override fun create(connectionString: String): DatabaseRepositories {
-        return DatabaseRepositories(
-            MemoryDatabaseCloudProcessGroupRepository(),
-            MemoryDatabaseOfflineCloudPlayerRepository(),
-            MemoryDatabaseOnlineCountStrategyRepository(),
-            MemoryDatabasePermissionGroupRepository(),
-            MemoryDatabaseStaticProcessTemplateRepository(),
-            MemoryDatabaseResourceRepository(),
-            MemoryDatabaseLinkRepository()
-        )
+    fun findByDefinitionName(name: String): CompletableFuture<Collection<LinkConfiguration>> {
+        return executeQuery(LinkCompareDefinitionNamePredicate(name))
     }
+
 }

@@ -32,9 +32,11 @@ import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnli
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyDeleteRequest
 import app.simplecloud.simplecloud.module.api.request.onlinestrategy.ProcessOnlineCountStrategyUpdateRequest
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.LinkService
 import app.simplecloud.simplecloud.node.onlinestrategy.UniversalProcessOnlineCountStrategyFactory
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 import app.simplecloud.simplecloud.node.resource.onlinestrategy.V1Beta1ProcessOnlineCountStrategySpec
+import app.simplecloud.simplecloud.node.util.Links
 import java.util.concurrent.CompletableFuture
 
 /**
@@ -46,6 +48,7 @@ import java.util.concurrent.CompletableFuture
 class NodeProcessOnlineStrategyServiceImpl(
     private val distributedRepository: DistributedOnlineCountStrategyRepository,
     private val factory: UniversalProcessOnlineCountStrategyFactory,
+    private val linkService: LinkService,
     private val requestHandler: ResourceRequestHandler,
 ) : InternalNodeProcessOnlineCountStrategyService {
 
@@ -59,12 +62,18 @@ class NodeProcessOnlineStrategyServiceImpl(
         return@future configurations.map { factory.create(it) }
     }
 
-    override fun findByProcessGroupName(
-        name: String,
+    override fun findByProcessGroup(
+        processGroup: CloudProcessGroup,
     ): CompletableFuture<ProcessesOnlineCountStrategy> = CloudScope.future {
-        val foundStrategies = distributedRepository.findByTargetProcessGroup(name).await()
-        if (foundStrategies.isEmpty()) return@future DefaultProcessesOnlineCountStrategy
-        return@future factory.create(foundStrategies.first())
+        val strategyName = findStrategyNameByGroup(processGroup) ?: return@future DefaultProcessesOnlineCountStrategy
+        val foundStrategyConfig = distributedRepository.find(strategyName).await()
+        return@future factory.create(foundStrategyConfig)
+    }
+
+    private suspend fun findStrategyNameByGroup(group: CloudProcessGroup): String? {
+        val linkType = Links.getOnlineCountLinkTypeByGroup(group)
+        val links = this.linkService.findLinksByDefinitionName(linkType).await()
+        return links.firstOrNull { it.getOneResourceName() == group.getName() }?.getManyResourceName()
     }
 
     override fun createCreateRequest(configuration: ProcessOnlineCountStrategyConfiguration): ProcessOnlineCountStrategyCreateRequest {
@@ -93,7 +102,6 @@ class NodeProcessOnlineStrategyServiceImpl(
             configuration.name,
             V1Beta1ProcessOnlineCountStrategySpec(
                 configuration.className,
-                configuration.targetGroupNames.toTypedArray(),
                 configuration.dataMap.keys.toTypedArray(),
                 configuration.dataMap.values.toTypedArray()
             )
@@ -108,7 +116,6 @@ class NodeProcessOnlineStrategyServiceImpl(
             configuration.name,
             V1Beta1ProcessOnlineCountStrategySpec(
                 configuration.className,
-                configuration.targetGroupNames.toTypedArray(),
                 configuration.dataMap.keys.toTypedArray(),
                 configuration.dataMap.values.toTypedArray()
             )
@@ -126,10 +133,6 @@ class NodeProcessOnlineStrategyServiceImpl(
 
     object DefaultProcessesOnlineCountStrategy : ProcessesOnlineCountStrategy {
 
-        override fun getTargetGroupNames(): Set<String> {
-            return emptySet()
-        }
-
         override fun calculateOnlineCount(group: CloudProcessGroup): Int {
             return 0
         }
@@ -142,7 +145,6 @@ class NodeProcessOnlineStrategyServiceImpl(
             return ProcessOnlineCountStrategyConfiguration(
                 getName(),
                 DefaultProcessesOnlineCountStrategy::class.java.name,
-                getTargetGroupNames(),
                 emptyMap()
             )
         }

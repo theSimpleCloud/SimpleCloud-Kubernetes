@@ -16,29 +16,34 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.memory.factory
+package app.simplecloud.simplecloud.node.resourcedefinition.web.handler
 
-import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
-import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.*
+import app.simplecloud.simplecloud.module.api.service.LinkService
 
 /**
- * Date: 24.04.22
- * Time: 11:54
+ * Date: 30.03.23
+ * Time: 17:37
  * @author Frederick Baier
  *
  */
-class InMemoryDatabaseFactory : DatabaseFactory {
+class WebRequestLinkDefinitionsGetHandler(
+    private val linkService: LinkService,
+) {
 
-    override fun create(connectionString: String): DatabaseRepositories {
-        return DatabaseRepositories(
-            MemoryDatabaseCloudProcessGroupRepository(),
-            MemoryDatabaseOfflineCloudPlayerRepository(),
-            MemoryDatabaseOnlineCountStrategyRepository(),
-            MemoryDatabasePermissionGroupRepository(),
-            MemoryDatabaseStaticProcessTemplateRepository(),
-            MemoryDatabaseResourceRepository(),
-            MemoryDatabaseLinkRepository()
-        )
+    fun handleGet(): Any {
+        return this.linkService.findAllLinkDefinitions().map {
+            LinkDefinitionDto(
+                it.getName(),
+                it.getOneResourceGroup() + "/" + it.getOneResourceKind(),
+                it.getManyResourceGroup() + "/" + it.getManyResourceKind()
+            )
+        }
     }
+
+    class LinkDefinitionDto(
+        val name: String,
+        val oneResourceName: String,
+        val manyResourceName: String,
+    )
+
 }

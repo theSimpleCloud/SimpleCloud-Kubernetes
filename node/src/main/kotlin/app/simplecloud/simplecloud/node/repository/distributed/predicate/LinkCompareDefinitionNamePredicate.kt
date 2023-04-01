@@ -16,30 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.defaultcontroller.v1
+package app.simplecloud.simplecloud.node.repository.distributed.predicate
 
-import app.simplecloud.simplecloud.api.service.NodeService
-import app.simplecloud.simplecloud.restserver.api.controller.Controller
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestMapping
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RestController
-import app.simplecloud.simplecloud.restserver.api.route.RequestType
-import java.util.*
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
+import app.simplecloud.simplecloud.distribution.api.Predicate
 
 /**
  * Created by IntelliJ IDEA.
- * Date: 16/07/2021
- * Time: 11:08
+ * Date: 30.05.2021
+ * Time: 13:13
  * @author Frederick Baier
  */
-@RestController(1, "cloud/node")
-class NodeController(
-    private val nodeService: NodeService
-) : Controller {
+class LinkCompareDefinitionNamePredicate(
+    private val compareName: String,
+) : Predicate<String, LinkConfiguration> {
 
-    @RequestMapping(RequestType.GET, "", "web.cloud.node.get")
-    fun handleGetAll(): List<UUID> {
-        val processes = this.nodeService.findAll().join()
-        return processes.map { it.getDistributionComponent().getDistributionId() }
+    override fun apply(string: String, configuration: LinkConfiguration): Boolean {
+        return configuration.linkType == compareName
     }
-
 }

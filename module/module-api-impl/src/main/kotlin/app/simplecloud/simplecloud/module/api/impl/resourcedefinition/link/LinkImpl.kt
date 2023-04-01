@@ -16,22 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.database.api.factory
+package app.simplecloud.simplecloud.module.api.impl.resourcedefinition.link
 
-import app.simplecloud.simplecloud.database.api.*
+import app.simplecloud.simplecloud.api.resourcedefinition.link.LinkConfiguration
+import app.simplecloud.simplecloud.module.api.resourcedefinition.link.Link
 
 /**
- * Date: 24.04.22
- * Time: 11:49
+ * Date: 29.03.23
+ * Time: 10:42
  * @author Frederick Baier
  *
  */
-data class DatabaseRepositories(
-    val cloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
-    val offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    val onlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
-    val permissionGroupRepository: DatabasePermissionGroupRepository,
-    val staticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
-    val resourceRepository: DatabaseResourceRepository,
-    val linkRepository: DatabaseLinkRepository,
-)
+class LinkImpl(
+    private val linkConfiguration: LinkConfiguration,
+) : Link {
+
+    override fun getLinkType(): String {
+        return this.linkConfiguration.linkType
+    }
+
+    override fun getOneResourceName(): String {
+        return this.linkConfiguration.oneResourceName
+    }
+
+    override fun getManyResourceName(): String {
+        return this.linkConfiguration.manyResourceName
+    }
+
+    override fun toConfiguration(): LinkConfiguration {
+        return this.linkConfiguration
+    }
+
+}

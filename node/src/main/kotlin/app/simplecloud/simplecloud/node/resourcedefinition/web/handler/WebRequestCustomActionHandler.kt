@@ -20,8 +20,8 @@ package app.simplecloud.simplecloud.node.resourcedefinition.web.handler
 
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomAction
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinition
-import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceDefinitionService
 import app.simplecloud.simplecloud.module.api.resourcedefinition.request.ResourceRequestHandler
+import app.simplecloud.simplecloud.module.api.service.ResourceDefinitionService
 import app.simplecloud.simplecloud.node.resourcedefinition.SchemaValidator
 import eu.thesimplecloud.jsonlib.JsonLib
 import org.yaml.snakeyaml.Yaml

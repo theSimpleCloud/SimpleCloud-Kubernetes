@@ -37,6 +37,7 @@ class InMemoryRepositorySafeDatabaseFactory : DatabaseFactory {
     val permissionGroupRepository = MemoryDatabasePermissionGroupRepository()
     val staticProcessTemplateRepository = MemoryDatabaseStaticProcessTemplateRepository()
     val resourceRepository = MemoryDatabaseResourceRepository()
+    val linkRepository = MemoryDatabaseLinkRepository()
 
     override fun create(connectionString: String): DatabaseRepositories {
         return DatabaseRepositories(
@@ -46,6 +47,7 @@ class InMemoryRepositorySafeDatabaseFactory : DatabaseFactory {
             permissionGroupRepository,
             staticProcessTemplateRepository,
             resourceRepository,
+            linkRepository
         )
     }
 }

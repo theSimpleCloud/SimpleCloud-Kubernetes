@@ -20,6 +20,7 @@ package app.simplecloud.simplecloud.node.resource.onlinestrategy
 
 import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
 import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceVersionRequestPrePostProcessor
+import app.simplecloud.simplecloud.module.api.service.LinkService
 import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnlineCountStrategyRepository
 
 /**
@@ -30,6 +31,7 @@ import app.simplecloud.simplecloud.node.repository.distributed.DistributedOnline
  */
 class V1Beta1OnlineCountStrategyPrePostProcessor(
     private val distributedStrategyRepository: DistributedOnlineCountStrategyRepository,
+    private val linkService: LinkService,
 ) : ResourceVersionRequestPrePostProcessor<V1Beta1ProcessOnlineCountStrategySpec>() {
 
     override fun postCreate(
@@ -72,7 +74,6 @@ class V1Beta1OnlineCountStrategyPrePostProcessor(
         return ProcessOnlineCountStrategyConfiguration(
             name,
             spec.className,
-            spec.targetGroupNames.toSet(),
             createMap(spec.dataKeys, spec.dataValues)
         )
     }
