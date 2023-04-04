@@ -38,4 +38,6 @@ interface DatabaseResourceRepository {
 
     fun delete(apiVersion: String, kind: String, name: String)
 
+    fun exists(apiVersion: String, kind: String): Boolean
+
 }

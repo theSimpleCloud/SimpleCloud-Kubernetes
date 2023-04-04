@@ -22,10 +22,12 @@ import app.simplecloud.simplecloud.api.permission.configuration.PermissionPlayer
 import app.simplecloud.simplecloud.api.player.PlayerWebConfig
 import app.simplecloud.simplecloud.api.player.configuration.OfflineCloudPlayerConfiguration
 import app.simplecloud.simplecloud.api.player.configuration.PlayerConnectionConfiguration
-import app.simplecloud.simplecloud.api.process.onlinestrategy.configuration.ProcessOnlineCountStrategyConfiguration
-import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
+import app.simplecloud.simplecloud.api.resourcedefinition.Resource
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
 import app.simplecloud.simplecloud.distribution.api.Address
+import app.simplecloud.simplecloud.node.resource.group.V1Beta1ProxyGroupSpec
+import app.simplecloud.simplecloud.node.resource.player.V1Beta1CloudPlayerSpec
+import eu.thesimplecloud.jsonlib.JsonLib
 import java.util.*
 
 /**
@@ -39,7 +41,7 @@ class DatabaseFactoryProvider {
 
 
     fun withFirstUser(): DatabaseFactoryProvider {
-        val offlineCloudPlayerRepository = this.databaseFactory.offlineCloudPlayerRepository
+        val resourceRepository = this.databaseFactory.resourceRepository
         val playerUniqueId = UUID.randomUUID()
         val playerName = "Wetterbericht"
         val configuration = OfflineCloudPlayerConfiguration(
@@ -62,14 +64,16 @@ class DatabaseFactoryProvider {
                 emptyList()
             )
         )
-        offlineCloudPlayerRepository.save(configuration.uniqueId, configuration)
+
+        val spec = JsonLib.fromObject(V1Beta1CloudPlayerSpec.fromConfig(configuration))
+            .getObject(Map::class.java) as Map<String, Any>
+        resourceRepository.save(Resource("core/v1beta1", "CloudPlayer", playerUniqueId.toString(), spec))
         return this
     }
 
     fun withProxyGroup(groupName: String): DatabaseFactoryProvider {
-        val groupRepository = this.databaseFactory.cloudProcessGroupRepository
-        val groupConfiguration = ProxyProcessTemplateConfiguration(
-            groupName,
+        val resourceRepository = this.databaseFactory.resourceRepository
+        val groupConfiguration = V1Beta1ProxyGroupSpec(
             512,
             20,
             false,
@@ -80,18 +84,8 @@ class DatabaseFactoryProvider {
             true,
             25565
         )
-        groupRepository.save(groupName, groupConfiguration)
-        return this
-    }
-
-    fun withMinOnlineStrategy(name: String, targetGroup: String, number: Int): DatabaseFactoryProvider {
-        val strategyRepository = this.databaseFactory.onlineCountStrategyRepository
-        val configuration = ProcessOnlineCountStrategyConfiguration(
-            "Min",
-            "app.simplecloud.simplecloud.node.onlinestrategy.MinOnlineStrategy",
-            mapOf("min" to number.toString())
-        )
-        strategyRepository.save(configuration.name, configuration)
+        val spec = JsonLib.fromObject(groupConfiguration).getObject(Map::class.java) as Map<String, Any>
+        resourceRepository.save(Resource("core/v1beta1", "CloudPlayer", groupName, spec))
         return this
     }
 

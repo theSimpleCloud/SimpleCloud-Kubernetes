@@ -61,7 +61,6 @@ class NodeStartTest {
         val databaseFactory = this.databaseFactoryProvider
             .withFirstUser()
             .withProxyGroup("Proxy")
-            .withMinOnlineStrategy("Min", "Proxy", 1)
             .get()
         nodeStartTestTemplate.given(databaseFactory)
         nodeStartTestTemplate.givenKubeAPIWithDatabaseConnection()

@@ -25,7 +25,7 @@ package app.simplecloud.simplecloud.api.impl.env
  *
  */
 class RealEnvironmentVariables : EnvironmentVariables {
-    override fun get(name: String): String {
+    override fun get(name: String): String? {
         return System.getenv(name)
     }
 }

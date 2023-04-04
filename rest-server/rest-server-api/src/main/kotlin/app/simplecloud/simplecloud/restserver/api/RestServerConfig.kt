@@ -20,7 +20,6 @@ package app.simplecloud.simplecloud.restserver.api
 
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
 import app.simplecloud.simplecloud.restserver.api.controller.ControllerHandlerFactory
-import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 
 /**
  * Date: 03.05.22
@@ -32,5 +31,4 @@ class RestServerConfig(
     val restServer: RestServer,
     val tokenHandlerFactory: TokenHandlerFactory,
     val controllerHandlerFactory: ControllerHandlerFactory,
-    val setupManager: RestSetupManager
 )

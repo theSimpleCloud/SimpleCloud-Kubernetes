@@ -27,8 +27,8 @@ package app.simplecloud.simplecloud.api.impl.env
 interface EnvironmentVariables {
 
     /**
-     * Returns the environment variable found by the specified name or throws a [NoSuchElementException]
+     * Returns the environment variable found by the specified name or null
      */
-    fun get(name: String): String
+    fun get(name: String): String?
 
 }

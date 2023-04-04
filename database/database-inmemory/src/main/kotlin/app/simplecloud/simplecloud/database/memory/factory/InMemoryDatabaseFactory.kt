@@ -20,7 +20,8 @@ package app.simplecloud.simplecloud.database.memory.factory
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.*
+import app.simplecloud.simplecloud.database.memory.MemoryDatabaseLinkRepository
+import app.simplecloud.simplecloud.database.memory.MemoryDatabaseResourceRepository
 
 /**
  * Date: 24.04.22
@@ -32,11 +33,6 @@ class InMemoryDatabaseFactory : DatabaseFactory {
 
     override fun create(connectionString: String): DatabaseRepositories {
         return DatabaseRepositories(
-            MemoryDatabaseCloudProcessGroupRepository(),
-            MemoryDatabaseOfflineCloudPlayerRepository(),
-            MemoryDatabaseOnlineCountStrategyRepository(),
-            MemoryDatabasePermissionGroupRepository(),
-            MemoryDatabaseStaticProcessTemplateRepository(),
             MemoryDatabaseResourceRepository(),
             MemoryDatabaseLinkRepository()
         )

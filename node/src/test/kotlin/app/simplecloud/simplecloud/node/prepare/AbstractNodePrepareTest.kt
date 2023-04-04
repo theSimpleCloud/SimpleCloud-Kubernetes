@@ -16,8 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.prepare.setup
+package app.simplecloud.simplecloud.node.prepare
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.impl.env.VirtualEnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryDatabaseFactory
@@ -27,7 +28,6 @@ import app.simplecloud.simplecloud.node.startup.prepare.NodePreparer
 import app.simplecloud.simplecloud.restserver.api.auth.Headers
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
-import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 import java.util.*
 
 /**
@@ -41,17 +41,22 @@ abstract class AbstractNodePrepareTest {
 
     private var databaseFactory: DatabaseFactory = InMemoryDatabaseFactory()
     private var kubeAPI: KubeAPI = KubeTestAPI()
-    private lateinit var restSetupManager: RestSetupManager
+    private var environmentVariables: EnvironmentVariables = VirtualEnvironmentVariables(emptyMap())
 
     internal open fun setUp() {
         this.databaseFactory = InMemoryDatabaseFactory()
         this.kubeAPI = KubeTestAPI()
     }
 
-    protected fun given(databaseFactory: DatabaseFactory, kubeAPI: KubeAPI, restSetupManager: RestSetupManager) {
+
+    protected fun given(
+        databaseFactory: DatabaseFactory,
+        kubeAPI: KubeAPI,
+        environmentVariables: EnvironmentVariables = VirtualEnvironmentVariables(emptyMap()),
+    ) {
         this.databaseFactory = databaseFactory
         this.kubeAPI = kubeAPI
-        this.restSetupManager = restSetupManager
+        this.environmentVariables = environmentVariables
     }
 
     protected fun prepareNode() {
@@ -59,15 +64,10 @@ abstract class AbstractNodePrepareTest {
             NodePreparer(
                 this.databaseFactory,
                 this.kubeAPI,
-                VirtualEnvironmentVariables(emptyMap()),
-                this.restSetupManager,
+                this.environmentVariables,
                 TestTokenHandlerFactory(),
             )
-        try {
-            nodePreparer.prepare()
-        } catch (e: Exception) {
-            //ignore because we are only testing if it reaches the setup
-        }
+        nodePreparer.prepare()
     }
 
     class TestTokenHandlerFactory : TokenHandlerFactory {

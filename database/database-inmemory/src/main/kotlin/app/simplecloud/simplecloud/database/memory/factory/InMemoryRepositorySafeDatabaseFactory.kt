@@ -20,7 +20,8 @@ package app.simplecloud.simplecloud.database.memory.factory
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.memory.*
+import app.simplecloud.simplecloud.database.memory.MemoryDatabaseLinkRepository
+import app.simplecloud.simplecloud.database.memory.MemoryDatabaseResourceRepository
 
 /**
  * Date: 24.04.22
@@ -31,21 +32,11 @@ import app.simplecloud.simplecloud.database.memory.*
  */
 class InMemoryRepositorySafeDatabaseFactory : DatabaseFactory {
 
-    val cloudProcessGroupRepository = MemoryDatabaseCloudProcessGroupRepository()
-    val offlineCloudPlayerRepository = MemoryDatabaseOfflineCloudPlayerRepository()
-    val onlineCountStrategyRepository = MemoryDatabaseOnlineCountStrategyRepository()
-    val permissionGroupRepository = MemoryDatabasePermissionGroupRepository()
-    val staticProcessTemplateRepository = MemoryDatabaseStaticProcessTemplateRepository()
     val resourceRepository = MemoryDatabaseResourceRepository()
     val linkRepository = MemoryDatabaseLinkRepository()
 
     override fun create(connectionString: String): DatabaseRepositories {
         return DatabaseRepositories(
-            cloudProcessGroupRepository,
-            offlineCloudPlayerRepository,
-            onlineCountStrategyRepository,
-            permissionGroupRepository,
-            staticProcessTemplateRepository,
             resourceRepository,
             linkRepository
         )

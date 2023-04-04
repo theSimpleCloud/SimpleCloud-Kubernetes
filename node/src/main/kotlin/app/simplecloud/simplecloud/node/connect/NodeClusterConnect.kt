@@ -44,6 +44,7 @@ import app.simplecloud.simplecloud.distribution.api.DistributionFactory
 import app.simplecloud.simplecloud.eventapi.DefaultEventManager
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
+import app.simplecloud.simplecloud.module.api.NodeCloudAPI
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
 import app.simplecloud.simplecloud.module.api.impl.error.ErrorFactoryImpl
 import app.simplecloud.simplecloud.module.api.impl.ftp.FtpServerFactoryImpl
@@ -61,6 +62,7 @@ import app.simplecloud.simplecloud.node.resourcedefinition.handler.ResourceReque
 import app.simplecloud.simplecloud.node.resourcedefinition.web.ResourceDefinitionRouteRegisterer
 import app.simplecloud.simplecloud.node.service.*
 import app.simplecloud.simplecloud.node.startup.prepare.ControllerRegisterer
+import app.simplecloud.simplecloud.node.startup.prepare.FirstUserChecker
 import app.simplecloud.simplecloud.node.startup.prepare.PreparedNode
 import app.simplecloud.simplecloud.restserver.api.RestServerConfig
 import org.apache.logging.log4j.LogManager
@@ -84,12 +86,21 @@ class NodeClusterConnect(
         val distribution = startDistribution()
         val distributedRepositories = initializeDistributedRepositories(distribution)
         val nodeCloudAPI = initializeServices(distribution, distributedRepositories)
+        checkForFirstUser(nodeCloudAPI)
         injectUserContextIntoDistribution(distribution, nodeCloudAPI, distributedRepositories)
         registerWebControllers(nodeCloudAPI)
         registerMessageChannels(nodeCloudAPI)
         checkForFirstNodeInCluster(distribution, distributedRepositories, nodeCloudAPI)
         handleClusterActive(nodeCloudAPI)
         return nodeCloudAPI
+    }
+
+    private fun checkForFirstUser(nodeCloudAPI: NodeCloudAPI) {
+        FirstUserChecker(
+            this.databaseRepositories.resourceRepository,
+            nodeCloudAPI.getResourceDefinitionService(),
+            this.preparedNode.environmentVariables
+        ).checkFirstUser()
     }
 
     private fun handleClusterActive(nodeCloudAPI: InternalNodeCloudAPI) {

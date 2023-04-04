@@ -44,7 +44,9 @@ class UpdateController(
     @RequestMapping(RequestType.POST, "", "web.cloud.update")
     fun handleUpdate(@RequestBody body: UpdateDto): Boolean {
         val buildKitAddr = environmentVariables.get("BUILDKIT_ADDR")
+            ?: throw NoSuchElementException("Environment variable BUILDKIT_ADDR is not set")
         val registryAddr = environmentVariables.get("REBUILD_REGISTRY")
+            ?: throw NoSuchElementException("Environment variable REBUILD_REGISTRY is not set")
         val nodeUpdater = NodeUpdater(
             body.moduleLinks,
             body.baseImage,

@@ -20,7 +20,8 @@ package app.simplecloud.simplecloud.database.mongo.factory
 
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
-import app.simplecloud.simplecloud.database.mongo.*
+import app.simplecloud.simplecloud.database.mongo.MongoDatabaseLinkRepository
+import app.simplecloud.simplecloud.database.mongo.MongoDatabaseResourceRepository
 import app.simplecloud.simplecloud.database.mongo.start.MongoClientStarter
 import dev.morphia.Datastore
 import java.net.ConnectException
@@ -41,11 +42,6 @@ class MongoDatabaseFactory : DatabaseFactory {
             throw ConnectException("Failed to connect to mongodb")
 
         return DatabaseRepositories(
-            MongoDatabaseCloudProcessGroupRepositoryAdapter(datastore),
-            MongoDatabaseOfflineCloudPlayerRepositoryAdapter(datastore),
-            MongoDatabaseOnlineCountStrategyRepositoryAdapter(datastore),
-            MongoDatabasePermissionGroupRepositoryAdapter(datastore),
-            MongoDatabaseStaticProcessTemplateRepositoryAdapter(datastore),
             MongoDatabaseResourceRepository(mongoDatabase),
             MongoDatabaseLinkRepository(mongoDatabase)
         )

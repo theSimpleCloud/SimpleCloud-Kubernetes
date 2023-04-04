@@ -18,13 +18,12 @@
 
 package app.simplecloud.simplecloud.node.startup.prepare.database
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecretService
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
-import app.simplecloud.simplecloud.node.startup.setup.task.DatabaseSetup
-import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -34,17 +33,24 @@ import org.apache.logging.log4j.LogManager
  * @author Frederick Baier
  */
 class DatabaseSafeStarter constructor(
-    private val restSetupManager: RestSetupManager,
     private val kubeSecretService: KubeSecretService,
-    private val databaseFactory: DatabaseFactory
+    private val databaseFactory: DatabaseFactory,
+    private val environmentVariables: EnvironmentVariables,
 ) {
 
     fun connectToDatabase(): DatabaseRepositories {
         logger.info("Starting Database Client")
         if (!isSecretAvailable()) {
-            executeDatabaseSetup()
+            checkForEnvironmentVariable()
         }
         return startClientAndTestConnection()
+    }
+
+    private fun checkForEnvironmentVariable() {
+        logger.info("Creating database secret from environment variables")
+        val initConnectionString = this.environmentVariables.get("INIT_DB_CONNECTION")
+            ?: throw IllegalStateException("Database secret is not available")
+        saveConnectionStringToSecret(initConnectionString)
     }
 
     private fun isSecretAvailable(): Boolean {
@@ -61,13 +67,7 @@ class DatabaseSafeStarter constructor(
         return this.kubeSecretService.getSecret(DATABASE_SECRET_NAME)
     }
 
-    private fun executeDatabaseSetup(): String {
-        val connectionString = DatabaseSetup(this.restSetupManager).executeSetup()
-        saveResponseToSecret(connectionString)
-        return connectionString
-    }
-
-    private fun saveResponseToSecret(connectionString: String) {
+    private fun saveConnectionStringToSecret(connectionString: String) {
         this.kubeSecretService.createSecret(DATABASE_SECRET_NAME, SecretSpec().withData("database", connectionString))
     }
 

@@ -18,6 +18,7 @@
 
 package app.simplecloud.simplecloud.node
 
+import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
 import app.simplecloud.simplecloud.api.impl.env.VirtualEnvironmentVariables
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.memory.factory.InMemoryRepositorySafeDatabaseFactory
@@ -27,7 +28,6 @@ import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.kubernetes.api.secret.SecretSpec
 import app.simplecloud.simplecloud.kubernetes.test.KubeTestAPI
 import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
-import app.simplecloud.simplecloud.node.start.restserver.FailingRestSetupManager
 import app.simplecloud.simplecloud.node.start.restserver.TestRestServer
 import app.simplecloud.simplecloud.node.start.restserver.TestTokenHandlerFactory
 import app.simplecloud.simplecloud.node.startup.NodeStartup
@@ -49,6 +49,7 @@ class NodeStartTestTemplate {
     var kubeAPI = KubeTestAPI()
         private set
     private var databaseFactory: DatabaseFactory = InMemoryRepositorySafeDatabaseFactory()
+    private var environmentVariables: EnvironmentVariables = VirtualEnvironmentVariables(emptyMap())
 
 
     fun setUp() {
@@ -71,13 +72,18 @@ class NodeStartTestTemplate {
         this.databaseFactory = databaseFactory
     }
 
+    fun given(kubeAPI: KubeTestAPI, databaseFactory: DatabaseFactory, environmentVariables: EnvironmentVariables) {
+        this.kubeAPI = kubeAPI
+        this.databaseFactory = databaseFactory
+        this.environmentVariables = environmentVariables
+    }
+
     private fun setUpRestServer() {
         val restServer = TestRestServer(NoAuthService())
         this.restServerConfig = RestServerConfig(
             restServer,
             TestTokenHandlerFactory(),
-            ControllerHandlerFactoryImpl(),
-            FailingRestSetupManager()
+            ControllerHandlerFactoryImpl()
         )
     }
 
@@ -89,7 +95,7 @@ class NodeStartTestTemplate {
             this.kubeAPI,
             selfPod,
             restServerConfig,
-            VirtualEnvironmentVariables(emptyMap())
+            this.environmentVariables
         ).start()
     }
 

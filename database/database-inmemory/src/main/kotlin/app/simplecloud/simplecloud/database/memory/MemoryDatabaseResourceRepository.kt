@@ -58,4 +58,9 @@ class MemoryDatabaseResourceRepository : DatabaseResourceRepository {
     override fun delete(apiVersion: String, kind: String, name: String) {
         this.resources.removeIf { it.kind == kind && it.apiVersion == apiVersion && it.name == name }
     }
+
+    override fun exists(apiVersion: String, kind: String): Boolean {
+        return this.resources.any { it.apiVersion == apiVersion && it.kind == kind }
+    }
+
 }

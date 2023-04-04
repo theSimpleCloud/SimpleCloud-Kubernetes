@@ -28,7 +28,6 @@ import app.simplecloud.simplecloud.restserver.api.auth.NoAuthService
 import app.simplecloud.simplecloud.restserver.base.RestServerFactory
 import app.simplecloud.simplecloud.restserver.impl.auth.JwtTokenHandlerFactory
 import app.simplecloud.simplecloud.restserver.impl.controller.ControllerHandlerFactoryImpl
-import app.simplecloud.simplecloud.restserver.impl.setup.RestSetupManagerImpl
 import com.github.ajalt.clikt.core.CliktCommand
 import com.github.ajalt.clikt.parameters.options.option
 
@@ -52,8 +51,7 @@ class NodeArgumentsParser : CliktCommand() {
             RestServerConfig(
                 restServer,
                 JwtTokenHandlerFactory(),
-                ControllerHandlerFactoryImpl(),
-                RestSetupManagerImpl(restServer)
+                ControllerHandlerFactoryImpl()
             ),
             RealEnvironmentVariables()
         ).start()

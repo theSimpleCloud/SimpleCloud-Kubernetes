@@ -39,7 +39,7 @@ class RestartMessageHandler(
         logger.info("Restarting cloud...")
         while (true) {
             if (message <= System.currentTimeMillis()) {
-                kubeAPI.getPodService().getPod(environmentVariables.get("HOSTNAME")).delete()
+                kubeAPI.getPodService().getPod(environmentVariables.get("HOSTNAME")!!).delete()
                 return@future
             }
             Thread.sleep(10)

@@ -68,4 +68,10 @@ class MongoDatabaseResourceRepository(
         val collection = database.getCollection("$apiVersion/$kind")
         collection.deleteOne(Filters.eq("name", name))
     }
+
+    override fun exists(apiVersion: String, kind: String): Boolean {
+        val collection = database.getCollection("$apiVersion/$kind")
+        return collection.countDocuments() > 0
+    }
+
 }

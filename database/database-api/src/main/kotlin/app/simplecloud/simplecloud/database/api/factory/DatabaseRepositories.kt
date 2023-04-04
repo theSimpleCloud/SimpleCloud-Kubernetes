@@ -18,7 +18,8 @@
 
 package app.simplecloud.simplecloud.database.api.factory
 
-import app.simplecloud.simplecloud.database.api.*
+import app.simplecloud.simplecloud.database.api.DatabaseLinkRepository
+import app.simplecloud.simplecloud.database.api.DatabaseResourceRepository
 
 /**
  * Date: 24.04.22
@@ -27,11 +28,6 @@ import app.simplecloud.simplecloud.database.api.*
  *
  */
 data class DatabaseRepositories(
-    val cloudProcessGroupRepository: DatabaseCloudProcessGroupRepository,
-    val offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-    val onlineCountStrategyRepository: DatabaseOnlineCountStrategyRepository,
-    val permissionGroupRepository: DatabasePermissionGroupRepository,
-    val staticProcessTemplateRepository: DatabaseStaticProcessTemplateRepository,
     val resourceRepository: DatabaseResourceRepository,
     val linkRepository: DatabaseLinkRepository,
 )

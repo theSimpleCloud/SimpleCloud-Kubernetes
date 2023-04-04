@@ -50,7 +50,6 @@ class NodeStartup(
             this.databaseFactory,
             this.kubeAPI,
             this.environmentVariables,
-            this.restServerConfig.setupManager,
             this.restServerConfig.tokenHandlerFactory
         )
         val preparedNode = nodePreparer.prepare()

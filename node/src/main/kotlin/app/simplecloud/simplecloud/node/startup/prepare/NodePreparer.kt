@@ -19,7 +19,6 @@
 package app.simplecloud.simplecloud.node.startup.prepare
 
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
-import app.simplecloud.simplecloud.database.api.DatabaseOfflineCloudPlayerRepository
 import app.simplecloud.simplecloud.database.api.factory.DatabaseFactory
 import app.simplecloud.simplecloud.database.api.factory.DatabaseRepositories
 import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
@@ -27,9 +26,7 @@ import app.simplecloud.simplecloud.module.api.impl.LocalAPIImpl
 import app.simplecloud.simplecloud.node.connect.RestTokenLoader
 import app.simplecloud.simplecloud.node.startup.prepare.database.DatabaseSafeStarter
 import app.simplecloud.simplecloud.node.startup.prepare.module.NodeModuleLoader
-import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandler
 import app.simplecloud.simplecloud.restserver.api.auth.token.TokenHandlerFactory
-import app.simplecloud.simplecloud.restserver.api.setup.RestSetupManager
 import org.apache.logging.log4j.LogManager
 
 /**
@@ -42,7 +39,6 @@ class NodePreparer(
     private val databaseFactory: DatabaseFactory,
     private val kubeApi: KubeAPI,
     private val environmentVariables: EnvironmentVariables,
-    private val restSetupManager: RestSetupManager,
     private val tokenHandlerFactory: TokenHandlerFactory,
 ) {
 
@@ -53,8 +49,6 @@ class NodePreparer(
         val databaseRepositories = initDatabaseRepositories()
         val restToken = RestTokenLoader(this.kubeApi.getSecretService()).loadRestToken()
         val jwtTokenHandler = this.tokenHandlerFactory.create(restToken)
-        checkForAnyWebAccount(databaseRepositories.offlineCloudPlayerRepository, jwtTokenHandler)
-        setupEnd()
         val nodeModuleLoader = loadModules()
         logger.info("Node Startup completed")
         return PreparedNode(
@@ -72,23 +66,8 @@ class NodePreparer(
         return moduleLoader
     }
 
-    private fun checkForAnyWebAccount(
-        offlineCloudPlayerRepository: DatabaseOfflineCloudPlayerRepository,
-        tokenHandler: TokenHandler,
-    ) {
-        FirstAccountCheck(
-            offlineCloudPlayerRepository,
-            tokenHandler,
-            this.restSetupManager
-        ).checkForAccount()
-    }
-
-    private fun setupEnd() {
-        this.restSetupManager.onEndOfAllSetups()
-    }
-
     private fun initDatabaseRepositories(): DatabaseRepositories {
-        return DatabaseSafeStarter(this.restSetupManager, this.kubeApi.getSecretService(), this.databaseFactory)
+        return DatabaseSafeStarter(this.kubeApi.getSecretService(), this.databaseFactory, this.environmentVariables)
             .connectToDatabase()
     }
 

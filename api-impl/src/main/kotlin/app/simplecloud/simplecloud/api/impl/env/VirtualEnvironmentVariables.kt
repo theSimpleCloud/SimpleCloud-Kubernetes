@@ -27,7 +27,7 @@ package app.simplecloud.simplecloud.api.impl.env
 class VirtualEnvironmentVariables(
     private val map: Map<String, String>
 ) : EnvironmentVariables {
-    override fun get(name: String): String {
-        return map[name]!!
+    override fun get(name: String): String? {
+        return map[name]
     }
 }
