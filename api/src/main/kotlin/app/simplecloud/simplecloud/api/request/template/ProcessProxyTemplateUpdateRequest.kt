@@ -28,12 +28,6 @@ import app.simplecloud.simplecloud.api.template.ProcessProxyTemplate
  */
 interface ProcessProxyTemplateUpdateRequest : ProcessTemplateUpdateRequest {
 
-    /**
-     * Sets the start priority for the template
-     * @return this
-     */
-    fun setStartPort(startPort: Int): ProcessProxyTemplateUpdateRequest
-
     override fun getProcessTemplate(): ProcessProxyTemplate
 
 }

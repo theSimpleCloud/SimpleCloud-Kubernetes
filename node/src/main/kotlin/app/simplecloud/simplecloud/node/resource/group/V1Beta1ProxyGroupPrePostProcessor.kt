@@ -63,8 +63,7 @@ class V1Beta1ProxyGroupPrePostProcessor(
             spec.stateUpdating,
             spec.startPriority,
             spec.joinPermission,
-            spec.active,
-            spec.startPort
+            spec.active
         )
     }
 

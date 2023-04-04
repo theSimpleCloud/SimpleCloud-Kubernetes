@@ -28,7 +28,5 @@ import app.simplecloud.simplecloud.api.request.template.ProcessProxyTemplateUpda
  */
 interface ProcessProxyTemplate : ProcessTemplate {
 
-    fun getStartPort(): Int
-
     override fun createUpdateRequest(): ProcessProxyTemplateUpdateRequest
 }

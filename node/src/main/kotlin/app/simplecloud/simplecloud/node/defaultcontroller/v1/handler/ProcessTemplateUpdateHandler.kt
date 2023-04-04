@@ -21,11 +21,9 @@ package app.simplecloud.simplecloud.node.defaultcontroller.v1.handler
 import app.simplecloud.simplecloud.api.future.await
 import app.simplecloud.simplecloud.api.image.ImageImpl
 import app.simplecloud.simplecloud.api.request.template.ProcessLobbyTemplateUpdateRequest
-import app.simplecloud.simplecloud.api.request.template.ProcessProxyTemplateUpdateRequest
 import app.simplecloud.simplecloud.api.template.ProcessTemplate
 import app.simplecloud.simplecloud.api.template.configuration.AbstractProcessTemplateConfiguration
 import app.simplecloud.simplecloud.api.template.configuration.LobbyProcessTemplateConfiguration
-import app.simplecloud.simplecloud.api.template.configuration.ProxyProcessTemplateConfiguration
 
 /**
  * Created by IntelliJ IDEA.
@@ -47,11 +45,6 @@ class ProcessTemplateUpdateHandler(
         request.setJoinPermission(this.targetConfig.joinPermission)
         request.setStateUpdating(this.targetConfig.stateUpdating)
         request.setStartPriority(this.targetConfig.startPriority)
-
-        if (request is ProcessProxyTemplateUpdateRequest) {
-            this.targetConfig as ProxyProcessTemplateConfiguration
-            request.setStartPort(this.targetConfig.startPort)
-        }
 
         if (request is ProcessLobbyTemplateUpdateRequest) {
             this.targetConfig as LobbyProcessTemplateConfiguration

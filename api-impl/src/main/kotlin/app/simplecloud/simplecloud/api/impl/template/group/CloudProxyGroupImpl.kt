@@ -38,10 +38,6 @@ class CloudProxyGroupImpl(
     processGroupService
 ), CloudProxyGroup {
 
-    override fun getStartPort(): Int {
-        return this.configuration.startPort
-    }
-
     override fun createUpdateRequest(): CloudProxyGroupUpdateRequest {
         return CloudProxyGroupUpdateRequestImpl(this.processGroupService, this)
     }

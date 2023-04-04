@@ -35,10 +35,6 @@ class StaticProxyTemplateImpl(
     private val internalService: InternalStaticProcessTemplateService,
 ) : AbstractStaticProcessTemplate(configuration, internalService), StaticProxyTemplate {
 
-    override fun getStartPort(): Int {
-        return this.configuration.startPort
-    }
-
     override fun createUpdateRequest(): StaticProxyTemplateUpdateRequest {
         return StaticProxyTemplateUpdateRequestImpl(this, this.internalService)
     }

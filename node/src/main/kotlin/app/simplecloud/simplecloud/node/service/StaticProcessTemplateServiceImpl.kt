@@ -90,8 +90,7 @@ class StaticProcessTemplateServiceImpl(
                 configuration.stateUpdating,
                 configuration.startPriority,
                 configuration.joinPermission,
-                configuration.active,
-                configuration.startPort
+                configuration.active
             )
 
             else -> V1Beta1StaticServerSpec(

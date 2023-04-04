@@ -32,8 +32,6 @@ interface StaticProxyTemplateUpdateRequest : StaticProcessTemplateUpdateRequest,
 
     override fun getProcessTemplate(): StaticProxyTemplate
 
-    override fun setStartPort(startPort: Int): StaticProxyTemplateUpdateRequest
-
     override fun setMaxMemory(memory: Int): StaticProxyTemplateUpdateRequest
 
     override fun setMaxPlayers(players: Int): StaticProxyTemplateUpdateRequest

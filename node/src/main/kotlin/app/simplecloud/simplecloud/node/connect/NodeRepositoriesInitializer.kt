@@ -240,8 +240,7 @@ class NodeRepositoriesInitializer(
             spec.stateUpdating,
             spec.startPriority,
             spec.joinPermission,
-            spec.active,
-            spec.startPort
+            spec.active
         )
     }
 
@@ -335,8 +334,7 @@ class NodeRepositoriesInitializer(
             spec.stateUpdating,
             spec.startPriority,
             spec.joinPermission,
-            spec.active,
-            spec.startPort
+            spec.active
         )
     }
 

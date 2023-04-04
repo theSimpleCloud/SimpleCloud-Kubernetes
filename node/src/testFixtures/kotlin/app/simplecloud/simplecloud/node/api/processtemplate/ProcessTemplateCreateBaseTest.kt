@@ -132,8 +132,8 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
     }
 
     @Test
-    fun createProxyTemplate_withNormalPort_willNotFail(): Unit = runBlocking {
-        val configuration = createProxyTemplateWithPort(25565)
+    fun createProxyTemplate_willNotFail(): Unit = runBlocking {
+        val configuration = createProxyTemplate()
         createTemplate(configuration)
     }
 
@@ -172,12 +172,11 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
             false,
             0,
             null,
-            true,
-            25565,
+            true
         )
     }
 
-    private fun createProxyTemplateWithPort(port: Int): ProxyProcessTemplateConfiguration {
+    private fun createProxyTemplate(): ProxyProcessTemplateConfiguration {
         return ProxyProcessTemplateConfiguration(
             "ProxyN",
             512,
@@ -187,8 +186,7 @@ abstract class ProcessTemplateCreateBaseTest : ProcessTemplateServiceBaseTest() 
             false,
             0,
             null,
-            true,
-            port,
+            true
         )
     }
 

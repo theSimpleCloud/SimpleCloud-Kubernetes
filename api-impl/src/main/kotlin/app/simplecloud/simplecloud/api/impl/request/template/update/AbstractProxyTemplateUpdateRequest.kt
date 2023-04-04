@@ -31,16 +31,8 @@ abstract class AbstractProxyTemplateUpdateRequest(
     private val proxyTemplate: ProcessProxyTemplate,
 ) : AbstractProcessTemplateUpdateRequest(proxyTemplate), ProcessProxyTemplateUpdateRequest {
 
-    @Volatile
-    protected var startPort = this.proxyTemplate.getStartPort()
-
     override fun getProcessTemplate(): ProcessProxyTemplate {
         return this.proxyTemplate
-    }
-
-    override fun setStartPort(startPort: Int): ProcessProxyTemplateUpdateRequest {
-        this.startPort = startPort
-        return this
     }
 
 }

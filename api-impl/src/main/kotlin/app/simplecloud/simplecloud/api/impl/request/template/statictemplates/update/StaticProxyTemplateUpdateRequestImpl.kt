@@ -40,11 +40,6 @@ class StaticProxyTemplateUpdateRequestImpl(
         return this.staticTemplate
     }
 
-    override fun setStartPort(startPort: Int): StaticProxyTemplateUpdateRequest {
-        super.setStartPort(startPort)
-        return this
-    }
-
     override fun setMaxMemory(memory: Int): StaticProxyTemplateUpdateRequest {
         super.setMaxMemory(memory)
         return this
@@ -95,8 +90,7 @@ class StaticProxyTemplateUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            this.active,
-            this.startPort
+            this.active
         )
         this.internalService.updateStaticTemplateInternal(updateObj)
     }

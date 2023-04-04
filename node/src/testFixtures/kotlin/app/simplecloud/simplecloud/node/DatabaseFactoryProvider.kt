@@ -81,8 +81,7 @@ class DatabaseFactoryProvider {
             true,
             0,
             null,
-            true,
-            25565
+            true
         )
         val spec = JsonLib.fromObject(groupConfiguration).getObject(Map::class.java) as Map<String, Any>
         resourceRepository.save(Resource("core/v1beta1", "CloudPlayer", groupName, spec))

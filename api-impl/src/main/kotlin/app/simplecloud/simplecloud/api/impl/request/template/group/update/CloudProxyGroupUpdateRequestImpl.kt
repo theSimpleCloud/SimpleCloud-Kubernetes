@@ -41,11 +41,6 @@ class CloudProxyGroupUpdateRequestImpl(
         return this.proxyGroup
     }
 
-    override fun setStartPort(startPort: Int): CloudProxyGroupUpdateRequest {
-        super.setStartPort(startPort)
-        return this
-    }
-
     override fun setMaxMemory(memory: Int): CloudProxyGroupUpdateRequest {
         super.setMaxMemory(memory)
         return this
@@ -96,8 +91,7 @@ class CloudProxyGroupUpdateRequestImpl(
             this.stateUpdating,
             this.startPriority,
             this.joinPermission,
-            this.active,
-            this.startPort
+            this.active
         )
         return this.internalService.updateGroupInternal(updateObj)
     }

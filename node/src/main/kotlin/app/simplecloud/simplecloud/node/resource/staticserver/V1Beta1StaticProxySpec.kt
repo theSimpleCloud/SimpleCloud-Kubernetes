@@ -40,5 +40,4 @@ data class V1Beta1StaticProxySpec(
     @Optional
     val joinPermission: String?,
     val active: Boolean,
-    val startPort: Int,
 )

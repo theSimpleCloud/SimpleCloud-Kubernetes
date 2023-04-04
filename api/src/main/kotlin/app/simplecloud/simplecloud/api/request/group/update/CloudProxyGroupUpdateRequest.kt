@@ -31,8 +31,6 @@ import java.util.concurrent.CompletableFuture
  */
 interface CloudProxyGroupUpdateRequest : CloudProcessGroupUpdateRequest, ProcessProxyTemplateUpdateRequest {
 
-    override fun setStartPort(startPort: Int): CloudProxyGroupUpdateRequest
-
     override fun getProcessTemplate(): CloudProxyGroup
 
     override fun setMaxMemory(memory: Int): CloudProxyGroupUpdateRequest
