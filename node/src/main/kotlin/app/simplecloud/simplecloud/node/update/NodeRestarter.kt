@@ -19,8 +19,10 @@
 package app.simplecloud.simplecloud.node.update
 
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.CloudState
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 import java.util.concurrent.TimeUnit
 
 /**
@@ -30,16 +32,22 @@ import java.util.concurrent.TimeUnit
  *
  */
 class NodeRestarter(
-    private val cloudAPI: InternalNodeCloudAPI,
+    private val stateService: InternalCloudStateService,
+    private val ftpServerService: InternalFtpServerService,
+    private val processService: CloudProcessService,
     private val messageChannelProvider: InternalMessageChannelProvider,
 ) {
 
     fun canPerformRestart(): Boolean {
-        return cloudAPI.getCloudStateService().getCloudState().get() != CloudState.DISABLED
+        return this.stateService.getCloudState().get() != CloudState.DISABLED
     }
 
     fun restartNodes() {
-        NodeDisabler(this.cloudAPI).disableNodes()
+        NodeDisabler(
+            this.stateService,
+            this.ftpServerService,
+            this.processService
+        ).disableNodes()
         val restartMessageChannel = this.messageChannelProvider.getInternalRestartMessageChannel()
         //send time to stop node
         restartMessageChannel.createMessageRequestToAll(System.currentTimeMillis() + TimeUnit.SECONDS.toMillis(3))

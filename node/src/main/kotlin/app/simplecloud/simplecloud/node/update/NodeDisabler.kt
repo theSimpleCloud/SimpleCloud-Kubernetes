@@ -18,8 +18,10 @@
 
 package app.simplecloud.simplecloud.node.update
 
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.CloudState
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
 
 /**
  * Date: 01.01.23
@@ -28,11 +30,13 @@ import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloud
  *
  */
 class NodeDisabler(
-    private val cloudAPI: InternalNodeCloudAPI,
+    private val stateService: InternalCloudStateService,
+    private val ftpServerService: InternalFtpServerService,
+    private val processService: CloudProcessService,
 ) {
 
     fun disableNodes() {
-        val stateService = this.cloudAPI.getCloudStateService()
+        val stateService = this.stateService
         if (stateService.getCloudState().get() == CloudState.DISABLED) {
             throw AlreadyDisabledException()
         }
@@ -42,13 +46,13 @@ class NodeDisabler(
     }
 
     private fun stopAllFtpServers() {
-        val ftpService = this.cloudAPI.getFtpService()
+        val ftpService = this.ftpServerService
         val ftpServersFuture = ftpService.findAll()
         ftpServersFuture.thenAccept { list -> list.forEach { it.createStopRequest().submit() } }
     }
 
     private fun stopAllProcesses() {
-        val processService = this.cloudAPI.getProcessService()
+        val processService = this.processService
         val processesFuture = processService.findAll()
         processesFuture.thenAccept { list -> list.forEach { it.createShutdownRequest().submit() } }
     }

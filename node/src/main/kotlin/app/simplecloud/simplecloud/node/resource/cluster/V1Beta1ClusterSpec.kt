@@ -16,28 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.startup.prepare
-
-import app.simplecloud.simplecloud.module.api.impl.NodeCloudAPIImpl
-import app.simplecloud.simplecloud.node.defaultcontroller.v1.LoginController
-import app.simplecloud.simplecloud.restserver.api.auth.AuthService
+package app.simplecloud.simplecloud.node.resource.cluster
 
 /**
- * Created by IntelliJ IDEA.
- * Date: 04/08/2021
- * Time: 11:22
+ * Date: 04.04.23
+ * Time: 16:52
  * @author Frederick Baier
+ *
  */
-class ControllerRegisterer(
-    private val cloudAPI: NodeCloudAPIImpl,
-    private val authService: AuthService,
-) {
-
-    private val controllerHandler = this.cloudAPI.getWebControllerHandler()
-
-    fun registerControllers() {
-        this.controllerHandler.registerController(LoginController(this.authService))
-    }
-
-
-}
+class V1Beta1ClusterSpec(
+    val version: String,
+)

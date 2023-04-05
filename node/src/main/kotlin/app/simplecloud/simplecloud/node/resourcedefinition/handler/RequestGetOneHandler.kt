@@ -56,8 +56,7 @@ class RequestGetOneHandler(
             is ResourceVersionRequestPrePostProcessor.OverwriteSpec -> {}
         }
         val resource = loadResource() ?: throw NoSuchElementException("Resource not found")
-        val requestedSpec = requestUtil.convertDefaultSpecToRequestedSpec(resource)
-        return requestUtil.generateResourceDtoFromSpec(resource, requestedSpec)
+        return requestUtil.convertDefaultVersionToRequestVersion(resource)
     }
 
     private fun handlePreProcessor(): ResourceVersionRequestPrePostProcessor.RequestPreProcessorResult<Any> {

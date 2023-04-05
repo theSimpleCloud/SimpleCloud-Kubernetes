@@ -16,32 +16,36 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.defaultcontroller.v1
+package app.simplecloud.simplecloud.node.resource.cluster.restart
 
 import app.simplecloud.simplecloud.api.internal.messagechannel.InternalMessageChannelProvider
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomActionHandler
 import app.simplecloud.simplecloud.node.update.NodeRestarter
-import app.simplecloud.simplecloud.restserver.api.controller.Controller
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestMapping
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RestController
-import app.simplecloud.simplecloud.restserver.api.route.RequestType
 import kotlin.concurrent.thread
 
 /**
- * Date: 27.12.22
- * Time: 20:45
+ * Date: 05.04.23
+ * Time: 12:18
  * @author Frederick Baier
  *
  */
-@RestController(1, "cloud/restart")
-class RestartController(
-    private val cloudAPI: InternalNodeCloudAPI,
+class V1Beta1ClusterRestartHandler(
+    private val stateService: InternalCloudStateService,
+    private val ftpServerService: InternalFtpServerService,
+    private val processService: CloudProcessService,
     private val messageChannelProvider: InternalMessageChannelProvider,
-) : Controller {
+) : ResourceCustomActionHandler<V1Beta1ClusterRestartBody> {
 
-    @RequestMapping(RequestType.POST, "", "web.cloud.process.restart")
-    fun handleRestart(): Boolean {
-        val nodeRestarter = NodeRestarter(this.cloudAPI, this.messageChannelProvider)
+    override fun handleAction(resourceName: String, body: V1Beta1ClusterRestartBody) {
+        val nodeRestarter = NodeRestarter(
+            this.stateService,
+            this.ftpServerService,
+            this.processService,
+            this.messageChannelProvider
+        )
         if (!nodeRestarter.canPerformRestart()) {
             throw UnableToRestartException()
         }
@@ -52,8 +56,8 @@ class RestartController(
                 e.printStackTrace()
             }
         }
-        return true
     }
+
 
     class UnableToRestartException() : Exception("Unable to restart")
 

@@ -41,18 +41,18 @@ class RequestUtil(
 
     fun convertDefaultVersionToRequestVersion(resource: Resource): RequestSpecAndStatusResult<*, *> {
         val requestedVersionSpecObj = convertDefaultSpecToRequestedSpec(resource)
-        return generateResourceDtoFromSpec(resource, requestedVersionSpecObj)
+        return generateResourceDtoFromSpec(resource.name, requestedVersionSpecObj)
     }
 
     fun generateResourceDtoFromSpec(
-        resource: Resource,
+        resourceName: String,
         requestedVersionSpecObj: Any,
     ): RequestSpecAndStatusResult<*, *> {
-        val requestedVersionStatusObj = generateStatusForRequestedVersion(resource.name, requestedVersionSpecObj)
+        val requestedVersionStatusObj = generateStatusForRequestedVersion(resourceName, requestedVersionSpecObj)
         val resourceDto = ResourceDto(
             this.resourceDefinition.getGroup() + "/" + this.requestedVersion.getName(),
             this.resourceDefinition.getKind(),
-            resource.name,
+            resourceName,
             requestedVersionSpecObj,
             requestedVersionStatusObj
         )

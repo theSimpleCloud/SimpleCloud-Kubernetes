@@ -49,8 +49,12 @@ class NodeRestartTest : NodeAPIBaseTest() {
     }
 
     private fun executeRestart() {
-        val nodeRestart =
-            NodeRestarter(this.cloudAPI, this.cloudAPI.getInternalMessageChannelProvider())
+        val nodeRestart = NodeRestarter(
+            this.cloudAPI.getCloudStateService(),
+            this.cloudAPI.getFtpService(),
+            this.cloudAPI.getProcessService(),
+            this.cloudAPI.getInternalMessageChannelProvider()
+        )
         nodeRestart.restartNodes()
     }
 

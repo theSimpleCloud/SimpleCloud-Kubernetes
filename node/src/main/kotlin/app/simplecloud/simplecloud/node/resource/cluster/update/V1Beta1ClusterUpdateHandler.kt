@@ -16,43 +16,48 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package app.simplecloud.simplecloud.node.defaultcontroller.v1
+package app.simplecloud.simplecloud.node.resource.cluster.update
 
 import app.simplecloud.simplecloud.api.impl.env.EnvironmentVariables
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
-import app.simplecloud.simplecloud.node.defaultcontroller.v1.dto.UpdateDto
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
+import app.simplecloud.simplecloud.module.api.resourcedefinition.ResourceCustomActionHandler
+import app.simplecloud.simplecloud.module.api.service.ErrorService
 import app.simplecloud.simplecloud.node.update.NodeUpdater
-import app.simplecloud.simplecloud.restserver.api.controller.Controller
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestBody
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RequestMapping
-import app.simplecloud.simplecloud.restserver.api.controller.annotation.RestController
-import app.simplecloud.simplecloud.restserver.api.route.RequestType
 import kotlin.concurrent.thread
 
 /**
- * Date: 27.12.22
- * Time: 20:45
+ * Date: 05.04.23
+ * Time: 11:46
  * @author Frederick Baier
  *
  */
-@RestController(1, "cloud/update")
-class UpdateController(
-    private val cloudAPI: InternalNodeCloudAPI,
+class V1Beta1ClusterUpdateHandler(
     private val environmentVariables: EnvironmentVariables,
-) : Controller {
+    private val stateService: InternalCloudStateService,
+    private val ftpServerService: InternalFtpServerService,
+    private val processService: CloudProcessService,
+    private val errorService: ErrorService,
+    private val kubeAPI: KubeAPI,
+) : ResourceCustomActionHandler<V1Beta1ClusterUpdateBody> {
 
-    @RequestMapping(RequestType.POST, "", "web.cloud.update")
-    fun handleUpdate(@RequestBody body: UpdateDto): Boolean {
+    override fun handleAction(resourceName: String, body: V1Beta1ClusterUpdateBody) {
         val buildKitAddr = environmentVariables.get("BUILDKIT_ADDR")
             ?: throw NoSuchElementException("Environment variable BUILDKIT_ADDR is not set")
         val registryAddr = environmentVariables.get("REBUILD_REGISTRY")
             ?: throw NoSuchElementException("Environment variable REBUILD_REGISTRY is not set")
         val nodeUpdater = NodeUpdater(
-            body.moduleLinks,
+            body.moduleLinks.toList(),
             body.baseImage,
             buildKitAddr,
             "${registryAddr}/simplecloud-internal:latest",
-            this.cloudAPI
+            this.stateService,
+            this.ftpServerService,
+            this.processService,
+            this.errorService,
+            this.kubeAPI
         )
         if (!nodeUpdater.canPerformUpdate()) {
             throw UnableToUpdateException()
@@ -64,8 +69,8 @@ class UpdateController(
                 e.printStackTrace()
             }
         }
-        return true
     }
+
 
     class UnableToUpdateException() : Exception("Unable to update")
 

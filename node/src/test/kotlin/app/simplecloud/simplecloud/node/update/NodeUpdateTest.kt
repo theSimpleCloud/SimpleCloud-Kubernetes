@@ -84,8 +84,17 @@ class NodeUpdateTest : NodeAPIBaseTest() {
     }
 
     private fun executeUpdater() {
-        val nodeUpdater =
-            NodeUpdater(emptyList(), "simplecloud-base", "buildkit.addr", "simplecloud-dest", this.cloudAPI)
+        val nodeUpdater = NodeUpdater(
+            emptyList(),
+            "simplecloud-base",
+            "buildkit.addr",
+            "simplecloud-dest",
+            this.cloudAPI.getCloudStateService(),
+            this.cloudAPI.getFtpService(),
+            this.cloudAPI.getProcessService(),
+            this.cloudAPI.getErrorService(),
+            this.cloudAPI.getKubeAPI()
+        )
         nodeUpdater.executeUpdate()
     }
 

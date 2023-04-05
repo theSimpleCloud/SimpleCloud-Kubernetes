@@ -166,7 +166,6 @@ class NodeClusterConnect(
         ControllerRegisterer(
             nodeCloudAPI,
             authService,
-            this.preparedNode.environmentVariables
         ).registerControllers()
 
         ResourceDefinitionRouteRegisterer(
@@ -275,8 +274,12 @@ class NodeClusterConnect(
         val cloudStateService = DefaultCloudStateService(cacheHandler)
 
 
+        val messageChannelProvider = InternalMessageChannelProviderImpl(messageChannelManager)
 
         ResourceDefinitionRegisterer(
+            this.preparedNode.environmentVariables,
+            messageChannelProvider,
+            errorService,
             resourceDefinitionService,
             cloudStateService,
             cloudProcessGroupService,
@@ -290,7 +293,10 @@ class NodeClusterConnect(
             this.kubeAPI.getPodService(),
             this.kubeAPI.getVolumeClaimService(),
             linkService,
+            this.kubeAPI,
             distributedRepositories,
+            requestHandler,
+            this.databaseRepositories.resourceRepository
         ).registerDefinitions()
 
         return NodeCloudAPIImpl(
@@ -312,7 +318,7 @@ class NodeClusterConnect(
             this.localAPI,
             this.kubeAPI,
             ftpService,
-            InternalMessageChannelProviderImpl(messageChannelManager),
+            messageChannelProvider,
             controllerHandler,
             resourceDefinitionService,
             requestHandler,

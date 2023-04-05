@@ -19,11 +19,15 @@
 package app.simplecloud.simplecloud.node.update
 
 import app.simplecloud.simplecloud.api.future.CloudCompletableFuture
+import app.simplecloud.simplecloud.api.internal.service.InternalCloudStateService
+import app.simplecloud.simplecloud.api.service.CloudProcessService
 import app.simplecloud.simplecloud.api.utils.CloudState
+import app.simplecloud.simplecloud.kubernetes.api.KubeAPI
 import app.simplecloud.simplecloud.kubernetes.api.pod.KubePod
 import app.simplecloud.simplecloud.kubernetes.api.pod.PodSpec
 import app.simplecloud.simplecloud.module.api.error.configuration.ErrorCreateConfiguration
-import app.simplecloud.simplecloud.module.api.internal.service.InternalNodeCloudAPI
+import app.simplecloud.simplecloud.module.api.internal.service.InternalFtpServerService
+import app.simplecloud.simplecloud.module.api.service.ErrorService
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.apache.logging.log4j.LogManager
 import java.util.concurrent.CompletableFuture
@@ -39,24 +43,31 @@ class NodeUpdater(
     private val baseImageName: String,
     private val remoteBuildkitAddr: String,
     private val destImageTag: String,
-    private val cloudAPI: InternalNodeCloudAPI,
+    private val stateService: InternalCloudStateService,
+    private val ftpServerService: InternalFtpServerService,
+    private val processService: CloudProcessService,
+    private val errorService: ErrorService,
+    private val kubeAPI: KubeAPI,
 ) {
 
     private val WORK_DIR = "/home/work/"
     private val MODULES_DIR_IN_CONTAINER = "/node/modules/"
 
-    private val errorService = this.cloudAPI.getErrorService()
-    private val podService = this.cloudAPI.getKubeAPI().getPodService()
-    private val deploymentService = this.cloudAPI.getKubeAPI().getDeploymentService()
+    private val podService = this.kubeAPI.getPodService()
+    private val deploymentService = this.kubeAPI.getDeploymentService()
 
     fun canPerformUpdate(): Boolean {
-        return cloudAPI.getCloudStateService().getCloudState().get() != CloudState.DISABLED
+        return this.stateService.getCloudState().get() != CloudState.DISABLED
     }
 
     @Synchronized
     fun executeUpdate() {
         logger.info("Updating Cloud...")
-        NodeDisabler(this.cloudAPI).disableNodes()
+        NodeDisabler(
+            this.stateService,
+            this.ftpServerService,
+            this.processService
+        ).disableNodes()
         executeUpdate0()
     }
 
