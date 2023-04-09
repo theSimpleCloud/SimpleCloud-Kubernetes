@@ -1,0 +1,64 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: simplecloud
+  labels:
+    app: simplecloud
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: simplecloud
+  template:
+    metadata:
+      labels:
+        app: simplecloud
+    spec:
+      serviceAccountName: simplecloud
+      containers:
+        - name: default
+          image: registry.registry.svc.cluster.local:5000/simplecloud3:latest
+          ports:
+            - containerPort: 8008
+          env:
+            - name: SELF_HOST
+              valueFrom:
+                fieldRef:
+                  fieldPath: status.podIP
+            - name: REBUILD_REGISTRY
+              value: "registry.registry.svc.cluster.local:5000"
+            - name: BUILDKIT_ADDR
+              value: "buildkitd.buildkit.svc.cluster.local"
+            - name: INIT_USER_NAME
+              value: Wetterbericht
+            - name: INIT_USER_UUID
+              value: "e32fda36-87d7-4520-8efb-71f11a221439"
+            - name: INIT_USER_PASSWORD
+              value: "fa0451e7d04d80ab934e526a249d45e2834f678a8bd21e0c72618e2d1b4a1ebc255c53988ce459f3d0700acde0de34184f37abab3d1bb2716f0a2b34102003f9"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: rest
+spec:
+  type: NodePort
+  selector:
+    app: simplecloud
+  ports:
+    - protocol: TCP
+      port: 8008
+      targetPort: 8008
+      nodePort: 30008
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: distribution
+spec:
+  selector:
+    app: simplecloud
+  ports:
+    - protocol: TCP
+      port: 1670
+      targetPort: 1670
