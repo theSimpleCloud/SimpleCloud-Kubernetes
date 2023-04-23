@@ -15,7 +15,7 @@ import java.util.*
  * Time: 19:12
  */
 class VelocityProxyServerRegistry(
-    private val proxyServer: ProxyServer
+    private val proxyServer: ProxyServer,
 ) : ProxyServerRegistry {
 
     override fun registerProcess(cloudProcess: CloudProcess) {
@@ -26,10 +26,10 @@ class VelocityProxyServerRegistry(
         if (cloudProcess.getProcessType() == ProcessTemplateType.PROXY)
             return
 
-        println("Registered process ${cloudProcess.getName()}")
         val address = cloudProcess.getAddress()
         val socketAddress = InetSocketAddress(address.host, address.port)
         registerServer(cloudProcess.getName(), cloudProcess.getUniqueId(), socketAddress)
+        println("Registered process ${cloudProcess.getName()}")
     }
 
     override fun registerServer(name: String, uniqueId: UUID, socketAddress: InetSocketAddress) {
@@ -43,6 +43,7 @@ class VelocityProxyServerRegistry(
     override fun unregisterServer(name: String) {
         this.proxyServer.getServer(name).ifPresent {
             this.proxyServer.unregisterServer(it.serverInfo)
+            println("Unregistered process ${name}")
         }
     }
 

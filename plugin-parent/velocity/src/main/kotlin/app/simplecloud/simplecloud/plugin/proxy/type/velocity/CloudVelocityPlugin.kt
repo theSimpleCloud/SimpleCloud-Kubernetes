@@ -38,16 +38,20 @@ class CloudVelocityPlugin @Inject constructor(
         SelfOnlineCountProvider { this.proxyServer.allPlayers.size }
     )
 
-    @Subscribe
-    fun onProxyInitialization(event: ProxyInitializeEvent) {
+    init {
         this.proxyServer.allServers.forEach {
             this.proxyServer.unregisterServer(it.serverInfo)
         }
 
         this.registerFallbackService()
+    }
 
-        this.proxyServer.eventManager.register(this, VelocityListener(this.proxyPlugin.proxyController, this.proxyServer))
-
+    @Subscribe
+    fun onProxyInitialization(event: ProxyInitializeEvent) {
+        this.proxyServer.eventManager.register(
+            this,
+            VelocityListener(this.proxyPlugin.proxyController, this.proxyServer)
+        )
     }
 
     private fun registerFallbackService() {

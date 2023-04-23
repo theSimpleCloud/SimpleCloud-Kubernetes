@@ -77,7 +77,12 @@ class VelocityListener(
                         event.result.server.get().serverInfo.name
                     )
                 )
-                val serverInfo = proxyServer.getServer(response.targetProcessName).orElse(null) ?: return@runBlocking
+                val serverInfo = proxyServer.getServer(response.targetProcessName).orElse(null)
+                if (serverInfo == null) {
+                    player.disconnect(Component.text("§cTarget process ${response.targetProcessName} is not registered"))
+                    event.result = ServerPreConnectEvent.ServerResult.denied()
+                    return@runBlocking
+                }
                 event.result = ServerPreConnectEvent.ServerResult.allowed(serverInfo)
             }
         } catch (ex: ProxyController.NoLobbyServerFoundException) {
