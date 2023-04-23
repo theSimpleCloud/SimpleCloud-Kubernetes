@@ -52,9 +52,14 @@ class KubernetesPodStarter(
             .tty(true)
             .resources(
                 V1ResourceRequirements()
-                    .requests(
+                    //.requests(
+                    //    hashMapOf(
+                    //        "memory" to Quantity.fromString("${this.containerSpec.maxMemory}Mi")
+                    //    )
+                    //)
+                    .limits(
                         hashMapOf(
-                            "memory" to Quantity.fromString("${this.containerSpec.maxMemory}Mi")
+                            "memory" to Quantity.fromString("${this.containerSpec.maxMemory * 2}Mi")
                         )
                     )
             ).volumeMounts(
@@ -70,20 +75,26 @@ class KubernetesPodStarter(
             container.args(kubeCommand.args)
         }
 
+        val podSpec = V1PodSpec()
+            .containers(
+                listOf(
+                    container
+                )
+            ).volumes(
+                volumes
+            ).restartPolicy(this.containerSpec.restartPolicy)
+
+        if (this.containerSpec.serviceAccountName != null) {
+            podSpec.serviceAccountName(this.containerSpec.serviceAccountName!!)
+        }
+
         val pod = V1Pod()
             .metadata(
                 V1ObjectMeta()
                     .name(this.containerName.lowercase())
                     .labels(labels)
             ).spec(
-                V1PodSpec()
-                    .containers(
-                        listOf(
-                            container
-                        )
-                    ).volumes(
-                        volumes
-                    ).restartPolicy(this.containerSpec.restartPolicy)
+                podSpec
             )
         createNamespacedPod(pod)
     }
@@ -97,6 +108,10 @@ class KubernetesPodStarter(
     }
 
     private fun createVolumes(): List<V1Volume> {
+        return createDirectoryVolumes().union(createSecretVolumes()).toList()
+    }
+
+    private fun createDirectoryVolumes(): List<V1Volume> {
         return this.containerSpec.volumes.map { it.volumeClaim }
             .map {
                 V1Volume()
@@ -108,11 +123,36 @@ class KubernetesPodStarter(
             }
     }
 
+    private fun createSecretVolumes(): List<V1Volume> {
+        return this.containerSpec.secrets.map { it.kubeSecret }
+            .map {
+                V1Volume()
+                    .name(it.getName())
+                    .secret(
+                        V1SecretVolumeSource()
+                            .secretName(it.getName())
+                    )
+            }
+    }
+
     private fun createVolumeMounts(): List<V1VolumeMount> {
+        return createDirectoryVolumeMounts().union(createSecretVolumeMounts()).toList()
+    }
+
+    private fun createDirectoryVolumeMounts(): List<V1VolumeMount> {
         return this.containerSpec.volumes.map {
             V1VolumeMount()
                 .name(it.volumeClaim.getName())
                 .mountPath(it.mountPath)
+        }
+    }
+
+    private fun createSecretVolumeMounts(): List<V1VolumeMount> {
+        return this.containerSpec.secrets.map {
+            V1VolumeMount()
+                .name(it.kubeSecret.getName())
+                .mountPath(it.mountPath)
+                .readOnly(true)
         }
     }
 

@@ -1,7 +1,8 @@
 FROM eclipse-temurin:17
 
 COPY bootstrap/build/libs/bootstrap-3.0.0-SNAPSHOT-all.jar /node.jar
-COPY microk8s/k3s/template-module-1.0-SNAPSHOT.jar /node/modules/template-module-1.0-SNAPSHOT.jar
+COPY plugin-parent/build/libs/plugin-parent-3.0.0-SNAPSHOT-all.jar /node/SimpleCloud-Plugin.jar
+COPY microk8s/k3s/template-module-1.0-SNAPSHOT-all.jar /node/modules/template-module-1.0-SNAPSHOT-all.jar
 COPY microk8s/k3s/junit-jupiter-api-5.9.1.jar /node/modules/junit.jar
 
 EXPOSE 8008
