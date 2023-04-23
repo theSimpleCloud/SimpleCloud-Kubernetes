@@ -82,7 +82,7 @@ class CloudProcessImpl constructor(
     }
 
     override fun getAddress(): Address {
-        return Address(getName(), 25565)
+        return Address(getName().lowercase(), 25565)
     }
 
     override fun isStatic(): Boolean {

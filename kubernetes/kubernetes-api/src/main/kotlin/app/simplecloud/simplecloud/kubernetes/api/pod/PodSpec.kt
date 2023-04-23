@@ -19,6 +19,7 @@
 package app.simplecloud.simplecloud.kubernetes.api.pod
 
 import app.simplecloud.simplecloud.kubernetes.api.Label
+import app.simplecloud.simplecloud.kubernetes.api.secret.KubeSecret
 import app.simplecloud.simplecloud.kubernetes.api.volume.KubeVolumeClaim
 import java.util.concurrent.CopyOnWriteArrayList
 
@@ -32,7 +33,12 @@ class PodSpec {
 
     val environmentVariables = CopyOnWriteArrayList<EnvironmentVariable>()
     val volumes = CopyOnWriteArrayList<MountableVolume>()
+    val secrets = CopyOnWriteArrayList<MountableSecret>()
     val labels = CopyOnWriteArrayList<Label>()
+
+    @Volatile
+    var serviceAccountName: String? = null
+        private set
 
     @Volatile
     var command: KubeCommand? = null
@@ -71,6 +77,16 @@ class PodSpec {
         return this
     }
 
+    fun withSecretVolume(vararg volumes: MountableSecret): PodSpec {
+        this.secrets.addAll(volumes)
+        return this
+    }
+
+    fun withServiceAccountName(serviceAccountName: String): PodSpec {
+        this.serviceAccountName = serviceAccountName
+        return this
+    }
+
     fun withImage(image: String): PodSpec {
         this.image = image
         return this
@@ -102,6 +118,11 @@ class PodSpec {
 
     class MountableVolume(
         val volumeClaim: KubeVolumeClaim,
+        val mountPath: String,
+    )
+
+    class MountableSecret(
+        val kubeSecret: KubeSecret,
         val mountPath: String,
     )
 
