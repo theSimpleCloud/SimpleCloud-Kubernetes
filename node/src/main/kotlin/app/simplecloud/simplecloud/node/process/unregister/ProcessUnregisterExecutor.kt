@@ -58,7 +58,7 @@ class ProcessUnregisterExecutor(
     }
 
     private fun stopContainerIfInactive(process: CloudProcess) {
-        val pod = this.kubeAPI.getPodService().getPod(process.getName())
+        val pod = this.kubeAPI.getPodService().getPod(process.getName().lowercase())
         if (!pod.isActive()) {
             pod.delete()
         }
