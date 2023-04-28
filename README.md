@@ -18,23 +18,26 @@ In the last few months we have come very far with SimpleCloud but we are **not d
 
 Those things are missing to make it usable:
 
-- Dashboard
-- Plugin loading (Formerly known as Modules)
-- The Ingame-Plugin for communicating with the node
-- Build Docker Images with Kubernetes form templates
+- [ ] Dashboard
+- [ ] Build Docker Images with Kubernetes from templates (Almost done)
+- [ ] Port-Forward (Important so users can join the network with a specific port. For example: 25565)
+- [x] Module loading
+- [x] The Ingame-Plugin for communicating with the node
 
 ## Dashboard
 
 SimpleCloud will release with a **built-in dashboard**. At the moment it is still work-in-progress and not available publicly.
 
-## Plugins (Formerly known as Modules)
+## Modules
 
-We are planning to release following plugins:
+We are planning to release following modules:
 
+- [ ] Templates
 - [ ] Permissions
 - [ ] Signs
 - [ ] Proxy Management
 - [ ] NPCs
+- [ ] Port-Forward
 - [ ] Chat + Tab
 - [ ] Hub Command
 - [ ] Notify
